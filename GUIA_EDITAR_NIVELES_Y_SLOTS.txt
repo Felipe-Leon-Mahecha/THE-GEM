@@ -1,0 +1,91 @@
+GUIA RAPIDA - THE GEM
+
+1. ANADIR UN NIVEL
+
+Abre levels.config.js y copia un bloque dentro de window.LEVEL_CONFIGS.
+Lo importante:
+
+name: nombre del nivel.
+number: numero visible del nivel.
+difficulty: dificultad que se muestra en el selector.
+unlocked: true si quieres que aparezca desbloqueado desde el inicio.
+theme: "silver", "volcano" o "frozen".
+rotationSpeed: velocidad base del mundo.
+spawnRate: mientras mas bajo, salen puas mas rapido.
+winTime: segundos para completar el nivel.
+ringInset: reduce el borde exterior donde aparecen obstaculos.
+rubySpawnInterval y maxRubies: controlan rubies dentro del nivel.
+
+assets:
+cover: portada del nivel en selector.
+core: imagen del nucleo central.
+sphereBackground: textura dentro del aro.
+outerBackground: fondo de pantalla del nivel.
+frame: marco del aro.
+music: musica del nivel.
+
+obstacles:
+spikes: true activa puas.
+saws: true activa sierras.
+lasers: true activa laser de hielo.
+laserSpawnInterval: cada cuantos frames intenta salir laser.
+
+2. EDITAR SLOTS VACIOS DE RUBY PASS
+
+Carpeta:
+assets/Imagenes/Ruby Pass/
+
+00_Logo: logo/candado.
+01_Acceso: banner de acceso desde tienda.
+02_Fondo: fondo del pase.
+03_Arco: texturas FREE, PREMIUM y marcador.
+04_Recompensas: imagenes de recompensas.
+05_Punto actual: imagen fija que marca donde esta el player.
+
+En shop.js busca RUBY_PASS_ASSETS para cambiar rutas.
+En RUBY_PASS_REWARDS cambias level, xp, free y premium.
+
+3. EDITAR SLOTS VIP
+
+Carpetas:
+assets/Imagenes/VIP/Carrusel/
+assets/Imagenes/VIP/Paquetes/Monstruos/
+assets/Imagenes/VIP/Paquetes/Elementos/
+assets/Imagenes/VIP/Paquetes/Troll/
+assets/Imagenes/VIP/Paquetes/Poder/
+
+En shop.js:
+VIP_CAROUSEL_DATA controla los 4 paneles del carrusel.
+VIP_PACKAGES_DATA controla paquetes y mini-items.
+
+Puedes reemplazar cualquier PNG manteniendo el mismo nombre de archivo.
+Si cambias el nombre, actualiza tambien la ruta en shop.js.
+
+4. EDITAR SLOTS DE TIENDA NORMAL
+
+Skins:
+assets/Imagenes/Skins/Placeholders/
+Datos en SKINS_DATA dentro de shop.js.
+
+Trails:
+assets/Imagenes/Trails/Placeholders/
+Datos en TRAILS_DATA dentro de shop.js.
+
+Banners:
+assets/Imagenes/Banners/Placeholders/
+Datos en BANNERS_DATA dentro de shop.js.
+
+Emotes:
+assets/Imagenes/Emotes/Placeholders/
+Datos en EMOTES_DATA dentro de shop.js.
+
+5. COFRES GUARDADOS
+
+Los cofres sin abrir se guardan en localStorage con:
+invChest_basic
+invChest_special
+invChest_epic
+invChest_demon
+invChest_vip
+
+El inventario los muestra en la seccion COFRES.

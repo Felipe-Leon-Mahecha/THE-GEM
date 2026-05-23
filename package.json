@@ -1,0 +1,16 @@
+{
+  "name": "juego-vgemini",
+  "version": "1.0.0",
+  "description": "Esfera Inversa",
+  "main": "main.js",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build && node scripts/copy-runtime-assets.mjs"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "phaser": "^3.90.0",
+    "vite": "^7.1.7"
+  }
+}
