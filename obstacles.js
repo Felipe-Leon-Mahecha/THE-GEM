@@ -133,22 +133,6 @@ function playerHit() {
             window.showGameOverWithRevive();
             return;
         }
-        window.running = false;
-        document.getElementById("gameCanvas").style.visibility = "hidden";
-        document.getElementById('pause-btn').classList.remove('is-playing');
-
-        // Parar música del juego y arrancar menú
-        window.bgMusic.pause();
-        window.bgMusic.currentTime = 0;
-
-        // Mostrar game over
-        const go = document.getElementById('gameOver');
-        document.getElementById('go-title').textContent = 'NIVEL ' + window.level;
-        document.getElementById('go-sub').textContent = 'INTENTALO DE NUEVO';
-        go.style.display = 'flex';
-        void go.offsetHeight;
-        go.style.animation = 'fadeInGO 0.8s ease forwards';
-        return;
     }
 }
 

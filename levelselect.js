@@ -34,10 +34,13 @@ const levels = (window.LEVEL_CONFIGS || []).map((lv, i) => ({
     name: lv.name,
     unlocked: i === 0 ? true : !!lv.unlocked,
     difficulty: lv.difficulty,
-    image: lv.assets && lv.assets.cover ? lv.assets.cover : "",
+    image: lv.assets && lv.assets.cover
+        ? lv.assets.cover
+        : window.LEVEL_ASSET_PLACEHOLDERS?.cover || "assets/Imagenes/Placeholders/Placeholder_Level_Cover.png",
     completed: !!lv.completed,
     percent: lv.percent || 0
 }));
+window.levels = levels;
 
 levels.forEach((lv, i) => {
     if (i > 0 && localStorage.getItem(`level${i}Unlocked`) === 'true') {
@@ -49,6 +52,9 @@ levels.forEach((lv, i) => {
 const levelImages = levels.map(lv => {
     const img = new Image();
     img.src = lv.image;
+    img.onerror = () => {
+        img.src = window.LEVEL_ASSET_PLACEHOLDERS?.cover || "assets/Imagenes/Placeholders/Placeholder_Level_Cover.png";
+    };
     return img;
 });
 
@@ -57,6 +63,7 @@ const levelSelectBg = new Image();
 levelSelectBg.src = "assets/Imagenes/Select Nivel Fondo/Select_Nivel_Image.png";
 
 let selectedLevel = 0;
+window.selectedLevel = selectedLevel;
 let carouselX = 0;
 let carouselTarget = 0;
 let selectVisible = false;
@@ -66,6 +73,41 @@ var bannerTrail = [];
 var bannerTime = 0;
 
 let carouselAnimId = null; // Control para memory leak
+
+function updateLevelSelectNav() {
+    window.selectedLevel = selectedLevel;
+    const prev = document.getElementById("ls-prev-btn");
+    const next = document.getElementById("ls-next-btn");
+    if (prev) prev.classList.toggle("is-hidden", selectedLevel <= 0);
+    if (next) next.classList.toggle("is-hidden", selectedLevel >= levels.length - 1);
+}
+
+function moveLevelSelection(direction) {
+    if (!selectVisible) return;
+
+    const nextLevel = Math.max(
+        0,
+        Math.min(levels.length - 1, selectedLevel + direction)
+    );
+
+    if (nextLevel === selectedLevel) {
+        updateLevelSelectNav();
+        return;
+    }
+
+    selectedLevel = nextLevel;
+    carouselTarget = 0;
+    updateLevelSelectNav();
+    window.playSfx?.("levelHover", 0.45);
+}
+
+window.moveLevelSelection = moveLevelSelection;
+
+window.playSelectedLevel = function () {
+    if (!levels[selectedLevel]?.unlocked) return;
+    window.hideLevelSelect();
+    (window.startLevelWithTransition || window.startGame)(selectedLevel);
+};
 
 const systemMessages = [
 
@@ -102,6 +144,7 @@ window.showLevelSelect = function () {
 
     selectVisible = true;
     selectedLevel = window.currentLevel || 0;
+    window.selectedLevel = selectedLevel;
     carouselTarget = 0;
     carouselX = 0;
     bannerTrail = [];
@@ -169,6 +212,7 @@ window.showLevelSelect = function () {
     ls.style.opacity = "1";
     ls.style.transition = "none";
     ls.style.display = "flex";
+    updateLevelSelectNav();
 
     if (carouselAnimId)
         cancelAnimationFrame(carouselAnimId);
@@ -176,6 +220,7 @@ window.showLevelSelect = function () {
     drawCarousel();
 
     clearInterval(window.systemMsgLoop);
+    clearTimeout(window.systemMsgTimeout);
 
     startSystemMessages();
 
@@ -187,16 +232,6 @@ window.showLevelSelect = function () {
         }, 4000);
 
 };
-
-// Mostrar level select directo, sin transición que cause negro
-if (carouselAnimId) cancelAnimationFrame(carouselAnimId);
-drawCarousel();
-
-clearInterval(window.systemMsgLoop);
-startSystemMessages();
-window.systemMsgLoop = setInterval(() => {
-    startSystemMessages();
-}, 4000);
 
 const menuMusic =
     document.getElementById("menuMusic");
@@ -214,6 +249,7 @@ window.hideLevelSelect = function () {
     document.getElementById("levelSelect").style.display = "none";
     if (carouselAnimId) cancelAnimationFrame(carouselAnimId);
     clearInterval(window.systemMsgLoop); // Prevenir ejecución fantasma en fondo
+    clearTimeout(window.systemMsgTimeout);
 }
 
 function startSystemMessages() {
@@ -224,7 +260,9 @@ function startSystemMessages() {
 
     text.style.opacity = 0;
 
-    setTimeout(() => {
+    clearTimeout(window.systemMsgTimeout);
+    window.systemMsgTimeout = setTimeout(() => {
+        if (!selectVisible) return;
 
         currentSystemMessage++;
 
@@ -639,9 +677,7 @@ function drawCarousel() {
     });
 
     if (selectVisible) {
-        carouselAnimId =
-            carouselAnimId =
-            requestAnimationFrame(drawCarousel);
+        carouselAnimId = requestAnimationFrame(drawCarousel);
     }
 
 }
@@ -657,10 +693,7 @@ document.addEventListener("keydown", e => {
         e.key === "ArrowLeft"
     ) {
 
-        if (selectedLevel > 0) {
-            selectedLevel--;
-            carouselTarget = 0;
-        }
+        moveLevelSelection(-1);
 
     }
 
@@ -670,10 +703,7 @@ document.addEventListener("keydown", e => {
         e.key === "ArrowRight"
     ) {
 
-        if (selectedLevel < levels.length - 1) {
-            selectedLevel++;
-            carouselTarget = 0;
-        }
+        moveLevelSelection(1);
 
     }
 
@@ -682,13 +712,7 @@ document.addEventListener("keydown", e => {
         e.code === "Space"
     ) {
 
-        if (levels[selectedLevel].unlocked) {
-
-            window.hideLevelSelect();
-
-            (window.startLevelWithTransition || window.startGame)(selectedLevel);
-
-        }
+        window.playSelectedLevel();
 
     }
 

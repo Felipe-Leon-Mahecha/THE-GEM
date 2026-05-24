@@ -24,6 +24,20 @@ outerBackground: fondo de pantalla del nivel.
 frame: marco del aro.
 music: musica del nivel.
 
+Importante:
+Las portadas actuales estan en assets/Imagenes/Portadas Niveles/.
+El selector usa Nivel_0.png para el nivel 1, Nivel_1.png para el nivel 2 y Nivel_2.png para el nivel 3.
+Si agregas un nivel 4, puedes crear Nivel_3.png y poner esa ruta en cover.
+
+Si no tienes una imagen lista, usa los placeholders:
+assets/Imagenes/Placeholders/Placeholder_Level_Cover.png
+assets/Imagenes/Placeholders/Placeholder_Level_Background.png
+assets/Imagenes/Placeholders/Placeholder_Sphere_Background.png
+assets/Imagenes/Placeholders/Placeholder_Core.png
+assets/Imagenes/Placeholders/Placeholder_Frame.png
+assets/Imagenes/Placeholders/Placeholder_Item.png
+assets/Imagenes/Placeholders/Placeholder_Ruby_Reward.png
+
 obstacles:
 spikes: true activa puas.
 saws: true activa sierras.

@@ -25,6 +25,7 @@ const TRAIL_EFFECTS = {
 
 // Cada punto guarda posición ABSOLUTA en el canvas
 let trail = [];
+let lastTrailPoint = null;
 
 function getTrailConfig() {
     const trailId = localStorage.getItem('equippedTrail') || 'basic_cyan';
@@ -44,6 +45,14 @@ function updateTrail() {
     const px = cx + Math.cos(angle) * r;
     const py = cy + Math.sin(angle) * r;
 
+    if (lastTrailPoint && Math.hypot(px - lastTrailPoint.x, py - lastTrailPoint.y) < 1.2) {
+        trail.forEach(point => point.life *= 0.96);
+        trail = trail.filter(point => point.life > 0.04);
+        return;
+    }
+
+    lastTrailPoint = { x: px, y: py };
+
     trail.push({
         x: px,
         y: py,
@@ -53,7 +62,7 @@ function updateTrail() {
     });
 
     const { effect } = getTrailConfig();
-    const maxTrail = effect === 'ghost' ? 52 : effect === 'fire' ? 44 : effect === 'fractura' ? 42 : effect === 'hielo' ? 46 : effect === 'toxico' ? 50 : 38;
+    const maxTrail = effect === 'ghost' ? 38 : effect === 'fire' ? 34 : effect === 'fractura' ? 32 : effect === 'hielo' ? 34 : effect === 'toxico' ? 36 : 28;
     if (trail.length > maxTrail) trail.shift();
 
     // vida proporcional a posición: el más viejo tiene life~0, el más nuevo life~1
@@ -64,6 +73,7 @@ function updateTrail() {
 
 function resetTrail() {
     trail = [];
+    lastTrailPoint = null;
 }
 
 function getSkinRgb() {

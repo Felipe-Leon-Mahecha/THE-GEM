@@ -65,10 +65,14 @@ const cancionesMenu = [
 window.menuMusic = new Audio();
 window.menuMusic.volume =
     Math.min(1, window.musicVolume * 0.55);
+window.menuMusic.addEventListener('ended', () => {
+    if (!window.isMuted && !window.running) reproducirAleatoria();
+});
 
 let ultimaCancion = -1;
 
 function reproducirAleatoria() {
+    if (window.isMuted) return;
 
     let indice;
 
@@ -95,6 +99,12 @@ menuMusic.onended = () => {
     reproducirAleatoria();
 };
 
+window.ensureMenuMusic = function () {
+    if (!window.menuMusic || window.isMuted || window.running) return;
+    if (!window.menuMusic.src || window.menuMusic.ended) reproducirAleatoria();
+    else if (window.menuMusic.paused) window.menuMusic.play().catch(() => { });
+};
+
 reproducirAleatoria();
 
 // =====================================================
@@ -104,11 +114,36 @@ reproducirAleatoria();
 const offscreen = document.createElement("canvas");
 const offCtx = offscreen.getContext("2d");
 
+function drawCenteredImage(ctxTarget, img, x, y, width, height, scale = 1, offsetX = 0, offsetY = 0) {
+    if (!img || !img.complete || img.naturalWidth <= 0) return;
+    const w = width * scale;
+    const h = height * scale;
+    ctxTarget.drawImage(img, x - w / 2 + offsetX, y - h / 2 + offsetY, w, h);
+}
+
+function drawCoverImage(ctxTarget, img, x, y, width, height, scale = 1, offsetX = 0, offsetY = 0) {
+    if (!img || !img.complete || img.naturalWidth <= 0) return;
+    const targetW = width * scale;
+    const targetH = height * scale;
+    const srcRatio = img.naturalWidth / img.naturalHeight;
+    const targetRatio = targetW / targetH;
+    let sx = 0, sy = 0, sw = img.naturalWidth, sh = img.naturalHeight;
+    if (srcRatio > targetRatio) {
+        sw = img.naturalHeight * targetRatio;
+        sx = (img.naturalWidth - sw) / 2;
+    } else {
+        sh = img.naturalWidth / targetRatio;
+        sy = (img.naturalHeight - sh) / 2;
+    }
+    ctxTarget.drawImage(img, sx, sy, sw, sh, x - targetW / 2 + offsetX, y - targetH / 2 + offsetY, targetW, targetH);
+}
+
 function buildStaticCanvas(lvl = window.level || 1) {
     if (!window.canvas || !window.BASE_RADIUS || !window.DOME_RADIUS) return;
 
     const levelConfig = window.getLevelConfig ? window.getLevelConfig(lvl) : { theme: "silver", assets: {} };
     const levelAssets = levelConfig.assets || {};
+    const visual = levelConfig.visual || {};
     const sphereBgImg = window.getLevelImage ? window.getLevelImage(levelAssets.sphereBackground) : null;
     const coreImg = window.getLevelImage ? window.getLevelImage(levelAssets.core) : null;
 
@@ -155,7 +190,17 @@ function buildStaticCanvas(lvl = window.level || 1) {
         offCtx.arc(0, 0, window.DOME_RADIUS - 12, 0, Math.PI * 2);
         offCtx.arc(0, 0, window.BASE_RADIUS + 12, 0, Math.PI * 2, true);
         offCtx.clip("evenodd");
-        offCtx.drawImage(sphereBgImg, -window.DOME_RADIUS, -window.DOME_RADIUS, window.DOME_RADIUS * 2, window.DOME_RADIUS * 2);
+        drawCoverImage(
+            offCtx,
+            sphereBgImg,
+            0,
+            0,
+            window.DOME_RADIUS * 2,
+            window.DOME_RADIUS * 2,
+            visual.sphereBackgroundScale ?? 0.72,
+            visual.sphereBackgroundOffsetX || 0,
+            visual.sphereBackgroundOffsetY || 0
+        );
         offCtx.restore();
     }
 
@@ -179,7 +224,17 @@ function buildStaticCanvas(lvl = window.level || 1) {
 
     // CORE 
     if (coreImg) {
-        offCtx.drawImage(coreImg, -window.BASE_RADIUS * 1.1, -window.BASE_RADIUS * 1.1, window.BASE_RADIUS * 2.2, window.BASE_RADIUS * 2.2);
+        drawCenteredImage(
+            offCtx,
+            coreImg,
+            0,
+            0,
+            window.BASE_RADIUS * 2.2,
+            window.BASE_RADIUS * 2.2,
+            visual.coreScale ?? 1,
+            visual.coreOffsetX || 0,
+            visual.coreOffsetY || 0
+        );
     } else {
         let cg = offCtx.createRadialGradient(-20, -20, 10, 0, 0, window.BASE_RADIUS);
         cg.addColorStop(0, "#fff");
@@ -191,7 +246,7 @@ function buildStaticCanvas(lvl = window.level || 1) {
         offCtx.fill();
     }
 
-    offCtx.restore(); // <-- esta línea ya existía, solo agrega lo de arriba ANTESoffCtx.restore();
+    offCtx.restore();
 }
 
 function resize() {
@@ -401,6 +456,12 @@ function update() {
         return;
     }
 
+    window.gameTimer = (window.gameTimer || 0) + 1 / 60;
+    if (!window.paused && window.gameTimer >= (levelConfig.winTime || LEVEL_WIN_TIME)) {
+        winGame();
+        return;
+    }
+
     // WORLD ROTATION
     window.worldChangeTimer--;
     if (window.worldChangeTimer <= 0) {
@@ -429,10 +490,10 @@ function update() {
     }
 
     window.angVel = Math.max(-0.062, Math.min(0.062, window.angVel * 0.925));
-    if (Math.abs(window.angVel) > 0.004) {
-        window.playerFacing = window.angVel < 0 ? "right" : "left";
-    }
     window.angle += window.angVel;
+    if (Math.abs(window.angVel) > 0.0015) {
+        window.playerFacing = window.angVel > 0 ? "left" : "right";
+    }
 
     // GRAVITY
     window.vel += 0.38 * window.gravity;
@@ -541,7 +602,7 @@ function update() {
 
     if (levelConfig.obstacles && levelConfig.obstacles.lasers) {
         window.laserSpawnTimer++;
-        const laserRate = levelConfig.laserSpawnInterval || 360;
+        const laserRate = levelConfig.lasers?.spawnInterval || levelConfig.laserSpawnInterval || 360;
         if (window.laserSpawnTimer > laserRate) {
             window.laserSpawnTimer = 0;
             spawnIceLaser();
@@ -569,22 +630,78 @@ function spawnRuby() {
 }
 
 function spawnIceLaser() {
-    const a = window.angle - window.worldRotation + Math.PI * (0.65 + Math.random() * 0.7);
-    window.lasers.push({
-        angle: a,
-        warningTime: 95,
-        maxWarningTime: 95,
-        activeTime: 46,
-        fadeTime: 34,
+    const levelConfig = window.getCurrentLevelConfig ? window.getCurrentLevelConfig() : {};
+    const cfg = levelConfig.lasers || {};
+    const variants = cfg.variants || [{ type: "radial", weight: 1 }];
+    const totalWeight = variants.reduce((sum, variant) => sum + (variant.weight || 1), 0);
+    let roll = Math.random() * totalWeight;
+    let variant = variants[0];
+    for (const candidate of variants) {
+        roll -= candidate.weight || 1;
+        if (roll <= 0) {
+            variant = candidate;
+            break;
+        }
+    }
+
+    const baseAngle = window.angle - window.worldRotation + Math.PI * (0.45 + Math.random() * 0.9);
+    const warningDuration = variant.warningDuration || cfg.warningDuration || 95;
+    const outer = variant.outer ?? 0.94;
+    const inner = variant.inner ?? 0.08;
+    const angularSpan = variant.angularSpan || cfg.angularSpan || 0.28;
+    const type = variant.type || "radial";
+    const laser = {
+        type,
+        angle: baseAngle,
+        startAngle: baseAngle,
+        endAngle: baseAngle,
+        inner,
+        outer,
+        angularSpan,
+        warningTime: warningDuration,
+        maxWarningTime: warningDuration,
+        activeTime: variant.activeDuration || cfg.activeDuration || 46,
+        fadeTime: variant.fadeDuration || cfg.fadeDuration || 34,
+        maxFadeTime: variant.fadeDuration || cfg.fadeDuration || 34,
         state: 'warning',
-        width: 0.045,
+        width: variant.angularWidth || cfg.angularWidth || 0.045,
+        thickness: variant.thickness || cfg.thickness || 8,
+        glowThickness: variant.glowThickness || cfg.glowThickness || 18,
+        mobility: variant.mobility || cfg.mobility || "static",
+        speed: variant.speed || cfg.speed || 0,
+        range: variant.range || cfg.range || 0,
+        direction: Math.random() < 0.5 ? -1 : 1,
+        warningType: variant.warningType || cfg.warningType || "emitter",
+        beamType: variant.beamType || cfg.beamType || "standard",
         played: false
-    });
+    };
+
+    if (type === "outerChord") {
+        laser.startAngle = baseAngle - angularSpan / 2;
+        laser.endAngle = baseAngle + angularSpan / 2;
+        laser.inner = outer;
+        laser.outer = outer;
+    } else if (type === "short") {
+        laser.startAngle = baseAngle - angularSpan / 3;
+        laser.endAngle = baseAngle + angularSpan / 3;
+    } else if (type === "giantArc") {
+        laser.startAngle = baseAngle - angularSpan / 2;
+        laser.endAngle = baseAngle + angularSpan / 2;
+        laser.mobility = "static";
+    }
+
+    window.lasers.push(laser);
 }
 
 function updateIceLasers() {
     for (let i = window.lasers.length - 1; i >= 0; i--) {
         const laser = window.lasers[i];
+        if (laser.mobility === "sweep" && laser.state !== "fade") {
+            laser.angle += laser.speed * laser.direction;
+            if (laser.range && Math.abs(laser.angle - laser.startAngle) > laser.range) {
+                laser.direction *= -1;
+            }
+        }
         if (laser.state === 'warning') {
             laser.warningTime--;
             if (laser.warningTime <= 0) {
@@ -599,10 +716,7 @@ function updateIceLasers() {
         if (laser.state === 'active') {
             laser.activeTime--;
             if (!window.invulnerable) {
-                const r = window.BASE_RADIUS + window.offset;
-                let rel = ((laser.angle + window.worldRotation - window.angle + Math.PI * 2) % (Math.PI * 2));
-                if (rel > Math.PI) rel -= Math.PI * 2;
-                if (Math.abs(rel) < laser.width && r > window.BASE_RADIUS + 8 && r < window.DOME_RADIUS - 8) {
+                if (laserHitsPlayer(laser)) {
                     playerHit();
                 }
             }
@@ -614,6 +728,75 @@ function updateIceLasers() {
     }
 }
 
+function laserRadius(ratio) {
+    return window.BASE_RADIUS + 12 + (window.DOME_RADIUS - window.BASE_RADIUS - 24) * ratio;
+}
+
+function getLaserPoints(laser, cx, cy) {
+    const angle = laser.angle + window.worldRotation;
+    if (laser.type === "outerChord") {
+        const r = laserRadius(laser.outer);
+        return {
+            sx: cx + Math.cos(laser.startAngle + window.worldRotation) * r,
+            sy: cy + Math.sin(laser.startAngle + window.worldRotation) * r,
+            ex: cx + Math.cos(laser.endAngle + window.worldRotation) * r,
+            ey: cy + Math.sin(laser.endAngle + window.worldRotation) * r,
+            emitterAngle: laser.startAngle + window.worldRotation
+        };
+    }
+
+    const startR = laserRadius(laser.inner);
+    const endR = laserRadius(laser.outer);
+    const startAngle = laser.type === "short" ? laser.startAngle + window.worldRotation : angle;
+    const endAngle = laser.type === "short" ? laser.endAngle + window.worldRotation : angle;
+    return {
+        sx: cx + Math.cos(startAngle) * startR,
+        sy: cy + Math.sin(startAngle) * startR,
+        ex: cx + Math.cos(endAngle) * endR,
+        ey: cy + Math.sin(endAngle) * endR,
+        emitterAngle: startAngle
+    };
+}
+
+function laserHitsPlayer(laser) {
+    const cx = canvas.width / 2;
+    const cy = canvas.height / 2;
+    const playerR = window.BASE_RADIUS + window.offset;
+    const px = cx + Math.cos(window.angle) * playerR;
+    const py = cy + Math.sin(window.angle) * playerR;
+
+    if (laser.type === "giantArc") {
+        const a = window.angle - window.worldRotation;
+        const start = normalizeAngle(laser.startAngle);
+        const end = normalizeAngle(laser.endAngle);
+        const current = normalizeAngle(a);
+        const inAngle = start < end
+            ? current >= start && current <= end
+            : current >= start || current <= end;
+        const innerR = laserRadius(laser.inner);
+        const outerR = laserRadius(laser.outer);
+        return inAngle && playerR >= innerR && playerR <= outerR;
+    }
+
+    const p = getLaserPoints(laser, cx, cy);
+    const dist = distanceToSegment(px, py, p.sx, p.sy, p.ex, p.ey);
+    return dist <= Math.max(10, laser.thickness * 1.4);
+}
+
+function normalizeAngle(value) {
+    return ((value % (Math.PI * 2)) + Math.PI * 2) % (Math.PI * 2);
+}
+
+function distanceToSegment(px, py, x1, y1, x2, y2) {
+    const dx = x2 - x1;
+    const dy = y2 - y1;
+    const lenSq = dx * dx + dy * dy || 1;
+    const t = Math.max(0, Math.min(1, ((px - x1) * dx + (py - y1) * dy) / lenSq));
+    const x = x1 + t * dx;
+    const y = y1 + t * dy;
+    return Math.hypot(px - x, py - y);
+}
+
 // =====================================================
 // DRAW
 // =====================================================
@@ -622,11 +805,18 @@ function draw() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     const levelConfig = window.getCurrentLevelConfig ? window.getCurrentLevelConfig() : { assets: {} };
     const levelAssets = levelConfig.assets || {};
+    const visual = levelConfig.visual || {};
 
     if (window.running) {
         const bg = window.getLevelImage ? window.getLevelImage(levelAssets.outerBackground) : null;
         if (bg && bg.complete && bg.naturalWidth > 0) {
-            ctx.drawImage(bg, 0, 0, canvas.width, canvas.height);
+            drawCoverImage(ctx, bg, canvas.width / 2, canvas.height / 2, canvas.width, canvas.height, visual.outerBackgroundScale ?? 1, visual.outerBackgroundOffsetX || 0, visual.outerBackgroundOffsetY || 0);
+        } else {
+            const fallbackBg = ctx.createLinearGradient(0, 0, 0, canvas.height);
+            fallbackBg.addColorStop(0, "#12131a");
+            fallbackBg.addColorStop(1, "#020307");
+            ctx.fillStyle = fallbackBg;
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
         }
     }
 
@@ -669,67 +859,12 @@ function draw() {
     }
     ctx.restore();
 
-    // 3) OBSTACLES — clip al círculo, sin rotar
-    ctx.save();
-    ctx.beginPath();
-    ctx.arc(cx, cy, DOME_RADIUS, 0, Math.PI * 2);
-    ctx.clip();
-    for (let o of window.obstacles) {
-        let a = o.angle + worldRotation;
-        if (o.warning) {
-            let wr = typeof getObstacleBaseRadius === "function"
-                ? getObstacleBaseRadius(o.fromGround)
-                : (o.fromGround ? BASE_RADIUS : DOME_RADIUS);
-            let pulse = 0.4 + Math.sin(Date.now() * 0.015) * 0.4;
-            let half = o.width / 2;
-            ctx.beginPath();
-            ctx.arc(cx, cy, wr - 6, a - half, a + half);
-            ctx.strokeStyle = `rgba(255,40,40,${pulse})`;
-            ctx.lineWidth = 4;
-            ctx.lineCap = "round";
-            ctx.shadowColor = "rgba(255,0,0,0.8)";
-            ctx.shadowBlur = 12;
-            ctx.stroke();
-            ctx.shadowBlur = 0;
-            ctx.lineCap = "butt";
-            continue;
-        }
-        let baseR = typeof getObstacleBaseRadius === "function"
-            ? getObstacleBaseRadius(o.fromGround)
-            : (o.fromGround ? BASE_RADIUS : DOME_RADIUS);
-        let dir = o.fromGround ? 1 : -1;
-        let currentR = baseR + dir * o.height * o.progress;
-        let half = o.width / 2;
-        ctx.beginPath();
-        ctx.moveTo(cx + Math.cos(a - half) * baseR, cy + Math.sin(a - half) * baseR);
-        ctx.lineTo(cx + Math.cos(a + half) * baseR, cy + Math.sin(a + half) * baseR);
-        ctx.lineTo(cx + Math.cos(a) * currentR, cy + Math.sin(a) * currentR);
-        ctx.closePath();
-        ctx.fillStyle = o.color;
-        ctx.fill();
-        ctx.strokeStyle = "rgba(200,200,200,0.9)";
-        ctx.lineWidth = 2.5;
-        ctx.stroke();
-    }
-    ctx.restore();
-
-    // 4) SIERRAS
-    if (typeof drawSierras === "function") drawSierras();
-
-    // 4.5) LASER DE HIELO
-    if (window.lasers && window.lasers.length) drawIceLasers(cx, cy);
-
-    // 5) MARCO fijo encima de trampas
     const frameImg = window.getLevelImage ? window.getLevelImage(levelAssets.frame) : null;
-    if (window.running && frameImg) {
-        const marcoSize = window.DOME_RADIUS * 2.28;
-        ctx.drawImage(frameImg, cx - marcoSize / 2, cy - marcoSize / 2, marcoSize, marcoSize);
-    }
 
-    // 6) TRAIL
+    // 3) TRAIL
     if (window.running) drawTrail();
 
-    // 7) HIT FLASH
+    // 4) HIT FLASH
     if (window.hitFlash > 0) {
         ctx.fillStyle = `rgba(255,0,80,${window.hitFlash * 0.25})`;
         ctx.fillRect(0, 0, canvas.width, canvas.height);
@@ -745,47 +880,21 @@ function draw() {
         ctx.restore();
     }
 
-    // 8) PLAYER
+    // 5) PLAYER
     if (window.running) {
-        let r = BASE_RADIUS + window.offset;
-        let px = cx + Math.cos(window.angle) * r;
-        let py = cy + Math.sin(window.angle) * r;
-        ctx.save();
-        ctx.translate(px, py);
-        if (window.invulnerable && Math.floor(Date.now() / 100) % 2 === 0) ctx.globalAlpha = 0.2;
-        const equippedId = localStorage.getItem('equippedSkin') || 'cyan';
-        const SKIN_COLORS = {
-            cyan: { color: '#00ffe7', glow: '#00ffe7' },
-            red: { color: '#ff4444', glow: '#ff4444' },
-            blue: { color: '#4488ff', glow: '#4488ff' },
-            yellow: { color: '#ffee00', glow: '#ffee00' },
-            orange: { color: '#ff8800', glow: '#ff8800' },
-            green: { color: '#44ff88', glow: '#44ff88' },
-            purple: { color: '#cc44ff', glow: '#cc44ff' },
-            cool: { color: '#ffffff', glow: '#ffff00' },
-        };
-        const skin = SKIN_COLORS[equippedId] || SKIN_COLORS['cyan'];
-        const directionalSkin = directionalSkinImages[equippedId]?.[window.playerFacing || "right"];
-        if (directionalSkin && directionalSkin.complete && directionalSkin.naturalWidth > 0) {
-            const skinSize = 48;
-            ctx.shadowBlur = 18;
-            ctx.shadowColor = DIRECTIONAL_SKINS[equippedId].glow;
-            ctx.drawImage(directionalSkin, -skinSize / 2, -skinSize / 2, skinSize, skinSize);
-        } else {
-            ctx.shadowBlur = 20;
-            ctx.shadowColor = skin.glow;
-            ctx.beginPath();
-            ctx.arc(0, 0, 16, 0, Math.PI * 2);
-            ctx.fillStyle = skin.color;
-            ctx.fill();
-            ctx.beginPath();
-            ctx.arc(0, 0, 6, 0, Math.PI * 2);
-            ctx.fillStyle = '#ffffff';
-            ctx.fill();
-        }
-        ctx.shadowBlur = 0;
-        ctx.restore();
+        drawPlayer(cx, cy);
     }
+
+    // 6) MARCO: encima del player para que el borde exterior lo tape.
+    if (window.running && frameImg) {
+        const marcoSize = window.DOME_RADIUS * (visual.frameSize || 2.28);
+        drawCenteredImage(ctx, frameImg, cx, cy, marcoSize, marcoSize, visual.frameScale ?? 1, visual.frameOffsetX || 0, visual.frameOffsetY || 0);
+    }
+
+    // 7) Trampas encima del marco: si hacen dano, se ven.
+    drawSpikesLayer(cx, cy);
+    if (typeof drawSierras === "function") drawSierras();
+    if (window.lasers && window.lasers.length) drawIceLasers(cx, cy);
 
     // 9) HUD
     if (!window.running) return;
@@ -820,57 +929,189 @@ function draw() {
     ctx.restore();
 }
 
+function drawPlayer(cx, cy) {
+    let r = BASE_RADIUS + window.offset;
+    let px = cx + Math.cos(window.angle) * r;
+    let py = cy + Math.sin(window.angle) * r;
+    ctx.save();
+    ctx.translate(px, py);
+    if (window.invulnerable && Math.floor(Date.now() / 100) % 2 === 0) ctx.globalAlpha = 0.2;
+    const equippedId = localStorage.getItem('equippedSkin') || 'cyan';
+    const SKIN_COLORS = {
+        cyan: { color: '#00ffe7', glow: '#00ffe7' },
+        red: { color: '#ff4444', glow: '#ff4444' },
+        blue: { color: '#4488ff', glow: '#4488ff' },
+        yellow: { color: '#ffee00', glow: '#ffee00' },
+        orange: { color: '#ff8800', glow: '#ff8800' },
+        green: { color: '#44ff88', glow: '#44ff88' },
+        purple: { color: '#cc44ff', glow: '#cc44ff' },
+        cool: { color: '#ffffff', glow: '#ffff00' },
+    };
+    const skin = SKIN_COLORS[equippedId] || SKIN_COLORS.cyan;
+    const directionalSkin = directionalSkinImages[equippedId]?.[window.playerFacing || "right"];
+    if (directionalSkin && directionalSkin.complete && directionalSkin.naturalWidth > 0) {
+        const skinSize = 48;
+        ctx.shadowBlur = 18;
+        ctx.shadowColor = DIRECTIONAL_SKINS[equippedId].glow;
+        ctx.drawImage(directionalSkin, -skinSize / 2, -skinSize / 2, skinSize, skinSize);
+    } else {
+        ctx.shadowBlur = 20;
+        ctx.shadowColor = skin.glow;
+        ctx.beginPath();
+        ctx.arc(0, 0, 16, 0, Math.PI * 2);
+        ctx.fillStyle = skin.color;
+        ctx.fill();
+        ctx.beginPath();
+        ctx.arc(0, 0, 6, 0, Math.PI * 2);
+        ctx.fillStyle = '#ffffff';
+        ctx.fill();
+    }
+    ctx.shadowBlur = 0;
+    ctx.restore();
+}
+
+function drawSpikesLayer(cx, cy) {
+    if (!window.running || !window.obstacles?.length) return;
+
+    ctx.save();
+    ctx.beginPath();
+    ctx.arc(cx, cy, DOME_RADIUS, 0, Math.PI * 2);
+    ctx.clip();
+
+    for (let o of window.obstacles) {
+        let a = o.angle + worldRotation;
+        if (o.warning) {
+            let wr = typeof getObstacleBaseRadius === "function"
+                ? getObstacleBaseRadius(o.fromGround)
+                : (o.fromGround ? BASE_RADIUS : DOME_RADIUS);
+            let pulse = 0.5 + Math.sin(Date.now() * 0.015) * 0.35;
+            let half = o.width / 2;
+            ctx.beginPath();
+            ctx.arc(cx, cy, wr - 6, a - half, a + half);
+            ctx.strokeStyle = `rgba(255,60,90,${pulse})`;
+            ctx.lineWidth = 6;
+            ctx.lineCap = "round";
+            ctx.shadowColor = "rgba(255,0,80,0.9)";
+            ctx.shadowBlur = 16;
+            ctx.stroke();
+            ctx.shadowBlur = 0;
+            ctx.lineCap = "butt";
+            continue;
+        }
+
+        let baseR = typeof getObstacleBaseRadius === "function"
+            ? getObstacleBaseRadius(o.fromGround)
+            : (o.fromGround ? BASE_RADIUS : DOME_RADIUS);
+        let dir = o.fromGround ? 1 : -1;
+        let currentR = baseR + dir * o.height * o.progress;
+        let half = o.width / 2;
+        ctx.beginPath();
+        ctx.moveTo(cx + Math.cos(a - half) * baseR, cy + Math.sin(a - half) * baseR);
+        ctx.lineTo(cx + Math.cos(a + half) * baseR, cy + Math.sin(a + half) * baseR);
+        ctx.lineTo(cx + Math.cos(a) * currentR, cy + Math.sin(a) * currentR);
+        ctx.closePath();
+        ctx.fillStyle = o.color;
+        ctx.fill();
+        ctx.strokeStyle = "rgba(255,255,255,0.92)";
+        ctx.lineWidth = 2.8;
+        ctx.stroke();
+    }
+
+    ctx.restore();
+}
+
 function drawIceLasers(cx, cy) {
     for (const laser of window.lasers) {
-        const a = laser.angle + window.worldRotation;
-        const innerR = window.BASE_RADIUS + 14;
-        const outerR = window.DOME_RADIUS - 14;
-        const ix = cx + Math.cos(a) * innerR;
-        const iy = cy + Math.sin(a) * innerR;
-        const ox = cx + Math.cos(a) * outerR;
-        const oy = cy + Math.sin(a) * outerR;
         const warningProgress = 1 - Math.max(0, laser.warningTime) / (laser.maxWarningTime || 95);
-        const activeAlpha = laser.state === 'active' ? 1 : laser.state === 'fade' ? Math.max(0, laser.fadeTime / 34) : 0;
+        const activeAlpha = laser.state === 'active' ? 1 : laser.state === 'fade' ? Math.max(0, laser.fadeTime / (laser.maxFadeTime || 34)) : 0;
+        const p = getLaserPoints(laser, cx, cy);
         ctx.save();
         ctx.beginPath();
         ctx.arc(cx, cy, DOME_RADIUS, 0, Math.PI * 2);
         ctx.arc(cx, cy, BASE_RADIUS, 0, Math.PI * 2, true);
         ctx.clip("evenodd");
         ctx.globalCompositeOperation = 'lighter';
-        ctx.fillStyle = `rgba(160,230,255,${laser.state === 'warning' ? 0.35 + warningProgress * 0.35 : 0.65})`;
         ctx.shadowColor = '#9fe8ff';
-        ctx.shadowBlur = 18;
-        ctx.beginPath();
-        ctx.arc(ix, iy, 8 + warningProgress * 4, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.beginPath();
-        ctx.arc(ox, oy, 8 + warningProgress * 4, 0, Math.PI * 2);
-        ctx.fill();
+
+        drawLaserEmitter(p.sx, p.sy, p.emitterAngle, warningProgress, laser);
+
         if (laser.state === 'warning') {
-            ctx.strokeStyle = `rgba(160,230,255,${0.18 + warningProgress * 0.36})`;
-            ctx.lineWidth = 2;
-            ctx.setLineDash([8, 12]);
-            ctx.beginPath();
-            ctx.moveTo(ix, iy);
-            ctx.lineTo(ox, oy);
-            ctx.stroke();
+            if (laser.type === "giantArc") {
+                const mid = (laserRadius(laser.inner) + laserRadius(laser.outer)) / 2;
+                ctx.strokeStyle = `rgba(160,230,255,${0.16 + warningProgress * 0.42})`;
+                ctx.lineWidth = Math.max(5, (laserRadius(laser.outer) - laserRadius(laser.inner)) * 0.5);
+                ctx.setLineDash([14, 16]);
+                ctx.beginPath();
+                ctx.arc(cx, cy, mid, laser.startAngle + window.worldRotation, laser.endAngle + window.worldRotation);
+                ctx.stroke();
+            } else {
+                ctx.strokeStyle = `rgba(160,230,255,${0.18 + warningProgress * 0.36})`;
+                ctx.lineWidth = Math.max(2, laser.thickness * 0.35);
+                ctx.setLineDash([8, 12]);
+                ctx.beginPath();
+                ctx.moveTo(p.sx, p.sy);
+                ctx.lineTo(p.ex, p.ey);
+                ctx.stroke();
+            }
         } else {
             ctx.setLineDash([]);
-            ctx.strokeStyle = `rgba(220,250,255,${0.92 * activeAlpha})`;
-            ctx.lineWidth = 8;
-            ctx.beginPath();
-            ctx.moveTo(ix, iy);
-            ctx.lineTo(ox, oy);
-            ctx.stroke();
-            ctx.strokeStyle = `rgba(80,200,255,${0.55 * activeAlpha})`;
-            ctx.lineWidth = 18;
-            ctx.beginPath();
-            ctx.moveTo(ix, iy);
-            ctx.lineTo(ox, oy);
-            ctx.stroke();
+            if (laser.type === "giantArc") {
+                const mid = (laserRadius(laser.inner) + laserRadius(laser.outer)) / 2;
+                ctx.strokeStyle = `rgba(80,200,255,${0.45 * activeAlpha})`;
+                ctx.lineWidth = Math.max(20, laser.glowThickness);
+                ctx.beginPath();
+                ctx.arc(cx, cy, mid, laser.startAngle + window.worldRotation, laser.endAngle + window.worldRotation);
+                ctx.stroke();
+                ctx.strokeStyle = `rgba(230,252,255,${0.92 * activeAlpha})`;
+                ctx.lineWidth = Math.max(10, laser.thickness);
+                ctx.beginPath();
+                ctx.arc(cx, cy, mid, laser.startAngle + window.worldRotation, laser.endAngle + window.worldRotation);
+                ctx.stroke();
+            } else {
+                ctx.strokeStyle = `rgba(80,200,255,${0.55 * activeAlpha})`;
+                ctx.lineWidth = laser.glowThickness;
+                ctx.beginPath();
+                ctx.moveTo(p.sx, p.sy);
+                ctx.lineTo(p.ex, p.ey);
+                ctx.stroke();
+                ctx.strokeStyle = `rgba(220,250,255,${0.92 * activeAlpha})`;
+                ctx.lineWidth = laser.thickness;
+                ctx.beginPath();
+                ctx.moveTo(p.sx, p.sy);
+                ctx.lineTo(p.ex, p.ey);
+                ctx.stroke();
+            }
         }
         ctx.restore();
     }
+}
+
+function drawLaserEmitter(x, y, angle, progress, laser) {
+    ctx.save();
+    ctx.translate(x, y);
+    ctx.rotate(angle + Math.PI / 2);
+    const scale = 0.85 + progress * 0.25;
+    ctx.scale(scale, scale);
+    ctx.shadowBlur = 16;
+    ctx.shadowColor = '#9fe8ff';
+    ctx.fillStyle = 'rgba(18,28,36,0.95)';
+    ctx.strokeStyle = 'rgba(170,230,255,0.72)';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.roundRect(-13, -18, 26, 34, 6);
+    ctx.fill();
+    ctx.stroke();
+    ctx.fillStyle = laser.state === 'warning'
+        ? `rgba(255,77,109,${0.35 + progress * 0.55})`
+        : 'rgba(120,235,255,0.95)';
+    ctx.beginPath();
+    ctx.roundRect(-7, -23, 14, 10, 4);
+    ctx.fill();
+    ctx.fillStyle = 'rgba(210,250,255,0.88)';
+    ctx.beginPath();
+    ctx.arc(0, -18, 4 + progress * 2, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.restore();
 }
 
 // =====================================================
@@ -884,7 +1125,6 @@ function loop() {
 }
 
 buildStaticCanvas();
-addEventListener("resize", () => buildStaticCanvas(window.level || 1));
 loop();
 
 // =====================================================
@@ -893,6 +1133,18 @@ loop();
 window.startGame = function (levelIndex = 0, skipStartSound = false) {
     window.level = levelIndex + 1;
     const levelConfig = window.getCurrentLevelConfig ? window.getCurrentLevelConfig() : {};
+
+    clearInterval(window.reviveTimer);
+    window.pendingWinChest = null;
+    const gameOverPanel = document.getElementById('gameOver');
+    const winPanel = document.getElementById('gameWin');
+    const winChestBox = document.getElementById('win-chest-box');
+    if (gameOverPanel) gameOverPanel.style.display = 'none';
+    if (winPanel) {
+        winPanel.style.display = 'none';
+        winPanel.classList.remove('showing');
+    }
+    if (winChestBox) winChestBox.innerHTML = '';
 
     document.getElementById("gameCanvas").style.visibility = "visible";
     document.getElementById('pause-btn').classList.add('is-playing');
@@ -912,9 +1164,10 @@ window.startGame = function (levelIndex = 0, skipStartSound = false) {
     window.bgMusic.currentTime = 0;
     window.bgMusic.play();
 
-    window.angle = Math.PI;
+    const spawn = levelConfig.playerSpawn || {};
+    window.angle = typeof spawn.angle === "number" ? spawn.angle : Math.PI / 2;
     window.angVel = 0;
-    window.offset = 0;
+    window.offset = typeof spawn.offset === "number" ? spawn.offset : 0;
     window.vel = 0;
     window.gravity = 1;
     window.lives = 3;
@@ -953,14 +1206,7 @@ window.startGame = function (levelIndex = 0, skipStartSound = false) {
     window.gameTimer = 0;
 
     clearInterval(gameTimerInterval);
-    gameTimerInterval = setInterval(() => {
-        if (!window.running) return;
-        window.gameTimer++;
-        if (window.gameTimer >= (levelConfig.winTime || LEVEL_WIN_TIME)) {
-            clearInterval(gameTimerInterval);
-            winGame();
-        }
-    }, 1000);
+    gameTimerInterval = null;
 
     window.gravity = 1;
     window.worldRotationSpeed = levelConfig.rotationSpeed || 0.01;
@@ -1001,8 +1247,10 @@ window.showGameOverWithRevive = function () {
     window.running = false;
     document.body.classList.remove('is-playing-touch');
     clearInterval(gameTimerInterval);
+    clearInterval(window.reviveTimer);
     document.getElementById("gameCanvas").style.visibility = "hidden";
     document.getElementById('pause-btn').classList.remove('is-playing');
+    document.getElementById('pausePanel').classList.remove('showing');
     window.bgMusic.pause();
     window.bgMusic.currentTime = 0;
     window.playSfx?.('gameOver', 0.9);
@@ -1102,6 +1350,7 @@ function drawAbilityIntro() {
 // =====================================================
 
 function winGame() {
+    if (window.paused) return;
     window.running = false;
     document.body.classList.remove('is-playing-touch');
     clearInterval(gameTimerInterval);
@@ -1186,7 +1435,7 @@ function maybeAwardLevelChest() {
         acc += chance;
         if (roll < acc) { chestId = id; break; }
     }
-    if (!chestId) return;
+    if (!chestId) chestId = 'basic';
     const chest = window.CHESTS_DATA?.find(c => c.id === chestId);
     if (!chest) return;
     window.pendingWinChest = chest;

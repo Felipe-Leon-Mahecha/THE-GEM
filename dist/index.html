@@ -11,7 +11,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Geom:ital,wght@0,300..900;1,300..900&display=swap"
         rel="stylesheet">
-  <link rel="stylesheet" crossorigin href="/assets/index-DAqg0bRb.css">
+  <link rel="stylesheet" crossorigin href="/assets/index-BhIgD_6Z.css">
 </head>
 
 <body>
@@ -202,6 +202,11 @@
 
     <button id="pause-btn" type="button" onclick="pauseGame()">PAUSA</button>
     <button id="settings-float-btn" class="settings-float-btn" type="button" onclick="openOptionsPanel()" title="Opciones">⚙</button>
+    <button id="emote-float-btn" class="emote-float-btn" type="button" onclick="toggleEmoteMenu()" title="Emotes">+</button>
+    <div id="emote-menu" class="emote-menu"></div>
+    <div id="emote-more-panel" class="emote-more-panel"></div>
+    <div id="ingame-profile-banner" class="ingame-profile-banner"></div>
+    <div id="active-emote-bubble" class="active-emote-bubble"></div>
 
     <div id="pausePanel">
         <div class="pause-dim" onclick="resumeGame()"></div>
@@ -657,6 +662,11 @@
             <canvas id="carouselCanvas" width="1400" height="700"></canvas>
         </div>
 
+        <button id="ls-prev-btn" class="ls-nav-btn ls-nav-prev" type="button" aria-label="Nivel anterior"
+            onclick="window.moveLevelSelection?.(-1)">←</button>
+        <button id="ls-next-btn" class="ls-nav-btn ls-nav-next" type="button" aria-label="Nivel siguiente"
+            onclick="window.moveLevelSelection?.(1)">→</button>
+
         <div class="ls-footer">
 
             <div class="ls-system-bar">
@@ -674,7 +684,7 @@
             </div>
 
             <button class="ls-play-btn"
-                onclick="if(levels[selectedLevel].unlocked){ hideLevelSelect(); (window.startLevelWithTransition || window.startGame)(selectedLevel); }">
+                onclick="window.playSelectedLevel?.()">
 
                 <div class="ls-play-glow"></div>
 

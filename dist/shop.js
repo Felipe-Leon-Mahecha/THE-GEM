@@ -2,6 +2,9 @@
 // SHOP SYSTEM
 // =====================================================
 
+const SHOP_PLACEHOLDER_IMAGE = 'assets/Imagenes/Placeholders/Placeholder_Item.png';
+const RUBY_PASS_REWARD_PLACEHOLDER = 'assets/Imagenes/Placeholders/Placeholder_Ruby_Reward.png';
+
 const SKINS_DATA = [
     { id: 'cyan', name: 'Cian', color: '#00ffe7', rarity: 'BASICA', price: 0, priceType: 'coins', owned: true, archetype: 'Supervivencia', ability: 'Sobrevive a 1 pinchazo por partida.' },
     { id: 'red', name: 'Rojo', color: '#ff4444', rarity: 'BASICA', price: 50, priceType: 'coins', owned: false, archetype: 'Supervivencia', ability: 'Sobrevive a 1 pinchazo por partida.' },
@@ -329,7 +332,7 @@ const RUBY_PASS_ASSETS = {
     accessBanner: 'assets/Imagenes/Ruby Pass/01_Acceso/RubyPass_Banner.png', // RUBY_PASS_ASSET_SLOT_ACCESS_BANNER
     background: 'assets/Imagenes/Ruby Pass/02_Fondo/RubyPass_Background.png', // RUBY_PASS_ASSET_SLOT_BACKGROUND
     currentPoint: 'assets/Imagenes/Ruby Pass/05_Punto actual/Punto_Actual.png', // RUBY_PASS_ASSET_SLOT_CURRENT_POINT
-    arcTexture: null, // El pase ahora usa solo los carriles FREE y PREMIUM.
+    arcTexture: RUBY_PASS_REWARD_PLACEHOLDER, // Slot visual de reserva por si se reactiva un arco unico.
     freeTrackTexture: 'assets/Imagenes/Ruby Pass/03_Arco/RubyPass_Free_Track.png', // RUBY_PASS_ASSET_SLOT_FREE_TRACK
     premiumTrackTexture: 'assets/Imagenes/Ruby Pass/03_Arco/RubyPass_Premium_Track.png', // RUBY_PASS_ASSET_SLOT_PREMIUM_TRACK
     levelMarker: 'assets/Imagenes/Ruby Pass/03_Arco/RubyPass_Level_Marker.png', // RUBY_PASS_ASSET_SLOT_LEVEL_MARKER
@@ -434,7 +437,7 @@ const RUBY_PASS_REWARDS = [
     // ── Nivel 12: EMOTE NORMAL FREE ───────────────────
     {
         level: 12, xp: 3300,
-        free: { type: 'emote', image: 'assets/Imagenes/Emotes/Basic/Emote_Basic_01.png' },
+        free: { type: 'emote', image: 'assets/Imagenes/Emotes/Basic/Brifon_Normal.png' },
         premium: { type: 'coins' }
     },
 
@@ -571,11 +574,11 @@ const RUBY_PASS_XP_PER_WIN = 120;
 // SHOP_EMOTE_ASSET_SLOT: add your emote PNG paths here.
 const EMOTES_DATA = [
     { id: 'emote_normal', name: 'Normal', image: 'assets/Imagenes/Emotes/Basic/Brifon_Normal.png', rarity: 'BASICA', slot: 'SHOP_EMOTE_ASSET_SLOT_BASIC_NORMAL' },
-    { id: 'emote_saludo', name: 'Saludo', image: 'assets/Imagenes/Emotes/Placeholders/Brifon_Saludo.png', rarity: 'BASICA', slot: 'SHOP_EMOTE_ASSET_SLOT_BASIC_SALUDO' },
-    { id: 'emote_enojado', name: 'Enojado', image: 'assets/Imagenes/Emotes/Placeholders/Brifon_Enojado.png', rarity: 'BASICA', slot: 'SHOP_EMOTE_ASSET_SLOT_BASIC_ENOJADO' },
-    { id: 'emote_Llorando', name: 'Llorando', image: 'assets/Imagenes/Emotes/Placeholders/Brifon_Llorando.png', rarity: 'BASICA', slot: 'SHOP_EMOTE_ASSET_SLOT_BASIC_LLORANDO' },
-    { id: 'emote_sorprendido', name: 'Sorprendido', image: 'assets/Imagenes/Emotes/Ruby/Brifon_Sorprendido.png', rarity: 'BASICA', slot: 'SHOP_EMOTE_ASSET_SLOT_BASIC_SORPRENDIDO' },
-    { id: 'emote_mudo', name: 'Mudo', image: 'assets/Imagenes/Emotes/Ruby/Brifon_Mudo.png', rarity: 'BASICA', slot: 'SHOP_EMOTE_ASSET_SLOT_BASIC_MUDO' },
+    { id: 'emote_saludo', name: 'Saludo', image: 'assets/Imagenes/Emotes/Basic/Brifon_Saludo.png', rarity: 'BASICA', slot: 'SHOP_EMOTE_ASSET_SLOT_BASIC_SALUDO' },
+    { id: 'emote_enojado', name: 'Enojado', image: 'assets/Imagenes/Emotes/Basic/Brifon_Enojado.png', rarity: 'BASICA', slot: 'SHOP_EMOTE_ASSET_SLOT_BASIC_ENOJADO' },
+    { id: 'emote_Llorando', name: 'Llorando', image: 'assets/Imagenes/Emotes/Basic/Brifon_Llorando.png', rarity: 'BASICA', slot: 'SHOP_EMOTE_ASSET_SLOT_BASIC_LLORANDO' },
+    { id: 'emote_sorprendido', name: 'Sorprendido', image: 'assets/Imagenes/Emotes/Basic/Brifon_Sorprendido.png', rarity: 'BASICA', slot: 'SHOP_EMOTE_ASSET_SLOT_BASIC_SORPRENDIDO' },
+    { id: 'emote_mudo', name: 'Mudo', image: 'assets/Imagenes/Emotes/Basic/Brifon_Mudo.png', rarity: 'BASICA', slot: 'SHOP_EMOTE_ASSET_SLOT_BASIC_MUDO' },
 ];
 
 const VIP_CAROUSEL_DATA = [
@@ -724,7 +727,14 @@ function openShop() {
 }
 
 function closeShop() {
-    if (trailAnimId) cancelAnimationFrame(trailAnimId); // Limpiar loop
+    if (trailAnimId) {
+        cancelAnimationFrame(trailAnimId);
+        trailAnimId = null;
+    }
+    if (previewTrailAnim) {
+        cancelAnimationFrame(previewTrailAnim);
+        previewTrailAnim = null;
+    }
     const panel = document.getElementById('shopPanel');
     panel.classList.add('leaving');
     setTimeout(() => {
@@ -735,6 +745,15 @@ function closeShop() {
 }
 
 function showShopSection(section) {
+    if (section !== 'trails' && trailAnimId) {
+        cancelAnimationFrame(trailAnimId);
+        trailAnimId = null;
+    }
+    if (section !== 'trails' && previewTrailAnim) {
+        cancelAnimationFrame(previewTrailAnim);
+        previewTrailAnim = null;
+    }
+
     ['home', 'skins', 'trails', 'banners', 'cofres', 'emotes', 'daily', 'ofertas', 'conversion'].forEach(s => {
         const el = document.getElementById('nav-' + s);
         if (!el) return;
@@ -939,7 +958,7 @@ function buySkin(id) {
     showShopModal({
         kicker: 'CONFIRMAR COMPRA',
         title: skin.name,
-        image: skin.imageRight || skin.imageLeft || null,
+        image: skin.imageRight || skin.imageLeft || SHOP_PLACEHOLDER_IMAGE,
         fallback: skin.emoji || skin.name?.charAt(0) || 'S',
         body: `Seguro comprar por ${chosenAmount} ${chosenCurrency === 'gems' ? 'rubies' : 'monedas'}?`,
         confirmText: 'SI',
@@ -1108,14 +1127,95 @@ function renderEmotesPage(container) {
 function renderEmoteSlot(emote) {
     const color = emote.vip ? '#ffcc00' : '#57b7dd';
     return `
+        <div class="emote-card" data-emote-id="${emote.id}">
             <div data-asset-slot="${emote.slot}" style="width:96px; height:96px; border-radius:50%; border:1px dashed ${color}88; background:${color}12; display:grid; place-items:center; overflow:hidden; color:rgba(255,255,255,0.35); font-family:monospace; font-size:10px; letter-spacing:2px;">
                 ${emote.image ? `<img src="${emote.image}" style="width:100%;height:100%;object-fit:contain;">` : 'PNG'}
             </div>
             <div style="color:white; font-family:monospace; font-size:12px; letter-spacing:1px;">${emote.name}</div>
             ${emote.vip ? `<div style="color:${color}; font-family:monospace; font-size:9px; letter-spacing:2px;">VIP</div>` : ''}
+            <button onclick="equipEmote('${emote.id}')" type="button">${localStorage.getItem('equippedEmote') === emote.id ? 'ACTIVO' : 'USAR'}</button>
         </div>
     `;
 }
+
+function getOwnedEmotes() {
+    return EMOTES_DATA.filter(e => localStorage.getItem('emote_' + e.id) === 'true' || !e.vip);
+}
+
+function equipEmote(id) {
+    localStorage.setItem('equippedEmote', id);
+    renderIngameEmotes();
+    const content = document.getElementById('shopContent');
+    if (content && content.innerHTML.includes('EMOTES')) renderEmotesPage(content);
+    const inv = document.getElementById('inventoryContent');
+    if (inv && document.getElementById('inv-nav-emotes')?.style.color === 'rgb(0, 255, 231)') {
+        showInventorySection('emotes');
+    }
+}
+window.equipEmote = equipEmote;
+
+function showActiveEmote(id) {
+    const emote = EMOTES_DATA.find(e => e.id === id) || getOwnedEmotes()[0];
+    if (!emote) return;
+    equipEmote(emote.id);
+    const bubble = document.getElementById('active-emote-bubble');
+    if (bubble) {
+        bubble.innerHTML = `<img src="${emote.image}" alt="">`;
+        bubble.classList.add('showing');
+        clearTimeout(window.activeEmoteTimeout);
+        window.activeEmoteTimeout = setTimeout(() => bubble.classList.remove('showing'), 2400);
+    }
+    document.getElementById('emote-menu')?.classList.remove('showing');
+    document.getElementById('emote-more-panel')?.classList.remove('showing');
+}
+window.showActiveEmote = showActiveEmote;
+
+function toggleEmoteMenu() {
+    renderIngameEmotes();
+    document.getElementById('emote-menu')?.classList.toggle('showing');
+    document.getElementById('emote-more-panel')?.classList.remove('showing');
+}
+window.toggleEmoteMenu = toggleEmoteMenu;
+
+function toggleMoreEmotes() {
+    renderIngameEmotes();
+    document.getElementById('emote-more-panel')?.classList.toggle('showing');
+}
+window.toggleMoreEmotes = toggleMoreEmotes;
+
+function renderIngameEmotes() {
+    const owned = getOwnedEmotes();
+    const main = document.getElementById('emote-menu');
+    const more = document.getElementById('emote-more-panel');
+    if (!main || !more) return;
+    const renderButton = emote => `<button type="button" onclick="showActiveEmote('${emote.id}')" title="${emote.name}"><img src="${emote.image}" alt=""></button>`;
+    main.innerHTML = owned.slice(0, 10).map(renderButton).join('') +
+        (owned.length > 10 ? `<button type="button" onclick="toggleMoreEmotes()">...</button>` : '');
+    more.innerHTML = owned.slice(10).map(renderButton).join('');
+    renderIngameProfileBanner();
+}
+window.renderIngameEmotes = renderIngameEmotes;
+
+function renderIngameProfileBanner() {
+    const target = document.getElementById('ingame-profile-banner');
+    if (!target) return;
+    const name = localStorage.getItem('playerName') || 'Jugador';
+    const avatar = localStorage.getItem('playerAvatar') || 'assets/Imagenes/Avatares/Avatar_Default.png';
+    const bannerId = localStorage.getItem('equippedBanner') || 'static_core';
+    const banner = BANNERS_DATA.find(b => b.id === bannerId) || BANNERS_DATA[0];
+    target.style.backgroundImage = banner.cover
+        ? `linear-gradient(90deg, rgba(5,6,12,0.88), rgba(5,6,12,0.32)), url("${banner.cover}")`
+        : 'linear-gradient(135deg, rgba(0,255,231,0.2), rgba(255,77,109,0.16))';
+    target.innerHTML = `
+        <div class="ingame-profile-avatar" style="background-image:url('${avatar}')"></div>
+        <div>
+            <div class="ingame-profile-name">${name}</div>
+            <div class="ingame-profile-sub">${banner.name || 'Banner'}</div>
+        </div>
+    `;
+}
+window.renderIngameProfileBanner = renderIngameProfileBanner;
+renderIngameEmotes();
 
 function renderChestsPage(container) {
     const normalChests = CHESTS_DATA.filter(chest => !chest.upgradeable);
@@ -1278,10 +1378,10 @@ function getChestRewardView(drop, coins, gems) {
     if (lower.includes('ruby') || lower.includes('rubie') || gems > coins) return { image: CURRENCY_ICONS.gems };
     if (lower.includes('skin')) {
         const skin = SKINS_DATA.find(s => !s.soon && s.imageRight);
-        return { image: skin?.imageRight || null, text: 'SKIN', color: '#ffee00' };
+        return { image: skin?.imageRight || SHOP_PLACEHOLDER_IMAGE, text: 'SKIN', color: '#ffee00' };
     }
-    if (lower.includes('fragmento')) return { image: null, text: 'FRAG', color: '#cc44ff' };
-    return { image: null, text: 'ITEM', color: '#00ffe7' };
+    if (lower.includes('fragmento')) return { image: SHOP_PLACEHOLDER_IMAGE, text: 'FRAG', color: '#cc44ff' };
+    return { image: SHOP_PLACEHOLDER_IMAGE, text: 'ITEM', color: '#00ffe7' };
 }
 
 function renderGambitBox() {
@@ -1492,16 +1592,20 @@ function equipBanner(id) {
     const banner = BANNERS_DATA.find(b => b.id === id);
     if (banner) banner.owned = true;
     updateMenuHUD();
+    updateShopProfileBanner();
+    renderIngameProfileBanner();
 
     const picker = document.getElementById('banner-picker');
     if (picker && picker.style.display !== 'none') {
         renderBannerPicker();
     }
 
-    // Reemplaza la condicion del color por esto
     const content = document.getElementById('shopContent');
-    if (content) {
+    if (content && document.getElementById('shopPanel')?.style.display !== 'none') {
         renderBannersPage(content);
+    }
+    if (document.getElementById('inventoryPanel')?.style.display !== 'none') {
+        showInventorySection('banners');
     }
 }
 
@@ -1778,6 +1882,14 @@ function grantVIPItem(item) {
 
 function openInventory() {
     window.playSfx?.('menuSelect', 0.6);
+    if (trailAnimId) {
+        cancelAnimationFrame(trailAnimId);
+        trailAnimId = null;
+    }
+    if (previewTrailAnim) {
+        cancelAnimationFrame(previewTrailAnim);
+        previewTrailAnim = null;
+    }
     const panel = document.getElementById('inventoryPanel');
     panel.style.display = 'flex';
     panel.classList.remove('entering');
@@ -1864,6 +1976,7 @@ function showInventorySection(section) {
             b.owned === true
         );
         content.innerHTML = `
+            ${renderInventoryProfileBanner(equipped)}
             <div style="color:rgba(255,255,255,0.4); font-family:monospace; font-size:11px; letter-spacing:4px; margin-bottom:20px;">BANNERS OBTENIDOS - ${owned.length}</div>
             <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:14px;">
                 ${owned.map(b => renderBannerCard(b, equipped)).join('')}
@@ -1873,7 +1986,7 @@ function showInventorySection(section) {
         const owned = EMOTES_DATA.filter(e => localStorage.getItem('emote_' + e.id) === 'true' || !e.vip);
         content.innerHTML = `
             <div style="color:rgba(255,255,255,0.4); font-family:monospace; font-size:11px; letter-spacing:4px; margin-bottom:20px;">EMOTES - ${owned.length}</div>
-            <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(170px,1fr)); gap:14px;">
+            <div class="inventory-emote-grid">
                 ${owned.map(renderEmoteSlot).join('')}
             </div>
         `;
@@ -1895,6 +2008,25 @@ function showInventorySection(section) {
             </div>
         ` : `<div style="display:grid;place-items:center;height:300px;color:rgba(255,255,255,.25);font-family:monospace;letter-spacing:4px;">NO TIENES COFRES GUARDADOS</div>`;
     }
+}
+
+function renderInventoryProfileBanner(equipped) {
+    const name = localStorage.getItem('playerName') || 'Jugador';
+    const avatar = localStorage.getItem('playerAvatar') || 'assets/Imagenes/Avatares/Avatar_Default.png';
+    const banner = BANNERS_DATA.find(b => b.id === equipped) || BANNERS_DATA[0];
+    const bg = banner.cover
+        ? `linear-gradient(90deg, rgba(5,6,12,0.86), rgba(5,6,12,0.36)), url('${banner.cover}')`
+        : 'linear-gradient(135deg, rgba(0,255,231,0.18), rgba(255,77,109,0.16))';
+    return `
+        <section class="inventory-profile-banner" style="background-image:${bg};">
+            <div class="inventory-profile-avatar" style="background-image:url('${avatar}')"></div>
+            <div>
+                <div class="inventory-profile-kicker">BANNER EQUIPADO</div>
+                <div class="inventory-profile-name">${name}</div>
+                <div class="inventory-profile-banner-name">${banner.name || 'Banner'}</div>
+            </div>
+        </section>
+    `;
 }
 
 function openInventoryChest(id) {
@@ -1994,6 +2126,10 @@ function renderTrailCard(t) {
 }
 
 function animateTrailCards() {
+    if (document.getElementById('shopPanel')?.style.display === 'none') {
+        trailAnimId = null;
+        return;
+    }
     TRAILS_DATA.forEach(t => {
         const cvs = document.getElementById('trail-card-' + t.id);
         if (!cvs) return;
@@ -2211,7 +2347,7 @@ function animateTrailCards() {
         }
     });
 
-    if (document.getElementById('trail-card-basic')) {
+    if (document.getElementById('trail-card-basic') && document.getElementById('shopPanel')?.style.display !== 'none') {
         trailAnimId = requestAnimationFrame(animateTrailCards);
     }
 }
@@ -2348,6 +2484,10 @@ function showTrailPreview() {
     const rgb = color?.rgb || null;
 
     function animatePreview() {
+        if (document.getElementById('shopPanel')?.style.display === 'none' || !document.body.contains(cvs)) {
+            previewTrailAnim = null;
+            return;
+        }
         pctx.clearRect(0, 0, 260, 80);
         px += 1.2;
         if (px > 240) px = 30;
@@ -2674,7 +2814,7 @@ function showRubyPassRewardModal(lane, level, reward) {
     showShopModal({
         kicker: `${lane === 'premium' ? 'PREMIUM' : 'FREE'} NIVEL ${level}`,
         title: getRewardLabel(reward),
-        image: reward.image || null,
+        image: reward.image || RUBY_PASS_REWARD_PLACEHOLDER,
         fallback: reward.type?.toUpperCase() || 'PNG',
         body: 'Recompensa reclamada. Ya puedes seguir avanzando.',
         cancelText: null,
@@ -2723,19 +2863,29 @@ function renderBattlePassPage(container, options = {}) {
     const premiumRotation = state.premiumOwned ? getRubyPassRotation(options.animateFrom ? renderPremiumLevel : premiumLevelForRender) : 0;
     const tipAngle = 110 + renderProgress * 170;
     const visibleRewards = RUBY_PASS_REWARDS;
+    const profileName = localStorage.getItem('playerName') || 'Jugador';
+    const profileAvatar = localStorage.getItem('playerAvatar') || 'assets/Imagenes/Avatares/Avatar_Default.png';
+    const bannerId = localStorage.getItem('equippedBanner') || 'static_core';
+    const banner = BANNERS_DATA.find(b => b.id === bannerId) || BANNERS_DATA[0];
+    const profileBannerBg = banner.cover
+        ? `linear-gradient(90deg, rgba(5,6,12,0.88), rgba(5,6,12,0.34)), url('${banner.cover}')`
+        : 'linear-gradient(135deg, rgba(0,255,231,0.18), rgba(255,77,109,0.16))';
 
     container.innerHTML = `
         <div class="ruby-pass-screen ${state.premiumOwned ? 'is-premium-owned' : 'is-premium-locked'}" style="${RUBY_PASS_ASSETS.background ? `background-image:linear-gradient(90deg, rgba(5,0,8,0.96), rgba(10,0,5,0.74)), url('${RUBY_PASS_ASSETS.background}')` : ''}">
             <div class="ruby-pass-topbar">
-                <button onclick="closeRubyPass()" class="ruby-pass-back" type="button">VOLVER</button>
-                <div>
-                    <div class="ruby-pass-kicker">ARCO ROTATORIO</div>
-                    <h2>RUBY PASS</h2>
+                <div class="ruby-pass-profile" style="background-image:${profileBannerBg};">
+                    <div class="ruby-pass-profile-avatar" style="background-image:url('${profileAvatar}')"></div>
+                    <div>
+                        <div class="ruby-pass-profile-name">${profileName}</div>
+                        <div class="ruby-pass-profile-sub">${banner.name || 'Banner'}</div>
+                    </div>
                 </div>
                 <div class="ruby-pass-season">
                     <span>NIVEL ${currentLevel}</span>
                     <strong>${currentXp} XP</strong>
                 </div>
+                <button onclick="closeRubyPass()" class="ruby-pass-back" type="button">VOLVER</button>
             </div>
 
             <div class="ruby-pass-stage">
@@ -2758,19 +2908,18 @@ function renderBattlePassPage(container, options = {}) {
                 </div>
 
                 <div class="ruby-pass-focus">
-                    <div class="ruby-pass-logo-slot" data-asset-slot="RUBY_PASS_ASSET_SLOT_LOGO_LOCK">
-                        ${RUBY_PASS_ASSETS.logo ? `<img src="${RUBY_PASS_ASSETS.logo}" alt="">` : '<span></span>'}
-                    </div>
                     <div class="ruby-pass-focus-copy">
-                        <div class="ruby-pass-kicker">${state.premiumOwned ? 'PREMIUM ACTIVO' : 'PREMIUM BLOQUEADO'}</div>
-                        <h3>FREE / PREMIUM</h3>
+                        <div class="ruby-pass-kicker">${state.premiumOwned ? 'VIP ACTIVO' : 'PASE FREE / VIP'}</div>
+                        <h3>RUBY PASS</h3>
+                        <p>${Math.round(renderProgress * 100)}% PROGRESO</p>
                         <div class="ruby-pass-xpbar"><span style="width:${Math.round(renderProgress * 100)}%;"></span></div>
                     </div>
                     ${state.premiumOwned
             ? `<button class="ruby-pass-buy is-owned" type="button">PREMIUM ACTIVO</button>`
             : `<button class="ruby-pass-buy" onclick="unlockRubyPassPremium()" type="button">RUBY PREMIUM · ${RUBY_PASS_PREMIUM_COST_GEMS} RUBIES</button>`
         }
-                    ${(window.player?.name || '').toUpperCase() === 'LEX' ? `<button class="ruby-pass-dev" onclick="addRubyPassXpDev()" type="button">DEV +250 XP</button><button class="ruby-pass-dev" onclick="resetRubyPassXpDev()" type="button">DEV RESET XP</button>` : ''}
+                    <button class="ruby-pass-dev" onclick="addRubyPassXpDev()" type="button">DEV +250 XP</button>
+                    <button class="ruby-pass-dev" onclick="resetRubyPassXpDev()" type="button">DEV RESET XP</button>
                 </div>
             </div>
         </div>

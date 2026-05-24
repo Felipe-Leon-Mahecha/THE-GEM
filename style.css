@@ -1,4 +1,13 @@
 * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+
+    user-select: none;
+    -webkit-user-select: none;
+}
+
+* {
     box-sizing: border-box;
     margin: 0;
     padding: 0;
@@ -563,6 +572,380 @@ body.is-playing-touch #touch-controls {
     display: block;
 }
 
+.emote-float-btn {
+    position: fixed;
+    top: 18px;
+    right: 18px;
+    z-index: 10000;
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    border: 1px solid rgba(255, 77, 109, 0.42);
+    background: rgba(8, 10, 16, 0.72);
+    color: #ffffff;
+    font: 900 28px/1 monospace;
+    cursor: pointer;
+    display: none;
+    box-shadow: 0 0 18px rgba(255, 77, 109, 0.22);
+}
+
+body.is-playing-touch .emote-float-btn {
+    display: grid;
+    place-items: center;
+}
+
+.emote-menu,
+.emote-more-panel {
+    position: fixed;
+    right: 18px;
+    z-index: 9999;
+    display: none;
+    grid-template-columns: 1fr;
+    gap: 8px;
+    padding: 8px;
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    background: rgba(6, 8, 12, 0.86);
+    box-shadow: 0 18px 50px rgba(0, 0, 0, 0.42);
+}
+
+.emote-menu {
+    top: 78px;
+}
+
+.emote-more-panel {
+    top: 78px;
+    right: 82px;
+    max-height: calc(100vh - 110px);
+    overflow: auto;
+}
+
+.emote-menu.showing,
+.emote-more-panel.showing {
+    display: grid;
+}
+
+.emote-menu button,
+.emote-more-panel button {
+    width: 46px;
+    height: 46px;
+    border-radius: 50%;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    background: rgba(255, 255, 255, 0.06);
+    color: white;
+    cursor: pointer;
+    display: grid;
+    place-items: center;
+    overflow: hidden;
+}
+
+.emote-menu img,
+.emote-more-panel img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+.ingame-profile-banner {
+    position: fixed;
+    left: 20px;
+    top: calc(8vh + 142px);
+    z-index: 9000;
+    width: 240px;
+    min-height: 58px;
+    display: none;
+    align-items: center;
+    gap: 10px;
+    padding: 9px 12px;
+    border-radius: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    background: rgba(8, 10, 16, 0.72) center / cover no-repeat;
+    box-shadow: 0 12px 34px rgba(0, 0, 0, 0.32);
+}
+
+body.is-playing-touch .ingame-profile-banner {
+    display: flex;
+}
+
+.ingame-profile-avatar {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    background: rgba(255, 255, 255, 0.08) center / cover no-repeat;
+    flex: 0 0 auto;
+}
+
+.ingame-profile-name {
+    color: #ffffff;
+    font: 800 12px/1.2 monospace;
+    letter-spacing: 1px;
+}
+
+.ingame-profile-sub {
+    margin-top: 3px;
+    color: rgba(255, 255, 255, 0.58);
+    font: 9px/1.2 monospace;
+    letter-spacing: 1px;
+}
+
+.active-emote-bubble {
+    position: fixed;
+    left: 276px;
+    top: calc(8vh + 143px);
+    z-index: 9001;
+    width: 54px;
+    height: 54px;
+    display: none;
+    place-items: center;
+    border-radius: 50% 50% 50% 12px;
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    background: rgba(255, 255, 255, 0.9);
+    box-shadow: 0 12px 34px rgba(0, 0, 0, 0.3);
+}
+
+.active-emote-bubble.showing {
+    display: grid;
+}
+
+.active-emote-bubble img {
+    width: 84%;
+    height: 84%;
+    object-fit: contain;
+}
+
+.inventory-profile-banner {
+    min-height: 118px;
+    margin-bottom: 22px;
+    padding: 18px;
+    border-radius: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    background: rgba(8, 10, 16, 0.7) center / cover no-repeat;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    box-shadow: 0 18px 48px rgba(0, 0, 0, 0.28), inset 0 0 60px rgba(255, 255, 255, 0.035);
+}
+
+.inventory-profile-avatar {
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    border: 2px solid rgba(255, 255, 255, 0.18);
+    background: rgba(255, 255, 255, 0.08) center / cover no-repeat;
+    flex: 0 0 auto;
+}
+
+.inventory-profile-kicker {
+    color: rgba(0, 255, 231, 0.62);
+    font: 10px/1.2 monospace;
+    letter-spacing: 3px;
+}
+
+.inventory-profile-name {
+    margin-top: 6px;
+    color: white;
+    font: 900 22px/1.1 monospace;
+    letter-spacing: 2px;
+}
+
+.inventory-profile-banner-name {
+    margin-top: 8px;
+    color: rgba(255, 255, 255, 0.62);
+    font: 11px/1.2 monospace;
+    letter-spacing: 2px;
+}
+
+.inventory-emote-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 14px;
+}
+
+.emote-card {
+    min-height: 190px;
+    padding: 16px;
+    border-radius: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.045), rgba(255, 255, 255, 0.018));
+    display: grid;
+    justify-items: center;
+    align-content: start;
+    gap: 10px;
+}
+
+.emote-card button {
+    width: 100%;
+    height: 34px;
+    border-radius: 8px;
+    border: 1px solid rgba(0, 255, 231, 0.28);
+    background: rgba(0, 255, 231, 0.08);
+    color: #00ffe7;
+    font: 800 10px/1 monospace;
+    letter-spacing: 2px;
+    cursor: pointer;
+}
+
+/* Ruby Pass final layout override */
+.ruby-pass-screen {
+    background-size: cover;
+    background-position: center;
+}
+
+.ruby-pass-topbar {
+    position: relative;
+    z-index: 20;
+    height: 76px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 12px 22px;
+}
+
+.ruby-pass-profile {
+    min-width: min(360px, 48vw);
+    height: 54px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 8px 12px;
+    border-radius: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    background: rgba(8, 10, 16, 0.72) center / cover no-repeat;
+}
+
+.ruby-pass-profile-avatar {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    background: rgba(255, 255, 255, 0.08) center / cover no-repeat;
+    flex: 0 0 auto;
+}
+
+.ruby-pass-profile-name {
+    color: white;
+    font: 900 12px/1.15 monospace;
+    letter-spacing: 1px;
+}
+
+.ruby-pass-profile-sub {
+    margin-top: 3px;
+    color: rgba(255, 255, 255, 0.55);
+    font: 9px/1.1 monospace;
+    letter-spacing: 1px;
+}
+
+.ruby-pass-back {
+    margin-left: 0;
+}
+
+.ruby-pass-season {
+    margin-left: auto;
+}
+
+.ruby-pass-stage {
+    height: calc(100vh - 76px);
+}
+
+.ruby-pass-arc-window {
+    inset: 0 !important;
+    right: 0 !important;
+    top: 0 !important;
+    bottom: 0 !important;
+    height: auto !important;
+    pointer-events: none;
+}
+
+.ruby-pass-gear-shell {
+    left: 50% !important;
+    top: calc(100% + min(54vw, 520px)) !important;
+    width: min(2300px, 190vw, 245vh) !important;
+    height: min(2300px, 190vw, 245vh) !important;
+    pointer-events: auto;
+}
+
+.ruby-pass-track-premium {
+    inset: 0 !important;
+}
+
+.ruby-pass-track-free {
+    width: 58% !important;
+    height: 58% !important;
+}
+
+.ruby-pass-node-premium {
+    transform: rotate(var(--node-angle)) translateX(min(810px, 68vw, 88vh)) !important;
+}
+
+.ruby-pass-node-free {
+    transform: rotate(var(--node-angle)) translateX(min(620px, 52vw, 67vh)) !important;
+}
+
+.ruby-pass-reward {
+    transform: rotate(calc(-1 * (var(--node-angle) + var(--lane-rotation, 0deg) + var(--ruby-drag-rotation, 0deg)))) !important;
+}
+
+.ruby-pass-level-number,
+.ruby-pass-level-marker {
+    transform: rotate(calc(-1 * (var(--node-angle) + var(--lane-rotation, 0deg) + var(--ruby-drag-rotation, 0deg)))) !important;
+}
+
+.ruby-pass-focus {
+    top: 10% !important;
+    left: 50% !important;
+    width: min(360px, calc(100vw - 40px)) !important;
+    padding: 0 !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    background: transparent !important;
+    backdrop-filter: none !important;
+    box-shadow: none !important;
+    gap: 10px !important;
+}
+
+.ruby-pass-focus h3 {
+    font-size: 22px !important;
+    letter-spacing: 5px;
+}
+
+.ruby-pass-focus p {
+    margin: 0;
+    color: rgba(255, 255, 255, 0.7);
+    font: 11px/1.2 monospace;
+    letter-spacing: 2px;
+}
+
+.ruby-pass-focus .ruby-pass-logo-slot {
+    display: none !important;
+}
+
+@media (max-width: 820px) {
+    .ruby-pass-topbar {
+        height: 92px;
+        align-items: flex-start;
+    }
+
+    .ruby-pass-profile {
+        min-width: 0;
+        width: calc(100vw - 130px);
+    }
+
+    .ruby-pass-season {
+        display: none;
+    }
+
+    .ruby-pass-stage {
+        height: calc(100vh - 92px);
+    }
+
+    .ruby-pass-gear-shell {
+        top: calc(100% + 340px) !important;
+        width: 210vw !important;
+        height: 210vw !important;
+    }
+}
+
 #pausePanel {
     position: fixed;
     inset: 0;
@@ -593,8 +976,8 @@ body.is-playing-touch #touch-controls {
     position: absolute;
     inset: 0;
     background: rgba(0, 0, 0, 0.68);
-    backdrop-filter: blur(5px);
-    -webkit-backdrop-filter: blur(5px);
+    backdrop-filter: blur(2px);
+    -webkit-backdrop-filter: blur(2px);
 }
 
 .profile-card {
@@ -605,8 +988,8 @@ body.is-playing-touch #touch-controls {
     border: 1px solid rgba(255, 255, 255, 0.14);
     background: linear-gradient(180deg, rgba(18, 20, 28, 0.82), rgba(5, 6, 10, 0.7));
     box-shadow: 0 26px 90px rgba(0, 0, 0, 0.65), inset 0 0 60px rgba(0, 255, 231, 0.05);
-    backdrop-filter: blur(18px) saturate(1.25);
-    -webkit-backdrop-filter: blur(18px) saturate(1.25);
+    backdrop-filter: blur(8px) saturate(1.1);
+    -webkit-backdrop-filter: blur(8px) saturate(1.1);
     color: white;
     font-family: monospace;
 }
@@ -636,7 +1019,7 @@ body.is-playing-touch #touch-controls {
     background: rgba(0, 0, 0, 0.38);
     color: white;
     cursor: pointer;
-    backdrop-filter: blur(6px);
+    backdrop-filter: blur(3px);
 }
 
 .options-card {
@@ -787,7 +1170,7 @@ body.is-playing-touch #touch-controls {
     position: absolute;
     inset: 0;
     background: rgba(0, 0, 0, 0.18);
-    backdrop-filter: blur(4px);
+    backdrop-filter: none;
 }
 
 .pause-drawer {
@@ -2612,6 +2995,8 @@ body.is-playing-touch #touch-controls {
 
 #gameWin {
     animation: none;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
 }
 
 #gameWin.showing {
@@ -2864,6 +3249,51 @@ CAROUSEL
 #carouselCanvas {
     width: 100%;
     height: 100%;
+}
+
+.ls-nav-btn {
+    position: absolute;
+    top: 52%;
+    z-index: 7;
+    width: 64px;
+    height: 64px;
+    border: 1px solid rgba(0, 255, 231, 0.22);
+    border-radius: 18px;
+    background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.02)),
+        rgba(2, 8, 12, 0.72);
+    color: #ffffff;
+    cursor: pointer;
+    font-family: Geom, monospace;
+    font-size: 34px;
+    line-height: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow:
+        0 0 24px rgba(0, 255, 231, 0.12),
+        inset 0 0 18px rgba(255, 255, 255, 0.04);
+    backdrop-filter: blur(10px);
+    transition: opacity 0.18s ease, transform 0.18s ease, border-color 0.18s ease;
+}
+
+.ls-nav-prev {
+    left: clamp(24px, 7vw, 110px);
+}
+
+.ls-nav-next {
+    right: clamp(24px, 7vw, 110px);
+}
+
+.ls-nav-btn:hover {
+    transform: translateY(-2px) scale(1.04);
+    border-color: rgba(0, 255, 231, 0.52);
+}
+
+.ls-nav-btn.is-hidden {
+    opacity: 0;
+    pointer-events: none;
+    transform: scale(0.92);
 }
 
 /* =========================

@@ -1,0 +1,36 @@
+Y desde hoy, antes de hacer cambios grandes en el juego:
+
+git add .
+git commit -m "qué cambiaste"
+git push
+
+Ejemplo:
+
+git add .
+git commit -m "Añadí nuevas músicas y tienda"
+git push
+
+--------------------------------------------------------------------------------------------------------------------------
+
+Subir cambios:
+
+git add .
+
+Significa:
+
+"Git, mira todos los archivos modificados"
+
+
+
+git commit -m "Añadí enemigos"
+
+Significa:
+
+"Guarda una versión del proyecto"
+
+
+git push
+
+Significa:
+
+"Sube esas versiones a GitHub"

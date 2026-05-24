@@ -12,6 +12,12 @@
     <link href="https://fonts.googleapis.com/css2?family=Geom:ital,wght@0,300..900;1,300..900&display=swap"
         rel="stylesheet">
     <link rel="stylesheet" href="style.css">
+    <link rel="manifest" href="manifest.json">
+    <script>
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('/service-worker.js');
+        }
+    </script>
 </head>
 
 <body>
@@ -189,7 +195,7 @@
             <div
                 style="position:absolute; bottom:28px; left:72px; right:28px; display:flex; justify-content:space-between; align-items:center;">
                 <div style="color:rgba(255,255,255,0.15); font-family:monospace; font-size:10px; letter-spacing:3px;">
-                    VERSION 2.2 · MADE BY LEX</div>
+                    VERSION 0.5 · MADE BY FELIX</div>
                 <div style="display:flex; gap:4px;">
                     <div style="width:5px; height:5px; border-radius:50%; background:#ff4d6d; opacity:0.5;"></div>
                     <div style="width:5px; height:5px; border-radius:50%; background:#ff4d6d; opacity:0.25;"></div>
@@ -201,7 +207,14 @@
     </div>
 
     <button id="pause-btn" type="button" onclick="pauseGame()">PAUSA</button>
-    <button id="settings-float-btn" class="settings-float-btn" type="button" onclick="openOptionsPanel()" title="Opciones">⚙</button>
+    <button id="settings-float-btn" class="settings-float-btn" type="button" onclick="openOptionsPanel()"
+        title="Opciones">⚙</button>
+    <button id="emote-float-btn" class="emote-float-btn" type="button" onclick="toggleEmoteMenu()"
+        title="Emotes">+</button>
+    <div id="emote-menu" class="emote-menu"></div>
+    <div id="emote-more-panel" class="emote-more-panel"></div>
+    <div id="ingame-profile-banner" class="ingame-profile-banner"></div>
+    <div id="active-emote-bubble" class="active-emote-bubble"></div>
 
     <div id="pausePanel">
         <div class="pause-dim" onclick="resumeGame()"></div>
@@ -285,19 +298,28 @@
                     ESTANDARTE</div>
                 <div id="shop-profile-banner"
                     style="height:112px; border-radius:12px; border:1px solid rgba(255,255,255,0.1); background:linear-gradient(135deg, rgba(0,255,231,0.18), rgba(255,77,109,0.16)); background-size:cover; background-position:center; padding:12px; display:flex; flex-direction:column; justify-content:space-between; overflow:hidden; position:relative; margin-bottom:14px;">
-                    <div style="position:absolute; inset:0; background:linear-gradient(180deg, rgba(0,0,0,0.1), rgba(0,0,0,0.55)); pointer-events:none;"></div>
+                    <div
+                        style="position:absolute; inset:0; background:linear-gradient(180deg, rgba(0,0,0,0.1), rgba(0,0,0,0.55)); pointer-events:none;">
+                    </div>
                     <div style="position:relative; display:flex; align-items:center; gap:10px;">
                         <div id="shop-profile-avatar"
                             style="width:42px; height:42px; border-radius:50%; background:rgba(255,77,109,0.15) center / cover no-repeat; border:1px solid rgba(255,255,255,0.35); flex:none;">
                         </div>
                         <div style="min-width:0;">
-                            <div id="shop-profile-name" style="color:white; font-family:monospace; font-size:13px; font-weight:bold; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">Jugador</div>
-                            <div style="color:rgba(255,255,255,0.45); font-family:monospace; font-size:10px;">Nivel 1</div>
+                            <div id="shop-profile-name"
+                                style="color:white; font-family:monospace; font-size:13px; font-weight:bold; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">
+                                Jugador</div>
+                            <div style="color:rgba(255,255,255,0.45); font-family:monospace; font-size:10px;">Nivel 1
+                            </div>
                         </div>
                     </div>
-                    <div id="shop-profile-banner-name" style="position:relative; color:rgba(255,255,255,0.78); font-family:monospace; font-size:9px; letter-spacing:2px;">Nucleo Estatico</div>
+                    <div id="shop-profile-banner-name"
+                        style="position:relative; color:rgba(255,255,255,0.78); font-family:monospace; font-size:9px; letter-spacing:2px;">
+                        Nucleo Estatico</div>
                 </div>
-                <div id="banner-picker" style="display:none; margin:-6px 0 14px; padding:10px; border:1px solid rgba(255,255,255,0.09); border-radius:10px; background:rgba(0,0,0,0.28);"></div>
+                <div id="banner-picker"
+                    style="display:none; margin:-6px 0 14px; padding:10px; border:1px solid rgba(255,255,255,0.09); border-radius:10px; background:rgba(0,0,0,0.28);">
+                </div>
 
                 <div style="display:flex; flex-direction:column; gap:10px;">
                     <div
@@ -338,7 +360,8 @@
                     <div>
                         <div id="sidebar-skin-name" style="color:white; font-family:monospace; font-size:12px;">Cian
                         </div>
-                        <div id="sidebar-skin-rarity" style="color:rgba(255,255,255,0.3); font-family:monospace; font-size:10px;">BASICA</div>
+                        <div id="sidebar-skin-rarity"
+                            style="color:rgba(255,255,255,0.3); font-family:monospace; font-size:10px;">BASICA</div>
                     </div>
                 </div>
             </div>
@@ -594,14 +617,18 @@
         </p>
 
         <div class="option-settings">
-            <label class="option-row"><span>MUSICA</span><input id="music-volume" type="range" min="0" max="100" value="45"></label>
-            <label class="option-row"><span>EFECTOS</span><input id="sfx-volume" type="range" min="0" max="100" value="75"></label>
+            <label class="option-row"><span>MUSICA</span><input id="music-volume" type="range" min="0" max="100"
+                    value="45"></label>
+            <label class="option-row"><span>EFECTOS</span><input id="sfx-volume" type="range" min="0" max="100"
+                    value="75"></label>
             <button class="option-action" onclick="toggleReducedMotion()">MODO SUAVE</button>
             <p id="motion-mode-text">Animaciones normales</p>
             <div class="option-mobile">
                 <div class="option-mobile-title">CONTROLES CELULAR</div>
-                <label>BOTONES LATERALES <input id="touch-side-offset" type="range" min="0" max="100" value="50"></label>
-                <label>BOTON GRAVEDAD <input id="touch-gravity-offset" type="range" min="0" max="100" value="50"></label>
+                <label>BOTONES LATERALES <input id="touch-side-offset" type="range" min="0" max="100"
+                        value="50"></label>
+                <label>BOTON GRAVEDAD <input id="touch-gravity-offset" type="range" min="0" max="100"
+                        value="50"></label>
                 <button class="option-action" onclick="saveTouchLayout()">GUARDAR POSICIONES</button>
             </div>
         </div>
@@ -657,6 +684,11 @@
             <canvas id="carouselCanvas" width="1400" height="700"></canvas>
         </div>
 
+        <button id="ls-prev-btn" class="ls-nav-btn ls-nav-prev" type="button" aria-label="Nivel anterior"
+            onclick="window.moveLevelSelection?.(-1)">←</button>
+        <button id="ls-next-btn" class="ls-nav-btn ls-nav-next" type="button" aria-label="Nivel siguiente"
+            onclick="window.moveLevelSelection?.(1)">→</button>
+
         <div class="ls-footer">
 
             <div class="ls-system-bar">
@@ -673,8 +705,7 @@
 
             </div>
 
-            <button class="ls-play-btn"
-                onclick="if(levels[selectedLevel].unlocked){ hideLevelSelect(); (window.startLevelWithTransition || window.startGame)(selectedLevel); }">
+            <button class="ls-play-btn" onclick="window.playSelectedLevel?.()">
 
                 <div class="ls-play-glow"></div>
 
