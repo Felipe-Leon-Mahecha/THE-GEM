@@ -649,8 +649,7 @@ body.is-playing-touch .emote-float-btn {
 .ingame-profile-banner {
     position: fixed;
     left: 20px;
-    top: calc(8vh + 142px);
-    z-index: 9000;
+    top: calc(8vh + 175px);
     width: 240px;
     min-height: 58px;
     display: none;

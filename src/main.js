@@ -1498,3 +1498,17 @@ addEventListener("keyup", e => {
     if (e.key === "a" || e.key === "A" || e.key === "ArrowLeft") window.keys.left = false;
     if (e.key === "d" || e.key === "D" || e.key === "ArrowRight") window.keys.right = false;
 });
+
+document.addEventListener('visibilitychange', () => {
+    if (document.hidden) {
+        window.bgMusic?.pause();
+        window.menuMusic?.pause();
+    } else {
+        if (window.running && !window.paused && !window.isMuted) {
+            window.bgMusic?.play();
+        }
+        if (!window.running && !window.isMuted) {
+            window.menuMusic?.play().catch(() => { });
+        }
+    }
+});
