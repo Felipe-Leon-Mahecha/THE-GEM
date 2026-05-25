@@ -85,7 +85,7 @@
             speed: 0,
             variants: [
                 { type: "radial", weight: 5, inner: 0.05, outer: 0.96 },
-                { type: "outerChord", weight: 2, angularSpan: 0.55, outer: 0.92 },
+                { type: "outerChord", weight: 2, angularSpan: 0.55, outer: 0.92, range: 1.8 },
                 { type: "short", weight: 2, inner: 0.45, outer: 0.86 },
                 { type: "giantArc", weight: 1, angularSpan: 0.785, inner: 0.2, outer: 0.96, mobility: "static", thickness: 14, glowThickness: 30 }
             ]

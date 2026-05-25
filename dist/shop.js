@@ -3158,11 +3158,11 @@ function claimDailyGift(day) {
     const rewards = [
         () => addCurrency(50, 'coins'),
         () => addCurrency(1, 'gems'),
-        () => localStorage.setItem('drop_cofre_basico', parseInt(localStorage.getItem('drop_cofre_basico') || '0') + 1),
+        () => { const k = 'invChest_basic'; localStorage.setItem(k, parseInt(localStorage.getItem(k) || '0') + 1); },
         () => addCurrency(80, 'coins'),
         () => addCurrency(2, 'gems'),
         () => localStorage.setItem('emote_daily_01', 'true'),
-        () => localStorage.setItem('drop_cofre_especial', parseInt(localStorage.getItem('drop_cofre_especial') || '0') + 1)
+        () => { const k = 'invChest_special'; localStorage.setItem(k, parseInt(localStorage.getItem(k) || '0') + 1); }
     ];
     rewards[(day - 1) % rewards.length]();
     localStorage.setItem(key, 'true');

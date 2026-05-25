@@ -717,7 +717,7 @@ body.is-playing-touch .ingame-profile-banner {
     min-height: 118px;
     margin-bottom: 22px;
     padding: 18px;
-    border-radius: 8px;
+    border-radius: 12px;
     border: 1px solid rgba(255, 255, 255, 0.12);
     background: rgba(8, 10, 16, 0.7) center / cover no-repeat;
     display: flex;
@@ -3641,5 +3641,30 @@ PLAY BUTTON
         transform-origin: top left;
         width: 133.33%;
         height: 133.33%;
+    }
+}
+
+@media (max-width: 900px) {
+
+    /* Tienda sidebar scroll */
+    #shopPanel>div:first-child+div {
+        min-height: unset !important;
+        height: 100vh;
+        overflow-y: auto;
+    }
+
+    /* Sidebar más angosta */
+    #shopPanel [style*="width:220px"],
+    #shopPanel [style*="width: 220px"] {
+        width: 160px !important;
+        min-width: 160px !important;
+    }
+
+    /* Botón volver siempre visible */
+    #shopPanel [style*="width:220px"]>div:last-child,
+    #shopPanel [style*="width: 220px"]>div:last-child {
+        position: sticky;
+        bottom: 0;
+        background: rgba(10, 10, 15, 0.95);
     }
 }

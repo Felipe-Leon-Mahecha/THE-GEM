@@ -1,3 +1,18 @@
+function preloadLevelImages(lvl) {
+    const config = window.getLevelConfig?.(lvl);
+    if (!config?.assets) return;
+    Object.values(config.assets).forEach(src => {
+        if (typeof src === 'string' && src.endsWith('.png')) {
+            const img = new Image();
+            img.src = src;
+        }
+    });
+}
+// Precarga todos los niveles al iniciar
+setTimeout(() => {
+    for (let i = 1; i <= 10; i++) preloadLevelImages(i);
+}, 1000);
+
 let gameTimerInterval = null;
 window.currentLevel = 0;
 const LEVEL_WIN_TIME = 133; // 2:13.3 en segundos
@@ -205,8 +220,8 @@ function buildStaticCanvas(lvl = window.level || 1) {
     }
 
     // PANELS
-    for (let i = 0; i < 44; i++) {
-        let a = (Math.PI * 2 / 44) * i;
+    for (let i = 0; i < 0; i++) {
+        let a = (Math.PI * 2 / 0) * i;
         offCtx.beginPath();
         offCtx.moveTo(Math.cos(a) * (window.BASE_RADIUS + 10), Math.sin(a) * (window.BASE_RADIUS + 10));
         offCtx.lineTo(Math.cos(a) * (window.DOME_RADIUS - 10), Math.sin(a) * (window.DOME_RADIUS - 10));
@@ -663,7 +678,7 @@ function spawnIceLaser() {
     const baseAngle = window.angle - window.worldRotation + Math.PI * (0.45 + Math.random() * 0.9);
     const warningDuration = variant.warningDuration || cfg.warningDuration || 95;
     const outer = variant.outer ?? 0.94;
-    const inner = variant.inner ?? 0.08;
+    const inner = variant.inner ?? 0.35;
     const angularSpan = variant.angularSpan || cfg.angularSpan || 0.28;
     const type = variant.type || "radial";
     const laser = {
@@ -1063,10 +1078,18 @@ function drawIceLasers(cx, cy) {
             } else {
                 ctx.strokeStyle = `rgba(160,230,255,${0.18 + warningProgress * 0.36})`;
                 ctx.lineWidth = Math.max(2, laser.thickness * 0.35);
-                ctx.setLineDash([8, 12]);
+                ctx.setLineDash([]);
+                const innerR = laserRadius(laser.inner);
+                const outerR = laserRadius(laser.outer);
+                const halfW = laser.angularSpan / 2;
                 ctx.beginPath();
-                ctx.moveTo(p.sx, p.sy);
-                ctx.lineTo(p.ex, p.ey);
+                ctx.arc(cx, cy, outerR, laser.angle + window.worldRotation - halfW, laser.angle + window.worldRotation + halfW);
+                ctx.arc(cx, cy, innerR, laser.angle + window.worldRotation + halfW, laser.angle + window.worldRotation - halfW, true);
+                ctx.closePath();
+                ctx.fillStyle = `rgba(255,60,90,${0.12 + warningProgress * 0.28})`;
+                ctx.fill();
+                ctx.strokeStyle = `rgba(255,60,90,${0.5 + warningProgress * 0.4})`;
+                ctx.lineWidth = 2;
                 ctx.stroke();
             }
         } else {
