@@ -1059,25 +1059,6 @@ function renderBannerCard(b, equipped) {
             </div>
         </div>
     `;
-
-
-    return `
-        <div style="background:${isVIP && isEquipped ? 'rgb(18,18,24)' : 'rgba(255,255,255,0.03)'}; border:${borderStyle}; border-radius:14px; padding:14px; display:flex; flex-direction:column; gap:12px; box-shadow:${boxShadow}; ${extraStyle}">
-            <div style="height:104px; border-radius:10px; border:1px solid rgba(0,0,0,0.45); background:${bannerBg}; background-size:cover; background-position:center; display:flex; align-items:center; justify-content:center; color:rgba(255,255,255,0.48); font-family:monospace; font-size:10px; letter-spacing:3px;">
-                ${b.cover ? '' : 'ESPACIO PNG PORTADA'}
-            </div>
-            <div style="display:flex; justify-content:space-between; gap:10px; align-items:center;">
-                <div>
-                    <div style="color:white; font-family:monospace; font-size:12px; letter-spacing:1px;">${b.name}</div>
-                    <div style="color:${BANNER_RARITY_COLORS[b.rarity] || 'rgba(255,255,255,0.35)'}; font-family:monospace; font-size:9px; margin-top:4px;">${b.rarity === 'VIP' ? 'VIP / PASE RUBY' : (b.rarity || 'NORMAL')}</div>
-                </div>
-                ${owned
-            ? `<button onclick="equipBanner('${b.id}')" style="padding:8px 12px; border-radius:8px; border:1px solid ${isEquipped ? (isVIP ? 'rgba(255,204,0,0.6)' : 'rgba(0,255,231,0.6)') : 'rgba(255,255,255,0.12)'}; background:${isEquipped ? (isVIP ? 'rgba(255,204,0,0.12)' : 'rgba(0,255,231,0.12)') : 'none'}; color:${isEquipped ? (isVIP ? '#ffd700' : '#00ffe7') : 'rgba(255,255,255,0.5)'}; font-family:monospace; font-size:9px; cursor:pointer;">${isEquipped ? 'EQUIPADO' : 'EQUIPAR'}</button>`
-            : `<button onclick="buyBanner('${b.id}')" ${(!canBuy || b.exclusive) ? 'disabled' : ''} style="padding:8px 12px; border-radius:8px; border:1px solid ${canBuy && !b.exclusive ? 'rgba(255,238,0,0.45)' : 'rgba(255,255,255,0.08)'}; background:none; color:${canBuy && !b.exclusive ? '#ffee00' : 'rgba(255,255,255,0.22)'}; font-family:monospace; font-size:9px; cursor:${canBuy && !b.exclusive ? 'pointer' : 'default'};">${b.exclusive ? 'RESERVADO' : b.price}</button>`
-        }
-            </div>
-        </div>
-    `;
 }
 
 
@@ -2148,7 +2129,7 @@ function animateTrailCards() {
                 ctx.fillStyle = `rgba(0,255,231,${alpha})`;
                 ctx.fill();
             }
-            ctx.shadowBlur = 16;
+            ctx.shadowBlur = 0;
             ctx.shadowColor = '#00ffe7';
             ctx.beginPath();
             ctx.arc(cx, cy, 10, 0, Math.PI * 2);
@@ -2168,7 +2149,7 @@ function animateTrailCards() {
                 ctx.fillStyle = `rgba(255,${green},0,${alpha})`;
                 ctx.fill();
             }
-            ctx.shadowBlur = 20;
+            ctx.shadowBlur = 0;
             ctx.shadowColor = '#ff4400';
             ctx.beginPath();
             ctx.ellipse(cx, cy + 8, 7, 9, 0, 0, Math.PI * 2);
@@ -2206,7 +2187,7 @@ function animateTrailCards() {
                 ctx.fillStyle = `rgba(220,230,255,${0.15 + Math.sin(time + i) * 0.08})`;
                 ctx.fill();
             }
-            ctx.shadowBlur = 12;
+            ctx.shadowBlur = 0;
             ctx.shadowColor = 'rgba(200,210,255,0.6)';
             ctx.beginPath();
             ctx.arc(cx, cy, 8, 0, Math.PI * 2);
@@ -2244,7 +2225,7 @@ function animateTrailCards() {
                     ctx.fill();
                 }
             }
-            ctx.shadowBlur = 18;
+            ctx.shadowBlur = 0;
             ctx.shadowColor = '#4488ff';
             ctx.beginPath();
             ctx.arc(cx, cy, 8, 0, Math.PI * 2);
@@ -2256,7 +2237,7 @@ function animateTrailCards() {
         else if (t.id === 'rayo') {
             ctx.save();
             ctx.globalCompositeOperation = 'lighter';
-            ctx.shadowBlur = 18;
+            ctx.shadowBlur = 0;
             ctx.shadowColor = '#9fd2ff';
             for (let i = 0; i < 4; i++) {
                 const y = cy - 16 + i * 10;
@@ -2274,7 +2255,7 @@ function animateTrailCards() {
                 ctx.stroke();
             }
             ctx.restore();
-            ctx.shadowBlur = 18;
+            ctx.shadowBlur = 0;
             ctx.shadowColor = '#4488ff';
             ctx.beginPath();
             ctx.arc(cx, cy, 8, 0, Math.PI * 2);
@@ -2329,7 +2310,7 @@ function animateTrailCards() {
                 ctx.lineWidth = 3;
                 ctx.stroke();
             }
-            ctx.shadowBlur = 16;
+            ctx.shadowBlur = 0;
             ctx.shadowColor = `hsl(${hue},100%,60%)`;
             ctx.beginPath();
             ctx.arc(cx, cy, 9, 0, Math.PI * 2);
@@ -2502,7 +2483,7 @@ function showTrailPreview() {
         }
 
         // Bolita con el color real elegido
-        pctx.shadowBlur = 14;
+        pctx.shadowBlur = 0;
         pctx.shadowColor = getTrailSolidColor(color);
         pctx.beginPath();
         pctx.arc(px, 40, 8, 0, Math.PI * 2);
@@ -3162,7 +3143,7 @@ function claimDailyGift(day) {
         () => addCurrency(80, 'coins'),
         () => addCurrency(2, 'gems'),
         () => localStorage.setItem('emote_daily_01', 'true'),
-        () => { const k = 'invChest_special'; localStorage.setItem(k, parseInt(localStorage.getItem(k) || '0') + 1); }
+        () => { const k = 'invChest_special'; localStorage.setItem(k, parseInt(localStorage.getItem(k) || '0') + 1); },
     ];
     rewards[(day - 1) % rewards.length]();
     localStorage.setItem(key, 'true');

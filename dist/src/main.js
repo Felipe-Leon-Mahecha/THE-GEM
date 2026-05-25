@@ -1,3 +1,18 @@
+function preloadLevelImages(lvl) {
+    const config = window.getLevelConfig?.(lvl);
+    if (!config?.assets) return;
+    Object.values(config.assets).forEach(src => {
+        if (typeof src === 'string' && src.endsWith('.png')) {
+            const img = new Image();
+            img.src = src;
+        }
+    });
+}
+// Precarga todos los niveles al iniciar
+setTimeout(() => {
+    for (let i = 1; i <= 10; i++) preloadLevelImages(i);
+}, 1000);
+
 let gameTimerInterval = null;
 window.currentLevel = 0;
 const LEVEL_WIN_TIME = 133; // 2:13.3 en segundos
@@ -58,7 +73,7 @@ window.currentLevelMusicSrc = bgMusic.src;
 
 //aqui agrega canciones nuevas para el menu
 const cancionesMenu = [
-    'assets/Musica/Chrome Lullaby (MENU).mp3',
+    'assets/Musica/Nebula Rift (MENU).mp3',
     'assets/Musica/Chrome Lullaby 2 (MENU).mp3'
 ];
 
@@ -205,8 +220,8 @@ function buildStaticCanvas(lvl = window.level || 1) {
     }
 
     // PANELS
-    for (let i = 0; i < 44; i++) {
-        let a = (Math.PI * 2 / 44) * i;
+    for (let i = 0; i < 0; i++) {
+        let a = (Math.PI * 2 / 0) * i;
         offCtx.beginPath();
         offCtx.moveTo(Math.cos(a) * (window.BASE_RADIUS + 10), Math.sin(a) * (window.BASE_RADIUS + 10));
         offCtx.lineTo(Math.cos(a) * (window.DOME_RADIUS - 10), Math.sin(a) * (window.DOME_RADIUS - 10));
@@ -249,19 +264,66 @@ function buildStaticCanvas(lvl = window.level || 1) {
     offCtx.restore();
 }
 
+function isTouchLayout() {
+    const viewport = window.visualViewport;
+    const width = viewport?.width || window.innerWidth || document.documentElement.clientWidth || screen.width;
+    const height = viewport?.height || window.innerHeight || document.documentElement.clientHeight || screen.height;
+    const phoneSizedViewport = Math.min(width, height) <= 600 && Math.max(width, height) <= 950;
+    return window.matchMedia?.("(hover: none) and (pointer: coarse)").matches ||
+        (("ontouchstart" in window) && Math.min(screen.width, screen.height) <= 900) ||
+        phoneSizedViewport;
+}
+
+function getViewportSize() {
+    const viewport = window.visualViewport;
+    return {
+        width: Math.max(1, Math.round(viewport?.width || window.innerWidth || document.documentElement.clientWidth || 1)),
+        height: Math.max(1, Math.round(viewport?.height || window.innerHeight || document.documentElement.clientHeight || 1))
+    };
+}
+
+function syncPlayfieldSize(width, height, compact) {
+    if (!compact) {
+        window.BASE_RADIUS = 150;
+        window.DOME_RADIUS = 300;
+    } else {
+        const shortestSide = Math.min(width, height);
+        const dome = Math.max(135, Math.min(270, shortestSide * 0.37));
+        window.DOME_RADIUS = dome;
+        window.BASE_RADIUS = dome * 0.5;
+    }
+    window.MAX_OFFSET = Math.max(30, window.DOME_RADIUS - window.BASE_RADIUS - 30);
+    if (window.offset > window.MAX_OFFSET) window.offset = window.MAX_OFFSET;
+}
+
 function resize() {
     if (!window.canvas) return;
+    const touchLayout = isTouchLayout();
+    const { width, height } = getViewportSize();
+    document.body.classList.toggle("is-touch-device", touchLayout);
+    syncPlayfieldSize(width, height, touchLayout);
 
-    window.canvas.width = innerWidth;
-
-    window.canvas.height = innerHeight;
-
+    if (touchLayout) {
+        window.canvas.width = width;
+        window.canvas.height = height;
+        window.canvas.style.width = width + "px";
+        window.canvas.style.height = height + "px";
+        window.canvas.style.position = "fixed";
+        window.canvas.style.left = "0";
+        window.canvas.style.top = "0";
+        window.canvas.style.transform = "none";
+    } else {
+        window.canvas.width = innerWidth;
+        window.canvas.height = innerHeight;
+        window.canvas.style.width = '';
+        window.canvas.style.height = '';
+        window.canvas.style.position = '';
+        window.canvas.style.left = '';
+        window.canvas.style.top = '';
+        window.canvas.style.transform = '';
+    }
     if (typeof buildStaticCanvas === "function") {
-
-        buildStaticCanvas(
-            window.level || 1
-        );
-
+        buildStaticCanvas(window.level || 1);
     }
 }
 
@@ -269,6 +331,8 @@ addEventListener(
     "resize",
     resize
 );
+
+window.visualViewport?.addEventListener("resize", resize);
 
 setTimeout(() => {
 
@@ -342,6 +406,8 @@ window.playerFacing = "right";
 // RADIOS
 // =====================================================
 
+const isMobileDevice = isTouchLayout();
+document.body.classList.toggle("is-touch-device", isMobileDevice);
 window.BASE_RADIUS = 150;
 window.DOME_RADIUS = 300;
 window.MAX_OFFSET = window.DOME_RADIUS - window.BASE_RADIUS - 30;
@@ -647,7 +713,7 @@ function spawnIceLaser() {
     const baseAngle = window.angle - window.worldRotation + Math.PI * (0.45 + Math.random() * 0.9);
     const warningDuration = variant.warningDuration || cfg.warningDuration || 95;
     const outer = variant.outer ?? 0.94;
-    const inner = variant.inner ?? 0.08;
+    const inner = variant.inner ?? 0.35;
     const angularSpan = variant.angularSpan || cfg.angularSpan || 0.28;
     const type = variant.type || "radial";
     const laser = {
@@ -802,6 +868,7 @@ function distanceToSegment(px, py, x1, y1, x2, y2) {
 // =====================================================
 
 function draw() {
+    if (!window.running && canvas.style.visibility === "hidden") return;
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     const levelConfig = window.getCurrentLevelConfig ? window.getCurrentLevelConfig() : { assets: {} };
     const levelAssets = levelConfig.assets || {};
@@ -899,11 +966,12 @@ function draw() {
     // 9) HUD
     if (!window.running) return;
     drawAbilityIntro();
-    const hudX = 20;
-    const hudY = canvas.height * 0.08;
-    const hudW = 240;
-    const hudH = 125;
-    const hudPad = 14;
+    const compactHud = isTouchLayout() && Math.min(canvas.width, canvas.height) < 520;
+    const hudX = compactHud ? 10 : 20;
+    const hudY = Math.max(compactHud ? 10 : 18, canvas.height * (compactHud ? 0.035 : 0.08));
+    const hudW = compactHud ? 178 : 240;
+    const hudH = compactHud ? 94 : 125;
+    const hudPad = compactHud ? 10 : 14;
     ctx.save();
     ctx.fillStyle = "rgba(0,0,0,0.45)";
     ctx.beginPath();
@@ -912,19 +980,21 @@ function draw() {
     ctx.strokeStyle = "rgba(255,255,255,0.08)";
     ctx.lineWidth = 1;
     ctx.stroke();
-    const iconSize = 36;
+    const iconSize = compactHud ? 25 : 36;
     const textOffset = iconSize * 0.78;
     ctx.drawImage(heartImg, hudX + hudPad, hudY + hudPad, iconSize, iconSize);
     ctx.fillStyle = "rgba(255,255,255,0.9)";
-    ctx.font = "bold 20px Geom, monospace";
+    ctx.font = `bold ${compactHud ? 15 : 20}px Geom, monospace`;
     ctx.fillText(window.lives, hudX + hudPad + iconSize + 10, hudY + hudPad + textOffset);
-    ctx.drawImage(skullCoinImg, hudX + hudPad, hudY + hudPad + 50, iconSize + 8, iconSize + 8);
-    ctx.font = "bold 20px Geom, monospace";
-    ctx.fillText(playerData.deadCoins, hudX + hudPad + iconSize + 18, hudY + hudPad + 50 + textOffset);
-    ctx.drawImage(rubyImg, hudX + hudPad + 128, hudY + hudPad + 52, iconSize, iconSize);
-    ctx.fillText(playerData.gems, hudX + hudPad + 128 + iconSize + 10, hudY + hudPad + 50 + textOffset);
+    const row2Y = hudY + hudPad + (compactHud ? 38 : 50);
+    ctx.drawImage(skullCoinImg, hudX + hudPad, row2Y, iconSize + (compactHud ? 5 : 8), iconSize + (compactHud ? 5 : 8));
+    ctx.font = `bold ${compactHud ? 15 : 20}px Geom, monospace`;
+    ctx.fillText(playerData.deadCoins, hudX + hudPad + iconSize + (compactHud ? 13 : 18), row2Y + textOffset);
+    const rubyX = hudX + hudPad + (compactHud ? 92 : 128);
+    ctx.drawImage(rubyImg, rubyX, row2Y + (compactHud ? 1 : 2), iconSize, iconSize);
+    ctx.fillText(playerData.gems, rubyX + iconSize + (compactHud ? 7 : 10), row2Y + textOffset);
     ctx.fillStyle = "rgba(255,255,255,0.5)";
-    ctx.font = "13px Geom, monospace";
+    ctx.font = `${compactHud ? 10 : 13}px Geom, monospace`;
     ctx.fillText("NIVEL " + window.level, hudX + hudPad, hudY + hudH - 10);
     ctx.restore();
 }
@@ -1047,10 +1117,18 @@ function drawIceLasers(cx, cy) {
             } else {
                 ctx.strokeStyle = `rgba(160,230,255,${0.18 + warningProgress * 0.36})`;
                 ctx.lineWidth = Math.max(2, laser.thickness * 0.35);
-                ctx.setLineDash([8, 12]);
+                ctx.setLineDash([]);
+                const innerR = laserRadius(laser.inner);
+                const outerR = laserRadius(laser.outer);
+                const halfW = laser.angularSpan / 2;
                 ctx.beginPath();
-                ctx.moveTo(p.sx, p.sy);
-                ctx.lineTo(p.ex, p.ey);
+                ctx.arc(cx, cy, outerR, laser.angle + window.worldRotation - halfW, laser.angle + window.worldRotation + halfW);
+                ctx.arc(cx, cy, innerR, laser.angle + window.worldRotation + halfW, laser.angle + window.worldRotation - halfW, true);
+                ctx.closePath();
+                ctx.fillStyle = `rgba(255,60,90,${0.12 + warningProgress * 0.28})`;
+                ctx.fill();
+                ctx.strokeStyle = `rgba(255,60,90,${0.5 + warningProgress * 0.4})`;
+                ctx.lineWidth = 2;
                 ctx.stroke();
             }
         } else {
@@ -1119,8 +1197,10 @@ function drawLaserEmitter(x, y, angle, progress, laser) {
 // =====================================================
 
 function loop() {
-    update();
-    draw();
+    if (window.running || window.paused || canvas.style.visibility !== "hidden") {
+        update();
+        draw();
+    }
     requestAnimationFrame(loop);
 }
 
@@ -1148,7 +1228,7 @@ window.startGame = function (levelIndex = 0, skipStartSound = false) {
 
     document.getElementById("gameCanvas").style.visibility = "visible";
     document.getElementById('pause-btn').classList.add('is-playing');
-    document.body.classList.add('is-playing-touch');
+    document.body.classList.toggle('is-playing-touch', isTouchLayout());
 
     if (!skipStartSound) window.playSfx?.('startGame', 0.9);
     window.menuMusic.pause();
@@ -1199,6 +1279,7 @@ window.startGame = function (levelIndex = 0, skipStartSound = false) {
 
     window.currentLevel = levelIndex;   // nivel 0 → level=1, nivel 1 → level=2, etc.
 
+    resize();
     if (typeof resetTrail === "function") resetTrail();
     buildStaticCanvas(levelIndex + 1);
 
@@ -1316,7 +1397,7 @@ window.revivePlayer = function (currency) {
     document.getElementById('gameOver').style.display = 'none';
     document.getElementById("gameCanvas").style.visibility = "visible";
     document.getElementById('pause-btn').classList.add('is-playing');
-    document.body.classList.add('is-playing-touch');
+    document.body.classList.toggle('is-playing-touch', isTouchLayout());
     window.lives = 1;
     window.invulnerable = true;
     window.invulnerableTimer = 150;
@@ -1497,4 +1578,18 @@ addEventListener("keydown", e => {
 addEventListener("keyup", e => {
     if (e.key === "a" || e.key === "A" || e.key === "ArrowLeft") window.keys.left = false;
     if (e.key === "d" || e.key === "D" || e.key === "ArrowRight") window.keys.right = false;
+});
+
+document.addEventListener('visibilitychange', () => {
+    if (document.hidden) {
+        window.bgMusic?.pause();
+        window.menuMusic?.pause();
+    } else {
+        if (window.running && !window.paused && !window.isMuted) {
+            window.bgMusic?.play();
+        }
+        if (!window.running && !window.isMuted) {
+            window.menuMusic?.play().catch(() => { });
+        }
+    }
 });
