@@ -251,17 +251,32 @@ function buildStaticCanvas(lvl = window.level || 1) {
 
 function resize() {
     if (!window.canvas) return;
-
-    window.canvas.width = innerWidth;
-
-    window.canvas.height = innerHeight;
-
-    if (typeof buildStaticCanvas === "function") {
-
-        buildStaticCanvas(
-            window.level || 1
+    const isMobile = ('ontouchstart' in window);
+    if (isMobile) {
+        const scale = Math.min(
+            window.innerWidth / 900,
+            window.innerHeight / 600
         );
-
+        window.canvas.width = 900;
+        window.canvas.height = 600;
+        window.canvas.style.width = (900 * scale) + 'px';
+        window.canvas.style.height = (600 * scale) + 'px';
+        window.canvas.style.position = 'absolute';
+        window.canvas.style.left = '50%';
+        window.canvas.style.top = '50%';
+        window.canvas.style.transform = 'translate(-50%, -50%)';
+    } else {
+        window.canvas.width = innerWidth;
+        window.canvas.height = innerHeight;
+        window.canvas.style.width = '';
+        window.canvas.style.height = '';
+        window.canvas.style.position = '';
+        window.canvas.style.left = '';
+        window.canvas.style.top = '';
+        window.canvas.style.transform = '';
+    }
+    if (typeof buildStaticCanvas === "function") {
+        buildStaticCanvas(window.level || 1);
     }
 }
 
@@ -342,8 +357,9 @@ window.playerFacing = "right";
 // RADIOS
 // =====================================================
 
-window.BASE_RADIUS = 150;
-window.DOME_RADIUS = 300;
+const isMobileDevice = ('ontouchstart' in window);
+window.BASE_RADIUS = isMobileDevice ? 90 : 150;
+window.DOME_RADIUS = isMobileDevice ? 180 : 300;
 window.MAX_OFFSET = window.DOME_RADIUS - window.BASE_RADIUS - 30;
 
 // =====================================================
