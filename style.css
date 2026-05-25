@@ -3671,6 +3671,249 @@ PLAY BUTTON
     }
 }
 
+/* Touch layout fixes */
+.ruby-pass-lane-premium {
+    z-index: 1;
+}
+
+.ruby-pass-lane-free {
+    z-index: 2;
+}
+
+.ruby-pass-current-point {
+    z-index: 5;
+}
+
+.ruby-pass-track-free {
+    opacity: 1;
+    filter: drop-shadow(0 0 18px rgba(0, 255, 231, 0.2));
+}
+
+body.is-touch-device #shopPanel {
+    transform: none !important;
+    width: 100% !important;
+    height: 100% !important;
+}
+
+body.is-touch-device #shopPanel>div[style*="width:220px"],
+body.is-touch-device #shopPanel>div[style*="width: 220px"] {
+    width: min(220px, 30vw) !important;
+    min-width: min(220px, 30vw) !important;
+    height: 100dvh !important;
+    min-height: 0 !important;
+    overflow-y: auto !important;
+    overscroll-behavior: contain;
+    padding-bottom: calc(14px + env(safe-area-inset-bottom)) !important;
+}
+
+body.is-touch-device #shopPanel>div[style*="width:220px"]>div:last-child,
+body.is-touch-device #shopPanel>div[style*="width: 220px"]>div:last-child {
+    position: sticky;
+    bottom: 0;
+    background: rgba(10, 10, 15, 0.96);
+}
+
+body.is-touch-device .shop-modal-card {
+    max-height: calc(100dvh - 28px);
+    overflow-y: auto;
+}
+
+.chest-quantity-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(96px, 1fr));
+    gap: 10px;
+}
+
+.chest-quantity-grid button {
+    height: 38px;
+    border: 1px solid rgba(255, 238, 0, 0.42);
+    border-radius: 8px;
+    background: rgba(255, 238, 0, 0.09);
+    color: #ffee00;
+    font: 800 11px/1 monospace;
+    letter-spacing: 1px;
+    cursor: pointer;
+}
+
+body.is-touch-device #levelSelect {
+    transform: none !important;
+    width: 100% !important;
+    height: 100% !important;
+}
+
+body.is-touch-device .ls-header {
+    top: calc(12px + env(safe-area-inset-top));
+    width: calc(100% - 48px);
+}
+
+body.is-touch-device .ls-small {
+    font-size: 9px;
+    letter-spacing: 3px;
+}
+
+body.is-touch-device .ls-title {
+    font-size: clamp(25px, 5.2vw, 44px);
+    letter-spacing: 4px;
+    line-height: 1;
+}
+
+body.is-touch-device .ls-player-bar {
+    top: calc(12px + env(safe-area-inset-top));
+    right: calc(18px + env(safe-area-inset-right));
+    padding: 8px 12px;
+    gap: 10px;
+}
+
+body.is-touch-device .ls-back-btn {
+    top: calc(74px + env(safe-area-inset-top));
+    right: calc(18px + env(safe-area-inset-right));
+}
+
+body.is-touch-device .ls-banner-wrap {
+    top: 92px;
+    opacity: 0.7;
+}
+
+body.is-touch-device #bannerCanvas {
+    width: min(760px, 62vw);
+    height: 42px;
+}
+
+body.is-touch-device .ls-nav-btn {
+    top: 58%;
+    width: clamp(50px, 7vw, 64px);
+    height: clamp(50px, 7vw, 64px);
+}
+
+body.is-touch-device .ls-footer {
+    left: 0;
+    right: 0;
+    bottom: calc(18px + env(safe-area-inset-bottom));
+    width: 100%;
+    transform: none;
+    pointer-events: none;
+}
+
+body.is-touch-device .ls-system-bar {
+    left: calc(18px + env(safe-area-inset-left));
+    bottom: 0;
+    width: min(360px, 42vw);
+    pointer-events: auto;
+}
+
+body.is-touch-device .ls-play-btn {
+    right: calc(86px + env(safe-area-inset-right));
+    bottom: 0;
+    width: min(250px, 25vw);
+    min-width: 176px;
+    height: 58px;
+    pointer-events: auto;
+}
+
+body.is-touch-device .ruby-pass-stage {
+    height: calc(100dvh - 76px);
+}
+
+body.is-touch-device .ruby-pass-arc-window {
+    left: 0 !important;
+    right: 0 !important;
+    top: 86px !important;
+    bottom: 86px !important;
+    overflow: hidden;
+}
+
+body.is-touch-device .ruby-pass-gear-shell {
+    top: calc(100% + min(11vw, 92px)) !important;
+    width: min(1180px, 128vw, 245vh) !important;
+    height: min(1180px, 128vw, 245vh) !important;
+}
+
+body.is-touch-device .ruby-pass-lane-free {
+    z-index: 2;
+}
+
+body.is-touch-device .ruby-pass-lane-premium {
+    z-index: 1;
+}
+
+body.is-touch-device .ruby-pass-track-free {
+    width: 61% !important;
+    height: 61% !important;
+    opacity: 1;
+    filter: drop-shadow(0 0 18px rgba(0, 255, 231, 0.22));
+}
+
+body.is-touch-device .ruby-pass-track-premium {
+    opacity: 0.86;
+}
+
+body.is-touch-device .ruby-pass-node-premium {
+    transform: rotate(var(--node-angle)) translateX(min(560px, 47vw, 66vh));
+}
+
+body.is-touch-device .ruby-pass-node-free {
+    transform: rotate(var(--node-angle)) translateX(min(390px, 33vw, 48vh));
+}
+
+body.is-touch-device .ruby-pass-focus {
+    left: 50% !important;
+    right: auto !important;
+    top: auto !important;
+    bottom: calc(12px + env(safe-area-inset-bottom)) !important;
+    width: min(560px, 42vw) !important;
+    min-width: 300px;
+    transform: translateX(-50%) !important;
+    grid-template-columns: 1fr;
+    gap: 8px !important;
+    padding: 0 !important;
+    background: transparent !important;
+    border: 0 !important;
+    box-shadow: none !important;
+    backdrop-filter: none !important;
+}
+
+body.is-touch-device .ruby-pass-focus h3 {
+    font-size: 24px !important;
+}
+
+body.is-touch-device .ruby-pass-buy,
+body.is-touch-device .ruby-pass-dev {
+    height: 34px;
+}
+
+@media (orientation: landscape) {
+    body.is-touch-device .ruby-pass-arc-window {
+        right: min(300px, 36vw) !important;
+        top: 72px !important;
+        bottom: 0 !important;
+    }
+
+    body.is-touch-device .ruby-pass-gear-shell {
+        top: calc(100% + min(8vw, 70px)) !important;
+        width: min(1180px, 150vw, 245vh) !important;
+        height: min(1180px, 150vw, 245vh) !important;
+    }
+
+    body.is-touch-device .ruby-pass-focus {
+        left: auto !important;
+        right: calc(14px + env(safe-area-inset-right)) !important;
+        top: 132px !important;
+        bottom: auto !important;
+        width: min(268px, 31vw) !important;
+        min-width: 230px;
+        transform: none !important;
+    }
+
+    body.is-touch-device .ruby-pass-focus h3 {
+        font-size: 22px !important;
+    }
+
+    body.is-touch-device .ruby-pass-focus p,
+    body.is-touch-device .ruby-pass-kicker {
+        font-size: 10px !important;
+    }
+}
+
 @media (max-width: 900px) {
 
     /* Tienda sidebar scroll */

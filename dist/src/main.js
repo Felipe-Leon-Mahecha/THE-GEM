@@ -1532,7 +1532,7 @@ function maybeAwardLevelChest() {
             <img src="${chest.image}" alt="">
             <div>GANASTE ${chest.name.toUpperCase()}</div>
             <button onclick="openWonChest()">ABRIR</button>
-            <button onclick="storeWonChest()">OK</button>
+            <button onclick="storeWonChest()">CERRAR</button>
         </div>
     `;
     window.playSfx?.('reward', 0.9);
@@ -1548,8 +1548,12 @@ window.openWonChest = function () {
 
 window.storeWonChest = function () {
     if (!window.pendingWinChest) return;
-    const key = 'invChest_' + window.pendingWinChest.id;
-    localStorage.setItem(key, String(parseInt(localStorage.getItem(key) || '0') + 1));
+    if (typeof window.storeChestInInventory === 'function') {
+        window.storeChestInInventory(window.pendingWinChest.id, 1);
+    } else {
+        const key = 'invChest_' + window.pendingWinChest.id;
+        localStorage.setItem(key, String(parseInt(localStorage.getItem(key) || '0') + 1));
+    }
     window.pendingWinChest = null;
     const box = document.getElementById('win-chest-box');
     if (box) box.innerHTML = '';

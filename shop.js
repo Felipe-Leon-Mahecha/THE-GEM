@@ -1267,12 +1267,19 @@ function showShopModal(options = {}) {
             <div class="shop-modal-media">${imageHTML}</div>
             <div class="shop-modal-body">${options.body || ''}</div>
             <div class="shop-modal-actions">
-                ${options.cancelText === null ? '' : `<button class="shop-modal-btn secondary" onclick="closeShopModal()" type="button">${options.cancelText || 'CERRAR'}</button>`}
+                ${options.cancelText === null ? '' : `<button class="shop-modal-btn secondary" id="shop-modal-cancel" type="button">${options.cancelText || 'CERRAR'}</button>`}
                 ${options.confirmText ? `<button class="shop-modal-btn primary" id="shop-modal-confirm" type="button">${options.confirmText}</button>` : ''}
             </div>
         </div>
     `;
     modal.classList.add('showing');
+    const cancel = document.getElementById('shop-modal-cancel');
+    if (cancel) {
+        cancel.onclick = () => {
+            closeShopModal();
+            options.onCancel?.();
+        };
+    }
     const confirm = document.getElementById('shop-modal-confirm');
     if (confirm) {
         confirm.onclick = () => {
@@ -1328,7 +1335,7 @@ function buyChest(id) {
     showChestResult(chest);
 }
 
-function showChestResult(chest) {
+function openChestReward(chest) {
     const coins = rand(chest.base.coins[0], chest.base.coins[1]);
     const gems = rand(chest.base.gems[0], chest.base.gems[1]);
     addCurrency(coins, 'coins');
@@ -1338,7 +1345,11 @@ function showChestResult(chest) {
     localStorage.setItem(key, parseInt(localStorage.getItem(key) || '0') + 1);
     updateMenuHUD();
     refreshShopBalances();
+    return { coins, gems, drop };
+}
 
+function showChestResult(chest) {
+    const { coins, gems, drop } = openChestReward(chest);
     const rewardView = getChestRewardView(drop, coins, gems);
     window.playSfx?.('reward');
     showShopModal({
@@ -1352,6 +1363,42 @@ function showChestResult(chest) {
     });
 }
 window.showChestResult = showChestResult;
+
+function storeChestInInventory(id, amount = 1) {
+    if (!id || amount <= 0) return;
+    const key = 'invChest_' + id;
+    localStorage.setItem(key, String(parseInt(localStorage.getItem(key) || '0') + amount));
+}
+window.storeChestInInventory = storeChestInInventory;
+
+function getChestFromReward(reward) {
+    if (!reward || reward.type !== 'chest') return null;
+    if (reward.chestId) return CHESTS_DATA.find(chest => chest.id === reward.chestId);
+    const image = (reward.image || '').toLowerCase();
+    return CHESTS_DATA.find(chest => !chest.upgradeable && (
+        image.includes(chest.id.toLowerCase()) ||
+        image.includes(chest.name.toLowerCase().replace('cofre ', '')) ||
+        image === (chest.image || '').toLowerCase()
+    )) || CHESTS_DATA.find(chest => chest.id === 'basic');
+}
+
+function showChestClaimOptions(chest, sourceLabel = 'COFRE') {
+    if (!chest) return;
+    showShopModal({
+        kicker: sourceLabel,
+        title: chest.name,
+        image: chest.image,
+        body: 'Quieres abrirlo ahora o guardarlo para abrirlo despues desde Inventario?',
+        cancelText: 'GUARDAR',
+        confirmText: 'ABRIR',
+        onConfirm: () => showChestResult(chest),
+        onCancel: () => {
+            storeChestInInventory(chest.id, 1);
+            showRubyPassToast?.('COFRE GUARDADO');
+        }
+    });
+}
+window.showChestClaimOptions = showChestClaimOptions;
 
 function getChestRewardView(drop, coins, gems) {
     const lower = drop.toLowerCase();
@@ -2015,10 +2062,52 @@ function openInventoryChest(id) {
     if (count <= 0) return;
     const chest = CHESTS_DATA.find(c => c.id === id);
     if (!chest) return;
-    localStorage.setItem('invChest_' + id, String(count - 1));
-    showChestResult(chest);
-    showInventorySection('cofres');
+    const options = [1, 2, 5, count].filter((value, index, arr) => value <= count && arr.indexOf(value) === index);
+    showShopModal({
+        kicker: 'INVENTARIO',
+        title: `${chest.name} x${count}`,
+        image: chest.image,
+        body: `
+            <div class="chest-quantity-grid">
+                ${options.map(value => `<button type="button" onclick="openInventoryChestAmount('${id}', ${value})">ABRIR ${value}</button>`).join('')}
+            </div>
+        `,
+        cancelText: 'CERRAR',
+        confirmText: null
+    });
 }
+
+function openInventoryChestAmount(id, amount) {
+    const chest = CHESTS_DATA.find(c => c.id === id);
+    const count = parseInt(localStorage.getItem('invChest_' + id) || '0');
+    const total = Math.max(1, Math.min(amount, count));
+    if (!chest || total <= 0) return;
+
+    localStorage.setItem('invChest_' + id, String(count - total));
+    const summary = { coins: 0, gems: 0, drops: {} };
+    for (let i = 0; i < total; i++) {
+        const result = openChestReward(chest);
+        summary.coins += result.coins;
+        summary.gems += result.gems;
+        summary.drops[result.drop] = (summary.drops[result.drop] || 0) + 1;
+    }
+    window.playSfx?.('reward');
+    showInventorySection('cofres');
+    showShopModal({
+        kicker: `${total} COFRE${total > 1 ? 'S' : ''} ABIERTO${total > 1 ? 'S' : ''}`,
+        title: chest.name,
+        image: chest.openImage || chest.image,
+        body: `
+            <div class="chest-open-result">
+                <div>Base: ${summary.coins} monedas + ${summary.gems} rubies</div>
+                <div>${Object.entries(summary.drops).map(([drop, qty]) => `${drop} x${qty}`).join('<br>')}</div>
+            </div>
+        `,
+        cancelText: null,
+        confirmText: 'CERRAR'
+    });
+}
+window.openInventoryChestAmount = openInventoryChestAmount;
 
 // =====================================================
 // TRAILS DATA
@@ -2783,7 +2872,11 @@ function claimRubyPassReward(lane, level, rewardType) {
     window.playSfx?.('passReward', 0.9);
     if (rewardData?.type === 'coins') addCurrency(50, 'coins');
     if (rewardData?.type === 'rubies') addCurrency(3, 'gems');
-    showRubyPassRewardModal(lane, level, rewardData || { type: rewardType });
+    if (rewardData?.type === 'chest') {
+        showChestClaimOptions(getChestFromReward(rewardData), `${lane === 'premium' ? 'PREMIUM' : 'FREE'} NIVEL ${level}`);
+    } else {
+        showRubyPassRewardModal(lane, level, rewardData || { type: rewardType });
+    }
     const el = document.querySelector(`[data-ruby-claim="${lane}_${level}"]`);
     if (el) {
         el.classList.add('is-claiming', 'is-claimed');

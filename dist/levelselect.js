@@ -350,12 +350,13 @@ function drawCarousel() {
     ctx2.fillStyle = bgGrad;
     ctx2.fillRect(0, 0, W, H);
 
-    const cardW = 320;
-    const cardH = 420;
-    const spacing = 420;
+    const compact = document.body.classList.contains('is-touch-device') && window.innerWidth > window.innerHeight;
+    const cardW = compact ? 250 : 320;
+    const cardH = compact ? 315 : 420;
+    const spacing = compact ? 315 : 420;
 
     const centerX = W / 2;
-    const centerY = H / 2 + 70;
+    const centerY = compact ? H * 0.58 : H / 2 + 70;
 
     carouselX += (carouselTarget - carouselX) * 0.12;
 
