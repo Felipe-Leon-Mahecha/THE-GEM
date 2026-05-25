@@ -3616,3 +3616,30 @@ PLAY BUTTON
         overflow: hidden;
     }
 }
+
+@media (max-width: 900px) {
+    html {
+        font-size: 12px;
+    }
+
+    #levelSelect {
+        transform: scale(0.75);
+        transform-origin: top left;
+        width: 133.33%;
+        height: 133.33%;
+    }
+
+    #overlay {
+        transform: scale(0.75);
+        transform-origin: top left;
+        width: 133.33%;
+        height: 133.33%;
+    }
+
+    #shopPanel {
+        transform: scale(0.75);
+        transform-origin: top left;
+        width: 133.33%;
+        height: 133.33%;
+    }
+}
