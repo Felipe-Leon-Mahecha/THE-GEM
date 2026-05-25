@@ -58,7 +58,7 @@ window.currentLevelMusicSrc = bgMusic.src;
 
 //aqui agrega canciones nuevas para el menu
 const cancionesMenu = [
-    'assets/Musica/Chrome Lullaby (MENU).mp3',
+    'assets/Musica/Nebula Rift (MENU).mp3',
     'assets/Musica/Chrome Lullaby 2 (MENU).mp3'
 ];
 
