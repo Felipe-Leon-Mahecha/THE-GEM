@@ -254,11 +254,11 @@ function resize() {
     const isMobile = ('ontouchstart' in window);
     if (isMobile) {
         const scale = Math.min(
-            window.innerWidth / 900,
-            window.innerHeight / 600
+            window.innerWidth / 1280,
+            window.innerHeight / 720
         );
-        window.canvas.width = 900;
-        window.canvas.height = 600;
+        window.canvas.width = 1280;
+        window.canvas.height = 720;
         window.canvas.style.width = (900 * scale) + 'px';
         window.canvas.style.height = (600 * scale) + 'px';
         window.canvas.style.position = 'absolute';
@@ -358,8 +358,8 @@ window.playerFacing = "right";
 // =====================================================
 
 const isMobileDevice = ('ontouchstart' in window);
-window.BASE_RADIUS = isMobileDevice ? 90 : 150;
-window.DOME_RADIUS = isMobileDevice ? 180 : 300;
+window.BASE_RADIUS = isMobileDevice ? 75 : 150;
+window.DOME_RADIUS = isMobileDevice ? 150 : 300;
 window.MAX_OFFSET = window.DOME_RADIUS - window.BASE_RADIUS - 30;
 
 // =====================================================
