@@ -22,6 +22,24 @@
 
 <body>
 
+    <div id="loading-screen" style="
+    position:fixed; inset:0; z-index:99999;
+    background:#050505;
+    display:flex; flex-direction:column;
+    align-items:center; justify-content:center; gap:24px;
+">
+        <img src="assets/Imagenes/Logo/Logo_THE_GEM.png" style="width:120px; height:120px; object-fit:contain;">
+        <div style="color:rgba(255,255,255,0.5); font-family:monospace; font-size:13px; letter-spacing:6px;">LOADING...
+        </div>
+        <div style="width:280px; height:6px; background:rgba(255,255,255,0.08); border-radius:999px; overflow:hidden;">
+            <div id="loading-bar"
+                style="height:100%; width:0%; background:linear-gradient(90deg,#ff4d6d,#ff9ab0); border-radius:999px; transition:width 0.3s ease;">
+            </div>
+        </div>
+        <div id="loading-percent" style="color:#ff4d6d; font-family:monospace; font-size:12px; letter-spacing:3px;">0%
+        </div>
+    </div>
+
     <h1>THE GEM</h1>
 
     <canvas id="gameCanvas"></canvas>
@@ -722,6 +740,27 @@
     <script src="shop.js"></script>
     <script src="obstacles.js"></script>
     <script src="particles.js"></script>
+
+    <script>
+        let prog = 0;
+        const bar = document.getElementById('loading-bar');
+        const pct = document.getElementById('loading-percent');
+        const iv = setInterval(() => {
+            prog = Math.min(prog + Math.random() * 12, 90);
+            bar.style.width = prog + '%';
+            pct.textContent = Math.floor(prog) + '%';
+        }, 200);
+        window.addEventListener('load', () => {
+            clearInterval(iv);
+            bar.style.width = '100%';
+            pct.textContent = '100%';
+            setTimeout(() => {
+                document.getElementById('loading-screen').style.opacity = '0';
+                document.getElementById('loading-screen').style.transition = 'opacity 0.5s';
+                setTimeout(() => document.getElementById('loading-screen').remove(), 500);
+            }, 300);
+        });
+    </script>
 
 </body>
 
