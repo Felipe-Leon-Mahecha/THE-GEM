@@ -3603,3 +3603,16 @@ PLAY BUTTON
         grid-template-columns: 70px 1fr;
     }
 }
+
+@media (max-width: 600px) and (orientation: portrait) {
+    body {
+        transform: rotate(90deg);
+        transform-origin: left top;
+        width: 100vh;
+        height: 100vw;
+        position: fixed;
+        top: 0;
+        left: 100%;
+        overflow: hidden;
+    }
+}
