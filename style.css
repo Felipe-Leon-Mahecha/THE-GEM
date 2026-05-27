@@ -1466,6 +1466,14 @@ body.is-touch-device .active-emote-bubble {
     padding: 10px;
 }
 
+.shop-modal-media.vip-panel-wide {
+    width: min(760px, calc(100vw - 64px));
+    height: auto;
+    max-height: min(62vh, 560px);
+    padding: 12px;
+    overflow: auto;
+}
+
 .shop-modal-media img {
     width: 100%;
     height: 100%;
@@ -1543,7 +1551,8 @@ body.is-touch-device .active-emote-bubble {
 .reward-currency-pile img {
     width: 100%;
     height: 78px;
-    object-fit: contain;
+    object-fit: cover;
+    border-radius: 8px;
 }
 
 .reward-currency-pile strong {
@@ -4170,6 +4179,68 @@ body.is-touch-device .ls-small {
 
 .vip-pack-poster {
     cursor: pointer;
+}
+
+.vip-panel-card {
+    border-color: rgba(255, 215, 0, 0.28);
+    background:
+        linear-gradient(145deg, rgba(255, 215, 0, 0.1), rgba(255, 77, 109, 0.06)),
+        rgba(0, 0, 0, 0.28);
+}
+
+.vip-panel-cover {
+    height: 150px;
+}
+
+.vip-panel-modal-grid {
+    width: 100%;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(145px, 1fr));
+    gap: 12px;
+}
+
+.vip-panel-modal-item {
+    min-height: 184px;
+    border-radius: 8px;
+    border: 1px solid rgba(255, 215, 0, 0.2);
+    background: rgba(0, 0, 0, 0.32);
+    display: grid;
+    place-items: center;
+    gap: 8px;
+    padding: 12px;
+}
+
+.vip-panel-modal-bundle {
+    grid-column: span 2;
+}
+
+.vip-panel-modal-item strong {
+    color: white;
+    font-size: 11px;
+    letter-spacing: 1px;
+    text-align: center;
+}
+
+.vip-panel-modal-item button {
+    width: 100%;
+    height: 34px;
+    border-radius: 8px;
+    border: 1px solid rgba(255, 238, 0, 0.38);
+    background: rgba(255, 238, 0, 0.08);
+    color: #ffee00;
+    font-family: monospace;
+    font-size: 10px;
+    cursor: pointer;
+}
+
+.vip-panel-modal-item button:disabled {
+    opacity: 0.5;
+    cursor: default;
+}
+
+.ruby-pass-reward img.ruby-pass-currency-img {
+    object-fit: cover;
+    border-radius: 50%;
 }
 
 body.is-touch-device .ls-title {

@@ -111,7 +111,8 @@ window.menuMusic.addEventListener('ended', () => {
 let ultimaCancion = -1;
 
 function reproducirAleatoria() {
-    if (window.isMuted) return;
+    const player = window.menuMusic;
+    if (window.isMuted || !player) return;
 
     let indice;
 
@@ -126,18 +127,14 @@ function reproducirAleatoria() {
 
     ultimaCancion = indice;
 
-    menuMusic.src = cancionesMenu[indice];
+    player.src = cancionesMenu[indice];
 
-    menuMusic.currentTime = 0;
+    player.currentTime = 0;
 
-    menuMusic.play().catch(() => { });
+    player.play().catch(() => { });
 }
 
 // cuando termina → otra
-menuMusic.onended = () => {
-    reproducirAleatoria();
-};
-
 window.ensureMenuMusic = function () {
     if (!window.menuMusic || window.isMuted || window.running) return;
     if (!window.menuMusic.src || window.menuMusic.ended) reproducirAleatoria();

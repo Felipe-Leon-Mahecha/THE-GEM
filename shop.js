@@ -48,16 +48,16 @@ const CURRENCY_ICONS = {
 
 const REWARD_CURRENCY_ASSETS = {
     gems: {
-        large: 'assets/UI/Rewards/Currency/Monton_de_gemas_grande.png',
-        medium: 'assets/UI/Rewards/Currency/Monton_de_gemas_Mediano.png',
-        small: 'assets/UI/Rewards/Currency/Monton_de_gemas_Pequeno.png',
-        single: 'assets/UI/Rewards/Currency/Monojo_de_gemas.png'
+        large: 'assets/UI/Rewards/Currency/Gems/Monton_de_gemas_grande.png',
+        medium: 'assets/UI/Rewards/Currency/Gems/Monton_de_gemas_Mediano.png',
+        small: 'assets/UI/Rewards/Currency/Gems/Monton_de_gemas_Pequeno.png',
+        single: 'assets/UI/Rewards/Currency/Gems/Monojo_de_gemas.png'
     },
     coins: {
-        large: 'assets/UI/Rewards/Currency/Monton_de_monedas_grande.png',
-        medium: 'assets/UI/Rewards/Currency/Monton_de_monedas_Mediano.png',
-        small: 'assets/UI/Rewards/Currency/Monton_de_monedas_Pequeno.png',
-        single: 'assets/UI/Rewards/Currency/Monojo_de_monedas.png'
+        large: 'assets/UI/Rewards/Currency/Coins/Monton_de_monedas_grande.png',
+        medium: 'assets/UI/Rewards/Currency/Coins/Monton_de_monedas_Mediano.png',
+        small: 'assets/UI/Rewards/Currency/Coins/Monton_de_monedas_Pequeno.png',
+        single: 'assets/UI/Rewards/Currency/Coins/Monojo_de_monedas.png'
     }
 };
 
@@ -598,65 +598,158 @@ const EMOTES_DATA = [
     { id: 'emote_ruby_pass_01', name: 'Ruby Pass', image: RUBY_PASS_ASSETS.premiumEmote01, rarity: 'VIP', vip: true, passOnly: true, rubyPassLane: 'premium', rubyPassLevel: 8, slot: 'SHOP_EMOTE_ASSET_SLOT_RUBY_PASS_01' },
 ];
 
+const VIP_ASSET_BASE = 'assets/UI/Store/VIP/Bundles';
+const VIP_ITEM_PRICE = 300;
+const VIP_PANEL_PRICE = 620;
+
+function vipSkin(folder, id, name, price = VIP_ITEM_PRICE) {
+    return { type: 'vipSkin', id, name, price, image: `${VIP_ASSET_BASE}/${folder}/${id}.png` };
+}
+
+function vipTrail(folder, id, name, price = 320) {
+    return { type: 'vipTrailPng', id, name, price, image: `${VIP_ASSET_BASE}/${folder}/${id}.png`, trailId: id };
+}
+
 const VIP_CAROUSEL_DATA = [
     {
-        id: 'royal_night',
-        title: 'Noche Real',
-        subtitle: 'Skins nocturnas y trail de corona',
-        price: 520,
-        cover: 'assets/UI/Store/VIP/CarouselPanels/panel_carousel_royal_night.png',
-        detailBackground: 'assets/UI/Store/VIP/Backgrounds/bg_carousel_royal_night.png',
-        popupBackground: 'assets/UI/Store/VIP/PopupBackgrounds/popup_carousel_royal_night.png',
+        id: 'la_realeza',
+        title: 'LA REALEZA',
+        subtitle: 'Corona, corte y poder real',
+        price: 3200,
+        cover: 'assets/UI/Store/VIP/CarouselPanels/panel_carousel_la_realeza.png',
+        detailBackground: 'assets/UI/Store/VIP/Backgrounds/bg_carousel_la_realeza.png',
+        popupBackground: 'assets/UI/Store/VIP/PopupBackgrounds/popup_carousel_la_realeza.png',
         items: [
-            { type: 'skin', name: 'Rey Sombra', image: 'assets/UI/Store/Skins/skin_rey_sombra.png' },
-            { type: 'skin', name: 'Dama Ruby', image: 'assets/UI/Store/Skins/skin_dama_ruby.png' },
-            { type: 'skin', name: 'Guardian Oro', image: 'assets/UI/Store/Skins/skin_guardian_oro.png' },
-            { type: 'trail', name: 'Corona Viva', image: 'assets/UI/Store/Trails/trail_corona_viva.png' }
+            {
+                type: 'vipPanel',
+                id: 'panel_los_reyes',
+                name: 'LOS REYES',
+                label: 'PANEL',
+                price: VIP_PANEL_PRICE,
+                image: 'assets/UI/Store/VIP/Bundles/Royal/panel_los_reyes.png',
+                popupBackground: 'assets/UI/Store/VIP/Bundles/Royal/popup_los_reyes_bg.png',
+                items: [
+                    vipSkin('Royal', 'skin_rey', 'Rey'),
+                    vipSkin('Royal', 'skin_reina', 'Reina')
+                ]
+            },
+            vipSkin('Royal', 'skin_caballero_bronce', 'Caballero Bronce'),
+            vipSkin('Royal', 'skin_caballero_plata', 'Caballero Plata'),
+            vipSkin('Royal', 'skin_caballero_dorado', 'Caballero Dorado', 340),
+            vipSkin('Royal', 'skin_bufon', 'Bufon'),
+            vipSkin('Royal', 'skin_emperador_oscuro', 'Emperador Oscuro', 380),
+            vipSkin('Royal', 'skin_principe_helado', 'Principe Helado', 340),
+            vipSkin('Royal', 'skin_mago', 'Mago'),
+            vipSkin('Royal', 'skin_arquera', 'Arquera'),
+            vipSkin('Royal', 'skin_noble', 'Noble')
         ]
     },
     {
-        id: 'void_lux',
-        title: 'Vacio Lux',
-        subtitle: 'Efectos premium de energia oscura',
-        price: 650,
-        cover: 'assets/UI/Store/VIP/CarouselPanels/panel_carousel_void_lux.png',
-        detailBackground: 'assets/UI/Store/VIP/Backgrounds/bg_carousel_void_lux.png',
-        popupBackground: 'assets/UI/Store/VIP/PopupBackgrounds/popup_carousel_void_lux.png',
+        id: 'mitologia_y_dioses',
+        title: 'MITOLOGIA Y DIOSES',
+        subtitle: 'Dioses, faraones y reliquias del Nilo',
+        price: 3600,
+        cover: 'assets/UI/Store/VIP/CarouselPanels/panel_carousel_mitologia_dioses.png',
+        detailBackground: 'assets/UI/Store/VIP/Backgrounds/bg_carousel_mitologia_dioses.png',
+        popupBackground: 'assets/UI/Store/VIP/PopupBackgrounds/popup_carousel_mitologia_dioses.png',
         items: [
-            { type: 'skin', name: 'Lux Void', image: 'assets/UI/Store/Skins/skin_lux_void.png' },
-            { type: 'skin', name: 'Oraculo', image: 'assets/UI/Store/Skins/skin_oraculo.png' },
-            { type: 'skin', name: 'Nucleo Negro', image: 'assets/UI/Store/Skins/skin_nucleo_negro.png' },
-            { type: 'trail', name: 'Vacio Lux', image: 'assets/UI/Store/Trails/trail_vacio_lux.png' }
+            {
+                type: 'vipPanel',
+                id: 'panel_dioses',
+                name: 'DIOSES',
+                label: 'PANEL',
+                price: 0,
+                image: 'assets/UI/Store/VIP/Bundles/Mythology/panel_dioses.png',
+                popupBackground: 'assets/UI/Store/VIP/Bundles/Mythology/popup_dioses_bg.png',
+                items: [
+                    vipSkin('Mythology', 'skin_zeus', 'Zeus', 380),
+                    vipSkin('Mythology', 'skin_hades', 'Hades', 380),
+                    vipSkin('Mythology', 'skin_poseidon', 'Poseidon', 380),
+                    vipSkin('Mythology', 'skin_ares', 'Ares', 360),
+                    vipSkin('Mythology', 'skin_medusa', 'Medusa', 360)
+                ]
+            },
+            {
+                type: 'vipPanel',
+                id: 'panel_nilo',
+                name: 'NILO REAL',
+                label: 'PANEL',
+                price: VIP_PANEL_PRICE,
+                image: 'assets/UI/Store/VIP/Bundles/Mythology/panel_nilo_real.png',
+                popupBackground: 'assets/UI/Store/VIP/Bundles/Mythology/popup_nilo_real_bg.png',
+                items: [
+                    {
+                        type: 'bundle',
+                        id: 'bundle_faraon',
+                        name: 'Faraon',
+                        price: 520,
+                        image: 'assets/UI/Store/VIP/Bundles/Mythology/skin_faraon.png',
+                        items: [
+                            vipSkin('Mythology', 'skin_faraon', 'Faraon'),
+                            vipTrail('Mythology', 'trail_faraon', 'Trail Faraon')
+                        ]
+                    },
+                    {
+                        type: 'bundle',
+                        id: 'bundle_reina_nilo',
+                        name: 'Reina del Nilo',
+                        price: 520,
+                        image: 'assets/UI/Store/VIP/Bundles/Mythology/skin_reina_nilo.png',
+                        items: [
+                            vipSkin('Mythology', 'skin_reina_nilo', 'Reina del Nilo'),
+                            vipTrail('Mythology', 'trail_nilo', 'Trail Nilo')
+                        ]
+                    }
+                ]
+            },
+            vipSkin('Mythology', 'skin_guardian_dorado', 'Guardian Dorado', 340),
+            vipSkin('Mythology', 'skin_momia', 'Momia'),
+            vipSkin('Mythology', 'skin_momia_malvada', 'Momia Malvada', 340),
+            vipSkin('Mythology', 'skin_sarcofago', 'Sarcofago'),
+            vipSkin('Mythology', 'skin_escarabajo', 'Escarabajo')
         ]
     },
     {
-        id: 'neon_elite',
-        title: 'Neon Elite',
-        subtitle: 'Coleccion rapida de luz y velocidad',
-        price: 480,
-        cover: 'assets/UI/Store/VIP/CarouselPanels/panel_carousel_neon_elite.png',
-        detailBackground: 'assets/UI/Store/VIP/Backgrounds/bg_carousel_neon_elite.png',
-        popupBackground: 'assets/UI/Store/VIP/PopupBackgrounds/popup_carousel_neon_elite.png',
+        id: 'criaturas_mitologicas',
+        title: 'CRIATURAS MITOLOGICAS',
+        subtitle: 'Bestias legendarias compradas una por una',
+        price: 3500,
+        cover: 'assets/UI/Store/VIP/CarouselPanels/panel_carousel_criaturas_mitologicas.png',
+        detailBackground: 'assets/UI/Store/VIP/Backgrounds/bg_carousel_criaturas_mitologicas.png',
+        popupBackground: 'assets/UI/Store/VIP/PopupBackgrounds/popup_carousel_criaturas_mitologicas.png',
         items: [
-            { type: 'skin', name: 'Neon Ace', image: 'assets/UI/Store/Skins/skin_neon_ace.png' },
-            { type: 'skin', name: 'Volt Star', image: 'assets/UI/Store/Skins/skin_volt_star.png' },
-            { type: 'skin', name: 'Pixel Gold', image: 'assets/UI/Store/Skins/skin_pixel_gold.png' },
-            { type: 'trail', name: 'Pulso Neon', image: 'assets/UI/Store/Trails/trail_pulso_neon.png' }
+            vipSkin('Creatures', 'skin_dragon', 'Dragon', 380),
+            vipSkin('Creatures', 'skin_hydra', 'Hydra', 360),
+            vipSkin('Creatures', 'skin_fenix', 'Fenix', 360),
+            vipSkin('Creatures', 'skin_quimera', 'Quimera', 360),
+            vipSkin('Creatures', 'skin_leviatan', 'Leviatan', 380),
+            vipSkin('Creatures', 'skin_grifo', 'Grifo', 340),
+            vipSkin('Creatures', 'skin_minotauro', 'Minotauro', 340),
+            vipSkin('Creatures', 'skin_gargola', 'Gargola'),
+            vipSkin('Creatures', 'skin_manticora', 'Manticora', 340),
+            vipSkin('Creatures', 'skin_serpiente_marina', 'Serpiente Marina', 340),
+            vipSkin('Creatures', 'skin_ciclope', 'Ciclope')
         ]
     },
     {
-        id: 'ruby_legend',
-        title: 'Ruby Legend',
-        subtitle: 'Set caro de temporada premium',
-        price: 700,
-        cover: 'assets/UI/Store/VIP/CarouselPanels/panel_carousel_ruby_legend.png',
-        detailBackground: 'assets/UI/Store/VIP/Backgrounds/bg_carousel_ruby_legend.png',
-        popupBackground: 'assets/UI/Store/VIP/PopupBackgrounds/popup_carousel_ruby_legend.png',
+        id: 'carnaval_oscuro',
+        title: 'CARNAVAL OSCURO',
+        subtitle: 'Trails de circo y skins malditas',
+        price: 2900,
+        cover: 'assets/UI/Store/VIP/CarouselPanels/panel_carousel_carnaval_oscuro.png',
+        detailBackground: 'assets/UI/Store/VIP/Backgrounds/bg_carousel_carnaval_oscuro.png',
+        popupBackground: 'assets/UI/Store/VIP/PopupBackgrounds/popup_carousel_carnaval_oscuro.png',
         items: [
-            { type: 'skin', name: 'Leyenda Ruby', image: 'assets/UI/Store/Skins/skin_leyenda_ruby.png' },
-            { type: 'skin', name: 'Diamante Rojo', image: 'assets/UI/Store/Skins/skin_diamante_rojo.png' },
-            { type: 'skin', name: 'Emperador', image: 'assets/UI/Store/Skins/skin_emperador.png' },
-            { type: 'trail', name: 'Ruby Orbit', image: 'assets/UI/Store/Trails/trail_ruby_orbit.png' }
+            vipTrail('DarkCarnival', 'trail_sonrisa_malvada', 'Trail Sonrisa Malvada'),
+            vipTrail('DarkCarnival', 'trail_circo', 'Trail Circo'),
+            vipSkin('DarkCarnival', 'skin_bufon_maldito', 'Bufon Maldito', 340),
+            vipSkin('DarkCarnival', 'skin_payaso_oscuro', 'Payaso Oscuro', 340),
+            vipSkin('DarkCarnival', 'skin_marioneta', 'Marioneta'),
+            vipSkin('DarkCarnival', 'skin_mascara_sonriente', 'Mascara Sonriente'),
+            vipSkin('DarkCarnival', 'skin_titiritero', 'Titiritero', 340),
+            vipSkin('DarkCarnival', 'skin_arlequin', 'Arlequin'),
+            vipSkin('DarkCarnival', 'skin_mascara_veneciana', 'Mascara Veneciana'),
+            vipSkin('DarkCarnival', 'skin_sonrisa_rota', 'Sonrisa Rota', 340)
         ]
     }
 ];
@@ -2066,6 +2159,7 @@ function renderVIPMiniItem(item) {
     const itemKey = getVIPItemStorageKey(item);
     const owned = localStorage.getItem(itemKey) === 'true';
 
+    if (item.type === 'vipPanel') return renderVIPPanelItem(item, owned);
     if (item.type === 'customTextTrail') return renderCustomTextTrailItem(item, owned);
     if (item.type === 'elementTrail') return renderElementTrailItem(item, owned);
     if (item.type === 'bundle') return renderVIPBundleItem(item, owned);
@@ -2121,12 +2215,84 @@ function getVIPItemStorageKey(item) {
 }
 
 function findVIPItemById(id) {
+    const match = item => (item.id || item.trailId || item.name) === id;
+    const walk = items => {
+        for (const item of items || []) {
+            if (match(item)) return item;
+            const nested = walk(item.items);
+            if (nested) return nested;
+        }
+        return null;
+    };
+    const carouselItem = walk(VIP_CAROUSEL_DATA.flatMap(panel => panel.items || []));
+    if (carouselItem) return carouselItem;
     for (const pack of VIP_PACKAGES_DATA) {
-        const direct = pack.items.find(item => (item.id || item.trailId || item.name) === id);
+        const direct = walk(pack.items);
         if (direct) return direct;
     }
     return null;
 }
+
+function renderVIPPanelItem(item, owned) {
+    return `
+        <article class="vip-mini-item vip-panel-card ${owned ? 'owned' : ''}" onclick="openVIPPanelModal('${item.id || item.name}')">
+            <div class="vip-mini-image vip-panel-cover">
+                <img src="${item.image}" alt="" draggable="false">
+                <span>PNG</span>
+            </div>
+            <div class="vip-mini-type">${item.label || 'PANEL'}</div>
+            <h3>${item.name}</h3>
+            <button onclick="event.stopPropagation(); openVIPPanelModal('${item.id || item.name}')" type="button">${owned ? 'VER' : 'ABRIR'}</button>
+        </article>
+    `;
+}
+
+function openVIPPanelModal(id) {
+    const item = findVIPItemById(id);
+    if (!item || item.type !== 'vipPanel') return;
+    const rows = (item.items || []).map(part => {
+        if (part.type === 'bundle') {
+            const owned = localStorage.getItem(getVIPItemStorageKey(part)) === 'true';
+            return `
+                <div class="vip-panel-modal-item vip-panel-modal-bundle">
+                    <div class="shop-modal-bundle-grid">${(part.items || []).map(piece => `
+                        <div>
+                            <img src="${piece.image}" alt="" draggable="false">
+                            <span>${piece.name}</span>
+                        </div>
+                    `).join('')}</div>
+                    <strong>${part.name}</strong>
+                    <button onclick="buyVIPMiniItemById('${part.id || part.name}')" ${owned ? 'disabled' : ''} type="button">${owned ? 'OBTENIDO' : `COMPRAR ${renderPrice(part.price, 'gems')}`}</button>
+                </div>
+            `;
+        }
+        const owned = localStorage.getItem(getVIPItemStorageKey(part)) === 'true';
+        const isSkinItem = part.type === 'vipSkin' || part.type === 'skin';
+        return `
+            <div class="vip-panel-modal-item">
+                <div class="${isSkinItem ? 'vip-skin-orb' : 'vip-mini-image'}">
+                    <img src="${part.image}" alt="" draggable="false">
+                    <span>PNG</span>
+                </div>
+                <strong>${part.name}</strong>
+                <button onclick="buyVIPMiniItemById('${part.id || part.trailId || part.name}')" ${owned ? 'disabled' : ''} type="button">${owned ? 'OBTENIDO' : `COMPRAR ${renderPrice(part.price, 'gems')}`}</button>
+            </div>
+        `;
+    }).join('');
+
+    showShopModal({
+        kicker: item.label || 'PANEL VIP',
+        title: item.name,
+        mediaHTML: `<div class="vip-panel-modal-grid">${rows}</div>`,
+        mediaClass: 'vip-panel-wide',
+        background: item.popupBackground,
+        body: 'Contenido disponible para compra individual.',
+        cancelText: 'CERRAR',
+        confirmText: null
+    });
+}
+
+window.openVIPPanelModal = openVIPPanelModal;
 
 function openEmojiPackModal(id) {
     const item = findVIPItemById(id);
@@ -2236,9 +2402,10 @@ function renderEmojiPackItem(item, owned) {
 }
 
 function renderEmojiItem(item, owned) {
+    const isSkinItem = item.type === 'vipSkin' || item.type === 'skin';
     return `
         <article class="vip-mini-item ${owned ? 'owned' : ''}">
-            <div class="vip-mini-image">
+            <div class="${isSkinItem ? 'vip-skin-orb' : 'vip-mini-image'}">
                 <img src="${item.image}" alt="" draggable="false">
                 <span>PNG</span>
             </div>
@@ -2351,6 +2518,10 @@ function buyVIPMiniItemById(id) {
 
 function grantVIPItem(item) {
     localStorage.setItem(getVIPItemStorageKey(item), 'true');
+    if (item.type === 'vipPanel' && Array.isArray(item.items)) {
+        item.items.forEach(part => grantVIPItem(part));
+        return;
+    }
     if (item.type === 'bundle' && Array.isArray(item.items)) {
         item.items.forEach(part => grantVIPItem(part));
         return;
@@ -3684,6 +3855,12 @@ function renderRubyPassNode(reward, index, currentLevel, lane, laneActive) {
 
 function renderRewardIcon(reward, lane) {
     if (reward.image) return `<img src="${reward.image}" alt="" draggable="false">`;
+    if (reward.type === 'coins') {
+        return `<img class="ruby-pass-currency-img" src="${getCurrencyPileAsset('coins', reward.amount || 50)}" alt="" draggable="false">`;
+    }
+    if (reward.type === 'rubies') {
+        return `<img class="ruby-pass-currency-img" src="${getCurrencyPileAsset('gems', reward.amount || 3)}" alt="" draggable="false">`;
+    }
     const slot = reward.slot ? `${lane}_${reward.slot}` : `${lane}_${reward.type}`;
     return `<div class="ruby-pass-placeholder ruby-pass-${reward.type}" data-asset-slot="RUBY_PASS_ASSET_SLOT_${slot.toUpperCase()}"></div>`;
 }
