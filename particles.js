@@ -16,23 +16,50 @@ const TRAIL_COLORS_RGB = {
 const TRAIL_EFFECTS = {
     basic: { type: 'basic' },
     fire: { type: 'fire' },
+    water: { type: 'water' },
+    wind: { type: 'wind' },
     ghost: { type: 'ghost' },
     fractura: { type: 'fractura' },
     rayo: { type: 'rayo' },
     hielo: { type: 'hielo' },
+    ice: { type: 'hielo' },
+    lava: { type: 'lava' },
+    nature: { type: 'nature' },
+    vampiro: { type: 'vampiro' },
+    zombie: { type: 'zombie' },
+    custom_text: { type: 'custom_text' },
     toxico: { type: 'toxico' },
 };
 
 // Cada punto guarda posición ABSOLUTA en el canvas
 let trail = [];
 let lastTrailPoint = null;
+let cachedTrailId = null;
+let cachedTrailConfig = { effect: 'basic', colorKey: 'cyan' };
+let cachedSkinId = null;
+let cachedSkinRgb = '0,255,231';
 
 function getTrailConfig() {
     const trailId = localStorage.getItem('equippedTrail') || 'basic_cyan';
-    const idx = trailId.indexOf('_');
-    const effect = trailId.substring(0, idx);
-    const colorKey = trailId.substring(idx + 1);
-    return { effect, colorKey };
+    if (trailId === cachedTrailId) return cachedTrailConfig;
+    let effect = 'basic';
+    let colorKey = 'cyan';
+    if (trailId.startsWith('trail_custom_text_')) {
+        effect = 'custom_text';
+        colorKey = trailId.substring('trail_custom_text_'.length) || 'cyan';
+    } else if (trailId.startsWith('trail_')) {
+        const rest = trailId.substring('trail_'.length);
+        const lastIdx = rest.lastIndexOf('_');
+        effect = lastIdx > 0 ? rest.substring(0, lastIdx) : rest;
+        colorKey = lastIdx > 0 ? rest.substring(lastIdx + 1) : 'cyan';
+    } else {
+        const idx = trailId.indexOf('_');
+        effect = idx > 0 ? trailId.substring(0, idx) : 'basic';
+        colorKey = idx > 0 ? trailId.substring(idx + 1) : 'cyan';
+    }
+    cachedTrailId = trailId;
+    cachedTrailConfig = { effect, colorKey };
+    return cachedTrailConfig;
 }
 
 // Llamada cada frame desde update() en main.js
@@ -46,8 +73,10 @@ function updateTrail() {
     const py = cy + Math.sin(angle) * r;
 
     if (lastTrailPoint && Math.hypot(px - lastTrailPoint.x, py - lastTrailPoint.y) < 1.2) {
-        trail.forEach(point => point.life *= 0.96);
-        trail = trail.filter(point => point.life > 0.04);
+        for (let i = trail.length - 1; i >= 0; i--) {
+            trail[i].life *= 0.96;
+            if (trail[i].life <= 0.04) trail.splice(i, 1);
+        }
         return;
     }
 
@@ -62,7 +91,9 @@ function updateTrail() {
     });
 
     const { effect } = getTrailConfig();
-    const maxTrail = effect === 'ghost' ? 38 : effect === 'fire' ? 34 : effect === 'fractura' ? 32 : effect === 'hielo' ? 34 : effect === 'toxico' ? 36 : 28;
+    const speedStretch = Math.min(18, Math.abs(window.angVel || 0) * 220);
+    const baseMaxTrail = effect === 'custom_text' ? 30 + Math.round(speedStretch) : effect === 'ghost' ? 38 : effect === 'fire' || effect === 'lava' ? 34 : effect === 'fractura' ? 32 : effect === 'hielo' || effect === 'ice' ? 34 : effect === 'toxico' || effect === 'nature' ? 36 : 28;
+    const maxTrail = window.GAME_PERF?.lowPower?.() ? Math.ceil(baseMaxTrail * 0.58) : baseMaxTrail;
     if (trail.length > maxTrail) trail.shift();
 
     // vida proporcional a posición: el más viejo tiene life~0, el más nuevo life~1
@@ -88,7 +119,10 @@ function getSkinRgb() {
         cool: '255,255,255',
     };
     const id = localStorage.getItem('equippedSkin') || 'cyan';
-    return SKIN_RGB[id] || '0,255,231';
+    if (id === cachedSkinId) return cachedSkinRgb;
+    cachedSkinId = id;
+    cachedSkinRgb = SKIN_RGB[id] || '0,255,231';
+    return cachedSkinRgb;
 }
 
 // drawTrail ya NO recibe cx,cy — los puntos tienen coords absolutas
@@ -96,10 +130,11 @@ function drawTrail() {
     if (trail.length < 2) return;
 
     const { effect, colorKey } = getTrailConfig();
-    const skinRgb = getSkinRgb();
-    const hueBase = (Date.now() * 0.18) % 360;
+    const lowPower = window.GAME_PERF?.lowPower?.();
+    const hueBase = ((window.GAME_PERF?.now || performance.now()) * 0.18) % 360;
+    const step = lowPower ? 2 : 1;
 
-    for (let i = 0; i < trail.length; i++) {
+    for (let i = 0; i < trail.length; i += step) {
         const t = trail[i];
         const life = t.life;
         if (life <= 0) continue;
@@ -120,8 +155,10 @@ function drawTrail() {
         // ── BASIC ──────────────────────────────────────
         if (effect === 'basic') {
             ctx.save();
-            ctx.shadowBlur = 12 * life;
-            ctx.shadowColor = rgbMode ? `hsl(${(hueBase + i * 9) % 360},100%,64%)` : `rgb(${rgb})`;
+            if (!lowPower) {
+                ctx.shadowBlur = 12 * life;
+                ctx.shadowColor = rgbMode ? `hsl(${(hueBase + i * 9) % 360},100%,64%)` : `rgb(${rgb})`;
+            }
             ctx.beginPath();
             ctx.ellipse(t.x - dx * 0.45, t.y - dy * 0.45, 18 * life, 5 * life, Math.atan2(dy, dx), 0, Math.PI * 2);
             ctx.fillStyle = fill(life * 0.13);
@@ -213,8 +250,10 @@ function drawTrail() {
             ctx.globalCompositeOperation = 'lighter';
             const bx = dx / len;
             const by = dy / len;
-            ctx.shadowBlur = 16 * life;
-            ctx.shadowColor = rgbMode ? `hsl(${(hueBase + i * 9) % 360},100%,70%)` : `rgb(${rgb})`;
+            if (!lowPower) {
+                ctx.shadowBlur = 16 * life;
+                ctx.shadowColor = rgbMode ? `hsl(${(hueBase + i * 9) % 360},100%,70%)` : `rgb(${rgb})`;
+            }
             if (t.seed > 0.18) {
                 ctx.beginPath();
                 ctx.moveTo(t.x, t.y);
@@ -242,11 +281,13 @@ function drawTrail() {
             ctx.restore();
         }
 
-        else if (effect === 'hielo') {
+        else if (effect === 'hielo' || effect === 'ice') {
             ctx.save();
             ctx.globalCompositeOperation = 'screen';
-            ctx.shadowBlur = 10 * life;
-            ctx.shadowColor = rgbMode ? `hsl(${(hueBase + i * 9) % 360},100%,74%)` : `rgb(${rgb})`;
+            if (!lowPower) {
+                ctx.shadowBlur = 10 * life;
+                ctx.shadowColor = rgbMode ? `hsl(${(hueBase + i * 9) % 360},100%,74%)` : `rgb(${rgb})`;
+            }
             ctx.beginPath();
             ctx.ellipse(t.x - dx * 0.38, t.y - dy * 0.38, 15 * life, 5 * life, Math.atan2(dy, dx), 0, Math.PI * 2);
             ctx.strokeStyle = fill(life * 0.48);
@@ -278,6 +319,85 @@ function drawTrail() {
                 ctx.fillStyle = fill(life * (0.1 + b * 0.04), b * 16);
                 ctx.fill();
             }
+            ctx.restore();
+        }
+
+        else if (effect === 'water' || effect === 'wind' || effect === 'nature' || effect === 'vampiro' || effect === 'zombie') {
+            ctx.save();
+            ctx.globalCompositeOperation = effect === 'wind' ? 'screen' : 'lighter';
+            const wave = Math.sin((window.GAME_PERF?.now || performance.now()) * 0.012 + t.seed * 12 + i) * 10 * life;
+            const tone = effect === 'water' ? '68,136,255' : effect === 'wind' ? '180,255,245' : effect === 'nature' ? '68,255,136' : effect === 'vampiro' ? '255,77,109' : '120,255,143';
+            for (let b = 0; b < 4; b++) {
+                const back = (b * 8 + 6) * life;
+                ctx.beginPath();
+                ctx.ellipse(
+                    t.x - (dx / len) * back + nx * wave * (0.35 + b * 0.12),
+                    t.y - (dy / len) * back + ny * wave * (0.35 + b * 0.12),
+                    (14 - b * 1.8) * life,
+                    (4 + b) * life,
+                    Math.atan2(dy, dx) + Math.sin(t.seed * 7 + b) * 0.3,
+                    0,
+                    Math.PI * 2
+                );
+                ctx.fillStyle = `rgba(${tone},${life * (0.18 - b * 0.025)})`;
+                ctx.fill();
+            }
+            ctx.restore();
+        }
+
+        else if (effect === 'lava') {
+            ctx.save();
+            ctx.globalCompositeOperation = 'lighter';
+            for (let b = 0; b < 5; b++) {
+                const back = (b * 7 + 5) * life;
+                ctx.beginPath();
+                ctx.ellipse(
+                    t.x - (dx / len) * back + nx * Math.sin(t.seed * 9 + b) * 7 * life,
+                    t.y - (dy / len) * back + ny * Math.cos(t.seed * 8 + b) * 7 * life,
+                    (18 - b * 2.3) * life,
+                    (6 + b * 0.8) * life,
+                    Math.atan2(dy, dx),
+                    0,
+                    Math.PI * 2
+                );
+                ctx.fillStyle = b < 2 ? `rgba(255,226,80,${life * 0.28})` : `rgba(255,68,28,${life * (0.28 - b * 0.035)})`;
+                ctx.fill();
+            }
+            ctx.restore();
+        }
+
+        else if (effect === 'custom_text') {
+            ctx.save();
+            const phrase = (localStorage.getItem('customTrailText') || 'RUBY').slice(0, 18);
+            const speedStretch = Math.min(1.8, 1 + Math.abs(window.angVel || 0) * 11);
+            const back = (1 - life) * 52 * speedStretch;
+            const px = t.x - (dx / len) * back;
+            const py = t.y - (dy / len) * back;
+            const angle = Math.atan2(dy, dx);
+            ctx.translate(px, py);
+            ctx.rotate(angle);
+            ctx.globalAlpha = Math.min(1, life * 1.05);
+            const rectW = Math.min(168, 42 + phrase.length * 12 * speedStretch);
+            const rectH = 28;
+            const grad = ctx.createLinearGradient(-rectW / 2, 0, rectW / 2, 0);
+            grad.addColorStop(0, `rgba(7,9,18,${0.1 + life * 0.62})`);
+            grad.addColorStop(0.72, `rgba(7,9,18,${0.08 + life * 0.44})`);
+            grad.addColorStop(1, `rgba(255,218,58,${life * 0.18})`);
+            ctx.fillStyle = grad;
+            ctx.fillRect(-rectW / 2, -rectH / 2, rectW, rectH);
+            ctx.font = '900 14px Geom, monospace';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.shadowBlur = lowPower ? 0 : 10 * life;
+            ctx.shadowColor = '#ffda3a';
+            ctx.fillStyle = `rgba(255,238,150,${0.18 + life * 0.72})`;
+            const spacing = Math.min(16, 9 + (1 - life) * 5 * speedStretch);
+            const chars = phrase.split('');
+            const start = -(chars.length - 1) * spacing / 2;
+            chars.forEach((ch, charIndex) => {
+                const wave = Math.sin((window.GAME_PERF?.now || performance.now()) * 0.009 + charIndex * 0.72 + t.seed * 3) * 5 * life;
+                ctx.fillText(ch, start + charIndex * spacing, wave);
+            });
             ctx.restore();
         }
     }

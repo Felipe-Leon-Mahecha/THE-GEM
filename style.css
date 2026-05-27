@@ -23,6 +23,30 @@ body {
     overscroll-behavior: none;
 }
 
+body.is-touch-device #shopPanel,
+body.is-touch-device #vipPanel,
+body.is-touch-device #rubyPassPanel,
+body.is-touch-device #profilePanel,
+body.is-touch-device #settingsPanel,
+body.is-touch-device #pausePanel,
+body.is-touch-device .shop-modal-card,
+body.is-touch-device .profile-card,
+body.is-touch-device .settings-card,
+body.is-touch-device .vip-shell,
+body.is-touch-device .ruby-pass-shell {
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+}
+
+body.is-touch-device .ruby-pass-focus,
+body.is-touch-device .ruby-pass-arc,
+body.is-touch-device .vip-pack-cover,
+body.is-touch-device .vip-feature-cover,
+body.is-touch-device .shop-card,
+body.is-touch-device .pass-reward-card {
+    filter: none !important;
+}
+
 canvas {
     display: block;
 }
@@ -1435,10 +1459,103 @@ body.is-touch-device .active-emote-bubble {
     overflow: hidden;
 }
 
+.shop-modal-media.wide {
+    width: min(340px, calc(100vw - 78px));
+    height: auto;
+    min-height: 132px;
+    padding: 10px;
+}
+
 .shop-modal-media img {
     width: 100%;
     height: 100%;
     object-fit: contain;
+}
+
+.shop-modal-bundle-grid,
+.shop-modal-emoji-grid {
+    width: 100%;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+}
+
+.shop-modal-emoji-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.shop-modal-bundle-grid div,
+.shop-modal-emoji-grid div {
+    min-height: 88px;
+    border-radius: 8px;
+    border: 1px dashed rgba(255, 215, 0, 0.22);
+    background: rgba(0, 0, 0, 0.28);
+    display: grid;
+    place-items: center;
+    gap: 4px;
+    overflow: hidden;
+}
+
+.shop-modal-bundle-grid img,
+.shop-modal-emoji-grid img {
+    width: 100%;
+    height: 70px;
+    object-fit: contain;
+}
+
+.emoji-pack-modal-grid div {
+    min-height: 112px;
+}
+
+.shop-modal-bundle-grid span,
+.shop-modal-emoji-grid span,
+.shop-modal-emoji-grid strong {
+    color: rgba(255, 255, 255, 0.52);
+    font-size: 9px;
+    letter-spacing: 1px;
+    text-align: center;
+}
+
+.shop-modal-emoji-grid strong {
+    color: #ffee00;
+    font-size: 10px;
+    text-transform: uppercase;
+}
+
+.reward-currency-piles {
+    width: 100%;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 12px;
+}
+
+.reward-currency-pile {
+    min-height: 128px;
+    border-radius: 8px;
+    border: 1px solid rgba(255, 215, 0, 0.22);
+    background: rgba(0, 0, 0, 0.32);
+    display: grid;
+    place-items: center;
+    gap: 3px;
+    padding: 10px;
+}
+
+.reward-currency-pile img {
+    width: 100%;
+    height: 78px;
+    object-fit: contain;
+}
+
+.reward-currency-pile strong {
+    color: #ffee00;
+    font-size: 18px;
+    letter-spacing: 1px;
+}
+
+.reward-currency-pile span {
+    color: rgba(255, 255, 255, 0.56);
+    font-size: 9px;
+    letter-spacing: 2px;
 }
 
 .shop-modal-body {
@@ -1596,6 +1713,12 @@ body.is-touch-device .active-emote-bubble {
     cursor: pointer;
 }
 
+.vip-detail-head {
+    min-height: 360px;
+    grid-template-columns: 1fr;
+    padding: 18px;
+}
+
 .vip-feature-cover,
 .vip-detail-cover,
 .vip-pack-cover {
@@ -1607,6 +1730,25 @@ body.is-touch-device .active-emote-bubble {
     color: rgba(255, 255, 255, 0.34);
     letter-spacing: 3px;
     font-size: 11px;
+}
+
+.vip-detail-cover {
+    width: min(980px, 100%);
+    min-height: 320px;
+    margin: auto;
+    padding: 0;
+    border-radius: 14px;
+    border: 1px solid rgba(255, 215, 0, 0.22);
+    display: grid;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-color: rgba(0, 0, 0, 0.28);
+}
+
+.vip-detail-head>.vip-detail-cover:last-child {
+    padding: 0;
+    display: grid;
 }
 
 .vip-feature-copy,
@@ -1753,6 +1895,15 @@ body.is-touch-device .active-emote-bubble {
     color: #ffee00;
 }
 
+.vip-buy-all-detail {
+    width: min(520px, 100%);
+    height: 48px;
+    margin: 0 auto 22px;
+    display: block;
+    font-size: 13px;
+    font-weight: 900;
+}
+
 .vip-mini-item {
     padding: 14px;
     display: grid;
@@ -1812,6 +1963,101 @@ body.is-touch-device .active-emote-bubble {
 
 .vip-mini-item.owned {
     opacity: 0.68;
+}
+
+.vip-bundle-preview,
+.vip-emoji-slots {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+}
+
+.vip-emoji-slots {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.vip-bundle-part,
+.vip-emoji-slots div,
+.vip-simple-panel {
+    min-height: 92px;
+    border-radius: 8px;
+    border: 1px dashed rgba(255, 215, 0, 0.22);
+    background: rgba(0, 0, 0, 0.26);
+    display: grid;
+    place-items: center;
+    overflow: hidden;
+    color: rgba(255, 255, 255, 0.32);
+    font-size: 9px;
+    letter-spacing: 2px;
+}
+
+.vip-bundle-part img,
+.vip-emoji-slots img,
+.vip-simple-panel img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    grid-area: 1 / 1;
+}
+
+.vip-bundle-part span,
+.vip-emoji-slots span {
+    grid-area: 1 / 1;
+    align-self: end;
+    margin-bottom: 6px;
+    color: rgba(255, 255, 255, 0.42);
+    font-size: 8px;
+}
+
+.vip-element-card .vip-simple-panel {
+    min-height: 122px;
+}
+
+.vip-trail-preview,
+.vip-custom-trail-preview {
+    width: 100%;
+    border-radius: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    background: rgba(0, 0, 0, 0.42);
+    display: block;
+}
+
+.vip-custom-trail-card {
+    position: relative;
+    border-color: rgba(255, 218, 58, 0.42);
+    background:
+        linear-gradient(140deg, rgba(255, 218, 58, 0.16), rgba(255, 77, 109, 0.07) 42%, rgba(0, 255, 231, 0.08)),
+        rgba(0, 0, 0, 0.42);
+    box-shadow: inset 0 0 42px rgba(255, 218, 58, 0.08), 0 0 28px rgba(255, 218, 58, 0.09);
+}
+
+.vip-custom-trail-card h3 {
+    color: #ffef9a;
+}
+
+.vip-custom-trail-input {
+    width: 100%;
+    height: 38px;
+    border-radius: 8px;
+    border: 1px solid rgba(255, 218, 58, 0.34);
+    background: rgba(0, 0, 0, 0.46);
+    color: white;
+    font-family: monospace;
+    font-weight: 900;
+    letter-spacing: 1px;
+    text-align: center;
+    outline: none;
+}
+
+.vip-custom-trail-validation {
+    min-height: 14px;
+    color: rgba(255, 255, 255, 0.48);
+    font-size: 10px;
+    letter-spacing: 1px;
+}
+
+.vip-custom-trail-validation.invalid {
+    color: #ff6b6b;
 }
 
 .daily-hero {
@@ -3671,6 +3917,151 @@ PLAY BUTTON
     }
 }
 
+/* Store/UI final organization pass */
+.store-panel-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+    gap: 16px;
+}
+
+.store-category-panel {
+    cursor: pointer;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 8px;
+    overflow: hidden;
+    padding: 0;
+    transition: transform 0.18s ease, border-color 0.18s ease;
+    aspect-ratio: 16 / 9;
+}
+
+.store-category-panel:hover {
+    border-color: rgba(255, 255, 255, 0.22);
+    transform: translateY(-2px);
+}
+
+.store-category-panel img {
+    width: 100%;
+    height: 100%;
+    display: block;
+    object-fit: cover;
+    border-radius: 8px;
+}
+
+#profilePanel,
+#optionsPanel {
+    overscroll-behavior: contain;
+}
+
+.profile-card,
+.options-card,
+.panel-popup {
+    max-height: calc(100dvh - 28px);
+    overflow-y: auto;
+    scrollbar-width: thin;
+}
+
+.profile-save,
+.popup-close {
+    position: sticky;
+    bottom: 0;
+    z-index: 3;
+}
+
+.emote-card button:disabled {
+    opacity: 0.44;
+    cursor: default;
+}
+
+.emote-card button.is-pass-only {
+    border-color: rgba(255, 204, 0, 0.36);
+    background: rgba(255, 204, 0, 0.1);
+    color: #ffcc00;
+}
+
+/* Ruby Pass final overrides: one visible free arc while locked, two arcs only with pass. */
+.ruby-pass-screen .ruby-pass-arc-window {
+    left: 0 !important;
+    right: 0 !important;
+    top: 0 !important;
+    bottom: 0 !important;
+    overflow: hidden !important;
+}
+
+.ruby-pass-screen .ruby-pass-gear-shell {
+    left: 50% !important;
+    top: calc(100% + min(12vw, 150px)) !important;
+    width: min(1380px, 132vw, 210vh) !important;
+    height: min(1380px, 132vw, 210vh) !important;
+    will-change: transform;
+    contain: layout paint;
+}
+
+.ruby-pass-screen .ruby-pass-lane-premium.is-locked {
+    display: none;
+}
+
+.ruby-pass-screen .ruby-pass-track,
+.ruby-pass-screen .ruby-pass-reward,
+.ruby-pass-screen .ruby-pass-current-point {
+    backface-visibility: hidden;
+}
+
+.ruby-pass-screen .ruby-pass-track-free {
+    width: 60% !important;
+    height: 60% !important;
+}
+
+.ruby-pass-screen .ruby-pass-node-premium {
+    transform: rotate(var(--node-angle)) translateX(min(565px, 46vw, 66vh)) !important;
+}
+
+.ruby-pass-screen .ruby-pass-node-free {
+    transform: rotate(var(--node-angle)) translateX(min(405px, 33vw, 48vh)) !important;
+}
+
+body.is-touch-device .ruby-pass-screen .ruby-pass-gear-shell {
+    top: calc(100% + min(6vw, 56px)) !important;
+    width: min(1040px, 112vw, 220vh) !important;
+    height: min(1040px, 112vw, 220vh) !important;
+}
+
+body.is-touch-device .ruby-pass-screen .ruby-pass-node-premium {
+    transform: rotate(var(--node-angle)) translateX(min(440px, 37vw, 58vh)) !important;
+}
+
+body.is-touch-device .ruby-pass-screen .ruby-pass-node-free {
+    transform: rotate(var(--node-angle)) translateX(min(318px, 27vw, 42vh)) !important;
+}
+
+body.is-touch-device .ruby-pass-reward {
+    width: 48px !important;
+    height: 48px !important;
+    left: -24px !important;
+    top: -24px !important;
+}
+
+body.is-touch-device .ruby-pass-reward-premium {
+    width: 56px !important;
+    height: 56px !important;
+    left: -28px !important;
+    top: -28px !important;
+}
+
+body.is-touch-device #play-btn,
+body.is-touch-device #shop-btn,
+body.is-touch-device #options-btn,
+body.is-touch-device #inventory-btn {
+    transform: scale(0.86);
+    transform-origin: center;
+}
+
+body.is-touch-device .menu-btn {
+    min-height: 36px;
+    padding: 8px 16px;
+    font-size: 12px;
+}
+
 /* Touch layout fixes */
 .ruby-pass-lane-premium {
     z-index: 1;
@@ -3749,6 +4140,36 @@ body.is-touch-device .ls-header {
 body.is-touch-device .ls-small {
     font-size: 9px;
     letter-spacing: 3px;
+}
+
+.vip-skin-orb {
+    width: 104px;
+    height: 104px;
+    justify-self: center;
+    border-radius: 50%;
+    border: 2px solid rgba(255, 215, 0, 0.24);
+    background: radial-gradient(circle at 35% 28%, rgba(255,255,255,0.12), rgba(0,0,0,0.42));
+    display: grid;
+    place-items: center;
+    overflow: hidden;
+    color: rgba(255, 255, 255, 0.3);
+    letter-spacing: 2px;
+}
+
+.vip-skin-orb img {
+    width: 86%;
+    height: 86%;
+    object-fit: contain;
+    grid-area: 1 / 1;
+}
+
+.vip-skin-orb span {
+    grid-area: 1 / 1;
+    font-size: 9px;
+}
+
+.vip-pack-poster {
+    cursor: pointer;
 }
 
 body.is-touch-device .ls-title {

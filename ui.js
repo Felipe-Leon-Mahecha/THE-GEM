@@ -2,7 +2,21 @@
 // MENU BUTTONS
 // =====================================================
 
+function lockLandscapeOrientation() {
+    const orientation = screen.orientation || screen.mozOrientation || screen.msOrientation;
+    if (!orientation?.lock) return;
+    orientation.lock('landscape').catch(() => { });
+}
+
+lockLandscapeOrientation();
+window.addEventListener('DOMContentLoaded', lockLandscapeOrientation);
+window.addEventListener('visibilitychange', () => {
+    if (!document.hidden) lockLandscapeOrientation();
+});
+window.addEventListener('pointerdown', lockLandscapeOrientation, { once: true, passive: true });
+
 document.getElementById("play-btn").onclick = () => {
+    lockLandscapeOrientation();
     window.playSfx?.('menuSelect');
 
     if (window.menuMusic) {

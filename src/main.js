@@ -40,12 +40,27 @@ window.SFX = {
 window.sfxVolume = parseFloat(localStorage.getItem('sfxVolume') || '0.75');
 window.musicVolume = parseFloat(localStorage.getItem('musicVolume') || '0.45');
 window.sfxCache = {};
+const SFX_POOL_SIZE = 4;
 
 window.playSfx = function (name, volume = 1) {
     if (window.isMuted) return;
     const src = window.SFX?.[name];
     if (!src) return;
-    const sound = new Audio(src);
+    let entry = window.sfxCache[name];
+    if (!entry) {
+        entry = {
+            index: 0,
+            pool: Array.from({ length: SFX_POOL_SIZE }, () => {
+                const audio = new Audio(src);
+                audio.preload = 'auto';
+                return audio;
+            })
+        };
+        window.sfxCache[name] = entry;
+    }
+    const sound = entry.pool[entry.index++ % entry.pool.length];
+    sound.pause();
+    sound.currentTime = 0;
     sound.volume = Math.max(0, Math.min(1, window.sfxVolume * volume));
     sound.play().catch(() => { });
 };
@@ -61,9 +76,18 @@ const heartImg = new Image();
 heartImg.src = "assets/Imagenes/Icono/Corazon_Vida.png";
 
 const canvas = document.getElementById("gameCanvas");
-const ctx = canvas.getContext("2d");
+const ctx = canvas.getContext("2d", { alpha: false });
+ctx.imageSmoothingEnabled = true;
+ctx.imageSmoothingQuality = "medium";
 window.canvas = canvas;
 window.ctx = ctx;
+window.GAME_PERF = {
+    frame: 0,
+    now: 0,
+    lowPower() {
+        return document.body.classList.contains("is-touch-device") || localStorage.getItem("reducedMotion") === "true";
+    }
+};
 
 window.bgMusic =
     new Audio('assets/Musica/Gravity Well.mp3');
@@ -128,6 +152,8 @@ reproducirAleatoria();
 
 const offscreen = document.createElement("canvas");
 const offCtx = offscreen.getContext("2d");
+const backgroundCanvas = document.createElement("canvas");
+const backgroundCtx = backgroundCanvas.getContext("2d", { alpha: false });
 
 function drawCenteredImage(ctxTarget, img, x, y, width, height, scale = 1, offsetX = 0, offsetY = 0) {
     if (!img || !img.complete || img.naturalWidth <= 0) return;
@@ -151,6 +177,40 @@ function drawCoverImage(ctxTarget, img, x, y, width, height, scale = 1, offsetX 
         sy = (img.naturalHeight - sh) / 2;
     }
     ctxTarget.drawImage(img, sx, sy, sw, sh, x - targetW / 2 + offsetX, y - targetH / 2 + offsetY, targetW, targetH);
+}
+
+function buildBackgroundCanvas(lvl = window.level || 1) {
+    if (!window.canvas) return;
+    backgroundCanvas.width = window.canvas.width;
+    backgroundCanvas.height = window.canvas.height;
+    const levelConfig = window.getLevelConfig ? window.getLevelConfig(lvl) : { assets: {} };
+    const levelAssets = levelConfig.assets || {};
+    const visual = levelConfig.visual || {};
+    const bg = window.getLevelImage ? window.getLevelImage(levelAssets.outerBackground) : null;
+    if (bg && bg.complete && bg.naturalWidth > 0) {
+        drawCoverImage(
+            backgroundCtx,
+            bg,
+            backgroundCanvas.width / 2,
+            backgroundCanvas.height / 2,
+            backgroundCanvas.width,
+            backgroundCanvas.height,
+            visual.outerBackgroundScale ?? 1,
+            visual.outerBackgroundOffsetX || 0,
+            visual.outerBackgroundOffsetY || 0
+        );
+        return;
+    }
+    if (bg && !bg.complete) {
+        bg.onload = () => {
+            if ((window.level || 1) === lvl) buildBackgroundCanvas(lvl);
+        };
+    }
+    const fallbackBg = backgroundCtx.createLinearGradient(0, 0, 0, backgroundCanvas.height);
+    fallbackBg.addColorStop(0, "#12131a");
+    fallbackBg.addColorStop(1, "#020307");
+    backgroundCtx.fillStyle = fallbackBg;
+    backgroundCtx.fillRect(0, 0, backgroundCanvas.width, backgroundCanvas.height);
 }
 
 function buildStaticCanvas(lvl = window.level || 1) {
@@ -296,25 +356,36 @@ function syncPlayfieldSize(width, height, compact) {
     if (window.offset > window.MAX_OFFSET) window.offset = window.MAX_OFFSET;
 }
 
-function resize() {
+let lastCanvasWidth = 0;
+let lastCanvasHeight = 0;
+let lastTouchLayout = null;
+let resizeQueued = false;
+
+function resize(force = false) {
     if (!window.canvas) return;
     const touchLayout = isTouchLayout();
     const { width, height } = getViewportSize();
     document.body.classList.toggle("is-touch-device", touchLayout);
     syncPlayfieldSize(width, height, touchLayout);
 
+    const targetWidth = touchLayout ? width : innerWidth;
+    const targetHeight = touchLayout ? height : innerHeight;
+    const sameSize = targetWidth === lastCanvasWidth && targetHeight === lastCanvasHeight && touchLayout === lastTouchLayout;
+    window.compactHud = touchLayout && Math.min(targetWidth, targetHeight) < 520;
+    if (sameSize && !force) return;
+
     if (touchLayout) {
-        window.canvas.width = width;
-        window.canvas.height = height;
-        window.canvas.style.width = width + "px";
-        window.canvas.style.height = height + "px";
+        window.canvas.width = targetWidth;
+        window.canvas.height = targetHeight;
+        window.canvas.style.width = targetWidth + "px";
+        window.canvas.style.height = targetHeight + "px";
         window.canvas.style.position = "fixed";
         window.canvas.style.left = "0";
         window.canvas.style.top = "0";
         window.canvas.style.transform = "none";
     } else {
-        window.canvas.width = innerWidth;
-        window.canvas.height = innerHeight;
+        window.canvas.width = targetWidth;
+        window.canvas.height = targetHeight;
         window.canvas.style.width = '';
         window.canvas.style.height = '';
         window.canvas.style.position = '';
@@ -322,21 +393,33 @@ function resize() {
         window.canvas.style.top = '';
         window.canvas.style.transform = '';
     }
+    lastCanvasWidth = targetWidth;
+    lastCanvasHeight = targetHeight;
+    lastTouchLayout = touchLayout;
     if (typeof buildStaticCanvas === "function") {
         buildStaticCanvas(window.level || 1);
     }
+    if (typeof buildBackgroundCanvas === "function") {
+        buildBackgroundCanvas(window.level || 1);
+    }
 }
 
-addEventListener(
-    "resize",
-    resize
-);
+function queueResize() {
+    if (resizeQueued) return;
+    resizeQueued = true;
+    requestAnimationFrame(() => {
+        resizeQueued = false;
+        resize();
+    });
+}
 
-window.visualViewport?.addEventListener("resize", resize);
+addEventListener("resize", queueResize, { passive: true });
+
+window.visualViewport?.addEventListener("resize", queueResize, { passive: true });
 
 setTimeout(() => {
 
-    resize();
+    resize(true);
 
 }, 50);
 
@@ -868,23 +951,14 @@ function distanceToSegment(px, py, x1, y1, x2, y2) {
 // =====================================================
 
 function draw() {
-    if (!window.running && canvas.style.visibility === "hidden") return;
+    if (!window.running && !window.paused) return;
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     const levelConfig = window.getCurrentLevelConfig ? window.getCurrentLevelConfig() : { assets: {} };
     const levelAssets = levelConfig.assets || {};
     const visual = levelConfig.visual || {};
 
     if (window.running) {
-        const bg = window.getLevelImage ? window.getLevelImage(levelAssets.outerBackground) : null;
-        if (bg && bg.complete && bg.naturalWidth > 0) {
-            drawCoverImage(ctx, bg, canvas.width / 2, canvas.height / 2, canvas.width, canvas.height, visual.outerBackgroundScale ?? 1, visual.outerBackgroundOffsetX || 0, visual.outerBackgroundOffsetY || 0);
-        } else {
-            const fallbackBg = ctx.createLinearGradient(0, 0, 0, canvas.height);
-            fallbackBg.addColorStop(0, "#12131a");
-            fallbackBg.addColorStop(1, "#020307");
-            ctx.fillStyle = fallbackBg;
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-        }
+        ctx.drawImage(backgroundCanvas, 0, 0);
     }
 
     const cx = canvas.width / 2;
@@ -919,8 +993,10 @@ function draw() {
         let size = 30 + Math.sin(rby.pulse) * 3;
         ctx.save();
         ctx.translate(x, y);
-        ctx.shadowColor = "rgba(255,40,90,0.95)";
-        ctx.shadowBlur = 16;
+        if (!window.GAME_PERF?.lowPower()) {
+            ctx.shadowColor = "rgba(255,40,90,0.95)";
+            ctx.shadowBlur = 16;
+        }
         ctx.drawImage(rubyImg, -size / 2, -size / 2, size, size);
         ctx.restore();
     }
@@ -966,7 +1042,7 @@ function draw() {
     // 9) HUD
     if (!window.running) return;
     drawAbilityIntro();
-    const compactHud = isTouchLayout() && Math.min(canvas.width, canvas.height) < 520;
+    const compactHud = !!window.compactHud;
     const hudX = compactHud ? 10 : 20;
     const hudY = Math.max(compactHud ? 10 : 18, canvas.height * (compactHud ? 0.035 : 0.08));
     const hudW = compactHud ? 178 : 240;
@@ -1003,9 +1079,11 @@ function drawPlayer(cx, cy) {
     let r = BASE_RADIUS + window.offset;
     let px = cx + Math.cos(window.angle) * r;
     let py = cy + Math.sin(window.angle) * r;
+    const lowPower = window.GAME_PERF?.lowPower?.();
+    const now = window.GAME_PERF?.now || performance.now();
     ctx.save();
     ctx.translate(px, py);
-    if (window.invulnerable && Math.floor(Date.now() / 100) % 2 === 0) ctx.globalAlpha = 0.2;
+    if (window.invulnerable && Math.floor(now / 100) % 2 === 0) ctx.globalAlpha = 0.2;
     const equippedId = localStorage.getItem('equippedSkin') || 'cyan';
     const SKIN_COLORS = {
         cyan: { color: '#00ffe7', glow: '#00ffe7' },
@@ -1021,12 +1099,16 @@ function drawPlayer(cx, cy) {
     const directionalSkin = directionalSkinImages[equippedId]?.[window.playerFacing || "right"];
     if (directionalSkin && directionalSkin.complete && directionalSkin.naturalWidth > 0) {
         const skinSize = 48;
-        ctx.shadowBlur = 18;
-        ctx.shadowColor = DIRECTIONAL_SKINS[equippedId].glow;
+        if (!lowPower) {
+            ctx.shadowBlur = 18;
+            ctx.shadowColor = DIRECTIONAL_SKINS[equippedId].glow;
+        }
         ctx.drawImage(directionalSkin, -skinSize / 2, -skinSize / 2, skinSize, skinSize);
     } else {
-        ctx.shadowBlur = 20;
-        ctx.shadowColor = skin.glow;
+        if (!lowPower) {
+            ctx.shadowBlur = 20;
+            ctx.shadowColor = skin.glow;
+        }
         ctx.beginPath();
         ctx.arc(0, 0, 16, 0, Math.PI * 2);
         ctx.fillStyle = skin.color;
@@ -1054,15 +1136,17 @@ function drawSpikesLayer(cx, cy) {
             let wr = typeof getObstacleBaseRadius === "function"
                 ? getObstacleBaseRadius(o.fromGround)
                 : (o.fromGround ? BASE_RADIUS : DOME_RADIUS);
-            let pulse = 0.5 + Math.sin(Date.now() * 0.015) * 0.35;
+            let pulse = 0.5 + Math.sin((window.GAME_PERF?.now || performance.now()) * 0.015) * 0.35;
             let half = o.width / 2;
             ctx.beginPath();
             ctx.arc(cx, cy, wr - 6, a - half, a + half);
             ctx.strokeStyle = `rgba(255,60,90,${pulse})`;
             ctx.lineWidth = 6;
             ctx.lineCap = "round";
-            ctx.shadowColor = "rgba(255,0,80,0.9)";
-            ctx.shadowBlur = 16;
+            if (!window.GAME_PERF?.lowPower()) {
+                ctx.shadowColor = "rgba(255,0,80,0.9)";
+                ctx.shadowBlur = 16;
+            }
             ctx.stroke();
             ctx.shadowBlur = 0;
             ctx.lineCap = "butt";
@@ -1170,8 +1254,10 @@ function drawLaserEmitter(x, y, angle, progress, laser) {
     ctx.rotate(angle + Math.PI / 2);
     const scale = 0.85 + progress * 0.25;
     ctx.scale(scale, scale);
-    ctx.shadowBlur = 16;
-    ctx.shadowColor = '#9fe8ff';
+    if (!window.GAME_PERF?.lowPower()) {
+        ctx.shadowBlur = 16;
+        ctx.shadowColor = '#9fe8ff';
+    }
     ctx.fillStyle = 'rgba(18,28,36,0.95)';
     ctx.strokeStyle = 'rgba(170,230,255,0.72)';
     ctx.lineWidth = 2;
@@ -1196,15 +1282,18 @@ function drawLaserEmitter(x, y, angle, progress, laser) {
 // LOOP
 // =====================================================
 
-function loop() {
-    if (window.running || window.paused || canvas.style.visibility !== "hidden") {
-        update();
+function loop(timestamp = 0) {
+    window.GAME_PERF.now = timestamp;
+    window.GAME_PERF.frame++;
+    if (!document.hidden && (window.running || window.paused)) {
+        if (window.running && !window.paused) update();
         draw();
     }
     requestAnimationFrame(loop);
 }
 
 buildStaticCanvas();
+buildBackgroundCanvas();
 loop();
 
 // =====================================================
@@ -1279,9 +1368,8 @@ window.startGame = function (levelIndex = 0, skipStartSound = false) {
 
     window.currentLevel = levelIndex;   // nivel 0 → level=1, nivel 1 → level=2, etc.
 
-    resize();
+    resize(true);
     if (typeof resetTrail === "function") resetTrail();
-    buildStaticCanvas(levelIndex + 1);
 
     window.running = true;
     window.gameTimer = 0;

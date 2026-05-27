@@ -73,6 +73,7 @@ var bannerTrail = [];
 var bannerTime = 0;
 
 let carouselAnimId = null; // Control para memory leak
+let carouselLastFrame = 0;
 
 function updateLevelSelectNav() {
     window.selectedLevel = selectedLevel;
@@ -279,7 +280,13 @@ function startSystemMessages() {
 
 }
 
-function drawCarousel() {
+function drawCarousel(timestamp = 0) {
+    const now = timestamp || performance.now();
+    if (selectVisible && carouselLastFrame && now - carouselLastFrame < 33) {
+        carouselAnimId = requestAnimationFrame(drawCarousel);
+        return;
+    }
+    carouselLastFrame = now;
 
     const container = document.getElementById("carouselCanvas");
     const ctx2 = container.getContext("2d");
@@ -302,16 +309,17 @@ function drawCarousel() {
     ctx2.fillRect(0, 0, W, H);
 
     // estrellas
-    for (let i = 0; i < 120; i++) {
+    const starCount = document.body.classList.contains('is-touch-device') ? 56 : 90;
+    for (let i = 0; i < starCount; i++) {
 
         const x =
-            (i * 97 + Date.now() * 0.002) % W;
+            (i * 97 + now * 0.002) % W;
 
         const y =
             (i * 53) % H;
 
         const size =
-            Math.sin(i + Date.now() * 0.001) * 1.5 + 2;
+            Math.sin(i + now * 0.001) * 1.5 + 2;
 
         ctx2.beginPath();
 
@@ -370,7 +378,7 @@ function drawCarousel() {
 
         const x = centerX + offsetX - cardW * scale / 2;
         const floatY =
-            Math.sin(Date.now() * 0.002 + i) * 8;
+            Math.sin(now * 0.002 + i) * 8;
 
         const y =
             centerY -
@@ -393,7 +401,7 @@ function drawCarousel() {
             ctx2.shadowColor = "#00ffe7";
             ctx2.shadowBlur =
                 25 +
-                Math.sin(Date.now() * 0.005) * 15;
+                Math.sin(now * 0.005) * 15;
 
         }
 
@@ -733,6 +741,7 @@ document.addEventListener("keydown", e => {
 // =====================================================
 
 function drawBanner() {
+    const now = carouselLastFrame || performance.now();
     const W = 1200;
     const bannerCanvas = document.getElementById('bannerCanvas');
     const bctx = bannerCanvas.getContext('2d');
@@ -874,7 +883,7 @@ function drawBanner() {
             }
 
         } else if (trailEffect === 'rainbow') {
-            const hue = (Date.now() * 0.15 + t.life * 120) % 360;
+            const hue = (now * 0.15 + t.life * 120) % 360;
             bctx.beginPath();
             bctx.arc(t.x, t.y, 14 * t.life, 0, Math.PI * 2);
             bctx.fillStyle = `hsla(${hue},100%,60%,${0.12 * t.life})`;

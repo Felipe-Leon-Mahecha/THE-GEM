@@ -2,8 +2,9 @@
 // SHOP SYSTEM
 // =====================================================
 
-const SHOP_PLACEHOLDER_IMAGE = 'assets/Imagenes/Placeholders/Placeholder_Item.png';
-const RUBY_PASS_REWARD_PLACEHOLDER = 'assets/Imagenes/Placeholders/Placeholder_Ruby_Reward.png';
+const SHOP_PLACEHOLDER_IMAGE = 'assets/UI/Store/Placeholders/placeholder_store_item.png';
+const RUBY_PASS_REWARD_PLACEHOLDER = 'assets/UI/Store/Placeholders/placeholder_ruby_pass_reward.png';
+const EMOTE_STANDARD_PRICE_COINS = 150;
 
 const SKINS_DATA = [
     { id: 'cyan', name: 'Cian', color: '#00ffe7', rarity: 'BASICA', price: 0, priceType: 'coins', owned: true, archetype: 'Supervivencia', ability: 'Sobrevive a 1 pinchazo por partida.' },
@@ -17,7 +18,7 @@ const SKINS_DATA = [
     { id: 'frank', name: 'Frankenstein', color: '#78ff8f', rarity: 'EPICA', price: 1200, priceType: 'coins', altPrice: 40, altType: 'gems', fragments: 3, owned: false, emoji: 'F', archetype: 'Magnetismo', ability: 'Atrae recursos en radio grande.' },
     { id: 'shield', name: 'Centinela', color: '#7fd8ff', rarity: 'EPICA', price: 1200, priceType: 'coins', altPrice: 40, altType: 'gems', fragments: 3, owned: false, emoji: 'S', archetype: 'Supervivencia', ability: 'Escudo que regenera cada 60 segundos.' },
     { id: 'kenji', name: 'KENJI', color: '#845cff', rarity: 'EPICA', price: 1500, priceType: 'coins', altPrice: 50, altType: 'gems', fragments: 3, owned: false, imageRight: 'assets/Imagenes/Skins/KENJI Skin EPICO/Kenji_Skin_Derecha.png', imageLeft: 'assets/Imagenes/Skins/KENJI Skin EPICO/Kenji_Skin_Izquierda.png', archetype: 'Tecnica', ability: 'Movimiento preciso con estela epica.' },
-    { id: 'brifon', name: 'BRIFON', color: '#b86cff', rarity: 'EPICA', price: 0, priceType: 'coins', owned: false, soon: true, imageRight: 'assets/Imagenes/Skins/BRIFON_Skin_Derecha 2.png', archetype: 'Pendiente', ability: 'Apartado reservado.' },
+    { id: 'brifon', name: 'BRIFON', color: '#b86cff', rarity: 'EPICA', price: 0, priceType: 'coins', owned: false, soon: true, imageRight: 'assets/Imagenes/Skins/BRIFON Skin EPICO/BRIFON_Skin_Derecha.png', archetype: 'Pendiente', ability: 'Apartado reservado.' },
     { id: 'demon_ember', name: 'Demon Ember', color: '#cf0000', rarity: 'DEMON', price: 4500, priceType: 'coins', altPrice: 150, altType: 'gems', fragments: 3, owned: false, emoji: 'D', archetype: 'Inmortalidad', ability: 'Invulnerable 3 segundos.' },
     { id: 'daxor', name: 'DAXOR', color: '#ff2448', rarity: 'DEMON', price: 5200, priceType: 'coins', altPrice: 170, altType: 'gems', fragments: 3, owned: false, imageRight: 'assets/Imagenes/Skins/DAXOR Skin DEMON/DAXOR_Skin_Derecha.png', imageLeft: 'assets/Imagenes/Skins/DAXOR Skin DEMON/DAXOR_Skin_Izquierda.png', archetype: 'Demon', ability: 'Aspecto demon con doble direccion.' },
     { id: 'vip_time', name: 'Crono VIP', color: '#ffee00', rarity: 'VIP', price: 500, priceType: 'gems', fragments: 4, owned: false, emoji: 'V', archetype: 'Control del Tiempo', ability: 'Ralentiza la pista 40% por 5 segundos.' },
@@ -43,6 +44,21 @@ const BANNER_RARITY_COLORS = {
 const CURRENCY_ICONS = {
     coins: 'assets/Imagenes/Monetizacion/DEAD_COIN.png',
     gems: 'assets/Imagenes/Monetizacion/Rubies.png'
+};
+
+const REWARD_CURRENCY_ASSETS = {
+    gems: {
+        large: 'assets/UI/Rewards/Currency/Monton_de_gemas_grande.png',
+        medium: 'assets/UI/Rewards/Currency/Monton_de_gemas_Mediano.png',
+        small: 'assets/UI/Rewards/Currency/Monton_de_gemas_Pequeno.png',
+        single: 'assets/UI/Rewards/Currency/Monojo_de_gemas.png'
+    },
+    coins: {
+        large: 'assets/UI/Rewards/Currency/Monton_de_monedas_grande.png',
+        medium: 'assets/UI/Rewards/Currency/Monton_de_monedas_Mediano.png',
+        small: 'assets/UI/Rewards/Currency/Monton_de_monedas_Pequeno.png',
+        single: 'assets/UI/Rewards/Currency/Monojo_de_monedas.png'
+    }
 };
 
 const BANNERS_DATA = [
@@ -328,26 +344,26 @@ window.CHESTS_DATA = CHESTS_DATA;
 
 // RUBY_PASS_ASSET_SLOT: replace null image paths with your final PNG files.
 const RUBY_PASS_ASSETS = {
-    logo: 'assets/Imagenes/Ruby Pass/00_Logo/RubyPass_Lock.png', // RUBY_PASS_ASSET_SLOT_LOGO_LOCK
-    accessBanner: 'assets/Imagenes/Ruby Pass/01_Acceso/RubyPass_Banner.png', // RUBY_PASS_ASSET_SLOT_ACCESS_BANNER
-    background: 'assets/Imagenes/Ruby Pass/02_Fondo/RubyPass_Background.png', // RUBY_PASS_ASSET_SLOT_BACKGROUND
-    currentPoint: 'assets/Imagenes/Ruby Pass/05_Punto actual/Punto_Actual.png', // RUBY_PASS_ASSET_SLOT_CURRENT_POINT
+    logo: 'assets/UI/Store/RubyPass/Logo/ruby_pass_lock.png', // RUBY_PASS_ASSET_SLOT_LOGO_LOCK
+    accessBanner: 'assets/UI/Store/RubyPass/Access/ruby_pass_banner.png', // RUBY_PASS_ASSET_SLOT_ACCESS_BANNER
+    background: 'assets/UI/Store/RubyPass/Backgrounds/bg_ruby_pass_main.png', // RUBY_PASS_ASSET_SLOT_BACKGROUND
+    currentPoint: 'assets/UI/Store/RubyPass/Markers/ruby_pass_current_point.png', // RUBY_PASS_ASSET_SLOT_CURRENT_POINT
     arcTexture: RUBY_PASS_REWARD_PLACEHOLDER, // Slot visual de reserva por si se reactiva un arco unico.
-    freeTrackTexture: 'assets/Imagenes/Ruby Pass/03_Arco/RubyPass_Free_Track.png', // RUBY_PASS_ASSET_SLOT_FREE_TRACK
-    premiumTrackTexture: 'assets/Imagenes/Ruby Pass/03_Arco/RubyPass_Premium_Track.png', // RUBY_PASS_ASSET_SLOT_PREMIUM_TRACK
-    levelMarker: 'assets/Imagenes/Ruby Pass/03_Arco/RubyPass_Level_Marker.png', // RUBY_PASS_ASSET_SLOT_LEVEL_MARKER
-    freeSkin01: 'assets/Imagenes/Ruby Pass/04_Recompensas/Free/Skins/Free_Skin_01.png', // RUBY_PASS_ASSET_SLOT_FREE_SKIN_01
-    freeSkin02: 'assets/Imagenes/Ruby Pass/04_Recompensas/Free/Skins/Free_Skin_02.png', // RUBY_PASS_ASSET_SLOT_FREE_SKIN_02
-    freeBanner01: 'assets/Imagenes/Ruby Pass/04_Recompensas/Free/Banners/Free_Banner_01.png', // RUBY_PASS_ASSET_SLOT_FREE_BANNER_01
-    freeBanner02: 'assets/Imagenes/Ruby Pass/04_Recompensas/Free/Banners/Free_Banner_02.png', // RUBY_PASS_ASSET_SLOT_FREE_BANNER_02
-    freeTrail01: 'assets/Imagenes/Ruby Pass/04_Recompensas/Free/Trails/Free_Trail_01.png', // RUBY_PASS_ASSET_SLOT_FREE_TRAIL_01
-    premiumSkinDemon: 'assets/Imagenes/Ruby Pass/04_Recompensas/Premium/Skins/Premium_Skin_Demon.png', // RUBY_PASS_ASSET_SLOT_PREMIUM_SKIN_DEMON
-    premiumSkinFinal: 'assets/Imagenes/Ruby Pass/04_Recompensas/Premium/Skins/Premium_Skin_Final.png', // RUBY_PASS_ASSET_SLOT_PREMIUM_SKIN_FINAL
-    premiumBanner01: 'assets/Imagenes/Ruby Pass/04_Recompensas/Premium/Banners/Premium_Banner_01.png', // RUBY_PASS_ASSET_SLOT_PREMIUM_BANNER_01
-    premiumFrame01: 'assets/Imagenes/Ruby Pass/04_Recompensas/Premium/Marcos/Premium_Frame_01.png', // RUBY_PASS_ASSET_SLOT_PREMIUM_FRAME_01
-    premiumFrame02: 'assets/Imagenes/Ruby Pass/04_Recompensas/Premium/Marcos/Premium_Frame_02.png', // RUBY_PASS_ASSET_SLOT_PREMIUM_FRAME_02
-    premiumEmote01: 'assets/Imagenes/Ruby Pass/04_Recompensas/Premium/Emotes/Premium_Emote_01.png', // RUBY_PASS_ASSET_SLOT_PREMIUM_EMOTE_01
-    premiumEmote02: 'assets/Imagenes/Ruby Pass/04_Recompensas/Premium/Emotes/Premium_Emote_02.png' // RUBY_PASS_ASSET_SLOT_PREMIUM_EMOTE_02
+    freeTrackTexture: 'assets/UI/Store/RubyPass/Arcs/ruby_pass_free_track.png', // RUBY_PASS_ASSET_SLOT_FREE_TRACK
+    premiumTrackTexture: 'assets/UI/Store/RubyPass/Arcs/ruby_pass_premium_track.png', // RUBY_PASS_ASSET_SLOT_PREMIUM_TRACK
+    levelMarker: 'assets/UI/Store/RubyPass/Markers/ruby_pass_level_marker.png', // RUBY_PASS_ASSET_SLOT_LEVEL_MARKER
+    freeSkin01: 'assets/UI/Store/RubyPass/Rewards/Free/Skins/skin_free_ruby_01.png', // RUBY_PASS_ASSET_SLOT_FREE_SKIN_01
+    freeSkin02: 'assets/UI/Store/RubyPass/Rewards/Free/Skins/skin_free_ruby_02.png', // RUBY_PASS_ASSET_SLOT_FREE_SKIN_02
+    freeBanner01: 'assets/UI/Store/RubyPass/Rewards/Free/Banners/banner_free_ruby_01.png', // RUBY_PASS_ASSET_SLOT_FREE_BANNER_01
+    freeBanner02: 'assets/UI/Store/RubyPass/Rewards/Free/Banners/banner_free_ruby_02.png', // RUBY_PASS_ASSET_SLOT_FREE_BANNER_02
+    freeTrail01: 'assets/UI/Store/RubyPass/Rewards/Free/Trails/trail_free_ruby_01.png', // RUBY_PASS_ASSET_SLOT_FREE_TRAIL_01
+    premiumSkinDemon: 'assets/UI/Store/RubyPass/Rewards/Premium/Skins/skin_premium_demon.png', // RUBY_PASS_ASSET_SLOT_PREMIUM_SKIN_DEMON
+    premiumSkinFinal: 'assets/UI/Store/RubyPass/Rewards/Premium/Skins/skin_premium_final.png', // RUBY_PASS_ASSET_SLOT_PREMIUM_SKIN_FINAL
+    premiumBanner01: 'assets/UI/Store/RubyPass/Rewards/Premium/Banners/banner_premium_ruby_01.png', // RUBY_PASS_ASSET_SLOT_PREMIUM_BANNER_01
+    premiumFrame01: 'assets/UI/Store/RubyPass/Rewards/Premium/Frames/frame_premium_ruby_01.png', // RUBY_PASS_ASSET_SLOT_PREMIUM_FRAME_01
+    premiumFrame02: 'assets/UI/Store/RubyPass/Rewards/Premium/Frames/frame_premium_ruby_02.png', // RUBY_PASS_ASSET_SLOT_PREMIUM_FRAME_02
+    premiumEmote01: 'assets/UI/Store/RubyPass/Rewards/Premium/Emotes/emote_premium_ruby_01.png', // RUBY_PASS_ASSET_SLOT_PREMIUM_EMOTE_01
+    premiumEmote02: 'assets/UI/Store/RubyPass/Rewards/Premium/Emotes/emote_premium_ruby_02.png' // RUBY_PASS_ASSET_SLOT_PREMIUM_EMOTE_02
 };
 
 // =====================================================
@@ -437,7 +453,7 @@ const RUBY_PASS_REWARDS = [
     // ── Nivel 12: EMOTE NORMAL FREE ───────────────────
     {
         level: 12, xp: 3300,
-        free: { type: 'emote', image: 'assets/Imagenes/Emotes/Basic/Brifon_Normal.png' },
+        free: { type: 'coins' },
         premium: { type: 'coins' }
     },
 
@@ -573,12 +589,13 @@ const RUBY_PASS_XP_PER_WIN = 120;
 
 // SHOP_EMOTE_ASSET_SLOT: add your emote PNG paths here.
 const EMOTES_DATA = [
-    { id: 'emote_normal', name: 'Normal', image: 'assets/Imagenes/Emotes/Basic/Brifon_Normal.png', rarity: 'BASICA', slot: 'SHOP_EMOTE_ASSET_SLOT_BASIC_NORMAL' },
-    { id: 'emote_saludo', name: 'Saludo', image: 'assets/Imagenes/Emotes/Basic/Brifon_Saludo.png', rarity: 'BASICA', slot: 'SHOP_EMOTE_ASSET_SLOT_BASIC_SALUDO' },
-    { id: 'emote_enojado', name: 'Enojado', image: 'assets/Imagenes/Emotes/Basic/Brifon_Enojado.png', rarity: 'BASICA', slot: 'SHOP_EMOTE_ASSET_SLOT_BASIC_ENOJADO' },
-    { id: 'emote_Llorando', name: 'Llorando', image: 'assets/Imagenes/Emotes/Basic/Brifon_Llorando.png', rarity: 'BASICA', slot: 'SHOP_EMOTE_ASSET_SLOT_BASIC_LLORANDO' },
-    { id: 'emote_sorprendido', name: 'Sorprendido', image: 'assets/Imagenes/Emotes/Basic/Brifon_Sorprendido.png', rarity: 'BASICA', slot: 'SHOP_EMOTE_ASSET_SLOT_BASIC_SORPRENDIDO' },
-    { id: 'emote_mudo', name: 'Mudo', image: 'assets/Imagenes/Emotes/Basic/Brifon_Mudo.png', rarity: 'BASICA', slot: 'SHOP_EMOTE_ASSET_SLOT_BASIC_MUDO' },
+    { id: 'emote_normal', name: 'Normal', image: 'assets/UI/Store/Emotes/emote_brifon_normal.png', rarity: 'BASICA', price: EMOTE_STANDARD_PRICE_COINS, priceType: 'coins', slot: 'SHOP_EMOTE_ASSET_SLOT_BASIC_NORMAL' },
+    { id: 'emote_saludo', name: 'Saludo', image: 'assets/UI/Store/Emotes/emote_brifon_saludo.png', rarity: 'BASICA', price: EMOTE_STANDARD_PRICE_COINS, priceType: 'coins', slot: 'SHOP_EMOTE_ASSET_SLOT_BASIC_SALUDO' },
+    { id: 'emote_enojado', name: 'Enojado', image: 'assets/UI/Store/Emotes/emote_brifon_enojado.png', rarity: 'BASICA', price: EMOTE_STANDARD_PRICE_COINS, priceType: 'coins', slot: 'SHOP_EMOTE_ASSET_SLOT_BASIC_ENOJADO' },
+    { id: 'emote_Llorando', name: 'Llorando', image: 'assets/UI/Store/Emotes/emote_brifon_llorando.png', rarity: 'BASICA', price: EMOTE_STANDARD_PRICE_COINS, priceType: 'coins', slot: 'SHOP_EMOTE_ASSET_SLOT_BASIC_LLORANDO' },
+    { id: 'emote_sorprendido', name: 'Sorprendido', image: 'assets/UI/Store/Emotes/emote_brifon_sorprendido.png', rarity: 'BASICA', price: EMOTE_STANDARD_PRICE_COINS, priceType: 'coins', slot: 'SHOP_EMOTE_ASSET_SLOT_BASIC_SORPRENDIDO' },
+    { id: 'emote_mudo', name: 'Mudo', image: 'assets/UI/Store/Emotes/emote_brifon_mudo.png', rarity: 'BASICA', price: EMOTE_STANDARD_PRICE_COINS, priceType: 'coins', slot: 'SHOP_EMOTE_ASSET_SLOT_BASIC_MUDO' },
+    { id: 'emote_ruby_pass_01', name: 'Ruby Pass', image: RUBY_PASS_ASSETS.premiumEmote01, rarity: 'VIP', vip: true, passOnly: true, rubyPassLane: 'premium', rubyPassLevel: 8, slot: 'SHOP_EMOTE_ASSET_SLOT_RUBY_PASS_01' },
 ];
 
 const VIP_CAROUSEL_DATA = [
@@ -587,12 +604,14 @@ const VIP_CAROUSEL_DATA = [
         title: 'Noche Real',
         subtitle: 'Skins nocturnas y trail de corona',
         price: 520,
-        cover: 'assets/Imagenes/VIP/Carrusel/Panel_Noche_Real.png',
+        cover: 'assets/UI/Store/VIP/CarouselPanels/panel_carousel_royal_night.png',
+        detailBackground: 'assets/UI/Store/VIP/Backgrounds/bg_carousel_royal_night.png',
+        popupBackground: 'assets/UI/Store/VIP/PopupBackgrounds/popup_carousel_royal_night.png',
         items: [
-            { type: 'skin', name: 'Rey Sombra', image: 'assets/Imagenes/Skins/Placeholders/Skin_Rey_Sombra.png' },
-            { type: 'skin', name: 'Dama Ruby', image: 'assets/Imagenes/Skins/Placeholders/Skin_Dama_Ruby.png' },
-            { type: 'skin', name: 'Guardian Oro', image: 'assets/Imagenes/Skins/Placeholders/Skin_Guardian_Oro.png' },
-            { type: 'trail', name: 'Corona Viva', image: 'assets/Imagenes/Trails/Placeholders/Trail_Corona_Viva.png' }
+            { type: 'skin', name: 'Rey Sombra', image: 'assets/UI/Store/Skins/skin_rey_sombra.png' },
+            { type: 'skin', name: 'Dama Ruby', image: 'assets/UI/Store/Skins/skin_dama_ruby.png' },
+            { type: 'skin', name: 'Guardian Oro', image: 'assets/UI/Store/Skins/skin_guardian_oro.png' },
+            { type: 'trail', name: 'Corona Viva', image: 'assets/UI/Store/Trails/trail_corona_viva.png' }
         ]
     },
     {
@@ -600,12 +619,14 @@ const VIP_CAROUSEL_DATA = [
         title: 'Vacio Lux',
         subtitle: 'Efectos premium de energia oscura',
         price: 650,
-        cover: 'assets/Imagenes/VIP/Carrusel/Panel_Vacio_Lux.png',
+        cover: 'assets/UI/Store/VIP/CarouselPanels/panel_carousel_void_lux.png',
+        detailBackground: 'assets/UI/Store/VIP/Backgrounds/bg_carousel_void_lux.png',
+        popupBackground: 'assets/UI/Store/VIP/PopupBackgrounds/popup_carousel_void_lux.png',
         items: [
-            { type: 'skin', name: 'Lux Void', image: 'assets/Imagenes/Skins/Placeholders/Skin_Lux_Void.png' },
-            { type: 'skin', name: 'Oraculo', image: 'assets/Imagenes/Skins/Placeholders/Skin_Oraculo.png' },
-            { type: 'skin', name: 'Nucleo Negro', image: 'assets/Imagenes/Skins/Placeholders/Skin_Nucleo_Negro.png' },
-            { type: 'trail', name: 'Vacio Lux', image: 'assets/Imagenes/Trails/Placeholders/Trail_Vacio_Lux.png' }
+            { type: 'skin', name: 'Lux Void', image: 'assets/UI/Store/Skins/skin_lux_void.png' },
+            { type: 'skin', name: 'Oraculo', image: 'assets/UI/Store/Skins/skin_oraculo.png' },
+            { type: 'skin', name: 'Nucleo Negro', image: 'assets/UI/Store/Skins/skin_nucleo_negro.png' },
+            { type: 'trail', name: 'Vacio Lux', image: 'assets/UI/Store/Trails/trail_vacio_lux.png' }
         ]
     },
     {
@@ -613,12 +634,14 @@ const VIP_CAROUSEL_DATA = [
         title: 'Neon Elite',
         subtitle: 'Coleccion rapida de luz y velocidad',
         price: 480,
-        cover: 'assets/Imagenes/VIP/Carrusel/Panel_Neon_Elite.png',
+        cover: 'assets/UI/Store/VIP/CarouselPanels/panel_carousel_neon_elite.png',
+        detailBackground: 'assets/UI/Store/VIP/Backgrounds/bg_carousel_neon_elite.png',
+        popupBackground: 'assets/UI/Store/VIP/PopupBackgrounds/popup_carousel_neon_elite.png',
         items: [
-            { type: 'skin', name: 'Neon Ace', image: 'assets/Imagenes/Skins/Placeholders/Skin_Neon_Ace.png' },
-            { type: 'skin', name: 'Volt Star', image: 'assets/Imagenes/Skins/Placeholders/Skin_Volt_Star.png' },
-            { type: 'skin', name: 'Pixel Gold', image: 'assets/Imagenes/Skins/Placeholders/Skin_Pixel_Gold.png' },
-            { type: 'trail', name: 'Pulso Neon', image: 'assets/Imagenes/Trails/Placeholders/Trail_Pulso_Neon.png' }
+            { type: 'skin', name: 'Neon Ace', image: 'assets/UI/Store/Skins/skin_neon_ace.png' },
+            { type: 'skin', name: 'Volt Star', image: 'assets/UI/Store/Skins/skin_volt_star.png' },
+            { type: 'skin', name: 'Pixel Gold', image: 'assets/UI/Store/Skins/skin_pixel_gold.png' },
+            { type: 'trail', name: 'Pulso Neon', image: 'assets/UI/Store/Trails/trail_pulso_neon.png' }
         ]
     },
     {
@@ -626,12 +649,14 @@ const VIP_CAROUSEL_DATA = [
         title: 'Ruby Legend',
         subtitle: 'Set caro de temporada premium',
         price: 700,
-        cover: 'assets/Imagenes/VIP/Carrusel/Panel_Ruby_Legend.png',
+        cover: 'assets/UI/Store/VIP/CarouselPanels/panel_carousel_ruby_legend.png',
+        detailBackground: 'assets/UI/Store/VIP/Backgrounds/bg_carousel_ruby_legend.png',
+        popupBackground: 'assets/UI/Store/VIP/PopupBackgrounds/popup_carousel_ruby_legend.png',
         items: [
-            { type: 'skin', name: 'Leyenda Ruby', image: 'assets/Imagenes/Skins/Placeholders/Skin_Leyenda_Ruby.png' },
-            { type: 'skin', name: 'Diamante Rojo', image: 'assets/Imagenes/Skins/Placeholders/Skin_Diamante_Rojo.png' },
-            { type: 'skin', name: 'Emperador', image: 'assets/Imagenes/Skins/Placeholders/Skin_Emperador.png' },
-            { type: 'trail', name: 'Ruby Orbit', image: 'assets/Imagenes/Trails/Placeholders/Trail_Ruby_Orbit.png' }
+            { type: 'skin', name: 'Leyenda Ruby', image: 'assets/UI/Store/Skins/skin_leyenda_ruby.png' },
+            { type: 'skin', name: 'Diamante Rojo', image: 'assets/UI/Store/Skins/skin_diamante_rojo.png' },
+            { type: 'skin', name: 'Emperador', image: 'assets/UI/Store/Skins/skin_emperador.png' },
+            { type: 'trail', name: 'Ruby Orbit', image: 'assets/UI/Store/Trails/trail_ruby_orbit.png' }
         ]
     }
 ];
@@ -639,56 +664,207 @@ const VIP_CAROUSEL_DATA = [
 const VIP_PACKAGES_DATA = [
     {
         id: 'monsters',
-        title: 'Paquete Monstruos',
+        title: 'PAQUETE MONSTRUOS',
         price: 1200,
-        cover: 'assets/Imagenes/VIP/Paquetes/Monstruos/Pack_Monstruos.png',
+        cover: 'assets/UI/Store/VIP/Bundles/Monsters/panel_bundle_monsters.png',
+        detailBackground: 'assets/UI/Store/VIP/Bundles/Monsters/bg_monsters_panel.png',
+        popupBackground: 'assets/UI/Store/VIP/Bundles/Monsters/popup_monsters_bg.png',
         accent: '#ff4d6d',
         items: [
-            { type: 'skin', name: 'Dracula', price: 320, image: 'assets/Imagenes/VIP/Paquetes/Monstruos/Dracula.png' },
-            { type: 'bundle', name: 'Zombie + Trail Zombie', price: 420, image: 'assets/Imagenes/VIP/Paquetes/Monstruos/Zombie.png' },
-            { type: 'skin', name: 'Fantasma', price: 260, image: 'assets/Imagenes/VIP/Paquetes/Monstruos/Fantasma.png' },
-            { type: 'skin', name: 'Lobo', price: 300, image: 'assets/Imagenes/VIP/Paquetes/Monstruos/Lobo.png' },
-            { type: 'skin', name: 'Calabaza', price: 280, image: 'assets/Imagenes/VIP/Paquetes/Monstruos/Calabaza.png' },
-            { type: 'trail', name: 'Niebla Zombie', price: 240, image: 'assets/Imagenes/VIP/Paquetes/Monstruos/Trail_Zombie.png' }
+            {
+                type: 'bundle',
+                name: 'Dracula',
+                price: 520,
+                image: 'assets/UI/Store/VIP/Bundles/Monsters/skin_conde_dracula.png',
+                items: [
+                    { type: 'skin', id: 'skin_conde_dracula', name: 'Conde Dracula', image: 'assets/UI/Store/VIP/Bundles/Monsters/skin_conde_dracula.png' },
+                    { type: 'trail', id: 'trail_vampiro', name: 'Trail Vampiro', image: 'assets/UI/Store/VIP/Bundles/Monsters/trail_vampiro.png', trailId: 'trail_vampiro' }
+                ]
+            },
+            {
+                type: 'bundle',
+                name: 'Zombie',
+                price: 520,
+                image: 'assets/UI/Store/VIP/Bundles/Monsters/skin_zombie.png',
+                items: [
+                    { type: 'skin', id: 'skin_zombie', name: 'Zombie', image: 'assets/UI/Store/VIP/Bundles/Monsters/skin_zombie.png' },
+                    { type: 'trail', id: 'trail_zombie', name: 'Trail Zombie', image: 'assets/UI/Store/VIP/Bundles/Monsters/trail_zombie.png', trailId: 'trail_zombie' }
+                ]
+            },
+            { type: 'vipSkin', id: 'skin_fantasma', name: 'Fantasma', price: 260, image: 'assets/UI/Store/VIP/Bundles/Monsters/skin_fantasma.png' },
+            { type: 'vipSkin', id: 'skin_lobo_monstruo', name: 'Lobo Monstruo', price: 300, image: 'assets/UI/Store/VIP/Bundles/Monsters/skin_lobo_monstruo.png' },
+            { type: 'vipSkin', id: 'skin_calabaza', name: 'Calabaza', price: 280, image: 'assets/UI/Store/VIP/Bundles/Monsters/skin_calabaza.png' },
+            {
+                type: 'bundle',
+                name: 'Las brujas',
+                price: 620,
+                image: 'assets/UI/Store/VIP/Bundles/Monsters/skin_bruja.png',
+                items: [
+                    { type: 'skin', id: 'skin_bruja', name: 'Bruja', image: 'assets/UI/Store/VIP/Bundles/Monsters/skin_bruja.png' },
+                    { type: 'skin', id: 'skin_nocturna', name: 'Nocturna', image: 'assets/UI/Store/VIP/Bundles/Monsters/skin_nocturna.png' }
+                ]
+            }
         ]
     },
     {
         id: 'elements',
         title: 'Paquete Elementos',
         price: 950,
-        cover: 'assets/Imagenes/VIP/Paquetes/Elementos/Pack_Elementos.png',
+        cover: 'assets/UI/Store/VIP/Bundles/Elements/panel_bundle_elements.png',
+        detailBackground: 'assets/UI/Store/VIP/Bundles/Elements/bg_elements_panel.png',
+        popupBackground: 'assets/UI/Store/VIP/Bundles/Elements/popup_elements_bg.png',
         accent: '#00ffe7',
         items: [
-            { type: 'trail', name: 'Trail de Fuego', price: 300, image: 'assets/Imagenes/VIP/Paquetes/Elementos/Trail_Fuego.png' },
-            { type: 'trail', name: 'Trail Rayo', price: 420, image: 'assets/Imagenes/VIP/Paquetes/Elementos/Trail_Rayo.png' },
-            { type: 'skin', name: 'Magma', price: 360, image: 'assets/Imagenes/VIP/Paquetes/Elementos/Skin_Magma.png' },
-            { type: 'skin', name: 'Tormenta', price: 390, image: 'assets/Imagenes/VIP/Paquetes/Elementos/Skin_Tormenta.png' }
+            { type: 'elementTrail', label: 'Elemento Fuego', name: 'Fuego', price: 300, image: 'assets/UI/Store/VIP/Bundles/Elements/trail_fire.png', trailId: 'trail_fire', previewColor: 'orange' },
+            { type: 'elementTrail', label: 'Elemento Agua', name: 'Agua', price: 300, image: 'assets/UI/Store/VIP/Bundles/Elements/trail_water.png', trailId: 'trail_water', previewColor: 'blue' },
+            { type: 'elementTrail', label: 'Elemento Viento', name: 'Viento', price: 300, image: 'assets/UI/Store/VIP/Bundles/Elements/trail_wind.png', trailId: 'trail_wind', previewColor: 'cyan' },
+            { type: 'elementTrail', label: 'Elemento Hielo', name: 'Hielo', price: 300, image: 'assets/UI/Store/VIP/Bundles/Elements/trail_ice.png', trailId: 'trail_ice', previewColor: 'cyan' },
+            { type: 'elementTrail', label: 'Elemento Lava', name: 'Lava', price: 360, image: 'assets/UI/Store/VIP/Bundles/Elements/trail_lava.png', trailId: 'trail_lava', previewColor: 'red' },
+            { type: 'elementTrail', label: 'Elemento Naturaleza', name: 'Naturaleza', price: 360, image: 'assets/UI/Store/VIP/Bundles/Elements/trail_nature.png', trailId: 'trail_nature', previewColor: 'green' }
         ]
     },
     {
-        id: 'troll',
-        title: 'Paquete Troll',
-        price: 800,
-        cover: 'assets/Imagenes/VIP/Paquetes/Troll/Pack_Troll.png',
-        accent: '#8dff5a',
+        id: 'emojis',
+        title: 'PAQUETE EMOJIS',
+        price: 1400,
+        cover: 'assets/UI/Store/VIP/Bundles/Emojis/panel_bundle_emojis.png',
+        detailBackground: 'assets/UI/Store/VIP/Bundles/Emojis/bg_emojis_panel.png',
+        popupBackground: 'assets/UI/Store/VIP/Bundles/Emojis/popup_emojis_bg.png',
+        accent: '#ffda3a',
         items: [
-            { type: 'skin', name: 'Troll Face', price: 260, image: 'assets/Imagenes/VIP/Paquetes/Troll/Troll_Face.png' },
-            { type: 'emote', name: 'Problem?', price: 180, image: 'assets/Imagenes/VIP/Paquetes/Troll/Emote_Problem.png' },
-            { type: 'emote', name: 'Forever Alone', price: 180, image: 'assets/Imagenes/VIP/Paquetes/Troll/Emote_Forever.png' },
-            { type: 'trail', name: 'Meme Dust', price: 240, image: 'assets/Imagenes/VIP/Paquetes/Troll/Trail_Meme_Dust.png' }
+            { type: 'customTextTrail', id: 'trail_custom_text', name: '¡Trail personalizable!', price: 1000, image: 'assets/UI/Store/VIP/Bundles/Emojis/trail_custom_text.png' },
+            {
+                type: 'emojiPack',
+                id: 'emoji_pack_expresiones',
+                name: 'Paquete de emojis',
+                price: 900,
+                image: 'assets/UI/Store/VIP/Bundles/Emojis/portada_paquete_emojis_exp.png',
+                items: [
+                    { id: 'emoji_fachero', name: 'Fachero', image: 'assets/UI/Store/VIP/Bundles/Emojis/emoji_fachero.png' },
+                    { id: 'emoji_enamorado', name: 'Enamorado', image: 'assets/UI/Store/VIP/Bundles/Emojis/emoji_enamorado.png' },
+                    { id: 'emoji_asustado', name: 'Asustado', image: 'assets/UI/Store/VIP/Bundles/Emojis/emoji_asustado.png' },
+                    { id: 'emoji_skull_pack', name: 'Skull', image: 'assets/UI/Store/VIP/Bundles/Emojis/emoji_skull_pack.png' },
+                    { id: 'emoji_derretido', name: 'Derretido', image: 'assets/UI/Store/VIP/Bundles/Emojis/emoji_derretido.png' },
+                    { id: 'emoji_serio', name: 'Serio', image: 'assets/UI/Store/VIP/Bundles/Emojis/emoji_serio.png' }
+                ]
+            },
+            { type: 'emoji', id: 'emoji_llorando', name: 'Llorando', price: 200, image: 'assets/UI/Store/VIP/Bundles/Emojis/emoji_llorando.png' },
+            { type: 'emoji', id: 'emoji_enojado', name: 'Enojado', price: 200, image: 'assets/UI/Store/VIP/Bundles/Emojis/emoji_enojado.png' },
+            { type: 'emoji', id: 'emoji_triste', name: 'Triste', price: 200, image: 'assets/UI/Store/VIP/Bundles/Emojis/emoji_triste.png' },
+            { type: 'emoji', id: 'emoji_feliz', name: 'Feliz', price: 200, image: 'assets/UI/Store/VIP/Bundles/Emojis/emoji_feliz.png' },
+            { type: 'emoji', id: 'emoji_guino', name: 'Guino', price: 200, image: 'assets/UI/Store/VIP/Bundles/Emojis/emoji_guino.png' },
+            { type: 'emoji', id: 'emoji_sonriente', name: 'Sonriente', price: 200, image: 'assets/UI/Store/VIP/Bundles/Emojis/emoji_sonriente.png' },
+            { type: 'emoji', id: 'emoji_bomito', name: 'Bomito', price: 200, image: 'assets/UI/Store/VIP/Bundles/Emojis/emoji_bomito.png' }
         ]
     },
     {
-        id: 'power',
-        title: 'Paquete de Poder',
+        id: 'food',
+        title: 'Paquete Comida',
+        price: 1200,
+        cover: 'assets/UI/Store/VIP/Bundles/Food/panel_bundle_food.png',
+        detailBackground: 'assets/UI/Store/VIP/Bundles/Food/bg_food_panel.png',
+        popupBackground: 'assets/UI/Store/VIP/Bundles/Food/popup_food_bg.png',
+        accent: '#ff8a3d',
+        items: [
+            { type: 'vipSkin', id: 'skin_hamburguesa', name: 'Hamburguesa', price: 260, image: 'assets/UI/Store/VIP/Bundles/Food/skin_hamburguesa.png' },
+            { type: 'vipSkin', id: 'skin_pizza', name: 'Pizza', price: 260, image: 'assets/UI/Store/VIP/Bundles/Food/skin_pizza.png' },
+            { type: 'vipSkin', id: 'skin_helado', name: 'Helado', price: 260, image: 'assets/UI/Store/VIP/Bundles/Food/skin_helado.png' },
+            { type: 'vipSkin', id: 'skin_limon_toxico', name: 'Limon Toxico', price: 320, image: 'assets/UI/Store/VIP/Bundles/Food/skin_limon_toxico.png' },
+            { type: 'vipSkin', id: 'skin_sandia', name: 'Sandia', price: 260, image: 'assets/UI/Store/VIP/Bundles/Food/skin_sandia.png' },
+            { type: 'vipSkin', id: 'skin_cafe', name: 'Cafe', price: 260, image: 'assets/UI/Store/VIP/Bundles/Food/skin_cafe.png' }
+        ]
+    },
+    {
+        id: 'space',
+        title: 'PAQUETE ESPACIAL',
         price: 1500,
-        cover: 'assets/Imagenes/VIP/Paquetes/Poder/Pack_Poder.png',
-        accent: '#ffee00',
+        cover: 'assets/UI/Store/VIP/Bundles/Space/portada_paquete_espacial.png',
+        detailBackground: 'assets/UI/Store/VIP/Bundles/Space/bg_espacial_panel.png',
+        popupBackground: 'assets/UI/Store/VIP/Bundles/Space/popup_espacial_bg.png',
+        accent: '#7fd8ff',
         items: [
-            { type: 'skin', name: 'Crono Max', price: 500, image: 'assets/Imagenes/VIP/Paquetes/Poder/Crono_Max.png' },
-            { type: 'skin', name: 'Mega Escudo', price: 480, image: 'assets/Imagenes/VIP/Paquetes/Poder/Mega_Escudo.png' },
-            { type: 'skin', name: 'Magneto Real', price: 460, image: 'assets/Imagenes/VIP/Paquetes/Poder/Magneto_Real.png' },
-            { type: 'trail', name: 'Poder Total', price: 380, image: 'assets/Imagenes/VIP/Paquetes/Poder/Trail_Poder_Total.png' }
+            { type: 'vipSkin', id: 'skin_sol', name: 'Sol', price: 300, image: 'assets/UI/Store/VIP/Bundles/Space/skin_sol.png' },
+            { type: 'vipSkin', id: 'skin_luna', name: 'Luna', price: 300, image: 'assets/UI/Store/VIP/Bundles/Space/skin_luna.png' },
+            { type: 'vipSkin', id: 'skin_planeta', name: 'Planeta', price: 300, image: 'assets/UI/Store/VIP/Bundles/Space/skin_planeta.png' },
+            { type: 'vipSkin', id: 'skin_agujero_negro', name: 'Agujero Negro', price: 380, image: 'assets/UI/Store/VIP/Bundles/Space/skin_agujero_negro.png' },
+            { type: 'vipSkin', id: 'skin_meteorito', name: 'Meteorito', price: 320, image: 'assets/UI/Store/VIP/Bundles/Space/skin_meteorito.png' },
+            { type: 'vipSkin', id: 'skin_alien', name: 'Alien', price: 340, image: 'assets/UI/Store/VIP/Bundles/Space/skin_alien.png' },
+            { type: 'vipTrailPng', id: 'trail_estrellas', name: 'Trail Estrellas', price: 320, image: 'assets/UI/Store/VIP/Bundles/Space/trail_estrellas.png', trailId: 'trail_estrellas' },
+            { type: 'vipTrailPng', id: 'trail_auroras', name: 'Trail Auroras', price: 320, image: 'assets/UI/Store/VIP/Bundles/Space/trail_auroras.png', trailId: 'trail_auroras' }
+        ]
+    },
+    {
+        id: 'professional',
+        title: 'PAQUETE PROFESIONAL',
+        price: 1300,
+        cover: 'assets/UI/Store/VIP/Bundles/Professional/portada_paquete_profesional.png',
+        detailBackground: 'assets/UI/Store/VIP/Bundles/Professional/bg_profesional_panel.png',
+        popupBackground: 'assets/UI/Store/VIP/Bundles/Professional/popup_profesional_bg.png',
+        accent: '#b6c7ff',
+        items: [
+            { type: 'vipSkin', id: 'skin_ninja', name: 'Ninja', price: 300, image: 'assets/UI/Store/VIP/Bundles/Professional/skin_ninja.png' },
+            { type: 'vipSkin', id: 'skin_pirata', name: 'Pirata', price: 300, image: 'assets/UI/Store/VIP/Bundles/Professional/skin_pirata.png' },
+            { type: 'vipSkin', id: 'skin_cientifico', name: 'Cientifico', price: 300, image: 'assets/UI/Store/VIP/Bundles/Professional/skin_cientifico.png' },
+            { type: 'vipSkin', id: 'skin_hacker', name: 'Hacker', price: 340, image: 'assets/UI/Store/VIP/Bundles/Professional/skin_hacker.png' },
+            { type: 'vipSkin', id: 'skin_chef', name: 'Chef', price: 280, image: 'assets/UI/Store/VIP/Bundles/Professional/skin_chef.png' },
+            { type: 'vipSkin', id: 'skin_samurai', name: 'Samurai', price: 360, image: 'assets/UI/Store/VIP/Bundles/Professional/skin_samurai.png' }
+        ]
+    },
+    {
+        id: 'wild',
+        title: 'PAQUETE SALVAJE',
+        price: 1350,
+        cover: 'assets/UI/Store/VIP/Bundles/Wild/portada_paquete_salvaje.png',
+        detailBackground: 'assets/UI/Store/VIP/Bundles/Wild/bg_salvaje_panel.png',
+        popupBackground: 'assets/UI/Store/VIP/Bundles/Wild/popup_salvaje_bg.png',
+        accent: '#44ff88',
+        items: [
+            { type: 'vipSkin', id: 'skin_lobo_salvaje', name: 'Lobo Salvaje', price: 320, image: 'assets/UI/Store/VIP/Bundles/Wild/skin_lobo_salvaje.png' },
+            { type: 'vipSkin', id: 'skin_serpiente', name: 'Serpiente', price: 300, image: 'assets/UI/Store/VIP/Bundles/Wild/skin_serpiente.png' },
+            { type: 'vipSkin', id: 'skin_tiburon', name: 'Tiburon', price: 340, image: 'assets/UI/Store/VIP/Bundles/Wild/skin_tiburon.png' },
+            { type: 'vipSkin', id: 'skin_cuervo', name: 'Cuervo', price: 300, image: 'assets/UI/Store/VIP/Bundles/Wild/skin_cuervo.png' },
+            { type: 'vipSkin', id: 'skin_escorpion', name: 'Escorpion', price: 320, image: 'assets/UI/Store/VIP/Bundles/Wild/skin_escorpion.png' },
+            { type: 'vipSkin', id: 'skin_tigre', name: 'Tigre', price: 360, image: 'assets/UI/Store/VIP/Bundles/Wild/skin_tigre.png' }
+        ]
+    },
+    {
+        id: 'christmas',
+        title: 'PAQUETE NAVIDEÑO',
+        price: 1700,
+        cover: 'assets/UI/Store/VIP/Bundles/Christmas/portada_paquete_navidad.png',
+        detailBackground: 'assets/UI/Store/VIP/Bundles/Christmas/bg_navidad_panel.png',
+        popupBackground: 'assets/UI/Store/VIP/Bundles/Christmas/popup_navidad_bg.png',
+        accent: '#ff4d6d',
+        items: [
+            {
+                type: 'bundle',
+                name: 'Santa Claus',
+                price: 620,
+                image: 'assets/UI/Store/VIP/Bundles/Christmas/skin_santa_claus.png',
+                popupBackground: 'assets/UI/Store/VIP/Bundles/Christmas/popup_santa_claus_bg.png',
+                items: [
+                    { type: 'skin', id: 'skin_santa_claus', name: 'Santa Claus', image: 'assets/UI/Store/VIP/Bundles/Christmas/skin_santa_claus.png' },
+                    { type: 'trail', id: 'trail_santa', name: 'Trail Santa', image: 'assets/UI/Store/VIP/Bundles/Christmas/trail_santa.png', trailId: 'trail_santa' }
+                ]
+            },
+            {
+                type: 'bundle',
+                name: 'Mama Claus',
+                price: 620,
+                image: 'assets/UI/Store/VIP/Bundles/Christmas/skin_mama_claus.png',
+                popupBackground: 'assets/UI/Store/VIP/Bundles/Christmas/popup_mama_claus_bg.png',
+                items: [
+                    { type: 'skin', id: 'skin_mama_claus', name: 'Mama Claus', image: 'assets/UI/Store/VIP/Bundles/Christmas/skin_mama_claus.png' },
+                    { type: 'trail', id: 'trail_mama_claus', name: 'Trail Mama Claus', image: 'assets/UI/Store/VIP/Bundles/Christmas/trail_mama_claus.png', trailId: 'trail_mama_claus' }
+                ]
+            },
+            { type: 'vipSkin', id: 'skin_reno', name: 'Reno', price: 300, image: 'assets/UI/Store/VIP/Bundles/Christmas/skin_reno.png' },
+            { type: 'vipSkin', id: 'skin_duende', name: 'Duende', price: 300, image: 'assets/UI/Store/VIP/Bundles/Christmas/skin_duende.png' },
+            { type: 'vipSkin', id: 'skin_regalo', name: 'Regalo', price: 300, image: 'assets/UI/Store/VIP/Bundles/Christmas/skin_regalo.png' },
+            { type: 'vipSkin', id: 'skin_arbol_navidad', name: 'Arbol Navidad', price: 340, image: 'assets/UI/Store/VIP/Bundles/Christmas/skin_arbol_navidad.png' },
+            { type: 'vipSkin', id: 'skin_baston_cristal', name: 'Baston Cristal', price: 340, image: 'assets/UI/Store/VIP/Bundles/Christmas/skin_baston_cristal.png' },
+            { type: 'vipSkin', id: 'skin_esfera_navidad', name: 'Esfera Navidad', price: 320, image: 'assets/UI/Store/VIP/Bundles/Christmas/skin_esfera_navidad.png' },
+            { type: 'vipSkin', id: 'skin_galleta_navidad', name: 'Galleta Navidad', price: 320, image: 'assets/UI/Store/VIP/Bundles/Christmas/skin_galleta_navidad.png' }
         ]
     }
 ];
@@ -790,6 +966,15 @@ function showShopSection(section) {
 
 function renderHome(container) {
     const rubyClaimable = hasRubyPassClaimableRewards();
+    const panels = [
+        { section: 'skins', image: 'assets/UI/Store/Panels/portada_panel_skins_tienda_normal.png' },
+        { section: 'trails', image: 'assets/UI/Store/Panels/portada_panel_trails_tienda_normal.png' },
+        { section: 'cofres', image: 'assets/UI/Store/Panels/portada_panel_cofres_tienda_normal.png' },
+        { section: 'banners', image: 'assets/UI/Store/Panels/portada_panel_banners_tienda_normal.png' },
+        { section: 'emotes', image: 'assets/UI/Store/Panels/portada_panel_emotes_tienda_normal.png' },
+        { section: 'daily', image: 'assets/UI/Store/Panels/portada_panel_regalo_diario_tienda_normal.png' },
+        { section: 'conversion', image: 'assets/UI/Store/Panels/portada_panel_conversion_tienda_normal.png' },
+    ];
     container.innerHTML = `
         <div style="display:grid; grid-template-columns:minmax(0,1fr) minmax(260px,380px); gap:16px; margin-bottom:32px;">
             <div style="min-height:140px; border-radius:16px; background:linear-gradient(135deg, rgba(255,180,0,0.12), rgba(180,100,0,0.08)); border:1px solid rgba(255,200,0,0.3); display:flex; align-items:center; padding:0 32px; gap:24px; overflow:hidden; position:relative; box-shadow:0 0 30px rgba(255,180,0,0.08);">
@@ -816,68 +1001,17 @@ function renderHome(container) {
             </button>
         </div>
 
-        <div style="color:rgba(255,255,255,0.4); font-family:monospace; font-size:11px; letter-spacing:4px; margin-bottom:16px;">CATEGORÍAS</div>
+        <div style="color:rgba(255,255,255,0.4); font-family:monospace; font-size:11px; letter-spacing:4px; margin-bottom:16px;">CATEGORIAS</div>
 
-        <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(210px,1fr)); gap:16px;">
-
-            <div onclick="showShopSection('skins')" style="cursor:pointer; background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.08); border-radius:14px; overflow:hidden; transition:0.2s;" onmouseover="this.style.borderColor='rgba(255,255,255,0.2)';this.style.transform='translateY(-2px)'" onmouseout="this.style.borderColor='rgba(255,255,255,0.08)';this.style.transform='none'">
-                <img src="assets/Imagenes/Paneles tienda/Panel_Skins.png" style="width:100%; height:180px; object-fit:contain; display:block; background:transparent; padding:8px;">
-                <div style="padding:12px 14px;">
-                    <div style="color:rgba(255,255,255,0.3); font-family:monospace; font-size:10px; margin-top:4px;">8 disponibles</div>
-                </div>
-            </div>
-
-            <div onclick="showShopSection('trails')" style="cursor:pointer; background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.08); border-radius:14px; overflow:hidden; transition:0.2s;" onmouseover="this.style.borderColor='rgba(255,255,255,0.2)';this.style.transform='translateY(-2px)'" onmouseout="this.style.borderColor='rgba(255,255,255,0.08)';this.style.transform='none'">
-                <img src="assets/Imagenes/Paneles tienda/Panel_Trails.png" style="width:100%; height:180px; object-fit:contain; display:block; background:transparent; padding:8px;">
-                <div style="padding:12px 14px;">
-                    <div style="color:rgba(255,255,255,0.3); font-family:monospace; font-size:10px; margin-top:4px;">4 efectos</div>
-                </div>
-            </div>
-
-            <div onclick="showShopSection('cofres')" style="cursor:pointer; background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.08); border-radius:14px; overflow:hidden; transition:0.2s;" onmouseover="this.style.borderColor='rgba(255,255,255,0.2)';this.style.transform='translateY(-2px)'" onmouseout="this.style.borderColor='rgba(255,255,255,0.08)';this.style.transform='none'">
-                <img src="assets/Imagenes/Paneles tienda/Panel_Cofres.png" style="width:100%; height:180px; object-fit:contain; display:block; background:transparent; padding:8px;">
-                <div style="padding:12px 14px;">
-                    <div style="color:rgba(255,255,255,0.3); font-family:monospace; font-size:10px; margin-top:4px;">Sistema activo</div>
-                </div>
-            </div>
-
-            <div onclick="showShopSection('banners')" style="cursor:pointer; background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.08); border-radius:14px; overflow:hidden; transition:0.2s;" onmouseover="this.style.borderColor='rgba(255,255,255,0.2)';this.style.transform='translateY(-2px)'" onmouseout="this.style.borderColor='rgba(255,255,255,0.08)';this.style.transform='none'">
-                <div style="height:180px; margin:8px; border-radius:10px; background:linear-gradient(135deg, rgba(0,255,231,0.16), rgba(255,77,109,0.12)); border:1px dashed rgba(255,255,255,0.18); display:flex; align-items:center; justify-content:center; color:white; font-family:monospace; font-size:20px; letter-spacing:5px;">BANNERS</div>
-                <div style="padding:12px 14px;">
-                    <div style="color:white; font-family:monospace; font-size:12px; letter-spacing:2px;">BANNERS</div>
-                    <div style="color:rgba(255,255,255,0.3); font-family:monospace; font-size:10px; margin-top:4px;">Decoracion de perfil</div>
-                </div>
-            </div>
-
-            <div onclick="showShopSection('emotes')" style="cursor:pointer; background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.08); border-radius:14px; overflow:hidden; transition:0.2s;" onmouseover="this.style.borderColor='rgba(255,255,255,0.2)';this.style.transform='translateY(-2px)'" onmouseout="this.style.borderColor='rgba(255,255,255,0.08)';this.style.transform='none'">
-                <div style="height:180px; margin:8px; border-radius:10px; background:linear-gradient(135deg, rgba(255,77,109,0.14), rgba(255,180,0,0.08)); border:1px dashed rgba(255,255,255,0.18); display:grid; place-items:center;">
-                    <div style="width:74px; height:74px; border-radius:50%; border:1px dashed rgba(255,255,255,0.28); background:rgba(0,0,0,0.25); display:grid; place-items:center; color:rgba(255,255,255,0.42); font-family:monospace; font-size:10px; letter-spacing:2px;">PNG</div>
-                </div>
-                <div style="padding:12px 14px;">
-                    <div style="color:white; font-family:monospace; font-size:12px; letter-spacing:2px;">EMOTES</div>
-                    <div style="color:rgba(255,255,255,0.3); font-family:monospace; font-size:10px; margin-top:4px;">Espacios PNG listos</div>
-                </div>
-            </div>
-
-            <div onclick="showShopSection('daily')" style="cursor:pointer; background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.08); border-radius:14px; overflow:hidden; transition:0.2s;" onmouseover="this.style.borderColor='rgba(255,255,255,0.2)';this.style.transform='translateY(-2px)'" onmouseout="this.style.borderColor='rgba(255,255,255,0.08)';this.style.transform='none'">
-                <img src="assets/Imagenes/Paneles tienda/Panel_Regalo_Diario.png" style="width:100%; height:180px; object-fit:contain; display:block; background:transparent; padding:8px;">
-                <div style="padding:12px 14px;">
-                    <div style="color:rgba(255,255,255,0.3); font-family:monospace; font-size:10px; margin-top:4px;">Proximamente</div>
-                </div>
-            </div>
-
-            <div onclick="showShopSection('conversion')" style="cursor:pointer; background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.08); border-radius:14px; overflow:hidden; transition:0.2s;" onmouseover="this.style.borderColor='rgba(255,255,255,0.2)';this.style.transform='translateY(-2px)'" onmouseout="this.style.borderColor='rgba(255,255,255,0.08)';this.style.transform='none'">
-                <img src="assets/Imagenes/Paneles tienda/Panel_Conversion.png" style="width:100%; height:180px; object-fit:contain; display:block; background:transparent; padding:8px;">
-                <div style="padding:12px 14px;">
-                    <div style="color:white; font-family:monospace; font-size:12px; letter-spacing:2px;">CONVERSIÓN</div>
-                    <div style="color:rgba(255,255,255,0.3); font-family:monospace; font-size:10px; margin-top:4px;">100 monedas = 1 ruby</div>
-                </div>
-            </div>
-
+        <div class="store-panel-grid">
+            ${panels.map(panel => `
+                <button class="store-category-panel" onclick="showShopSection('${panel.section}')" type="button">
+                    <img src="${panel.image}" alt="" draggable="false">
+                </button>
+            `).join('')}
         </div>
     `;
 }
-
 function renderSkinsPage(container) {
     const equipped = localStorage.getItem('equippedSkin') || 'cyan';
     container.innerHTML = `
@@ -1107,23 +1241,69 @@ function renderEmotesPage(container) {
 
 function renderEmoteSlot(emote) {
     const color = emote.vip ? '#ffcc00' : '#57b7dd';
+    const owned = isEmoteOwned(emote);
+    const equipped = localStorage.getItem('equippedEmote') === emote.id;
+    const canBuy = !owned && !emote.passOnly && canAfford(emote.price || EMOTE_STANDARD_PRICE_COINS, emote.priceType || 'coins');
+    const action = owned
+        ? `<button onclick="equipEmote('${emote.id}')" type="button">${equipped ? 'ACTIVO' : 'USAR'}</button>`
+        : emote.passOnly
+            ? `<button class="is-pass-only" type="button" disabled>EN EL PASE</button>`
+            : `<button onclick="buyEmote('${emote.id}')" type="button" ${canBuy ? '' : 'disabled'}>${renderPrice(emote.price || EMOTE_STANDARD_PRICE_COINS, emote.priceType || 'coins')}</button>`;
     return `
         <div class="emote-card" data-emote-id="${emote.id}">
             <div data-asset-slot="${emote.slot}" style="width:96px; height:96px; border-radius:50%; border:1px dashed ${color}88; background:${color}12; display:grid; place-items:center; overflow:hidden; color:rgba(255,255,255,0.35); font-family:monospace; font-size:10px; letter-spacing:2px;">
                 ${emote.image ? `<img src="${emote.image}" style="width:100%;height:100%;object-fit:contain;">` : 'PNG'}
             </div>
             <div style="color:white; font-family:monospace; font-size:12px; letter-spacing:1px;">${emote.name}</div>
-            ${emote.vip ? `<div style="color:${color}; font-family:monospace; font-size:9px; letter-spacing:2px;">VIP</div>` : ''}
-            <button onclick="equipEmote('${emote.id}')" type="button">${localStorage.getItem('equippedEmote') === emote.id ? 'ACTIVO' : 'USAR'}</button>
+            ${emote.passOnly ? `<div style="color:${color}; font-family:monospace; font-size:9px; letter-spacing:2px;">EN EL PASE</div>` : `<div style="color:${color}; font-family:monospace; font-size:9px; letter-spacing:2px;">${emote.rarity}</div>`}
+            ${action}
         </div>
     `;
 }
 
-function getOwnedEmotes() {
-    return EMOTES_DATA.filter(e => localStorage.getItem('emote_' + e.id) === 'true' || !e.vip);
+function isEmoteOwned(emote) {
+    if (!emote) return false;
+    if (localStorage.getItem('emote_' + emote.id) === 'true') return true;
+    if (emote.passOnly && emote.rubyPassLane && emote.rubyPassLevel) {
+        return localStorage.getItem(`rubyPassClaimed_${emote.rubyPassLane}_${emote.rubyPassLevel}`) === 'true';
+    }
+    return false;
 }
 
+function getOwnedEmotes() {
+    return EMOTES_DATA.filter(isEmoteOwned);
+}
+
+function buyEmote(id) {
+    const emote = EMOTES_DATA.find(e => e.id === id);
+    if (!emote || emote.passOnly || isEmoteOwned(emote)) return;
+    const price = emote.price || EMOTE_STANDARD_PRICE_COINS;
+    const currency = emote.priceType || 'coins';
+    showShopModal({
+        kicker: 'CONFIRMAR EMOTE',
+        title: emote.name,
+        image: emote.image,
+        body: `Seguro comprar por ${price} ${currency === 'gems' ? 'rubies' : 'monedas'}?`,
+        confirmText: 'SI',
+        cancelText: 'NO',
+        onConfirm: () => {
+            if (!canAfford(price, currency)) return alert(currency === 'gems' ? 'No tienes suficientes rubies.' : 'No tienes suficientes monedas.');
+            spendCurrency(price, currency);
+            localStorage.setItem('emote_' + emote.id, 'true');
+            localStorage.setItem('equippedEmote', emote.id);
+            window.playSfx?.('spend');
+            refreshShopBalances();
+            renderEmotesPage(document.getElementById('shopContent'));
+            renderIngameEmotes();
+            updateMenuHUD();
+        }
+    });
+}
+window.buyEmote = buyEmote;
+
 function equipEmote(id) {
+    const emote = EMOTES_DATA.find(e => e.id === id);
+    if (!isEmoteOwned(emote)) return;
     localStorage.setItem('equippedEmote', id);
     renderIngameEmotes();
     const content = document.getElementById('shopContent');
@@ -1255,16 +1435,16 @@ function showShopModal(options = {}) {
         modal.id = 'shop-modal';
         document.body.appendChild(modal);
     }
-    const imageHTML = options.image
+    const imageHTML = options.mediaHTML || (options.image
         ? `<img src="${options.image}" alt="" draggable="false">`
-        : `<span>${options.fallback || 'PNG'}</span>`;
+        : `<span>${options.fallback || 'PNG'}</span>`);
     modal.innerHTML = `
         <div class="shop-modal-dim" onclick="closeShopModal()"></div>
-        <div class="shop-modal-card">
+        <div class="shop-modal-card" style="${options.background ? `background-image:linear-gradient(180deg, rgba(8,8,14,0.88), rgba(8,8,14,0.96)), url('${options.background}'); background-size:cover; background-position:center;` : ''}">
             <button class="shop-modal-x" onclick="closeShopModal()" type="button">X</button>
             <div class="shop-modal-kicker">${options.kicker || 'THE GEM'}</div>
             <div class="shop-modal-title">${options.title || ''}</div>
-            <div class="shop-modal-media">${imageHTML}</div>
+            <div class="shop-modal-media ${options.mediaClass || ''}">${imageHTML}</div>
             <div class="shop-modal-body">${options.body || ''}</div>
             <div class="shop-modal-actions">
                 ${options.cancelText === null ? '' : `<button class="shop-modal-btn secondary" id="shop-modal-cancel" type="button">${options.cancelText || 'CERRAR'}</button>`}
@@ -1351,13 +1531,16 @@ function openChestReward(chest) {
 function showChestResult(chest) {
     const { coins, gems, drop } = openChestReward(chest);
     const rewardView = getChestRewardView(drop, coins, gems);
+    const currencyHTML = renderCurrencyRewardPiles({ coins, gems });
     window.playSfx?.('reward');
     showShopModal({
         kicker: 'RECOMPENSA',
         title: drop,
-        image: rewardView.image || chest.openImage || chest.image,
+        image: currencyHTML ? null : (rewardView.image || chest.openImage || chest.image),
+        mediaHTML: currencyHTML || null,
+        mediaClass: currencyHTML ? 'wide' : '',
         fallback: rewardView.text || 'ITEM',
-        body: `Base: ${coins} monedas + ${gems} rubies`,
+        body: `${drop}<br>Base: ${coins} monedas + ${gems} rubies`,
         cancelText: null,
         confirmText: 'CERRAR'
     });
@@ -1410,6 +1593,40 @@ function getChestRewardView(drop, coins, gems) {
     }
     if (lower.includes('fragmento')) return { image: SHOP_PLACEHOLDER_IMAGE, text: 'FRAG', color: '#cc44ff' };
     return { image: SHOP_PLACEHOLDER_IMAGE, text: 'ITEM', color: '#00ffe7' };
+}
+
+function getCurrencyPileAsset(currency, amount) {
+    const assets = REWARD_CURRENCY_ASSETS[currency];
+    if (!assets || amount <= 0) return CURRENCY_ICONS[currency];
+    if (currency === 'gems') {
+        if (amount > 200) return assets.large;
+        if (amount > 100) return assets.medium;
+        if (amount > 30) return assets.small;
+        if (amount > 1) return assets.single;
+        return CURRENCY_ICONS.gems;
+    }
+    if (amount > 700) return assets.large;
+    if (amount > 450) return assets.medium;
+    if (amount > 200) return assets.small;
+    if (amount > 1) return assets.single;
+    return CURRENCY_ICONS.coins;
+}
+
+function renderCurrencyRewardPiles(reward = {}) {
+    const entries = [
+        { type: 'coins', amount: reward.coins || 0, label: 'MONEDAS' },
+        { type: 'gems', amount: reward.gems || reward.rubies || 0, label: 'RUBIES' }
+    ].filter(entry => entry.amount > 0);
+    if (!entries.length) return '';
+    return `<div class="reward-currency-piles">
+        ${entries.map(entry => `
+            <div class="reward-currency-pile">
+                <img src="${getCurrencyPileAsset(entry.type, entry.amount)}" alt="" draggable="false">
+                <strong>${entry.amount}</strong>
+                <span>${entry.label}</span>
+            </div>
+        `).join('')}
+    </div>`;
 }
 
 function renderGambitBox() {
@@ -1724,7 +1941,7 @@ function closeVIP() {
 function renderVIPShell(panel) {
     panel.innerHTML = `
         <div class="vip-bg">
-            <img src="assets/Imagenes/Fondo Tienda VIP/Fondo_Tienda_VIP.png" alt="" draggable="false">
+            <img src="assets/UI/Store/VIP/Backgrounds/bg_store_vip.png" alt="" draggable="false">
             <div></div>
         </div>
         <div class="vip-shell">
@@ -1753,9 +1970,7 @@ function renderVIPHome() {
         <section class="vip-hero">
             <button class="vip-arrow" onclick="moveVIPCarousel(-1)" type="button">&lt;</button>
             <div class="vip-feature" onclick="renderVIPCarouselDetail('${active.id}')">
-                <div class="vip-feature-cover" style="background-image:linear-gradient(90deg, rgba(0,0,0,.58), rgba(0,0,0,.12)), url('${active.cover}');">
-                    <div class="vip-cover-placeholder">PORTADA PNG</div>
-                </div>
+                <div class="vip-feature-cover" style="background-image:linear-gradient(90deg, rgba(0,0,0,.58), rgba(0,0,0,.12)), url('${active.cover}');"></div>
                 <div class="vip-feature-copy">
                     <div class="vip-kicker">PANEL DESTACADO</div>
                     <h2>${active.title}</h2>
@@ -1796,9 +2011,7 @@ function setVIPCarousel(index) {
 function renderVIPPackageCard(pack) {
     return `
         <article class="vip-pack-card" style="--vip-accent:${pack.accent};" onclick="renderVIPPackageDetail('${pack.id}')">
-            <div class="vip-pack-cover" style="background-image:linear-gradient(180deg, rgba(0,0,0,.12), rgba(0,0,0,.64)), url('${pack.cover}');">
-                <span>PNG</span>
-            </div>
+            <div class="vip-pack-cover" style="background-image:linear-gradient(180deg, rgba(0,0,0,.12), rgba(0,0,0,.64)), url('${pack.cover}');"></div>
             <div class="vip-pack-body">
                 <div class="vip-kicker">PAQUETE</div>
                 <h3>${pack.title}</h3>
@@ -1813,51 +2026,237 @@ function renderVIPCarouselDetail(id) {
     const panel = VIP_CAROUSEL_DATA.find(item => item.id === id);
     if (!panel) return renderVIPHome();
     window.currentVIPDetailRenderer = () => renderVIPCarouselDetail(id);
-    renderVIPDetail(panel.title, panel.subtitle, panel.price, panel.cover, panel.items, () => buyVIPCollection('carousel', panel));
+    renderVIPDetail(panel.title, panel.subtitle, panel.price, panel.cover, panel.items, () => buyVIPCollection('carousel', panel), panel.detailBackground);
 }
 
 function renderVIPPackageDetail(id) {
     const pack = VIP_PACKAGES_DATA.find(item => item.id === id);
     if (!pack) return renderVIPHome();
     window.currentVIPDetailRenderer = () => renderVIPPackageDetail(id);
-    renderVIPDetail(pack.title, 'Contenido del paquete completo o compra mini-items.', pack.price, pack.cover, pack.items, () => buyVIPCollection('package', pack));
+    renderVIPDetail(pack.title, '', pack.price, pack.cover, pack.items, () => buyVIPCollection('package', pack), pack.detailBackground || pack.cover);
 }
 
-function renderVIPDetail(title, subtitle, price, cover, items, buyAll) {
+function renderVIPDetail(title, subtitle, price, cover, items, buyAll, detailBackground = cover) {
     const content = document.getElementById('vipContent');
     if (!content) return;
     window.currentVIPBuyAll = buyAll;
     content.innerHTML = `
         <button class="vip-back" onclick="renderVIPHome()" type="button">VOLVER A VIP</button>
-        <section class="vip-detail-head">
-            <div class="vip-detail-cover" style="background-image:linear-gradient(90deg, rgba(0,0,0,.56), rgba(0,0,0,.18)), url('${cover}');"><span>PORTADA PNG</span></div>
-            <div>
-                <div class="vip-kicker">DETALLE VIP</div>
-                <h2>${title}</h2>
-                <p>${subtitle}</p>
-                <button onclick="currentVIPBuyAll()" class="vip-buy-all" type="button">COMPRAR TODO ${renderPrice(price, 'gems')}</button>
-            </div>
+        <section class="vip-detail-head" style="background-image:linear-gradient(90deg, rgba(8,8,14,.86), rgba(8,8,14,.52)), url('${detailBackground}'); background-size:cover; background-position:center;">
+            <div class="vip-detail-cover" style="background-image:url('${cover}');"></div>
         </section>
+        <button onclick="currentVIPBuyAll()" class="vip-buy-all vip-buy-all-detail" type="button">COMPRAR TODO ${renderPrice(price, 'gems')}</button>
         <section class="vip-item-grid">
             ${items.map(item => renderVIPMiniItem(item)).join('')}
         </section>
     `;
+    setTimeout(() => {
+        items.forEach(item => {
+            if ((item.type === 'trail' || item.type === 'elementTrail') && item.trailId) {
+                const defaultColor = item.previewColor || vipSelectedColors[item.trailId] || 'cyan';
+                startVIPTrailCanvas(item.trailId, defaultColor);
+            } else if (item.type === 'customTextTrail') {
+                startCustomTextTrailPreview('custom-text-trail-canvas', 'customTrailPhrase');
+            }
+        });
+    }, 50);
 }
 
 function renderVIPMiniItem(item) {
-    const itemKey = `vip_item_${item.name.toLowerCase().replaceAll(' ', '_')}`;
+    const itemKey = getVIPItemStorageKey(item);
     const owned = localStorage.getItem(itemKey) === 'true';
+
+    if (item.type === 'customTextTrail') return renderCustomTextTrailItem(item, owned);
+    if (item.type === 'elementTrail') return renderElementTrailItem(item, owned);
+    if (item.type === 'bundle') return renderVIPBundleItem(item, owned);
+    if (item.type === 'emojiPack') return renderEmojiPackItem(item, owned);
+    if (item.type === 'emoji') return renderEmojiItem(item, owned);
+    if (item.type === 'vipTrailPng') return renderVIPPngTrailItem(item, owned);
+
+    const isTrail = item.type === 'trail' && item.trailId;
+    const canvasId = `vip-trail-canvas-${item.trailId}`;
+
+    if (isTrail) {
+        return `
+        <article class="vip-mini-item ${owned ? 'owned' : ''}" style="display:flex;flex-direction:column;align-items:center;gap:10px;">
+            <canvas id="${canvasId}" width="220" height="90" style="border-radius:10px;background:rgba(0,0,0,0.4);display:block;"></canvas>
+            <div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:center;" id="vip-colors-${item.trailId}">
+                ${TRAIL_COLOR_LIST.map(c => {
+            const colorOwned = localStorage.getItem(`trail_${item.trailId}_${c.id}`) === 'true';
+            return `<div onclick="selectVIPTrailColor('${item.trailId}','${c.id}',${item.price})"
+                        style="width:22px;height:22px;border-radius:50%;background:${c.color};
+                        border:2px solid ${colorOwned ? '#00ff88' : 'rgba(255,255,255,0.2)'};
+                        cursor:pointer;position:relative;"
+                        title="${c.id}">
+                        ${colorOwned ? `<div style="position:absolute;top:-4px;right:-4px;width:10px;height:10px;border-radius:50%;background:#00ff88;font-size:6px;display:flex;align-items:center;justify-content:center;">✔</div>` : ''}
+                    </div>`;
+        }).join('')}
+            </div>
+            <div class="vip-mini-type">TRAIL</div>
+            <h3>${item.name}</h3>
+            <div id="vip-trail-action-${item.trailId}" style="width:100%;">
+                <button onclick="buyVIPTrailFull('${item.trailId}','${item.name}',${item.price})" type="button" style="width:100%;">
+                    ${owned ? 'OBTENIDO' : `COMPRAR COMPLETO ${renderPrice(item.price, 'gems')}`}
+                </button>
+            </div>
+        </article>`;
+    }
+
     return `
         <article class="vip-mini-item ${owned ? 'owned' : ''}">
             <div class="vip-mini-image">
                 <img src="${item.image}" alt="" draggable="false">
                 <span>PNG</span>
             </div>
-            <div class="vip-mini-type">${item.type.toUpperCase()}</div>
+            <div class="vip-mini-type">${(item.type === 'vipSkin' ? 'SKIN' : item.type).toUpperCase()}</div>
             <h3>${item.name}</h3>
-            ${item.price ? `<button onclick="buyVIPMiniItem('${item.name}', '${item.image}', ${item.price})" ${owned ? 'disabled' : ''} type="button">${owned ? 'OBTENIDO' : `COMPRAR ${renderPrice(item.price, 'gems')}`}</button>` : ''}
+            ${item.price ? `<button onclick="buyVIPMiniItemById('${item.id || item.name}')" ${owned ? 'disabled' : ''} type="button">${owned ? 'OBTENIDO' : `COMPRAR ${renderPrice(item.price, 'gems')}`}</button>` : ''}
         </article>
     `;
+}
+
+function getVIPItemStorageKey(item) {
+    const raw = item.id || item.trailId || item.name || 'item';
+    return `vip_item_${String(raw).toLowerCase().replaceAll(' ', '_')}`;
+}
+
+function findVIPItemById(id) {
+    for (const pack of VIP_PACKAGES_DATA) {
+        const direct = pack.items.find(item => (item.id || item.trailId || item.name) === id);
+        if (direct) return direct;
+    }
+    return null;
+}
+
+function openEmojiPackModal(id) {
+    const item = findVIPItemById(id);
+    if (!item || item.type !== 'emojiPack') return;
+    const owned = localStorage.getItem(getVIPItemStorageKey(item)) === 'true';
+    showShopModal({
+        kicker: 'PAQUETE DE EMOJIS',
+        title: item.name,
+        mediaHTML: `<div class="shop-modal-emoji-grid emoji-pack-modal-grid">
+            ${(item.items || []).map(part => `
+                <div>
+                    <img src="${part.image}" alt="" draggable="false">
+                    <strong>${part.name}</strong>
+                </div>
+            `).join('')}
+        </div>`,
+        mediaClass: 'wide',
+        background: item.popupBackground || getVIPPackageForItem(item)?.popupBackground,
+        body: owned ? 'Ya tienes este paquete desbloqueado.' : `Incluye ${item.items?.length || 6} emojis. Comprar por ${item.price} rubies?`,
+        cancelText: owned ? 'CERRAR' : 'NO',
+        confirmText: owned ? null : 'COMPRAR',
+        onConfirm: () => {
+            if (!canAfford(item.price, 'gems')) return alert('No tienes suficientes rubies.');
+            spendCurrency(item.price, 'gems');
+            window.playSfx?.('vipBuy');
+            grantVIPItem(item);
+            if (typeof currentVIPDetailRenderer === 'function') currentVIPDetailRenderer();
+            updateMenuHUD();
+        }
+    });
+}
+
+window.openEmojiPackModal = openEmojiPackModal;
+
+function renderVIPBundleItem(item, owned) {
+    const previews = item.items.map(part => `
+        <div class="vip-bundle-part">
+            <img src="${part.image}" alt="" draggable="false">
+            <span>${part.type.toUpperCase()}</span>
+        </div>
+    `).join('');
+    return `
+        <article class="vip-mini-item vip-bundle-card ${owned ? 'owned' : ''}">
+            <div class="vip-bundle-preview">${previews}</div>
+            <div class="vip-mini-type">BUNDLE</div>
+            <h3>${item.name}</h3>
+            <button onclick="buyVIPMiniItemById('${item.name}')" ${owned ? 'disabled' : ''} type="button">${owned ? 'OBTENIDO' : `COMPRAR ${renderPrice(item.price, 'gems')}`}</button>
+        </article>
+    `;
+}
+
+function renderElementTrailItem(item, owned) {
+    return `
+        <article class="vip-mini-item vip-element-card ${owned ? 'owned' : ''}">
+            <div class="vip-simple-panel">
+                <img src="${item.image}" alt="" draggable="false">
+            </div>
+            <div class="vip-mini-type">TRAIL</div>
+            <h3>${item.label}</h3>
+            <canvas id="vip-trail-canvas-${item.trailId}" width="220" height="90" class="vip-trail-preview"></canvas>
+            <button onclick="buyVIPMiniItemById('${item.trailId}')" ${owned ? 'disabled' : ''} type="button">${owned ? 'OBTENIDO' : `COMPRAR ${renderPrice(item.price, 'gems')}`}</button>
+        </article>
+    `;
+}
+
+function renderVIPPngTrailItem(item, owned) {
+    const isSkinItem = item.type === 'vipSkin' || item.type === 'skin';
+    return `
+        <article class="vip-mini-item ${owned ? 'owned' : ''}">
+            <div class="${isSkinItem ? 'vip-skin-orb' : 'vip-mini-image'}">
+                <img src="${item.image}" alt="" draggable="false">
+                <span>PNG</span>
+            </div>
+            <div class="vip-mini-type">TRAIL</div>
+            <h3>${item.name}</h3>
+            <button onclick="buyVIPMiniItemById('${item.id || item.trailId}')" ${owned ? 'disabled' : ''} type="button">${owned ? 'OBTENIDO' : `COMPRAR ${renderPrice(item.price, 'gems')}`}</button>
+        </article>
+    `;
+}
+
+function renderCustomTextTrailItem(item, owned) {
+    const saved = localStorage.getItem('customTrailText') || '';
+    return `
+        <article class="vip-mini-item vip-custom-trail-card ${owned ? 'owned' : ''}">
+            <div class="vip-mini-type">TRAIL PERSONALIZABLE</div>
+            <h3>${item.name}</h3>
+            <canvas id="custom-text-trail-canvas" width="360" height="110" class="vip-custom-trail-preview"></canvas>
+            <input id="customTrailPhrase" class="vip-custom-trail-input" maxlength="18" value="${escapeHtml(saved)}" placeholder="Pon tu frase aqui" oninput="validateCustomTrailInput(this); startCustomTextTrailPreview('custom-text-trail-canvas','customTrailPhrase')" />
+            <div id="customTrailValidation" class="vip-custom-trail-validation">Maximo 18 caracteres.</div>
+            <button onclick="buyCustomTextTrail()" ${owned ? '' : ''} type="button">${owned ? 'ACTUALIZAR Y EQUIPAR' : `COMPRAR ${renderPrice(item.price, 'gems')}`}</button>
+        </article>
+    `;
+}
+
+function renderEmojiPackItem(item, owned) {
+    return `
+        <article class="vip-mini-item vip-emoji-pack ${owned ? 'owned' : ''}">
+            <div class="vip-mini-image vip-pack-poster" onclick="openEmojiPackModal('${item.id || item.name}')">
+                <img src="${item.image}" alt="" draggable="false">
+                <span>PNG</span>
+            </div>
+            <div class="vip-mini-type">PANEL 2</div>
+            <h3>${item.name}</h3>
+            <button onclick="openEmojiPackModal('${item.id || item.name}')" type="button">${owned ? 'VER EMOJIS' : `VER ${renderPrice(item.price, 'gems')}`}</button>
+        </article>
+    `;
+}
+
+function renderEmojiItem(item, owned) {
+    return `
+        <article class="vip-mini-item ${owned ? 'owned' : ''}">
+            <div class="vip-mini-image">
+                <img src="${item.image}" alt="" draggable="false">
+                <span>PNG</span>
+            </div>
+            <div class="vip-mini-type">EMOJI</div>
+            <h3>${item.name}</h3>
+            <button onclick="buyVIPMiniItemById('${item.id}')" ${owned ? 'disabled' : ''} type="button">${owned ? 'OBTENIDO' : `COMPRAR ${renderPrice(item.price, 'gems')}`}</button>
+        </article>
+    `;
+}
+
+function escapeHtml(value) {
+    return String(value || '').replace(/[&<>"']/g, char => ({
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        '"': '&quot;',
+        "'": '&#39;'
+    }[char]));
 }
 
 function buyVIPCollection(kind, data) {
@@ -1865,6 +2264,7 @@ function buyVIPCollection(kind, data) {
         kicker: kind === 'carousel' ? 'PANEL VIP' : 'PAQUETE VIP',
         title: data.title,
         image: data.cover,
+        background: data.popupBackground || data.detailBackground || data.cover,
         body: `Seguro comprar por ${data.price} rubies?`,
         confirmText: 'SI',
         cancelText: 'NO',
@@ -1901,11 +2301,80 @@ function buyVIPMiniItem(name, image, price) {
     });
 }
 
+function buyVIPMiniItemById(id) {
+    const item = findVIPItemById(id);
+    if (!item) return;
+    if (item.type === 'customTextTrail') return buyCustomTextTrail();
+
+    const key = getVIPItemStorageKey(item);
+    const owned = localStorage.getItem(key) === 'true';
+    const mediaHTML = item.type === 'bundle'
+        ? `<div class="shop-modal-bundle-grid">${item.items.map(part => `
+            <div>
+                <img src="${part.image}" alt="" draggable="false">
+                <span>${part.name}</span>
+            </div>
+        `).join('')}</div>`
+        : item.type === 'emojiPack'
+            ? `<div class="shop-modal-emoji-grid emoji-pack-modal-grid">${(item.items || []).map(part => `
+                <div><img src="${part.image}" alt="" draggable="false"><strong>${part.name}</strong></div>
+            `).join('')}</div>`
+            : item.type === 'elementTrail'
+                ? `<canvas id="modal-vip-trail-${item.trailId}" width="260" height="110" class="vip-trail-preview"></canvas>`
+                : null;
+
+    showShopModal({
+        kicker: item.type === 'bundle' ? 'BUNDLE VIP' : item.type === 'elementTrail' ? 'TRAIL VIP' : item.type === 'emojiPack' ? 'EMOJIS VIP' : 'MINI-ITEM VIP',
+        title: item.name || item.label,
+        image: mediaHTML ? null : item.image,
+        mediaHTML,
+        mediaClass: mediaHTML ? 'wide' : '',
+        background: item.popupBackground || getVIPPackageForItem(item)?.popupBackground,
+        body: owned ? 'Ya lo tienes desbloqueado.' : `Seguro comprar por ${item.price} rubies?`,
+        confirmText: owned ? null : 'SI',
+        cancelText: owned ? 'CERRAR' : 'NO',
+        onConfirm: () => {
+            if (!canAfford(item.price, 'gems')) return alert('No tienes suficientes rubies.');
+            spendCurrency(item.price, 'gems');
+            window.playSfx?.('vipBuy');
+            grantVIPItem(item);
+            if (typeof currentVIPDetailRenderer === 'function') currentVIPDetailRenderer();
+            else renderVIPHome();
+            updateMenuHUD();
+        }
+    });
+
+    if (item.type === 'elementTrail') {
+        setTimeout(() => startVIPTrailCanvas(item.trailId, item.previewColor || 'cyan', `modal-vip-trail-${item.trailId}`), 20);
+    }
+}
+
 function grantVIPItem(item) {
-    const key = item.name.toLowerCase().replaceAll(' ', '_');
-    localStorage.setItem(`vip_item_${key}`, 'true');
-    if (item.name.toLowerCase().includes('fuego')) localStorage.setItem('trail_fire_cyan', 'true');
-    if (item.name.toLowerCase().includes('rayo')) localStorage.setItem('trail_rayo_cyan', 'true');
+    localStorage.setItem(getVIPItemStorageKey(item), 'true');
+    if (item.type === 'bundle' && Array.isArray(item.items)) {
+        item.items.forEach(part => grantVIPItem(part));
+        return;
+    }
+    if (item.type === 'vipSkin' || item.type === 'skin') {
+        localStorage.setItem(item.id || `skin_${item.name.toLowerCase().replaceAll(' ', '_')}`, 'true');
+    } else if (item.type === 'emoji') {
+        localStorage.setItem(item.id || `emoji_${item.name.toLowerCase().replaceAll(' ', '_')}`, 'true');
+    } else if (item.type === 'emojiPack') {
+        (item.items || []).forEach(part => localStorage.setItem(part.id, 'true'));
+    } else if (item.type === 'vipTrailPng') {
+        const trailId = item.trailId || item.id;
+        localStorage.setItem(`trail_${trailId}_png`, 'true');
+    } else if (item.trailId || item.id?.startsWith('trail_')) {
+        const trailId = item.trailId || item.id;
+        const defaultColor = item.previewColor || 'cyan';
+        localStorage.setItem(`trail_${trailId}_${defaultColor}`, 'true');
+        localStorage.setItem('equippedTrail', `${trailId}_${defaultColor}`);
+        if (typeof bannerTrail !== 'undefined') bannerTrail = [];
+    }
+}
+
+function getVIPPackageForItem(item) {
+    return VIP_PACKAGES_DATA.find(pack => pack.items.includes(item) || pack.items.some(candidate => candidate.name === item?.name || candidate.id === item?.id));
 }
 
 function openInventory() {
@@ -1963,39 +2432,80 @@ function showInventorySection(section) {
         `;
     } else if (section === 'trails') {
         const equippedTrail = localStorage.getItem('equippedTrail') || 'basic_cyan';
-        const ownedTrails = [];
 
+        // Agrupar por efecto
+        const ownedByEffect = {};
         TRAILS_DATA.forEach(t => {
             TRAIL_COLOR_LIST.forEach(c => {
-                const key = `trail_${t.id}_${c.id}`;
-                if (localStorage.getItem(key) === 'true') {
-                    ownedTrails.push({ effect: t.id, colorId: c.id, name: t.name, color: c.color, rarityColor: t.rarityColor, rarity: t.rarity });
+                if (localStorage.getItem(`trail_${t.id}_${c.id}`) === 'true') {
+                    if (!ownedByEffect[t.id]) ownedByEffect[t.id] = { trail: t, colors: [] };
+                    ownedByEffect[t.id].colors.push(c);
                 }
             });
         });
 
-        if (ownedTrails.length === 0) {
-            content.innerHTML = `
-            <div style="display:flex; align-items:center; justify-content:center; height:300px; color:rgba(255,255,255,0.2); font-family:monospace; font-size:14px; letter-spacing:4px;">NO TIENES TRAILS AÚN</div>
-        `;
+        const groups = Object.values(ownedByEffect);
+
+        if (groups.length === 0) {
+            content.innerHTML = `<div style="display:flex;align-items:center;justify-content:center;height:300px;color:rgba(255,255,255,0.2);font-family:monospace;font-size:14px;letter-spacing:4px;">NO TIENES TRAILS AÚN</div>`;
             return;
         }
 
         content.innerHTML = `
-        <div style="color:rgba(255,255,255,0.4); font-family:monospace; font-size:11px; letter-spacing:4px; margin-bottom:20px;">TRAILS OBTENIDOS — ${ownedTrails.length}</div>
-        <div style="display:grid; grid-template-columns:repeat(5,1fr); gap:14px;">
-            ${ownedTrails.map(t => {
-            const isEquipped = equippedTrail === `${t.effect}_${t.colorId}`;
+            <div style="color:rgba(255,255,255,0.4);font-family:monospace;font-size:11px;letter-spacing:4px;margin-bottom:20px;">TRAILS — ${groups.length} EFECTOS</div>
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:16px;">
+                ${groups.map(({ trail: t, colors }) => {
+            const allOwned = TRAIL_COLOR_LIST.every(c => localStorage.getItem(`trail_${t.id}_${c.id}`) === 'true');
+            const equippedColor = colors.find(c => equippedTrail === `${t.id}_${c.id}`);
+            const displayColor = equippedColor || colors[0];
             return `
-                <div style="background:rgba(255,255,255,0.03); border:1px solid ${isEquipped ? t.rarityColor + '66' : 'rgba(255,255,255,0.08)'}; border-radius:14px; padding:16px 10px; display:flex; flex-direction:column; align-items:center; gap:8px; ${isEquipped ? 'box-shadow:0 0 16px ' + t.rarityColor + '22' : ''}">
-                    <div style="width:36px; height:36px; border-radius:50%; background:${t.color}; box-shadow:0 0 8px ${t.color}66;"></div>
-                    <div style="color:white; font-family:monospace; font-size:10px; letter-spacing:1px;">${t.name}</div>
-                    <div style="color:${t.rarityColor}; font-family:monospace; font-size:9px;">${t.colorId.toUpperCase()}</div>
-                    <button onclick="equipTrailFromInventory('${t.effect}','${t.colorId}')" style="width:100%; padding:5px 0; border-radius:8px; border:1px solid ${isEquipped ? t.rarityColor + '66' : 'rgba(255,255,255,0.12)'}; background:${isEquipped ? t.rarityColor + '15' : 'none'}; color:${isEquipped ? t.rarityColor : 'rgba(255,255,255,0.4)'}; font-family:monospace; font-size:9px; cursor:pointer;">${isEquipped ? '✔ EQUIPADO' : 'EQUIPAR'}</button>
-                </div>`;
+                    <div style="position:relative;">
+                        <div id="inv-trail-card-${t.id}"
+                            onclick="toggleInvTrailExpand('${t.id}')"
+                            style="background:rgba(255,255,255,0.03);border:1px solid ${equippedColor ? t.rarityColor + '66' : 'rgba(255,255,255,0.1)'};border-radius:14px;padding:14px;cursor:pointer;transition:0.2s;${equippedColor ? 'box-shadow:0 0 16px ' + t.rarityColor + '22;' : ''}">
+                            <canvas id="inv-trail-canvas-${t.id}" width="200" height="60" style="border-radius:8px;background:rgba(0,0,0,0.35);display:block;width:100%;"></canvas>
+                            <div style="display:flex;justify-content:space-between;align-items:center;margin-top:10px;">
+                                <div>
+                                    <div style="color:white;font-family:monospace;font-size:12px;letter-spacing:1px;">${t.name}</div>
+                                    <div style="color:${t.rarityColor};font-family:monospace;font-size:9px;letter-spacing:2px;">${t.rarity}</div>
+                                </div>
+                                <div style="display:flex;align-items:center;gap:6px;">
+                                    ${allOwned ? `<div style="color:#00ff88;font-family:monospace;font-size:9px;">★ COMPLETO</div>` : `<div style="color:rgba(255,255,255,0.3);font-family:monospace;font-size:9px;">${colors.length}/${TRAIL_COLOR_LIST.length}</div>`}
+                                    <div style="color:rgba(255,255,255,0.4);font-size:10px;transition:0.2s;" id="inv-trail-arrow-${t.id}">▼</div>
+                                </div>
+                            </div>
+                            ${equippedColor ? `<div style="margin-top:8px;font-family:monospace;font-size:9px;color:#ffd700;">✔ EQUIPADO · ${equippedColor.id.toUpperCase()}</div>` : ''}
+                        </div>
+                        <div id="inv-trail-expand-${t.id}" style="display:none;background:rgba(0,0,0,0.3);border:1px solid rgba(255,255,255,0.08);border-top:none;border-radius:0 0 14px 14px;padding:12px 14px;">
+                            <div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:center;">
+                                ${TRAIL_COLOR_LIST.map(c => {
+                const has = localStorage.getItem(`trail_${t.id}_${c.id}`) === 'true';
+                const isEq = equippedTrail === `${t.id}_${c.id}`;
+                return `<div onclick="${has ? `invEquipTrailColor('${t.id}','${c.id}')` : ''}"
+                                        style="width:28px;height:28px;border-radius:50%;background:${c.color};
+                                        border:2px solid ${isEq ? '#ffd700' : has ? '#00ff88' : 'rgba(255,255,255,0.1)'};
+                                        cursor:${has ? 'pointer' : 'default'};opacity:${has ? '1' : '0.25'};
+                                        position:relative;transition:0.15s;"
+                                        title="${c.id}${isEq ? ' (equipado)' : !has ? ' (no tienes)' : ''}">
+                                        ${isEq ? `<div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);color:#000;font-size:9px;font-weight:bold;">✔</div>` : ''}
+                                    </div>`;
+            }).join('')}
+                            </div>
+                        </div>
+                    </div>`;
         }).join('')}
-        </div>
-    `;
+            </div>
+        `;
+
+        // Iniciar canvas animados
+        setTimeout(() => {
+            groups.forEach(({ trail: t, colors }) => {
+                const equippedColor = colors.find(c => equippedTrail === `${t.id}_${c.id}`) || colors[0];
+                startInvTrailCanvas(t.id, equippedColor.id);
+            });
+        }, 30);
+
+
     } else if (section === 'banners') {
         const equipped = localStorage.getItem('equippedBanner') || 'static_core';
         const owned = BANNERS_DATA.filter(b =>
@@ -2119,6 +2629,15 @@ const TRAILS_DATA = [
     { id: 'fractura', name: 'Fractura', rarity: 'EPICA', rarityColor: '#cc44ff', price: 1000, priceType: 'coins' },
     { id: 'hielo', name: 'Hielo', rarity: 'ESPECIAL', rarityColor: '#7fd8ff', price: 260, priceType: 'coins' },
     { id: 'toxico', name: 'Toxico', rarity: 'ESPECIAL', rarityColor: '#8dff5a', price: 320, priceType: 'coins' },
+    { id: 'trail_vampiro', name: 'Vampiro', rarity: 'VIP', rarityColor: '#ff4d6d', price: 0, priceType: 'gems' },
+    { id: 'trail_zombie', name: 'Zombie', rarity: 'VIP', rarityColor: '#78ff8f', price: 0, priceType: 'gems' },
+    { id: 'trail_fire', name: 'Elemento Fuego', rarity: 'VIP', rarityColor: '#ff8a00', price: 0, priceType: 'gems' },
+    { id: 'trail_water', name: 'Elemento Agua', rarity: 'VIP', rarityColor: '#4488ff', price: 0, priceType: 'gems' },
+    { id: 'trail_wind', name: 'Elemento Viento', rarity: 'VIP', rarityColor: '#00ffe7', price: 0, priceType: 'gems' },
+    { id: 'trail_ice', name: 'Elemento Hielo', rarity: 'VIP', rarityColor: '#7fd8ff', price: 0, priceType: 'gems' },
+    { id: 'trail_lava', name: 'Elemento Lava', rarity: 'VIP', rarityColor: '#ff4444', price: 0, priceType: 'gems' },
+    { id: 'trail_nature', name: 'Elemento Naturaleza', rarity: 'VIP', rarityColor: '#44ff88', price: 0, priceType: 'gems' },
+    { id: 'trail_custom_text', name: 'Texto Personalizado', rarity: 'VIP', rarityColor: '#ffda3a', price: 0, priceType: 'gems' },
 ];
 
 // ── Sin el color RGB ──────────────────────────────────
@@ -2195,11 +2714,20 @@ function renderTrailCard(t) {
     </div>`;
 }
 
-function animateTrailCards() {
+function animateTrailCards(timestamp = 0) {
     if (document.getElementById('shopPanel')?.style.display === 'none') {
         trailAnimId = null;
         return;
     }
+    if (document.hidden) {
+        trailAnimId = requestAnimationFrame(animateTrailCards);
+        return;
+    }
+    if (timestamp && animateTrailCards.lastFrame && timestamp - animateTrailCards.lastFrame < 50) {
+        trailAnimId = requestAnimationFrame(animateTrailCards);
+        return;
+    }
+    animateTrailCards.lastFrame = timestamp || performance.now();
     TRAILS_DATA.forEach(t => {
         const cvs = document.getElementById('trail-card-' + t.id);
         if (!cvs) return;
@@ -2207,7 +2735,7 @@ function animateTrailCards() {
         ctx.clearRect(0, 0, 80, 80);
 
         const cx = 40, cy = 40;
-        const time = Date.now() * 0.001;
+        const time = animateTrailCards.lastFrame * 0.001;
 
         if (t.id === 'basic') {
             for (let i = 8; i >= 0; i--) {
@@ -2391,7 +2919,7 @@ function animateTrailCards() {
         }
 
         else if (t.id === 'rainbow') {
-            const hue = (Date.now() * 0.1) % 360;
+            const hue = (animateTrailCards.lastFrame * 0.1) % 360;
             for (let i = 3; i >= 0; i--) {
                 ctx.beginPath();
                 ctx.arc(cx, cy, 10 + i * 6, 0, Math.PI * 2);
@@ -2551,13 +3079,19 @@ function showTrailPreview() {
     const pctx = cvs.getContext('2d');
     let px = 30;
     let pts = [];
-    const rgb = color?.rgb || null;
+    const rgb = color?.rgb || '0,255,231';
 
-    function animatePreview() {
+    let previewLastFrame = 0;
+    function animatePreview(timestamp = 0) {
         if (document.getElementById('shopPanel')?.style.display === 'none' || !document.body.contains(cvs)) {
             previewTrailAnim = null;
             return;
         }
+        if (timestamp && previewLastFrame && timestamp - previewLastFrame < 33) {
+            previewTrailAnim = requestAnimationFrame(animatePreview);
+            return;
+        }
+        previewLastFrame = timestamp || performance.now();
         pctx.clearRect(0, 0, 260, 80);
         px += 1.2;
         if (px > 240) px = 30;
@@ -2566,6 +3100,7 @@ function showTrailPreview() {
         if (pts.length > 50) pts.shift();
         for (let p of pts) p.life -= 0.012;
 
+        pctx.__previewNow = previewLastFrame;
         for (let p of pts) {
             if (p.life <= 0) continue;
             drawPreviewTrailPoint(pctx, p, selectedTrailEffect, rgb, selectedTrailColor);
@@ -2576,7 +3111,7 @@ function showTrailPreview() {
         pctx.shadowColor = getTrailSolidColor(color);
         pctx.beginPath();
         pctx.arc(px, 40, 8, 0, Math.PI * 2);
-        pctx.fillStyle = color?.id === 'rgb' ? `hsl(${(Date.now() * 0.18) % 360},100%,64%)` : getTrailSolidColor(color);
+        pctx.fillStyle = color?.id === 'rgb' ? `hsl(${(previewLastFrame * 0.18) % 360},100%,64%)` : getTrailSolidColor(color);
         pctx.fill();
         pctx.shadowBlur = 0;
 
@@ -2586,23 +3121,25 @@ function showTrailPreview() {
 }
 
 function drawPreviewTrailPoint(pctx, p, effect, rgb, colorId) {
+    effect = normalizeTrailEffectId(effect);
     const life = p.life;
     // rgb SIEMPRE viene del color elegido, nunca null para colores normales
     const rgbMode = colorId === 'rgb';
-    const hue = (Date.now() * 0.18 + p.x * 0.7) % 360;
+    const hue = (((pctx.__previewNow || performance.now()) * 0.18) + p.x * 0.7) % 360;
     const safeRgb = rgb || '255,80,255';
     const fill = (alpha, boost = 0) => rgbMode
         ? `hsla(${(hue + boost) % 360},100%,64%,${alpha})`
         : `rgba(${safeRgb},${alpha})`;
 
     if (effect === 'basic') {
+        const r = 6 * life;
+        const grad = pctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, r * 3);
+        grad.addColorStop(0, fill(life * 0.7));
+        grad.addColorStop(0.4, fill(life * 0.25));
+        grad.addColorStop(1, fill(0));
         pctx.beginPath();
-        pctx.ellipse(p.x - 9 * life, p.y, 18 * life, 5 * life, 0, 0, Math.PI * 2);
-        pctx.fillStyle = fill(life * 0.14);
-        pctx.fill();
-        pctx.beginPath();
-        pctx.arc(p.x, p.y, 5 * life, 0, Math.PI * 2);
-        pctx.fillStyle = fill(life * 0.28);
+        pctx.arc(p.x, p.y, r * 3, 0, Math.PI * 2);
+        pctx.fillStyle = grad;
         pctx.fill();
 
     } else if (effect === 'fire') {
@@ -2624,16 +3161,27 @@ function drawPreviewTrailPoint(pctx, p, effect, rgb, colorId) {
         }
 
     } else if (effect === 'rayo') {
-        for (let i = 0; i < 2; i++) {
-            pctx.beginPath();
-            pctx.moveTo(p.x, p.y);
-            pctx.lineTo(p.x - 9 * life, p.y + (i ? -8 : 8) * life);
-            pctx.lineTo(p.x - 23 * life, p.y + (i ? 5 : -5) * life);
-            pctx.lineTo(p.x - 34 * life, p.y + (i ? -10 : 10) * life);
-            pctx.strokeStyle = fill(life * 0.8, i * 80);
-            pctx.lineWidth = Math.max(1, 2.2 * life);
-            pctx.stroke();
-        }
+        // línea principal con zigzag
+        pctx.beginPath();
+        pctx.moveTo(p.x, p.y);
+        pctx.lineTo(p.x - 10 * life, p.y - 7 * life);
+        pctx.lineTo(p.x - 18 * life, p.y + 4 * life);
+        pctx.lineTo(p.x - 28 * life, p.y - 5 * life);
+        pctx.lineTo(p.x - 38 * life, p.y + 8 * life);
+        pctx.strokeStyle = fill(life * 0.9);
+        pctx.lineWidth = Math.max(1, 2.5 * life);
+        pctx.stroke();
+        // brillo blanco encima
+        pctx.beginPath();
+        pctx.moveTo(p.x, p.y);
+        pctx.lineTo(p.x - 10 * life, p.y - 7 * life);
+        pctx.lineTo(p.x - 18 * life, p.y + 4 * life);
+        pctx.lineTo(p.x - 28 * life, p.y - 5 * life);
+        pctx.lineTo(p.x - 38 * life, p.y + 8 * life);
+        pctx.strokeStyle = `rgba(240,250,255,${life * 0.55})`;
+        pctx.lineWidth = Math.max(0.5, life * 0.8);
+        pctx.stroke();
+
     } else if (effect === 'hielo') {
         pctx.beginPath();
         pctx.arc(p.x, p.y, 11 * life, 0, Math.PI * 2);
@@ -2654,7 +3202,25 @@ function drawPreviewTrailPoint(pctx, p, effect, rgb, colorId) {
             pctx.fillStyle = fill(life * (0.1 + i * 0.04), i * 18);
             pctx.fill();
         }
+    } else if (['water', 'wind', 'nature', 'vampiro', 'zombie', 'lava'].includes(effect)) {
+        const tone = effect === 'water' ? '68,136,255' : effect === 'wind' ? '180,255,245' : effect === 'nature' ? '68,255,136' : effect === 'vampiro' ? '255,77,109' : effect === 'zombie' ? '120,255,143' : '255,86,28';
+        for (let i = 0; i < 4; i++) {
+            const wave = Math.sin(p.x * 0.08 + i) * 8 * life;
+            pctx.beginPath();
+            pctx.ellipse(p.x - i * 10 * life, p.y + wave, (16 - i * 2) * life, (5 + i) * life, 0, 0, Math.PI * 2);
+            pctx.fillStyle = `rgba(${tone},${life * (0.22 - i * 0.03)})`;
+            pctx.fill();
+        }
     }
+}
+
+function normalizeTrailEffectId(effect) {
+    if (effect === 'trail_custom_text') return 'custom_text';
+    if (!String(effect || '').startsWith('trail_')) return effect;
+    const id = String(effect).substring('trail_'.length);
+    if (id === 'fire') return 'fire';
+    if (id === 'ice') return 'hielo';
+    return id;
 }
 
 function confirmBuyTrail() {
@@ -2870,12 +3436,23 @@ function claimRubyPassReward(lane, level, rewardType) {
     }
     localStorage.setItem(key, 'true');
     window.playSfx?.('passReward', 0.9);
-    if (rewardData?.type === 'coins') addCurrency(50, 'coins');
-    if (rewardData?.type === 'rubies') addCurrency(3, 'gems');
+    const currencyReward = { coins: 0, gems: 0 };
+    if (rewardData?.type === 'coins') {
+        currencyReward.coins = rewardData.amount || 50;
+        addCurrency(currencyReward.coins, 'coins');
+    }
+    if (rewardData?.type === 'rubies') {
+        currencyReward.gems = rewardData.amount || 3;
+        addCurrency(currencyReward.gems, 'gems');
+    }
+    if (rewardData?.type === 'emote') {
+        const passEmote = EMOTES_DATA.find(emote => emote.passOnly && emote.rubyPassLane === lane && emote.rubyPassLevel === level);
+        if (passEmote) localStorage.setItem('emote_' + passEmote.id, 'true');
+    }
     if (rewardData?.type === 'chest') {
         showChestClaimOptions(getChestFromReward(rewardData), `${lane === 'premium' ? 'PREMIUM' : 'FREE'} NIVEL ${level}`);
     } else {
-        showRubyPassRewardModal(lane, level, rewardData || { type: rewardType });
+        showRubyPassRewardModal(lane, level, rewardData || { type: rewardType }, currencyReward);
     }
     const el = document.querySelector(`[data-ruby-claim="${lane}_${level}"]`);
     if (el) {
@@ -2884,11 +3461,14 @@ function claimRubyPassReward(lane, level, rewardType) {
     }
 }
 
-function showRubyPassRewardModal(lane, level, reward) {
+function showRubyPassRewardModal(lane, level, reward, currencyReward = {}) {
+    const currencyHTML = renderCurrencyRewardPiles(currencyReward);
     showShopModal({
         kicker: `${lane === 'premium' ? 'PREMIUM' : 'FREE'} NIVEL ${level}`,
         title: getRewardLabel(reward),
-        image: reward.image || RUBY_PASS_REWARD_PLACEHOLDER,
+        image: currencyHTML ? null : (reward.image || RUBY_PASS_REWARD_PLACEHOLDER),
+        mediaHTML: currencyHTML || null,
+        mediaClass: currencyHTML ? 'wide' : '',
         fallback: reward.type?.toUpperCase() || 'PNG',
         body: 'Recompensa reclamada. Ya puedes seguir avanzando.',
         cancelText: null,
@@ -2967,7 +3547,7 @@ function renderBattlePassPage(container, options = {}) {
                     <div class="ruby-pass-gear-shell">
                         <div class="ruby-pass-lane ruby-pass-lane-premium ${state.premiumOwned ? 'is-active' : 'is-locked'}" style="--premium-rotation:${premiumRotation}deg;">
                             <div class="ruby-pass-track ruby-pass-track-premium" style="${RUBY_PASS_ASSETS.premiumTrackTexture ? `background-image:url('${RUBY_PASS_ASSETS.premiumTrackTexture}')` : ''}"></div>
-                            ${visibleRewards.map((reward, index) => renderRubyPassNode(reward, index, state.premiumLevel, 'premium', state.premiumOwned)).join('')}
+                            ${state.premiumOwned ? visibleRewards.map((reward, index) => renderRubyPassNode(reward, index, state.premiumLevel, 'premium', true)).join('') : ''}
                         </div>
                         <div class="ruby-pass-lane ruby-pass-lane-free" style="--free-rotation:${freeRotation}deg;">
                             <div class="ruby-pass-track ruby-pass-track-free" style="${RUBY_PASS_ASSETS.freeTrackTexture ? `background-image:url('${RUBY_PASS_ASSETS.freeTrackTexture}')` : ''}"></div>
@@ -3003,7 +3583,7 @@ function renderBattlePassPage(container, options = {}) {
         animateRubyPassProgress(container, {
             progress,
             freeRotation: getRubyPassRotation(currentLevel),
-            premiumRotation: state.premiumOwned ? getRubyPassRotation(state.premiumLevel) : 0
+            premiumRotation: state.premiumOwned ? getRubyPassRotation(state.premiumLevel) : getRubyPassRotation(currentLevel)
         });
     }
     initRubyPassDrag(container);
@@ -3318,6 +3898,309 @@ function convertGems() {
 function equipTrailFromInventory(effectId, colorId) {
     localStorage.setItem('equippedTrail', `${effectId}_${colorId}`);
     if (typeof bannerTrail !== 'undefined') bannerTrail = [];
+    showInventorySection('trails');
+}
+
+let vipTrailAnims = {};
+let vipSelectedColors = {};
+
+function selectVIPTrailColor(trailId, colorId, price) {
+    vipSelectedColors[trailId] = colorId;
+    const color = TRAIL_COLOR_LIST.find(c => c.id === colorId);
+    const owned = localStorage.getItem(`trail_${trailId}_${colorId}`) === 'true';
+    const equipped = localStorage.getItem('equippedTrail') === `${trailId}_${colorId}`;
+
+    const actionEl = document.getElementById(`vip-trail-action-${trailId}`);
+    if (actionEl) {
+        actionEl.innerHTML = owned
+            ? `<button onclick="vipEquipTrail('${trailId}','${colorId}')" type="button" style="width:100%;border-color:${equipped ? '#ffd700' : '#00ff88'};color:${equipped ? '#ffd700' : '#00ff88'};">
+                ${equipped ? '✔ EQUIPADO' : 'EQUIPAR'}
+               </button>`
+            : `<button onclick="vipBuyTrail('${trailId}','${colorId}',${price})" type="button" style="width:100%;">
+                COMPRAR ${renderPrice(price, 'gems')} · ${colorId.toUpperCase()}
+               </button>`;
+    }
+
+    startVIPTrailCanvas(trailId, colorId);
+}
+
+function startVIPTrailCanvas(trailId, colorId, canvasId = `vip-trail-canvas-${trailId}`) {
+    const animKey = `${canvasId}_${trailId}`;
+    if (vipTrailAnims[animKey]) cancelAnimationFrame(vipTrailAnims[animKey]);
+
+    const cvs = document.getElementById(canvasId);
+    if (!cvs) return;
+    const ctx = cvs.getContext('2d');
+    const color = TRAIL_COLOR_LIST.find(c => c.id === colorId);
+    const rgb = color?.rgb || '255,80,255';
+    let px = 20, pts = [];
+    let lastFrame = 0;
+
+    function loop(timestamp = 0) {
+        if (!document.body.contains(cvs)) { vipTrailAnims[animKey] = null; return; }
+        if (timestamp && lastFrame && timestamp - lastFrame < 33) {
+            vipTrailAnims[animKey] = requestAnimationFrame(loop);
+            return;
+        }
+        lastFrame = timestamp || performance.now();
+        ctx.clearRect(0, 0, cvs.width, cvs.height);
+        px += 1.4;
+        if (px > cvs.width - 20) px = 20;
+        pts.push({ x: px, y: cvs.height / 2, life: 1.0 });
+        if (pts.length > 50) pts.shift();
+        for (let p of pts) p.life -= 0.014;
+
+        ctx.__previewNow = lastFrame;
+        for (let p of pts) {
+            if (p.life <= 0) continue;
+            drawPreviewTrailPoint(ctx, p, trailId, rgb, colorId);
+        }
+
+        ctx.beginPath();
+        ctx.arc(px, cvs.height / 2, 7, 0, Math.PI * 2);
+        ctx.fillStyle = color?.id === 'rgb' ? `hsl(${(lastFrame * 0.18) % 360},100%,64%)` : (color?.color || '#fff');
+        ctx.fill();
+
+        vipTrailAnims[animKey] = requestAnimationFrame(loop);
+    }
+    loop();
+}
+
+let customTextTrailAnim = null;
+
+function validateCustomTrailInput(input) {
+    const cleaned = String(input.value || '').replace(/[<>]/g, '').slice(0, 18);
+    if (input.value !== cleaned) input.value = cleaned;
+    const status = document.getElementById('customTrailValidation');
+    if (!status) return cleaned;
+    const valid = cleaned.trim().length >= 2;
+    status.textContent = valid ? `${cleaned.length}/18 caracteres` : 'Escribe minimo 2 caracteres.';
+    status.classList.toggle('invalid', !valid);
+    return cleaned;
+}
+
+function startCustomTextTrailPreview(canvasId, inputId) {
+    if (customTextTrailAnim) cancelAnimationFrame(customTextTrailAnim);
+    const cvs = document.getElementById(canvasId);
+    const input = document.getElementById(inputId);
+    if (!cvs) return;
+    const ctx = cvs.getContext('2d');
+    let x = 38;
+    let pts = [];
+    let lastFrame = 0;
+
+    function loop(timestamp = 0) {
+        if (!document.body.contains(cvs)) { customTextTrailAnim = null; return; }
+        if (timestamp && lastFrame && timestamp - lastFrame < 33) {
+            customTextTrailAnim = requestAnimationFrame(loop);
+            return;
+        }
+        lastFrame = timestamp || performance.now();
+        const phrase = validateCustomTrailInput(input || { value: localStorage.getItem('customTrailText') || 'RUBY' }) || 'RUBY';
+        ctx.clearRect(0, 0, cvs.width, cvs.height);
+        x += 2.2;
+        if (x > cvs.width - 34) x = 38;
+        pts.push({ x, y: cvs.height / 2, life: 1, text: phrase });
+        if (pts.length > 32) pts.shift();
+        pts.forEach(p => p.life -= 0.018);
+
+        ctx.save();
+        const bodyGrad = ctx.createLinearGradient(16, 0, cvs.width - 16, 0);
+        bodyGrad.addColorStop(0, 'rgba(10,12,20,0.96)');
+        bodyGrad.addColorStop(0.72, 'rgba(10,12,20,0.86)');
+        bodyGrad.addColorStop(1, 'rgba(255,218,58,0.03)');
+        ctx.fillStyle = bodyGrad;
+        ctx.fillRect(14, 24, cvs.width - 28, cvs.height - 48);
+        const fade = ctx.createLinearGradient(cvs.width - 110, 0, cvs.width - 16, 0);
+        fade.addColorStop(0, 'rgba(255,218,58,0)');
+        fade.addColorStop(1, 'rgba(255,218,58,0.34)');
+        ctx.fillStyle = fade;
+        ctx.fillRect(cvs.width - 110, 24, 94, cvs.height - 48);
+        ctx.restore();
+
+        pts.forEach((p, i) => {
+            if (p.life <= 0) return;
+            const stretch = 1 + Math.min(0.55, Math.abs(window.angVel || 0) * 8);
+            ctx.save();
+            ctx.globalAlpha = Math.max(0, p.life);
+            ctx.translate(p.x - (1 - p.life) * 56 * stretch, p.y + Math.sin(lastFrame * 0.006 + i) * 7);
+            ctx.font = '900 17px Geom, monospace';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.shadowBlur = 12 * p.life;
+            ctx.shadowColor = '#ffda3a';
+            ctx.fillStyle = `rgba(255,238,150,${0.22 + p.life * 0.72})`;
+            const chars = p.text.split('');
+            const spacing = 11 + (1 - p.life) * 3 * stretch;
+            const start = -(chars.length - 1) * spacing / 2;
+            chars.forEach((ch, index) => {
+                const wave = Math.sin(lastFrame * 0.008 + index * 0.78 + i) * 7 * p.life;
+                ctx.fillText(ch, start + index * spacing, wave);
+            });
+            ctx.restore();
+        });
+
+        ctx.beginPath();
+        ctx.arc(x, cvs.height / 2, 7, 0, Math.PI * 2);
+        ctx.fillStyle = '#ffda3a';
+        ctx.fill();
+        customTextTrailAnim = requestAnimationFrame(loop);
+    }
+    loop();
+}
+
+function buyCustomTextTrail() {
+    const input = document.getElementById('customTrailPhrase');
+    const phrase = validateCustomTrailInput(input || { value: '' }).trim();
+    if (phrase.length < 2) return alert('Escribe una frase corta para el trail.');
+    const item = findVIPItemById('trail_custom_text');
+    const owned = localStorage.getItem('vip_item_trail_custom_text') === 'true';
+    const complete = () => {
+        localStorage.setItem('customTrailText', phrase);
+        localStorage.setItem('vip_item_trail_custom_text', 'true');
+        localStorage.setItem('trail_trail_custom_text_cyan', 'true');
+        localStorage.setItem('equippedTrail', 'trail_custom_text_cyan');
+        if (typeof bannerTrail !== 'undefined') bannerTrail = [];
+        window.playSfx?.('spend');
+        updateMenuHUD();
+        if (typeof currentVIPDetailRenderer === 'function') currentVIPDetailRenderer();
+    };
+    if (owned) return complete();
+    showShopModal({
+        kicker: 'TRAIL PERSONALIZABLE',
+        title: '¡Trail personalizable!',
+        mediaHTML: `<canvas id="modal-custom-text-trail" width="300" height="110" class="vip-custom-trail-preview"></canvas>`,
+        mediaClass: 'wide',
+        body: `Comprar por ${item?.price || 1000} rubies?`,
+        confirmText: 'SI',
+        cancelText: 'NO',
+        onConfirm: () => {
+            if (!canAfford(item?.price || 1000, 'gems')) return alert('No tienes suficientes rubies.');
+            spendCurrency(item?.price || 1000, 'gems');
+            complete();
+        }
+    });
+    setTimeout(() => {
+        localStorage.setItem('customTrailTextPreview', phrase);
+        startCustomTextTrailPreview('modal-custom-text-trail', 'customTrailPhrase');
+    }, 20);
+}
+
+function vipBuyTrail(trailId, colorId, price) {
+    showShopModal({
+        kicker: 'TRAIL VIP',
+        title: `${trailId.toUpperCase()} · ${colorId.toUpperCase()}`,
+        body: `Comprar por ${price} rubies?`,
+        confirmText: 'SI',
+        cancelText: 'NO',
+        onConfirm: () => {
+            if (!canAfford(price, 'gems')) return alert('No tienes suficientes rubies.');
+            spendCurrency(price, 'gems');
+            localStorage.setItem(`trail_${trailId}_${colorId}`, 'true');
+            localStorage.setItem('equippedTrail', `${trailId}_${colorId}`);
+            if (typeof bannerTrail !== 'undefined') bannerTrail = [];
+            window.playSfx?.('spend');
+            updateMenuHUD();
+            refreshShopBalances();
+            selectVIPTrailColor(trailId, colorId, price);
+            const colorsEl = document.getElementById(`vip-colors-${trailId}`);
+            if (colorsEl) colorsEl.querySelectorAll('div').forEach(d => {
+                if (d.title === colorId) d.style.borderColor = '#00ff88';
+            });
+        }
+    });
+}
+
+function buyVIPTrailFull(trailId, name, price) {
+    const alreadyOwned = TRAIL_COLOR_LIST.every(c =>
+        localStorage.getItem(`trail_${trailId}_${c.id}`) === 'true'
+    );
+    if (alreadyOwned) return;
+
+    showShopModal({
+        kicker: 'TRAIL VIP COMPLETO',
+        title: name,
+        body: `Comprar todos los colores por ${price} rubies?`,
+        confirmText: 'SI',
+        cancelText: 'NO',
+        onConfirm: () => {
+            if (!canAfford(price, 'gems')) return alert('No tienes suficientes rubies.');
+            spendCurrency(price, 'gems');
+            // Desbloquear TODOS los colores
+            TRAIL_COLOR_LIST.forEach(c => {
+                localStorage.setItem(`trail_${trailId}_${c.id}`, 'true');
+            });
+            localStorage.setItem('equippedTrail', `${trailId}_cyan`);
+            if (typeof bannerTrail !== 'undefined') bannerTrail = [];
+            window.playSfx?.('spend');
+            updateMenuHUD();
+            refreshShopBalances();
+            // Refrescar panel
+            if (typeof currentVIPDetailRenderer === 'function') currentVIPDetailRenderer();
+        }
+    });
+}
+
+function vipEquipTrail(trailId, colorId) {
+    localStorage.setItem('equippedTrail', `${trailId}_${colorId}`);
+    if (typeof bannerTrail !== 'undefined') bannerTrail = [];
+    updateMenuHUD();
+    selectVIPTrailColor(trailId, colorId, 0);
+}
+
+let invTrailAnims = {};
+
+function startInvTrailCanvas(trailId, colorId) {
+    if (invTrailAnims[trailId]) cancelAnimationFrame(invTrailAnims[trailId]);
+    const cvs = document.getElementById(`inv-trail-canvas-${trailId}`);
+    if (!cvs) return;
+    const ctx = cvs.getContext('2d');
+    const color = TRAIL_COLOR_LIST.find(c => c.id === colorId);
+    const rgb = color?.rgb || '0,255,231';
+    let px = 20, pts = [];
+    let lastFrame = 0;
+    function loop(timestamp = 0) {
+        if (!document.body.contains(cvs)) { invTrailAnims[trailId] = null; return; }
+        if (timestamp && lastFrame && timestamp - lastFrame < 33) {
+            invTrailAnims[trailId] = requestAnimationFrame(loop);
+            return;
+        }
+        lastFrame = timestamp || performance.now();
+        ctx.clearRect(0, 0, cvs.width, cvs.height);
+        px += 1.2;
+        if (px > cvs.width - 20) px = 20;
+        pts.push({ x: px, y: cvs.height / 2, life: 1.0 });
+        if (pts.length > 45) pts.shift();
+        for (let p of pts) p.life -= 0.015;
+        ctx.__previewNow = lastFrame;
+        for (let p of pts) {
+            if (p.life <= 0) continue;
+            drawPreviewTrailPoint(ctx, p, trailId, rgb, colorId);
+        }
+        ctx.beginPath();
+        ctx.arc(px, cvs.height / 2, 6, 0, Math.PI * 2);
+        ctx.fillStyle = color?.id === 'rgb' ? `hsl(${(lastFrame * 0.18) % 360},100%,64%)` : (color?.color || '#fff');
+        ctx.fill();
+        invTrailAnims[trailId] = requestAnimationFrame(loop);
+    }
+    loop();
+}
+
+function toggleInvTrailExpand(trailId) {
+    const expand = document.getElementById(`inv-trail-expand-${trailId}`);
+    const arrow = document.getElementById(`inv-trail-arrow-${trailId}`);
+    const card = document.getElementById(`inv-trail-card-${trailId}`);
+    if (!expand) return;
+    const open = expand.style.display === 'none';
+    expand.style.display = open ? 'block' : 'none';
+    if (arrow) arrow.textContent = open ? '▲' : '▼';
+    if (card) card.style.borderRadius = open ? '14px 14px 0 0' : '14px';
+}
+
+function invEquipTrailColor(trailId, colorId) {
+    localStorage.setItem('equippedTrail', `${trailId}_${colorId}`);
+    if (typeof bannerTrail !== 'undefined') bannerTrail = [];
+    updateMenuHUD();
     showInventorySection('trails');
 }
 
