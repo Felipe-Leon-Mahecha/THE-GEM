@@ -610,6 +610,23 @@ function vipTrail(folder, id, name, price = 320) {
     return { type: 'vipTrailPng', id, name, price, image: `${VIP_ASSET_BASE}/${folder}/${id}.png`, trailId: id };
 }
 
+const VIP_PROMO_BANNERS = [
+    {
+        id: 'vip_powerups',
+        title: 'POTENCIADORES VIP',
+        subtitle: 'Espacio reservado para potenciadores',
+        cover: 'assets/UI/Store/VIP/Banners/banner_vip_powerups.png',
+        detailBackground: 'assets/UI/Store/VIP/Banners/bg_vip_powerups.png'
+    },
+    {
+        id: 'vip_specials',
+        title: 'ESPECIALES VIP',
+        subtitle: 'Espacio reservado para nuevos extras',
+        cover: 'assets/UI/Store/VIP/Banners/banner_vip_specials.png',
+        detailBackground: 'assets/UI/Store/VIP/Banners/bg_vip_specials.png'
+    }
+];
+
 const VIP_CAROUSEL_DATA = [
     {
         id: 'la_realeza',
@@ -619,6 +636,8 @@ const VIP_CAROUSEL_DATA = [
         cover: 'assets/UI/Store/VIP/CarouselPanels/panel_carousel_la_realeza.png',
         detailBackground: 'assets/UI/Store/VIP/Backgrounds/bg_carousel_la_realeza.png',
         popupBackground: 'assets/UI/Store/VIP/PopupBackgrounds/popup_carousel_la_realeza.png',
+        glowA: '#ffe45c',
+        glowB: '#b47a00',
         items: [
             {
                 type: 'vipPanel',
@@ -652,6 +671,8 @@ const VIP_CAROUSEL_DATA = [
         cover: 'assets/UI/Store/VIP/CarouselPanels/panel_carousel_mitologia_dioses.png',
         detailBackground: 'assets/UI/Store/VIP/Backgrounds/bg_carousel_mitologia_dioses.png',
         popupBackground: 'assets/UI/Store/VIP/PopupBackgrounds/popup_carousel_mitologia_dioses.png',
+        glowA: '#244dff',
+        glowB: '#00f5ff',
         items: [
             {
                 type: 'vipPanel',
@@ -717,6 +738,8 @@ const VIP_CAROUSEL_DATA = [
         cover: 'assets/UI/Store/VIP/CarouselPanels/panel_carousel_criaturas_mitologicas.png',
         detailBackground: 'assets/UI/Store/VIP/Backgrounds/bg_carousel_criaturas_mitologicas.png',
         popupBackground: 'assets/UI/Store/VIP/PopupBackgrounds/popup_carousel_criaturas_mitologicas.png',
+        glowA: '#ff8a00',
+        glowB: '#ffffff',
         items: [
             vipSkin('Creatures', 'skin_dragon', 'Dragon', 380),
             vipSkin('Creatures', 'skin_hydra', 'Hydra', 360),
@@ -739,9 +762,11 @@ const VIP_CAROUSEL_DATA = [
         cover: 'assets/UI/Store/VIP/CarouselPanels/panel_carousel_carnaval_oscuro.png',
         detailBackground: 'assets/UI/Store/VIP/Backgrounds/bg_carousel_carnaval_oscuro.png',
         popupBackground: 'assets/UI/Store/VIP/PopupBackgrounds/popup_carousel_carnaval_oscuro.png',
+        glowA: '#ff1f3d',
+        glowB: '#030000',
         items: [
-            vipTrail('DarkCarnival', 'trail_sonrisa_malvada', 'Trail Sonrisa Malvada'),
-            vipTrail('DarkCarnival', 'trail_circo', 'Trail Circo'),
+            { ...vipTrail('DarkCarnival', 'trail_sonrisa_malvada', 'Trail Sonrisa Malvada'), previewColor: 'red' },
+            { ...vipTrail('DarkCarnival', 'trail_circo', 'Trail Circo'), previewColor: 'orange' },
             vipSkin('DarkCarnival', 'skin_bufon_maldito', 'Bufon Maldito', 340),
             vipSkin('DarkCarnival', 'skin_payaso_oscuro', 'Payaso Oscuro', 340),
             vipSkin('DarkCarnival', 'skin_marioneta', 'Marioneta'),
@@ -1070,7 +1095,7 @@ function renderHome(container) {
     ];
     container.innerHTML = `
         <div style="display:grid; grid-template-columns:minmax(0,1fr) minmax(260px,380px); gap:16px; margin-bottom:32px;">
-            <div style="min-height:140px; border-radius:16px; background:linear-gradient(135deg, rgba(255,180,0,0.12), rgba(180,100,0,0.08)); border:1px solid rgba(255,200,0,0.3); display:flex; align-items:center; padding:0 32px; gap:24px; overflow:hidden; position:relative; box-shadow:0 0 30px rgba(255,180,0,0.08);">
+            <div class="shop-vip-access-banner" style="background-image:linear-gradient(90deg, rgba(18,11,5,0.88), rgba(12,9,7,0.68)), url('assets/UI/Store/VIP/Banners/banner_tienda_vip_home.png');">
                 <div style="position:absolute; right:0; top:0; bottom:0; width:300px; background:linear-gradient(90deg, transparent, rgba(255,180,0,0.06)); pointer-events:none;"></div>
                 <div style="position:absolute; left:0; top:0; bottom:0; width:4px; background:linear-gradient(to bottom, #ffcc00, #ff8800);"></div>
                 <div style="margin-left:12px;">
@@ -1533,7 +1558,7 @@ function showShopModal(options = {}) {
         : `<span>${options.fallback || 'PNG'}</span>`);
     modal.innerHTML = `
         <div class="shop-modal-dim" onclick="closeShopModal()"></div>
-        <div class="shop-modal-card" style="${options.background ? `background-image:linear-gradient(180deg, rgba(8,8,14,0.88), rgba(8,8,14,0.96)), url('${options.background}'); background-size:cover; background-position:center;` : ''}">
+        <div class="shop-modal-card ${options.cardClass || ''}" style="${options.background ? `background-image:linear-gradient(180deg, rgba(8,8,14,0.88), rgba(8,8,14,0.96)), url('${options.background}'); background-size:cover; background-position:center;` : ''}">
             <button class="shop-modal-x" onclick="closeShopModal()" type="button">X</button>
             <div class="shop-modal-kicker">${options.kicker || 'THE GEM'}</div>
             <div class="shop-modal-title">${options.title || ''}</div>
@@ -1729,7 +1754,7 @@ function renderGambitBox() {
     const luckChest = CHESTS_DATA.find(chest => chest.id === 'luck');
     const maxed = gambitState && clicks >= 5;
     return `
-        <div style="margin-top:22px; border:1px solid rgba(255,77,109,0.22); border-radius:14px; background:rgba(255,77,109,0.05); padding:18px; display:grid; grid-template-columns:150px 1fr auto; gap:18px; align-items:center;">
+        <div class="luck-chest-banner" style="background-image:linear-gradient(90deg, rgba(22,8,18,0.92), rgba(12,6,12,0.72)), url('assets/UI/Store/Chests/banner_cofre_suerte.png');">
             <img src="${luckChest.image}" style="width:150px; height:120px; object-fit:contain; filter:brightness(${1 + level * 0.08});">
             <div>
                 <div style="color:white; font-family:monospace; font-size:16px; font-weight:bold; letter-spacing:2px;">COFRE DE LA SUERTE</div>
@@ -2062,7 +2087,7 @@ function renderVIPHome() {
     content.innerHTML = `
         <section class="vip-hero">
             <button class="vip-arrow" onclick="moveVIPCarousel(-1)" type="button">&lt;</button>
-            <div class="vip-feature" onclick="renderVIPCarouselDetail('${active.id}')">
+            <div class="vip-feature vip-carousel-glow" style="--vip-glow-a:${active.glowA || '#ffee00'}; --vip-glow-b:${active.glowB || '#ff8800'};" onclick="renderVIPCarouselDetail('${active.id}')">
                 <div class="vip-feature-cover" style="background-image:linear-gradient(90deg, rgba(0,0,0,.58), rgba(0,0,0,.12)), url('${active.cover}');"></div>
                 <div class="vip-feature-copy">
                     <div class="vip-kicker">PANEL DESTACADO</div>
@@ -2076,14 +2101,8 @@ function renderVIPHome() {
         <div class="vip-dots">
             ${VIP_CAROUSEL_DATA.map((panel, index) => `<button class="${index === vipCarouselIndex ? 'active' : ''}" onclick="setVIPCarousel(${index})" type="button">${index + 1}</button>`).join('')}
         </div>
-        <section class="vip-premium-store">
-            ${['Skins Premium', 'Trails Premium', 'Banners Premium', 'Emotes VIP', 'Cofres VIP'].map((name, i) => `
-                <article class="vip-premium-tile">
-                    <div class="vip-premium-slot">PNG</div>
-                    <h3>${name}</h3>
-                    <p>Espacios premium listos para nuevas recompensas.</p>
-                </article>
-            `).join('')}
+        <section class="vip-banner-row">
+            ${VIP_PROMO_BANNERS.map(renderVIPPromoBanner).join('')}
         </section>
         <section class="vip-package-grid">
             ${VIP_PACKAGES_DATA.map(renderVIPPackageCard).join('')}
@@ -2122,6 +2141,31 @@ function renderVIPCarouselDetail(id) {
     renderVIPDetail(panel.title, panel.subtitle, panel.price, panel.cover, panel.items, () => buyVIPCollection('carousel', panel), panel.detailBackground);
 }
 
+function renderVIPPromoBanner(banner) {
+    return `
+        <article class="vip-promo-banner" onclick="renderVIPPromoDetail('${banner.id}')">
+            <img src="${banner.cover}" alt="" draggable="false">
+        </article>
+    `;
+}
+
+function renderVIPPromoDetail(id) {
+    const banner = VIP_PROMO_BANNERS.find(item => item.id === id);
+    if (!banner) return renderVIPHome();
+    const content = document.getElementById('vipContent');
+    if (!content) return;
+    window.currentVIPDetailRenderer = () => renderVIPPromoDetail(id);
+    content.innerHTML = `
+        <button class="vip-back" onclick="renderVIPHome()" type="button">VOLVER A VIP</button>
+        <section class="vip-detail-head" style="background-image:linear-gradient(90deg, rgba(8,8,14,.86), rgba(8,8,14,.52)), url('${banner.detailBackground}'); background-size:cover; background-position:center;">
+            <div class="vip-detail-cover" style="background-image:url('${banner.cover}');"></div>
+        </section>
+        <section class="vip-empty-slot">
+            <div class="vip-kicker">CONTENIDO</div>
+        </section>
+    `;
+}
+
 function renderVIPPackageDetail(id) {
     const pack = VIP_PACKAGES_DATA.find(item => item.id === id);
     if (!pack) return renderVIPHome();
@@ -2145,7 +2189,7 @@ function renderVIPDetail(title, subtitle, price, cover, items, buyAll, detailBac
     `;
     setTimeout(() => {
         items.forEach(item => {
-            if ((item.type === 'trail' || item.type === 'elementTrail') && item.trailId) {
+            if ((item.type === 'trail' || item.type === 'elementTrail' || item.type === 'vipTrailPng') && item.trailId) {
                 const defaultColor = item.previewColor || vipSelectedColors[item.trailId] || 'cyan';
                 startVIPTrailCanvas(item.trailId, defaultColor);
             } else if (item.type === 'customTextTrail') {
@@ -2262,7 +2306,7 @@ function openVIPPanelModal(id) {
                         </div>
                     `).join('')}</div>
                     <strong>${part.name}</strong>
-                    <button onclick="buyVIPMiniItemById('${part.id || part.name}')" ${owned ? 'disabled' : ''} type="button">${owned ? 'OBTENIDO' : `COMPRAR ${renderPrice(part.price, 'gems')}`}</button>
+                    <button onclick="openVIPBundleModal('${part.id || part.name}')" type="button">${owned ? 'VER' : `ABRIR ${renderPrice(part.price, 'gems')}`}</button>
                 </div>
             `;
         }
@@ -2285,6 +2329,7 @@ function openVIPPanelModal(id) {
         title: item.name,
         mediaHTML: `<div class="vip-panel-modal-grid">${rows}</div>`,
         mediaClass: 'vip-panel-wide',
+        cardClass: 'shop-modal-card-wide',
         background: item.popupBackground,
         body: 'Contenido disponible para compra individual.',
         cancelText: 'CERRAR',
@@ -2335,14 +2380,53 @@ function renderVIPBundleItem(item, owned) {
         </div>
     `).join('');
     return `
-        <article class="vip-mini-item vip-bundle-card ${owned ? 'owned' : ''}">
+        <article class="vip-mini-item vip-bundle-card ${owned ? 'owned' : ''}" onclick="openVIPBundleModal('${item.id || item.name}')">
             <div class="vip-bundle-preview">${previews}</div>
             <div class="vip-mini-type">BUNDLE</div>
             <h3>${item.name}</h3>
-            <button onclick="buyVIPMiniItemById('${item.name}')" ${owned ? 'disabled' : ''} type="button">${owned ? 'OBTENIDO' : `COMPRAR ${renderPrice(item.price, 'gems')}`}</button>
+            <button onclick="event.stopPropagation(); openVIPBundleModal('${item.id || item.name}')" type="button">${owned ? 'VER' : 'ABRIR'}</button>
         </article>
     `;
 }
+
+function openVIPBundleModal(id) {
+    const item = findVIPItemById(id);
+    if (!item || item.type !== 'bundle') return;
+    const owned = localStorage.getItem(getVIPItemStorageKey(item)) === 'true';
+    const rows = (item.items || []).map(part => {
+        const isSkinItem = part.type === 'vipSkin' || part.type === 'skin';
+        return `
+            <div class="vip-panel-modal-item">
+                <div class="${isSkinItem ? 'vip-skin-orb' : 'vip-mini-image'}">
+                    <img src="${part.image}" alt="" draggable="false">
+                    <span>PNG</span>
+                </div>
+                <strong>${part.name}</strong>
+            </div>
+        `;
+    }).join('');
+    showShopModal({
+        kicker: 'BUNDLE VIP',
+        title: item.name,
+        mediaHTML: `<div class="vip-panel-modal-grid">${rows}</div>`,
+        mediaClass: 'vip-panel-wide',
+        cardClass: 'shop-modal-card-wide',
+        background: item.popupBackground || getVIPPackageForItem(item)?.popupBackground,
+        body: owned ? 'Ya tienes este bundle desbloqueado.' : `Incluye ${item.items?.length || 2} piezas. Comprar por ${item.price} rubies?`,
+        cancelText: owned ? 'CERRAR' : 'NO',
+        confirmText: owned ? null : 'COMPRAR',
+        onConfirm: () => {
+            if (!canAfford(item.price, 'gems')) return alert('No tienes suficientes rubies.');
+            spendCurrency(item.price, 'gems');
+            window.playSfx?.('vipBuy');
+            grantVIPItem(item);
+            if (typeof currentVIPDetailRenderer === 'function') currentVIPDetailRenderer();
+            updateMenuHUD();
+        }
+    });
+}
+
+window.openVIPBundleModal = openVIPBundleModal;
 
 function renderElementTrailItem(item, owned) {
     return `
@@ -2360,12 +2444,13 @@ function renderElementTrailItem(item, owned) {
 
 function renderVIPPngTrailItem(item, owned) {
     const isSkinItem = item.type === 'vipSkin' || item.type === 'skin';
+    const isTrailPreview = item.type === 'vipTrailPng' && item.trailId;
     return `
         <article class="vip-mini-item ${owned ? 'owned' : ''}">
-            <div class="${isSkinItem ? 'vip-skin-orb' : 'vip-mini-image'}">
+            ${isTrailPreview ? `<canvas id="vip-trail-canvas-${item.trailId}" width="220" height="90" class="vip-trail-preview"></canvas>` : `<div class="${isSkinItem ? 'vip-skin-orb' : 'vip-mini-image'}">
                 <img src="${item.image}" alt="" draggable="false">
                 <span>PNG</span>
-            </div>
+            </div>`}
             <div class="vip-mini-type">TRAIL</div>
             <h3>${item.name}</h3>
             <button onclick="buyVIPMiniItemById('${item.id || item.trailId}')" ${owned ? 'disabled' : ''} type="button">${owned ? 'OBTENIDO' : `COMPRAR ${renderPrice(item.price, 'gems')}`}</button>
@@ -2878,7 +2963,9 @@ function renderTrailCard(t) {
         <canvas class="trail-card-canvas" id="trail-card-${t.id}" width="80" height="80" style="border-radius:50%; background:rgba(0,0,0,0.3);"></canvas>
         <div style="color:white; font-family:monospace; font-size:12px; letter-spacing:1px;">${t.name}</div>
         <div style="color:${t.rarityColor}; font-family:monospace; font-size:9px; letter-spacing:2px;">${t.rarity}</div>
-        ${isOwned
+        ${t.id === 'trail_custom_text'
+            ? `<div style="color:#ffda3a; font-family:monospace; font-size:9px; letter-spacing:1px;">SOLO VIP</div>`
+            : isOwned
             ? `<div style="color:#00ff88; font-family:monospace; font-size:9px;">✔ TIENES COLORES</div>`
             : `<div style="display:flex;align-items:center;gap:4px;">${priceIcon}<span style="color:rgba(255,255,255,0.3);font-family:monospace;font-size:9px;">${t.price}</span></div>`
         }
@@ -3169,6 +3256,22 @@ function showTrailPreview() {
 
     const trail = TRAILS_DATA.find(t => t.id === selectedTrailEffect);
     const color = TRAIL_COLOR_LIST.find(c => c.id === selectedTrailColor);
+    if (trail?.id === 'trail_custom_text') {
+        previewContainer.style.display = 'block';
+        previewContainer.innerHTML = `
+            <div class="normal-custom-trail-preview">
+                <div>
+                    <div class="vip-mini-type">TRAIL PERSONALIZABLE</div>
+                    <h3>Texto Personalizado</h3>
+                    <canvas id="normal-custom-text-trail-canvas" width="340" height="96" class="vip-custom-trail-preview"></canvas>
+                    <p>Disponible solo desde Tienda VIP.</p>
+                </div>
+                <button onclick="openVIP()" type="button">IR A VIP</button>
+            </div>
+        `;
+        setTimeout(() => startCustomTextTrailPreview('normal-custom-text-trail-canvas', 'customTrailPhrase'), 20);
+        return;
+    }
     const owned = localStorage.getItem(`trail_${selectedTrailEffect}_${selectedTrailColor}`) === 'true';
     const equipped = localStorage.getItem('equippedTrail') === `${selectedTrailEffect}_${selectedTrailColor}`;
     const purchase = getTrailPurchaseInfo(trail, color);
@@ -3945,7 +4048,7 @@ function renderDailyGiftPage(container) {
             <button onclick="showShopSection('home')" style="padding:8px 16px; background:none; border:1px solid rgba(255,255,255,0.12); border-radius:8px; color:rgba(255,255,255,0.5); font-family:monospace; font-size:11px; letter-spacing:2px; cursor:pointer;">VOLVER</button>
             <div style="color:rgba(255,255,255,0.4); font-family:monospace; font-size:11px; letter-spacing:4px;">REGALO DIARIO</div>
         </div>
-        <div class="daily-hero">
+        <div class="daily-hero" style="background-image:linear-gradient(90deg, rgba(2,30,32,0.88), rgba(16,7,18,0.72)), url('assets/UI/Store/Daily/banner_regalo_diario.png');">
             <div>
                 <div class="daily-kicker">RECOMPENSA DE HOY</div>
                 <h2>${todayReward}</h2>
@@ -4177,8 +4280,8 @@ function startCustomTextTrailPreview(canvasId, inputId) {
         ctx.clearRect(0, 0, cvs.width, cvs.height);
         x += 2.2;
         if (x > cvs.width - 34) x = 38;
-        pts.push({ x, y: cvs.height / 2, life: 1, text: phrase });
-        if (pts.length > 32) pts.shift();
+        pts.push({ x, y: cvs.height / 2, life: 1 });
+        if (pts.length > 28) pts.shift();
         pts.forEach(p => p.life -= 0.018);
 
         ctx.save();
@@ -4199,23 +4302,30 @@ function startCustomTextTrailPreview(canvasId, inputId) {
             if (p.life <= 0) return;
             const stretch = 1 + Math.min(0.55, Math.abs(window.angVel || 0) * 8);
             ctx.save();
-            ctx.globalAlpha = Math.max(0, p.life);
-            ctx.translate(p.x - (1 - p.life) * 56 * stretch, p.y + Math.sin(lastFrame * 0.006 + i) * 7);
-            ctx.font = '900 17px Geom, monospace';
-            ctx.textAlign = 'center';
-            ctx.textBaseline = 'middle';
-            ctx.shadowBlur = 12 * p.life;
+            ctx.globalAlpha = Math.max(0, p.life * 0.55);
+            ctx.translate(p.x - (1 - p.life) * 68 * stretch, p.y + Math.sin(lastFrame * 0.006 + i) * 5);
+            ctx.shadowBlur = 14 * p.life;
             ctx.shadowColor = '#ffda3a';
-            ctx.fillStyle = `rgba(255,238,150,${0.22 + p.life * 0.72})`;
-            const chars = p.text.split('');
-            const spacing = 11 + (1 - p.life) * 3 * stretch;
-            const start = -(chars.length - 1) * spacing / 2;
-            chars.forEach((ch, index) => {
-                const wave = Math.sin(lastFrame * 0.008 + index * 0.78 + i) * 7 * p.life;
-                ctx.fillText(ch, start + index * spacing, wave);
-            });
+            ctx.beginPath();
+            ctx.ellipse(0, 0, 26 * p.life, 7 * p.life, 0, 0, Math.PI * 2);
+            ctx.fillStyle = `rgba(255,218,58,${0.08 + p.life * 0.24})`;
+            ctx.fill();
             ctx.restore();
         });
+
+        ctx.save();
+        ctx.translate(x, cvs.height / 2 + Math.sin(lastFrame * 0.006) * 4);
+        ctx.font = '900 18px Geom, monospace';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.shadowBlur = 16;
+        ctx.shadowColor = '#ffda3a';
+        ctx.lineWidth = 4;
+        ctx.strokeStyle = 'rgba(20,12,0,0.82)';
+        ctx.fillStyle = '#fff0a8';
+        ctx.strokeText(phrase, 0, 0);
+        ctx.fillText(phrase, 0, 0);
+        ctx.restore();
 
         ctx.beginPath();
         ctx.arc(x, cvs.height / 2, 7, 0, Math.PI * 2);
