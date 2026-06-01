@@ -34,6 +34,8 @@ function spawnObstacleGroup() {
             baseAngle +
             (i - (count - 1) / 2) * spacing;
 
+        if (window.isAngleInsideLethalZone?.(a)) continue;
+
         let blocked =
             obstacles.some(o =>
                 Math.abs(o.angle - a) < 0.15
@@ -74,7 +76,7 @@ function spawnObstacleGroup() {
 
 function checkCollisions() {
 
-    if (window.invulnerable) return;
+    if (window.invulnerable || window.isPowerupInvulnerable?.()) return;
 
     let r = window.BASE_RADIUS + window.offset;
 
@@ -123,6 +125,9 @@ function checkCollisions() {
 // =====================================================
 
 function playerHit() {
+    if (window.absorbPowerupHit?.()) return;
+    window.resetCombo?.();
+    window._rachaTimer = 0;
     window.lives--;
     window.hitFlash = 1;
     window.invulnerable = true;
@@ -183,31 +188,31 @@ function spawnSierra() {
     });
 }
 
-function updateSierras() {
+function updateSierras(timeScale = 1) {
     if (!window.sierras) window.sierras = [];
 
     for (let i = window.sierras.length - 1; i >= 0; i--) {
         let s = window.sierras[i];
 
         if (s.state === "warning") {
-            s.warningTime--;
+            s.warningTime -= timeScale;
             if (s.warningTime <= 0) {
                 s.warning = false;
                 s.state = "moving";
                 window.playSfx?.(s.travelAngle > 0.54 ? 'sawLong' : 'sawShort', 0.55);
             }
         } else if (s.state === "moving") {
-            let step = 0.0025 * s.dir;
+            let step = 0.0025 * s.dir * timeScale;
             s.angle += step;
             s.traveled += Math.abs(step);
-            s.rotation += 0.06 * s.dir;
+            s.rotation += 0.06 * s.dir * timeScale;
 
             if (s.traveled >= s.travelAngle) {
                 s.state = "leave";
             }
 
             // Colision
-            if (!window.invulnerable) {
+            if (!window.invulnerable && !window.isPowerupInvulnerable?.()) {
                 let r = window.BASE_RADIUS + window.offset;
                 let sr = s.fromGround ? window.BASE_RADIUS : window.DOME_RADIUS;
                 let rel = ((s.angle + window.worldRotation - window.angle + Math.PI * 2) % (Math.PI * 2));
@@ -217,7 +222,7 @@ function updateSierras() {
                 }
             }
         } else if (s.state === "leave") {
-            s.progress += 0.02;
+            s.progress += 0.02 * timeScale;
             if (s.progress >= 1) {
                 window.sierras.splice(i, 1);
             }

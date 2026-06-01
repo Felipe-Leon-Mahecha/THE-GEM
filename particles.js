@@ -27,9 +27,33 @@ const TRAIL_EFFECTS = {
     nature: { type: 'nature' },
     vampiro: { type: 'vampiro' },
     zombie: { type: 'zombie' },
+    navidad: { type: 'navidad' },
+    santa: { type: 'navidad' },
+    mama_claus: { type: 'navidad' },
+    sonrisa_malvada: { type: 'risa_malvada' },
+    circo: { type: 'risa' },
+    money: { type: 'dinero' },
+    dinero: { type: 'dinero' },
     custom_text: { type: 'custom_text' },
     toxico: { type: 'toxico' },
 };
+
+const snowflakeTrailImg = new Image();
+snowflakeTrailImg.src = 'assets/UI/Efectos de trails/Efecto copo de nieve.png';
+const trailParticleImages = {
+    veneno: new Image(),
+    burbuja: new Image(),
+    dinero: new Image(),
+    risa: new Image(),
+    risaMalvada: new Image(),
+    dulce: new Image(),
+};
+trailParticleImages.veneno.src = 'assets/UI/Efectos de trails/Particulas/particula_veneno.png';
+trailParticleImages.burbuja.src = 'assets/UI/Efectos de trails/Particulas/particula_burbuja.png';
+trailParticleImages.dinero.src = 'assets/UI/Efectos de trails/Particulas/particula_dinero.png';
+trailParticleImages.risa.src = 'assets/UI/Efectos de trails/Particulas/particula_risa.png';
+trailParticleImages.risaMalvada.src = 'assets/UI/Efectos de trails/Particulas/particula_risa_malvada.png';
+trailParticleImages.dulce.src = 'assets/UI/Efectos de trails/Particulas/particula_dulce.png';
 
 // Cada punto guarda posición ABSOLUTA en el canvas
 let trail = [];
@@ -57,6 +81,7 @@ function getTrailConfig() {
         effect = idx > 0 ? trailId.substring(0, idx) : 'basic';
         colorKey = idx > 0 ? trailId.substring(idx + 1) : 'cyan';
     }
+    effect = TRAIL_EFFECTS[effect]?.type || effect;
     cachedTrailId = trailId;
     cachedTrailConfig = { effect, colorKey };
     return cachedTrailConfig;
@@ -88,11 +113,13 @@ function updateTrail() {
         life: 1.0,
         seed: Math.random(),
         wobble: (Math.random() - 0.5) * 2,
+        spin: (Math.random() - 0.5) * Math.PI * 2,
+        scale: 0.65 + Math.random() * 0.8,
     });
 
     const { effect } = getTrailConfig();
     const speedStretch = Math.min(18, Math.abs(window.angVel || 0) * 220);
-    const baseMaxTrail = effect === 'custom_text' ? 30 + Math.round(speedStretch) : effect === 'ghost' ? 38 : effect === 'fire' || effect === 'lava' ? 34 : effect === 'fractura' ? 32 : effect === 'hielo' || effect === 'ice' ? 34 : effect === 'toxico' || effect === 'nature' ? 36 : 28;
+    const baseMaxTrail = effect === 'custom_text' ? 30 + Math.round(speedStretch) : effect === 'ghost' ? 38 : effect === 'fire' || effect === 'lava' ? 34 : effect === 'fractura' ? 32 : effect === 'hielo' || effect === 'ice' ? 22 : effect === 'toxico' || effect === 'nature' ? 34 : effect === 'navidad' ? 28 : 28;
     const maxTrail = window.GAME_PERF?.lowPower?.() ? Math.ceil(baseMaxTrail * 0.58) : baseMaxTrail;
     if (trail.length > maxTrail) trail.shift();
 
@@ -105,6 +132,110 @@ function updateTrail() {
 function resetTrail() {
     trail = [];
     lastTrailPoint = null;
+}
+
+function drawTrailParticleImage(ctxTarget, img, x, y, size, rotation, alpha) {
+    if (!img || !img.complete || img.naturalWidth <= 0) return false;
+    ctxTarget.save();
+    ctxTarget.translate(x, y);
+    ctxTarget.rotate(rotation || 0);
+    ctxTarget.globalAlpha = alpha;
+    ctxTarget.drawImage(img, -size / 2, -size / 2, size, size);
+    ctxTarget.restore();
+    return true;
+}
+
+function drawCustomTextTrailRibbon(colorKey, lowPower, hueBase) {
+    if (trail.length < 2) return;
+    const phrase = (localStorage.getItem('customTrailText') || 'RUBY').trim().slice(0, 18) || 'RUBY';
+    const head = trail[trail.length - 1];
+    const prev = trail[Math.max(0, trail.length - 5)];
+    const dx = head.x - prev.x;
+    const dy = head.y - prev.y;
+    const len = Math.hypot(dx, dy) || 1;
+    const angle = Math.atan2(dy, dx);
+    const now = window.GAME_PERF?.now || performance.now();
+    const speed = Math.min(1, Math.abs(window.angVel || 0) / 0.055);
+    const rgbMode = colorKey === 'rgb';
+    const rgb = TRAIL_COLORS_RGB[colorKey] || '255,218,58';
+    const glow = rgbMode ? `hsla(${hueBase},100%,64%,0.95)` : `rgba(${rgb},0.95)`;
+    const textW = Math.min(170, Math.max(54, phrase.length * 14));
+    const ribbonW = Math.min(214, Math.max(118, textW + 66));
+    const ribbonH = 28;
+    const attachGap = 28;
+    const waveAmp = 4 + speed * 3;
+    const segments = lowPower ? 9 : 16;
+
+    ctx.save();
+    ctx.translate(head.x, head.y);
+    ctx.rotate(angle);
+    ctx.globalAlpha = 0.96;
+    ctx.shadowColor = glow;
+    ctx.shadowBlur = lowPower ? 0 : 14;
+
+    const startX = -attachGap;
+    const endX = -attachGap - ribbonW;
+    const drawEdge = (side) => {
+        for (let i = 0; i <= segments; i++) {
+            const p = i / segments;
+            const x = startX + (endX - startX) * p;
+            const wave = Math.sin(now * 0.007 + p * Math.PI * 4.4) * waveAmp;
+            const taper = 1 - p * 0.18;
+            const y = side * (ribbonH * 0.5 * taper) + wave;
+            if (i === 0 && side < 0) ctx.moveTo(x, y);
+            else ctx.lineTo(x, y);
+        }
+    };
+
+    ctx.beginPath();
+    drawEdge(-1);
+    ctx.lineTo(endX - 18, Math.sin(now * 0.007 + 2.4) * waveAmp);
+    drawEdge(1);
+    ctx.closePath();
+    const bodyGrad = ctx.createLinearGradient(endX - 18, 0, startX, 0);
+    bodyGrad.addColorStop(0, 'rgba(250,252,255,0.78)');
+    bodyGrad.addColorStop(0.2, 'rgba(255,255,255,0.94)');
+    bodyGrad.addColorStop(0.72, 'rgba(255,255,255,0.88)');
+    bodyGrad.addColorStop(1, rgbMode ? `hsla(${hueBase},100%,70%,0.42)` : `rgba(${rgb},0.34)`);
+    ctx.fillStyle = bodyGrad;
+    ctx.fill();
+    ctx.lineWidth = 2;
+    ctx.strokeStyle = 'rgba(18,22,34,0.42)';
+    ctx.stroke();
+
+    ctx.beginPath();
+    ctx.moveTo(startX + 2, -7);
+    ctx.lineTo(-10, -2);
+    ctx.lineTo(-10, 2);
+    ctx.lineTo(startX + 2, 7);
+    ctx.strokeStyle = rgbMode ? `hsla(${hueBase},100%,64%,0.58)` : `rgba(${rgb},0.58)`;
+    ctx.lineWidth = 3;
+    ctx.stroke();
+
+    ctx.shadowBlur = lowPower ? 0 : 5;
+    ctx.shadowColor = 'rgba(255,255,255,0.8)';
+    ctx.font = '900 15px Geom, monospace';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.lineWidth = 3;
+    ctx.strokeStyle = 'rgba(255,255,255,0.78)';
+    ctx.fillStyle = 'rgba(22,24,34,0.95)';
+    const chars = phrase.split('');
+    const spacing = Math.min(14, Math.max(8, textW / Math.max(1, chars.length)));
+    const textCenter = endX + ribbonW * 0.55;
+    const firstX = textCenter - ((chars.length - 1) * spacing) / 2;
+    chars.forEach((ch, index) => {
+        const p = (firstX + index * spacing - endX) / ribbonW;
+        const wave = Math.sin(now * 0.007 + p * Math.PI * 4.4) * (waveAmp * 0.72);
+        const tilt = Math.cos(now * 0.007 + p * Math.PI * 4.4) * 0.1;
+        ctx.save();
+        ctx.translate(firstX + index * spacing, wave);
+        ctx.rotate(tilt);
+        ctx.strokeText(ch, 0, 0);
+        ctx.fillText(ch, 0, 0);
+        ctx.restore();
+    });
+    ctx.restore();
 }
 
 function getSkinRgb() {
@@ -133,6 +264,11 @@ function drawTrail() {
     const lowPower = window.GAME_PERF?.lowPower?.();
     const hueBase = ((window.GAME_PERF?.now || performance.now()) * 0.18) % 360;
     const step = lowPower ? 2 : 1;
+
+    if (effect === 'custom_text') {
+        drawCustomTextTrailRibbon(colorKey, lowPower, hueBase);
+        return;
+    }
 
     for (let i = 0; i < trail.length; i += step) {
         const t = trail[i];
@@ -284,20 +420,41 @@ function drawTrail() {
         else if (effect === 'hielo' || effect === 'ice') {
             ctx.save();
             ctx.globalCompositeOperation = 'screen';
-            if (!lowPower) {
-                ctx.shadowBlur = 10 * life;
+            if (!lowPower && i % 2 === 0) {
+                ctx.shadowBlur = 5 * life;
                 ctx.shadowColor = rgbMode ? `hsl(${(hueBase + i * 9) % 360},100%,74%)` : `rgb(${rgb})`;
             }
-            ctx.beginPath();
-            ctx.ellipse(t.x - dx * 0.38, t.y - dy * 0.38, 15 * life, 5 * life, Math.atan2(dy, dx), 0, Math.PI * 2);
-            ctx.strokeStyle = fill(life * 0.48);
-            ctx.lineWidth = Math.max(1, 2 * life);
-            ctx.stroke();
-            if (t.seed > 0.45) {
+            const flakeCount = lowPower ? 1 : (t.seed > 0.48 ? 1 : 0);
+            for (let f = 0; f < flakeCount; f++) {
+                const drift = (t.seed - 0.5) * 12 * life;
+                const back = (12 + t.seed * 10) * life;
+                const fx = t.x - (dx / len) * back + nx * (drift + Math.sin((window.GAME_PERF?.now || performance.now()) * 0.003 + t.seed * 8) * 2.5 * life);
+                const fy = t.y - (dy / len) * back + ny * (drift + Math.cos((window.GAME_PERF?.now || performance.now()) * 0.003 + t.seed * 6) * 2.5 * life);
+                const size = Math.max(4, (8 + t.seed * 9) * life * (t.scale || 1));
+                ctx.save();
+                ctx.translate(fx, fy);
+                ctx.rotate((t.spin || 0) + (window.GAME_PERF?.now || performance.now()) * (0.001 + t.seed * 0.0012));
+                ctx.globalAlpha = Math.min(0.72, life * (0.32 + t.seed * 0.28));
+                if (snowflakeTrailImg.complete && snowflakeTrailImg.naturalWidth > 0) {
+                    ctx.drawImage(snowflakeTrailImg, -size / 2, -size / 2, size, size);
+                } else {
+                    ctx.strokeStyle = 'rgba(230,252,255,0.75)';
+                    ctx.lineWidth = Math.max(0.8, size * 0.08);
+                    for (let arm = 0; arm < 3; arm++) {
+                        ctx.rotate(Math.PI / 3);
+                        ctx.beginPath();
+                        ctx.moveTo(-size * 0.42, 0);
+                        ctx.lineTo(size * 0.42, 0);
+                        ctx.stroke();
+                    }
+                }
+                ctx.restore();
+            }
+            if (t.seed > 0.72 && i % 2 === 0) {
                 ctx.beginPath();
                 ctx.moveTo(t.x, t.y);
-                ctx.lineTo(t.x - (dx / len) * 20 * life + nx * 8 * life, t.y - (dy / len) * 20 * life + ny * 8 * life);
-                ctx.strokeStyle = 'rgba(220,250,255,0.72)';
+                ctx.lineTo(t.x - (dx / len) * 16 * life + nx * 6 * life, t.y - (dy / len) * 16 * life + ny * 6 * life);
+                ctx.strokeStyle = 'rgba(220,250,255,0.42)';
                 ctx.lineWidth = 1;
                 ctx.stroke();
             }
@@ -307,11 +464,14 @@ function drawTrail() {
         else if (effect === 'toxico') {
             ctx.save();
             ctx.globalCompositeOperation = 'lighter';
-            for (let b = 0; b < 3; b++) {
+            for (let b = 0; b < 2; b++) {
+                const px = t.x - (dx / len) * (b * 11 + 5) * life + nx * Math.sin(t.seed * 8 + b) * 7 * life;
+                const py = t.y - (dy / len) * (b * 11 + 5) * life + ny * Math.cos(t.seed * 8 + b) * 7 * life;
+                if (t.seed > 0.36 && drawTrailParticleImage(ctx, trailParticleImages.veneno, px, py, (13 + b * 3) * life, t.spin + b, life * 0.55)) continue;
                 ctx.beginPath();
                 ctx.arc(
-                    t.x - (dx / len) * (b * 9 + 5) * life + nx * Math.sin(t.seed * 8 + b) * 8 * life,
-                    t.y - (dy / len) * (b * 9 + 5) * life + ny * Math.cos(t.seed * 8 + b) * 8 * life,
+                    px,
+                    py,
                     (7 + b * 2) * life,
                     0,
                     Math.PI * 2
@@ -322,13 +482,45 @@ function drawTrail() {
             ctx.restore();
         }
 
+        else if (effect === 'navidad') {
+            ctx.save();
+            ctx.globalCompositeOperation = 'screen';
+            ctx.beginPath();
+            ctx.ellipse(t.x - dx * 0.45, t.y - dy * 0.45, 18 * life, 5.5 * life, Math.atan2(dy, dx), 0, Math.PI * 2);
+            ctx.fillStyle = `rgba(40,255,120,${life * 0.18})`;
+            ctx.fill();
+            ctx.strokeStyle = `rgba(255,55,70,${life * 0.42})`;
+            ctx.lineWidth = Math.max(1, 2 * life);
+            ctx.stroke();
+            if (!lowPower && t.seed > 0.5) {
+                const px = t.x - (dx / len) * (12 + t.seed * 12) * life + nx * (t.seed - 0.5) * 16 * life;
+                const py = t.y - (dy / len) * (12 + t.seed * 12) * life + ny * (t.seed - 0.5) * 16 * life;
+                drawTrailParticleImage(ctx, trailParticleImages.dulce, px, py, (12 + t.seed * 8) * life, (t.spin || 0) + hueBase * 0.02, life * 0.75);
+            }
+            ctx.restore();
+        }
+
+        else if (effect === 'dinero' || effect === 'risa' || effect === 'risa_malvada') {
+            const img = effect === 'dinero' ? trailParticleImages.dinero : effect === 'risa_malvada' ? trailParticleImages.risaMalvada : trailParticleImages.risa;
+            ctx.save();
+            ctx.globalCompositeOperation = 'screen';
+            if (t.seed > 0.32) {
+                const px = t.x - (dx / len) * (10 + t.seed * 14) * life + nx * (t.seed - 0.5) * 14 * life;
+                const py = t.y - (dy / len) * (10 + t.seed * 14) * life + ny * (t.seed - 0.5) * 14 * life;
+                drawTrailParticleImage(ctx, img, px, py, (14 + t.seed * 8) * life, (t.spin || 0) * 0.25, life * 0.72);
+            }
+            ctx.restore();
+        }
+
         else if (effect === 'water' || effect === 'wind' || effect === 'nature' || effect === 'vampiro' || effect === 'zombie') {
             ctx.save();
             ctx.globalCompositeOperation = effect === 'wind' ? 'screen' : 'lighter';
             const wave = Math.sin((window.GAME_PERF?.now || performance.now()) * 0.012 + t.seed * 12 + i) * 10 * life;
             const tone = effect === 'water' ? '68,136,255' : effect === 'wind' ? '180,255,245' : effect === 'nature' ? '68,255,136' : effect === 'vampiro' ? '255,77,109' : '120,255,143';
-            for (let b = 0; b < 4; b++) {
+            const bands = lowPower ? 2 : 3;
+            for (let b = 0; b < bands; b++) {
                 const back = (b * 8 + 6) * life;
+                if (effect === 'water' && b === 0 && t.seed > 0.45 && drawTrailParticleImage(ctx, trailParticleImages.burbuja, t.x - (dx / len) * back, t.y + ny * wave * 0.35, 12 * life, 0, life * 0.52)) continue;
                 ctx.beginPath();
                 ctx.ellipse(
                     t.x - (dx / len) * back + nx * wave * (0.35 + b * 0.12),
@@ -366,39 +558,5 @@ function drawTrail() {
             ctx.restore();
         }
 
-        else if (effect === 'custom_text') {
-            ctx.save();
-            const phrase = (localStorage.getItem('customTrailText') || 'RUBY').slice(0, 18);
-            const speedStretch = Math.min(1.8, 1 + Math.abs(window.angVel || 0) * 11);
-            const back = (1 - life) * 52 * speedStretch;
-            const px = t.x - (dx / len) * back;
-            const py = t.y - (dy / len) * back;
-            const angle = Math.atan2(dy, dx);
-            ctx.translate(px, py);
-            ctx.rotate(angle);
-            ctx.globalAlpha = Math.min(1, life * 1.05);
-            const rectW = Math.min(168, 42 + phrase.length * 12 * speedStretch);
-            const rectH = 28;
-            const grad = ctx.createLinearGradient(-rectW / 2, 0, rectW / 2, 0);
-            grad.addColorStop(0, `rgba(7,9,18,${0.1 + life * 0.62})`);
-            grad.addColorStop(0.72, `rgba(7,9,18,${0.08 + life * 0.44})`);
-            grad.addColorStop(1, `rgba(255,218,58,${life * 0.18})`);
-            ctx.fillStyle = grad;
-            ctx.fillRect(-rectW / 2, -rectH / 2, rectW, rectH);
-            ctx.font = '900 14px Geom, monospace';
-            ctx.textAlign = 'center';
-            ctx.textBaseline = 'middle';
-            ctx.shadowBlur = lowPower ? 0 : 10 * life;
-            ctx.shadowColor = '#ffda3a';
-            ctx.fillStyle = `rgba(255,238,150,${0.18 + life * 0.72})`;
-            const spacing = Math.min(16, 9 + (1 - life) * 5 * speedStretch);
-            const chars = phrase.split('');
-            const start = -(chars.length - 1) * spacing / 2;
-            chars.forEach((ch, charIndex) => {
-                const wave = Math.sin((window.GAME_PERF?.now || performance.now()) * 0.009 + charIndex * 0.72 + t.seed * 3) * 5 * life;
-                ctx.fillText(ch, start + charIndex * spacing, wave);
-            });
-            ctx.restore();
-        }
     }
 }

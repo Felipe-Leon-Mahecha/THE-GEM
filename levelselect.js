@@ -14,21 +14,35 @@ const BANNER_TRAIL_COLORS = {
 
 const LEVEL_SELECT_SKIN_IMAGES = {
     daxor: {
-        right: "assets/Imagenes/Skins/DAXOR Skin DEMON/DAXOR_Skin_Derecha.png",
-        left: "assets/Imagenes/Skins/DAXOR Skin DEMON/DAXOR_Skin_Izquierda.png"
+        side: "assets/UI/Store/Skins/Normal/DAXOR Skin DEMON/DAXOR_Skin_lado.png"
+    },
+    brifon: {
+        side: "assets/UI/Store/Skins/Normal/BRIFON Skin EPICO/BRIFON_Skin_lado.png"
     },
     kenji: {
-        right: "assets/Imagenes/Skins/KENJI Skin EPICO/Kenji_Skin_Derecha.png",
-        left: "assets/Imagenes/Skins/KENJI Skin EPICO/Kenji_Skin_Izquierda.png"
+        side: "assets/UI/Store/Skins/Normal/KENJI Skin EPICO/Kenji_Skin_lado.png"
     }
 };
 
 const levelSelectSkinImages = {};
 Object.entries(LEVEL_SELECT_SKIN_IMAGES).forEach(([id, paths]) => {
-    levelSelectSkinImages[id] = { right: new Image(), left: new Image() };
-    levelSelectSkinImages[id].right.src = paths.right;
-    levelSelectSkinImages[id].left.src = paths.left;
+    levelSelectSkinImages[id] = new Image();
+    levelSelectSkinImages[id].src = paths.side;
 });
+
+function getLevelSelectSkinImage(id) {
+    const data = typeof window.findShopSkin === 'function' ? window.findShopSkin(id) : null;
+    const src = data?.rolling ? (data.image || data.imageSide || data.imageRight || data.imageLeft) : (data?.imageSide || data?.imageRight || data?.image || data?.imageLeft);
+    if (src) {
+        const key = `${id}_shop`;
+        if (!levelSelectSkinImages[key] || levelSelectSkinImages[key].src !== src) {
+            levelSelectSkinImages[key] = new Image();
+            levelSelectSkinImages[key].src = src;
+        }
+        return { image: levelSelectSkinImages[key], rolling: !!data?.rolling };
+    }
+    return { image: levelSelectSkinImages[id] || null, rolling: false };
+}
 
 const levels = (window.LEVEL_CONFIGS || []).map((lv, i) => ({
     name: lv.name,
@@ -897,11 +911,20 @@ function drawBanner() {
         bctx.fill();
     }
 
-    const skinImg = levelSelectSkinImages[equippedSkin]?.right;
+    const selectedSkinPreview = getLevelSelectSkinImage(equippedSkin);
+    const skinImg = selectedSkinPreview.image;
     bctx.shadowBlur = 16;
     bctx.shadowColor = skinColor;
     if (skinImg && skinImg.complete && skinImg.naturalWidth > 0) {
+        if (selectedSkinPreview.rolling) {
+            bctx.save();
+            bctx.translate(bx, by);
+            bctx.rotate(now * 0.006);
+            bctx.drawImage(skinImg, -18, -18, 36, 36);
+            bctx.restore();
+        } else {
         bctx.drawImage(skinImg, bx - 18, by - 18, 36, 36);
+        }
     } else {
         bctx.beginPath();
         bctx.arc(bx, by, 9, 0, Math.PI * 2);

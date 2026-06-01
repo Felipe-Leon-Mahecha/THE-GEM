@@ -14,21 +14,35 @@ const BANNER_TRAIL_COLORS = {
 
 const LEVEL_SELECT_SKIN_IMAGES = {
     daxor: {
-        right: "assets/Imagenes/Skins/DAXOR Skin DEMON/DAXOR_Skin_Derecha.png",
-        left: "assets/Imagenes/Skins/DAXOR Skin DEMON/DAXOR_Skin_Izquierda.png"
+        side: "assets/UI/Store/Skins/Normal/DAXOR Skin DEMON/DAXOR_Skin_lado.png"
+    },
+    brifon: {
+        side: "assets/UI/Store/Skins/Normal/BRIFON Skin EPICO/BRIFON_Skin_lado.png"
     },
     kenji: {
-        right: "assets/Imagenes/Skins/KENJI Skin EPICO/Kenji_Skin_Derecha.png",
-        left: "assets/Imagenes/Skins/KENJI Skin EPICO/Kenji_Skin_Izquierda.png"
+        side: "assets/UI/Store/Skins/Normal/KENJI Skin EPICO/Kenji_Skin_lado.png"
     }
 };
 
 const levelSelectSkinImages = {};
 Object.entries(LEVEL_SELECT_SKIN_IMAGES).forEach(([id, paths]) => {
-    levelSelectSkinImages[id] = { right: new Image(), left: new Image() };
-    levelSelectSkinImages[id].right.src = paths.right;
-    levelSelectSkinImages[id].left.src = paths.left;
+    levelSelectSkinImages[id] = new Image();
+    levelSelectSkinImages[id].src = paths.side;
 });
+
+function getLevelSelectSkinImage(id) {
+    const data = typeof window.findShopSkin === 'function' ? window.findShopSkin(id) : null;
+    const src = data?.rolling ? (data.image || data.imageSide || data.imageRight || data.imageLeft) : (data?.imageSide || data?.imageRight || data?.image || data?.imageLeft);
+    if (src) {
+        const key = `${id}_shop`;
+        if (!levelSelectSkinImages[key] || levelSelectSkinImages[key].src !== src) {
+            levelSelectSkinImages[key] = new Image();
+            levelSelectSkinImages[key].src = src;
+        }
+        return { image: levelSelectSkinImages[key], rolling: !!data?.rolling };
+    }
+    return { image: levelSelectSkinImages[id] || null, rolling: false };
+}
 
 const levels = (window.LEVEL_CONFIGS || []).map((lv, i) => ({
     name: lv.name,
@@ -61,12 +75,15 @@ const levelImages = levels.map(lv => {
 // Precarga del fondo del level select para transición sin parpadeo
 const levelSelectBg = new Image();
 levelSelectBg.src = "assets/Imagenes/Select Nivel Fondo/Select_Nivel_Image.png";
+const levelPlayButtonImg = new Image();
+levelPlayButtonImg.src = "assets/Imagenes/Boton Play/Play_Button.png";
 
 let selectedLevel = 0;
 window.selectedLevel = selectedLevel;
 let carouselX = 0;
 let carouselTarget = 0;
 let selectVisible = false;
+let selectedPlayButtonBounds = null;
 
 // Variable global para el trail del banner (usada también en shop.js)
 var bannerTrail = [];
@@ -106,8 +123,15 @@ window.moveLevelSelection = moveLevelSelection;
 
 window.playSelectedLevel = function () {
     if (!levels[selectedLevel]?.unlocked) return;
-    window.hideLevelSelect();
-    (window.startLevelWithTransition || window.startGame)(selectedLevel);
+    const launchLevel = () => {
+        window.hideLevelSelect();
+        window.startGame(selectedLevel);
+    };
+    if (typeof window.showPowerupSelection === 'function') {
+        window.showPowerupSelection(selectedLevel, launchLevel);
+        return;
+    }
+    launchLevel();
 };
 
 const systemMessages = [
@@ -154,8 +178,8 @@ window.showLevelSelect = function () {
     const ls =
         document.getElementById("levelSelect");
 
-    document.getElementById("overlay")
-        .style.display = "none";
+    const overlay = document.getElementById("overlay");
+    if (overlay) overlay.style.display = "none";
 
     const nameEl =
         document.getElementById("playerName");
@@ -247,7 +271,8 @@ if (menuMusic) {
 
 window.hideLevelSelect = function () {
     selectVisible = false;
-    document.getElementById("levelSelect").style.display = "none";
+    const ls = document.getElementById("levelSelect");
+    if (ls) ls.style.display = "none";
     if (carouselAnimId) cancelAnimationFrame(carouselAnimId);
     clearInterval(window.systemMsgLoop); // Prevenir ejecución fantasma en fondo
     clearTimeout(window.systemMsgTimeout);
@@ -367,6 +392,7 @@ function drawCarousel(timestamp = 0) {
     const centerY = compact ? H * 0.58 : H / 2 + 70;
 
     carouselX += (carouselTarget - carouselX) * 0.12;
+    selectedPlayButtonBounds = null;
 
     levels.forEach((lv, i) => {
 
@@ -625,6 +651,35 @@ function drawCarousel(timestamp = 0) {
 
             }
 
+            if (i === selectedLevel) {
+                const btnW = 178 * scale;
+                const btnH = 48 * scale;
+                const btnX = centerX + offsetX - btnW / 2;
+                const btnY = y + h - 76 * scale;
+                selectedPlayButtonBounds = { x: btnX, y: btnY, w: btnW, h: btnH };
+
+                ctx2.save();
+                ctx2.shadowColor = "rgba(0,255,231,0.45)";
+                ctx2.shadowBlur = 18;
+                if (levelPlayButtonImg.complete && levelPlayButtonImg.naturalWidth) {
+                    ctx2.drawImage(levelPlayButtonImg, btnX, btnY, btnW, btnH);
+                } else {
+                    const playGrad = ctx2.createLinearGradient(btnX, btnY, btnX + btnW, btnY + btnH);
+                    playGrad.addColorStop(0, "#00ffe7");
+                    playGrad.addColorStop(1, "#0088ff");
+                    ctx2.fillStyle = playGrad;
+                    ctx2.beginPath();
+                    ctx2.roundRect(btnX, btnY, btnW, btnH, 14 * scale);
+                    ctx2.fill();
+                }
+                ctx2.shadowBlur = 0;
+                ctx2.fillStyle = "#050507";
+                ctx2.font = `900 ${15 * scale}px Geom, monospace`;
+                ctx2.letterSpacing = "0px";
+                ctx2.fillText("JUGAR", centerX + offsetX, btnY + btnH * 0.62);
+                ctx2.restore();
+            }
+
         } else {
 
             // overlay oscuro
@@ -729,8 +784,8 @@ document.addEventListener("keydown", e => {
 
         window.hideLevelSelect();
 
-        document.getElementById("overlay").style.display =
-            "flex";
+        const overlay = document.getElementById("overlay");
+        if (overlay) overlay.style.display = "flex";
 
     }
 
@@ -897,11 +952,20 @@ function drawBanner() {
         bctx.fill();
     }
 
-    const skinImg = levelSelectSkinImages[equippedSkin]?.right;
+    const selectedSkinPreview = getLevelSelectSkinImage(equippedSkin);
+    const skinImg = selectedSkinPreview.image;
     bctx.shadowBlur = 16;
     bctx.shadowColor = skinColor;
     if (skinImg && skinImg.complete && skinImg.naturalWidth > 0) {
+        if (selectedSkinPreview.rolling) {
+            bctx.save();
+            bctx.translate(bx, by);
+            bctx.rotate(now * 0.006);
+            bctx.drawImage(skinImg, -18, -18, 36, 36);
+            bctx.restore();
+        } else {
         bctx.drawImage(skinImg, bx - 18, by - 18, 36, 36);
+        }
     } else {
         bctx.beginPath();
         bctx.arc(bx, by, 9, 0, Math.PI * 2);

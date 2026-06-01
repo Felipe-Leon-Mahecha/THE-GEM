@@ -5,6 +5,10 @@
 const SHOP_PLACEHOLDER_IMAGE = 'assets/UI/Store/Placeholders/placeholder_store_item.png';
 const RUBY_PASS_REWARD_PLACEHOLDER = 'assets/UI/Store/Placeholders/placeholder_ruby_pass_reward.png';
 const EMOTE_STANDARD_PRICE_COINS = 150;
+const SHOP_SNOWFLAKE_IMAGE = new Image();
+SHOP_SNOWFLAKE_IMAGE.src = 'assets/UI/Efectos de trails/Efecto copo de nieve.png';
+const SHOP_CANDY_PARTICLE_IMAGE = new Image();
+SHOP_CANDY_PARTICLE_IMAGE.src = 'assets/UI/Efectos de trails/Particulas/particula_dulce.png';
 
 const SKINS_DATA = [
     { id: 'cyan', name: 'Cian', color: '#00ffe7', rarity: 'BASICA', price: 0, priceType: 'coins', owned: true, archetype: 'Supervivencia', ability: 'Sobrevive a 1 pinchazo por partida.' },
@@ -17,10 +21,10 @@ const SKINS_DATA = [
     { id: 'cool', name: 'Cool', color: '#ffffff', rarity: 'ESPECIAL', price: 300, priceType: 'coins', altPrice: 10, altType: 'gems', owned: false, emoji: 'C', archetype: 'Magnetismo', ability: 'Atrae recursos en radio pequeno.' },
     { id: 'frank', name: 'Frankenstein', color: '#78ff8f', rarity: 'EPICA', price: 1200, priceType: 'coins', altPrice: 40, altType: 'gems', fragments: 3, owned: false, emoji: 'F', archetype: 'Magnetismo', ability: 'Atrae recursos en radio grande.' },
     { id: 'shield', name: 'Centinela', color: '#7fd8ff', rarity: 'EPICA', price: 1200, priceType: 'coins', altPrice: 40, altType: 'gems', fragments: 3, owned: false, emoji: 'S', archetype: 'Supervivencia', ability: 'Escudo que regenera cada 60 segundos.' },
-    { id: 'kenji', name: 'KENJI', color: '#845cff', rarity: 'EPICA', price: 1500, priceType: 'coins', altPrice: 50, altType: 'gems', fragments: 3, owned: false, imageRight: 'assets/Imagenes/Skins/KENJI Skin EPICO/Kenji_Skin_Derecha.png', imageLeft: 'assets/Imagenes/Skins/KENJI Skin EPICO/Kenji_Skin_Izquierda.png', archetype: 'Tecnica', ability: 'Movimiento preciso con estela epica.' },
-    { id: 'brifon', name: 'BRIFON', color: '#b86cff', rarity: 'EPICA', price: 0, priceType: 'coins', owned: false, soon: true, imageRight: 'assets/Imagenes/Skins/BRIFON Skin EPICO/BRIFON_Skin_Derecha.png', archetype: 'Pendiente', ability: 'Apartado reservado.' },
+    { id: 'kenji', name: 'KENJI', color: '#845cff', rarity: 'EPICA', price: 1500, priceType: 'coins', altPrice: 50, altType: 'gems', fragments: 3, owned: false, image: 'assets/UI/Store/Skins/Normal/KENJI Skin EPICO/Kenji_Skin.png', imageSide: 'assets/UI/Store/Skins/Normal/KENJI Skin EPICO/Kenji_Skin_lado.png', archetype: 'Tecnica', ability: 'Movimiento preciso con estela epica.' },
+    { id: 'brifon', name: 'BRIFON', color: '#b86cff', rarity: 'EPICA', price: 0, priceType: 'coins', owned: false, soon: true, image: 'assets/UI/Store/Skins/Normal/Brifon.png', imageSide: 'assets/UI/Store/Skins/Normal/BRIFON Skin EPICO/BRIFON_Skin_lado.png', archetype: 'Pendiente', ability: 'Apartado reservado.' },
     { id: 'demon_ember', name: 'Demon Ember', color: '#cf0000', rarity: 'DEMON', price: 4500, priceType: 'coins', altPrice: 150, altType: 'gems', fragments: 3, owned: false, emoji: 'D', archetype: 'Inmortalidad', ability: 'Invulnerable 3 segundos.' },
-    { id: 'daxor', name: 'DAXOR', color: '#ff2448', rarity: 'DEMON', price: 5200, priceType: 'coins', altPrice: 170, altType: 'gems', fragments: 3, owned: false, imageRight: 'assets/Imagenes/Skins/DAXOR Skin DEMON/DAXOR_Skin_Derecha.png', imageLeft: 'assets/Imagenes/Skins/DAXOR Skin DEMON/DAXOR_Skin_Izquierda.png', archetype: 'Demon', ability: 'Aspecto demon con doble direccion.' },
+    { id: 'daxor', name: 'DAXOR', color: '#ff2448', rarity: 'DEMON', price: 5200, priceType: 'coins', altPrice: 170, altType: 'gems', fragments: 3, owned: false, image: 'assets/UI/Store/Skins/Normal/DAXOR_Skin.png', imageSide: 'assets/UI/Store/Skins/Normal/DAXOR Skin DEMON/DAXOR_Skin_lado.png', archetype: 'Demon', ability: 'Aspecto demon con doble direccion.' },
     { id: 'vip_time', name: 'Crono VIP', color: '#ffee00', rarity: 'VIP', price: 500, priceType: 'gems', fragments: 4, owned: false, emoji: 'V', archetype: 'Control del Tiempo', ability: 'Ralentiza la pista 40% por 5 segundos.' },
 ];
 window.SKINS_DATA = SKINS_DATA;
@@ -332,6 +336,32 @@ const BANNERS_DATA = [
     },
 ];
 
+const VIP_BANNER_PLACEHOLDERS = [
+    { id: 'VIP_Placeholder_PNG_1', name: 'VIP Placeholder PNG 1', price: 420, cover: 'assets/Imagenes/Banners/Placeholders/VIP_Placeholder_PNG_1.png', rarity: 'VIP', exclusive: true },
+    { id: 'VIP_Placeholder_PNG_2', name: 'VIP Placeholder PNG 2', price: 420, cover: 'assets/Imagenes/Banners/Placeholders/VIP_Placeholder_PNG_2.png', rarity: 'VIP', exclusive: true },
+    { id: 'VIP_Placeholder_PNG_3', name: 'VIP Placeholder PNG 3', price: 420, cover: 'assets/Imagenes/Banners/Placeholders/VIP_Placeholder_PNG_3.png', rarity: 'VIP', exclusive: true },
+    { id: 'VIP_Placeholder_PNG_4', name: 'VIP Placeholder PNG 4', price: 420, cover: 'assets/Imagenes/Banners/Placeholders/VIP_Placeholder_PNG_4.png', rarity: 'VIP', exclusive: true },
+    { id: 'VIP_Placeholder_PNG_5', name: 'VIP Placeholder PNG 5', price: 420, cover: 'assets/Imagenes/Banners/Placeholders/VIP_Placeholder_PNG_5.png', rarity: 'VIP', exclusive: true },
+    { id: 'VIP_Placeholder_GIF_1', name: 'VIP Placeholder GIF 1', price: 560, cover: 'assets/Imagenes/Banners/Placeholders/VIP_Placeholder_GIF_1.gif', rarity: 'VIP', exclusive: true, animated: true },
+    { id: 'VIP_Placeholder_GIF_2', name: 'VIP Placeholder GIF 2', price: 560, cover: 'assets/Imagenes/Banners/Placeholders/VIP_Placeholder_GIF_2.gif', rarity: 'VIP', exclusive: true, animated: true },
+    { id: 'VIP_Placeholder_GIF_3', name: 'VIP Placeholder GIF 3', price: 560, cover: 'assets/Imagenes/Banners/Placeholders/VIP_Placeholder_GIF_3.gif', rarity: 'VIP', exclusive: true, animated: true },
+    { id: 'VIP_Placeholder_GIF_4', name: 'VIP Placeholder GIF 4', price: 560, cover: 'assets/Imagenes/Banners/Placeholders/VIP_Placeholder_GIF_4.gif', rarity: 'VIP', exclusive: true, animated: true },
+    { id: 'VIP_Placeholder_GIF_5', name: 'VIP Placeholder GIF 5', price: 560, cover: 'assets/Imagenes/Banners/Placeholders/VIP_Placeholder_GIF_5.gif', rarity: 'VIP', exclusive: true, animated: true }
+];
+
+function isVIPBannerOnly(banner) {
+    return banner?.rarity === 'VIP' || banner?.exclusive === true || String(banner?.cover || '').toLowerCase().endsWith('.gif');
+}
+
+function getVIPBannerCatalog() {
+    const byId = new Map();
+    [...BANNERS_DATA, ...VIP_BANNER_PLACEHOLDERS].forEach(banner => {
+        if (!banner?.id || !isVIPBannerOnly(banner) || byId.has(banner.id)) return;
+        byId.set(banner.id, { ...banner, rarity: 'VIP', exclusive: true });
+    });
+    return [...byId.values()];
+}
+
 const CHESTS_DATA = [
     { id: 'basic', name: 'Cofre Basico', image: 'assets/Imagenes/Cofres Imagenes/Cofre BASICO.png', openImage: 'assets/Imagenes/Cofres Imagenes/Cofres Abiertos/Cofre_BASICO_Abierto.png', cost: 150, currency: 'coins', base: { coins: [25, 60], gems: [0, 1] }, drops: [['Item basico', 85], ['Item especial', 14], ['Fragmento epico', 1]] },
     { id: 'special', name: 'Cofre Especial', image: 'assets/Imagenes/Cofres Imagenes/Cofre ESPECIAL.png', openImage: 'assets/Imagenes/Cofres Imagenes/Cofres Abiertos/Cofre_ESPECIAL_Abierto.png', cost: 500, currency: 'coins', altCost: 20, altCurrency: 'gems', base: { coins: [70, 140], gems: [1, 3] }, drops: [['Item especial', 60], ['Fragmento epico', 8], ['Fragmento demon', 2]] },
@@ -601,9 +631,67 @@ const EMOTES_DATA = [
 const VIP_ASSET_BASE = 'assets/UI/Store/VIP/Bundles';
 const VIP_ITEM_PRICE = 300;
 const VIP_PANEL_PRICE = 620;
+const ROLLING_SKIN_IDS = new Set([
+    'skin_sol',
+    'skin_luna',
+    'skin_galaxia',
+    'skin_agujero_negro',
+    'skin_meteorito',
+    'skin_alien',
+    'skin_planeta_marte',
+    'skin_planeta_saturno',
+    'skin_planeta_tierra',
+    'skin_lobo_salvaje',
+    'Caramelo_de_Navidad',
+    'skin_hamburguesa',
+    'skin_pizza',
+    'skin_helado',
+    'skin_limon_toxico',
+    'skin_sandia',
+    'skin_cafe',
+    'skin_dona',
+    'skin_papas_fritas',
+    'skin_sandwich',
+    'skin_manzana',
+    'skin_palomitas',
+    'skin_cupcake',
+    'skin_jugo',
+    'skin_galleta',
+    'skin_torta'
+]);
 
-function vipSkin(folder, id, name, price = VIP_ITEM_PRICE) {
-    return { type: 'vipSkin', id, name, price, image: `${VIP_ASSET_BASE}/${folder}/${id}.png` };
+function getSkinSidePath(image, id) {
+    if (!image || !id) return null;
+    const slash = image.lastIndexOf('/');
+    if (slash < 0) return null;
+    const folder = image.slice(0, slash);
+    return `${folder}/${id}/${id}_lado.png`;
+}
+
+function withGameplaySkinAssets(item) {
+    if (!item || !(item.type === 'vipSkin' || item.type === 'skin')) return item;
+    const rolling = item.rolling === true || ROLLING_SKIN_IDS.has(item.id);
+    const sideImage = rolling
+        ? item.image
+        : (item.imageSide || getSkinSidePath(item.image, item.id) || item.imageRight || item.imageLeft || item.image);
+    return {
+        ...item,
+        rolling,
+        imageSide: sideImage,
+        imageRight: sideImage,
+        imageLeft: sideImage
+    };
+}
+
+function vipSkin(folder, id, name, price = VIP_ITEM_PRICE, options = {}) {
+    return withGameplaySkinAssets({
+        type: 'vipSkin',
+        id,
+        name,
+        price,
+        image: `${VIP_ASSET_BASE}/${folder}/${id}.png`,
+        ...options
+    });
 }
 
 function vipTrail(folder, id, name, price = 320) {
@@ -620,11 +708,19 @@ const VIP_PROMO_BANNERS = [
     },
     {
         id: 'vip_specials',
-        title: 'ESPECIALES VIP',
-        subtitle: 'Espacio reservado para nuevos extras',
+        title: 'BANNERS VIP',
+        subtitle: 'Banners premium, animados y coleccionables',
         cover: 'assets/UI/Store/VIP/Banners/banner_vip_specials.png',
         detailBackground: 'assets/UI/Store/VIP/Banners/bg_vip_specials.png'
     }
+];
+
+const VIP_GAMEPLAY_PLACEHOLDERS = [
+    { id: 'boosters', name: 'Potenciadores', type: 'BOOSTERS', detail: 'Slots para boosts del gameplay', rarity: 'rare' },
+    { id: 'bots', name: 'Bots VIP', type: 'BOTS', detail: 'Slots para ayudantes automaticos', rarity: 'epic' },
+    { id: 'perks', name: 'Ventajas', type: 'PERKS', detail: 'Slots para ventajas temporales', rarity: 'rare' },
+    { id: 'power', name: 'Especiales', type: 'POWER', detail: 'Slots para poderes premium', rarity: 'legendary' },
+    { id: 'reactor', name: 'Reactor', type: 'CORE', detail: 'Slots para energia de partida', rarity: 'epic' }
 ];
 
 const VIP_CAROUSEL_DATA = [
@@ -889,7 +985,16 @@ const VIP_PACKAGES_DATA = [
             { type: 'vipSkin', id: 'skin_helado', name: 'Helado', price: 260, image: 'assets/UI/Store/VIP/Bundles/Food/skin_helado.png' },
             { type: 'vipSkin', id: 'skin_limon_toxico', name: 'Limon Toxico', price: 320, image: 'assets/UI/Store/VIP/Bundles/Food/skin_limon_toxico.png' },
             { type: 'vipSkin', id: 'skin_sandia', name: 'Sandia', price: 260, image: 'assets/UI/Store/VIP/Bundles/Food/skin_sandia.png' },
-            { type: 'vipSkin', id: 'skin_cafe', name: 'Cafe', price: 260, image: 'assets/UI/Store/VIP/Bundles/Food/skin_cafe.png' }
+            { type: 'vipSkin', id: 'skin_cafe', name: 'Cafe', price: 260, image: 'assets/UI/Store/VIP/Bundles/Food/skin_cafe.png' },
+            { type: 'vipSkin', id: 'skin_dona', name: 'Dona', price: 260, image: 'assets/UI/Store/VIP/Bundles/Food/skin_dona.png', rolling: true },
+            { type: 'vipSkin', id: 'skin_papas_fritas', name: 'Papas Fritas', price: 260, image: 'assets/UI/Store/VIP/Bundles/Food/skin_papas_fritas.png', rolling: true },
+            { type: 'vipSkin', id: 'skin_sandwich', name: 'Sandwich', price: 260, image: 'assets/UI/Store/VIP/Bundles/Food/skin_sandwich.png', rolling: true },
+            { type: 'vipSkin', id: 'skin_manzana', name: 'Manzana', price: 260, image: 'assets/UI/Store/VIP/Bundles/Food/skin_manzana.png', rolling: true },
+            { type: 'vipSkin', id: 'skin_palomitas', name: 'Palomitas', price: 260, image: 'assets/UI/Store/VIP/Bundles/Food/skin_palomitas.png', rolling: true },
+            { type: 'vipSkin', id: 'skin_cupcake', name: 'Cupcake', price: 260, image: 'assets/UI/Store/VIP/Bundles/Food/skin_cupcake.png', rolling: true },
+            { type: 'vipSkin', id: 'skin_jugo', name: 'Jugo', price: 260, image: 'assets/UI/Store/VIP/Bundles/Food/skin_jugo.png', rolling: true },
+            { type: 'vipSkin', id: 'skin_galleta', name: 'Galleta', price: 260, image: 'assets/UI/Store/VIP/Bundles/Food/skin_galleta.png', rolling: true },
+            { type: 'vipSkin', id: 'skin_torta', name: 'Torta', price: 260, image: 'assets/UI/Store/VIP/Bundles/Food/skin_torta.png', rolling: true }
         ]
     },
     {
@@ -903,7 +1008,10 @@ const VIP_PACKAGES_DATA = [
         items: [
             { type: 'vipSkin', id: 'skin_sol', name: 'Sol', price: 300, image: 'assets/UI/Store/VIP/Bundles/Space/skin_sol.png' },
             { type: 'vipSkin', id: 'skin_luna', name: 'Luna', price: 300, image: 'assets/UI/Store/VIP/Bundles/Space/skin_luna.png' },
-            { type: 'vipSkin', id: 'skin_planeta', name: 'Planeta', price: 300, image: 'assets/UI/Store/VIP/Bundles/Space/skin_planeta.png' },
+            { type: 'vipSkin', id: 'skin_galaxia', name: 'Galaxia', price: 300, image: 'assets/UI/Store/VIP/Bundles/Space/skin_galaxia.png', rolling: true },
+            { type: 'vipSkin', id: 'skin_planeta_marte', name: 'Planeta Marte', price: 300, image: 'assets/UI/Store/VIP/Bundles/Space/skin_planeta_marte.png', rolling: true },
+            { type: 'vipSkin', id: 'skin_planeta_saturno', name: 'Planeta Saturno', price: 300, image: 'assets/UI/Store/VIP/Bundles/Space/skin_planeta_saturno.png', rolling: true },
+            { type: 'vipSkin', id: 'skin_planeta_tierra', name: 'Planeta Tierra', price: 300, image: 'assets/UI/Store/VIP/Bundles/Space/skin_planeta_tierra.png', rolling: true },
             { type: 'vipSkin', id: 'skin_agujero_negro', name: 'Agujero Negro', price: 380, image: 'assets/UI/Store/VIP/Bundles/Space/skin_agujero_negro.png' },
             { type: 'vipSkin', id: 'skin_meteorito', name: 'Meteorito', price: 320, image: 'assets/UI/Store/VIP/Bundles/Space/skin_meteorito.png' },
             { type: 'vipSkin', id: 'skin_alien', name: 'Alien', price: 340, image: 'assets/UI/Store/VIP/Bundles/Space/skin_alien.png' },
@@ -942,7 +1050,13 @@ const VIP_PACKAGES_DATA = [
             { type: 'vipSkin', id: 'skin_tiburon', name: 'Tiburon', price: 340, image: 'assets/UI/Store/VIP/Bundles/Wild/skin_tiburon.png' },
             { type: 'vipSkin', id: 'skin_cuervo', name: 'Cuervo', price: 300, image: 'assets/UI/Store/VIP/Bundles/Wild/skin_cuervo.png' },
             { type: 'vipSkin', id: 'skin_escorpion', name: 'Escorpion', price: 320, image: 'assets/UI/Store/VIP/Bundles/Wild/skin_escorpion.png' },
-            { type: 'vipSkin', id: 'skin_tigre', name: 'Tigre', price: 360, image: 'assets/UI/Store/VIP/Bundles/Wild/skin_tigre.png' }
+            { type: 'vipSkin', id: 'skin_tigre', name: 'Tigre', price: 360, image: 'assets/UI/Store/VIP/Bundles/Wild/skin_tigre.png' },
+            { type: 'vipSkin', id: 'skin_leon', name: 'Leon', price: 320, image: 'assets/UI/Store/VIP/Bundles/Wild/skin_leon.png' },
+            { type: 'vipSkin', id: 'skin_cebra', name: 'Cebra', price: 300, image: 'assets/UI/Store/VIP/Bundles/Wild/skin_cebra.png' },
+            { type: 'vipSkin', id: 'skin_elefante', name: 'Elefante', price: 340, image: 'assets/UI/Store/VIP/Bundles/Wild/skin_elefante.png' },
+            { type: 'vipSkin', id: 'skin_cerdo', name: 'Cerdo', price: 280, image: 'assets/UI/Store/VIP/Bundles/Wild/skin_cerdo.png' },
+            { type: 'vipSkin', id: 'skin_ciervo', name: 'Ciervo', price: 300, image: 'assets/UI/Store/VIP/Bundles/Wild/skin_ciervo.png' },
+            { type: 'vipSkin', id: 'skin_aguila', name: 'Aguila', price: 340, image: 'assets/UI/Store/VIP/Bundles/Wild/skin_aguila.png' }
         ]
     },
     {
@@ -982,27 +1096,125 @@ const VIP_PACKAGES_DATA = [
             { type: 'vipSkin', id: 'skin_arbol_navidad', name: 'Arbol Navidad', price: 340, image: 'assets/UI/Store/VIP/Bundles/Christmas/skin_arbol_navidad.png' },
             { type: 'vipSkin', id: 'skin_baston_cristal', name: 'Baston Cristal', price: 340, image: 'assets/UI/Store/VIP/Bundles/Christmas/skin_baston_cristal.png' },
             { type: 'vipSkin', id: 'skin_esfera_navidad', name: 'Esfera Navidad', price: 320, image: 'assets/UI/Store/VIP/Bundles/Christmas/skin_esfera_navidad.png' },
-            { type: 'vipSkin', id: 'skin_galleta_navidad', name: 'Galleta Navidad', price: 320, image: 'assets/UI/Store/VIP/Bundles/Christmas/skin_galleta_navidad.png' }
+            { type: 'vipSkin', id: 'skin_galleta_navidad', name: 'Galleta Navidad', price: 320, image: 'assets/UI/Store/VIP/Bundles/Christmas/skin_galleta_navidad.png' },
+            { type: 'vipSkin', id: 'Caramelo_de_Navidad', name: 'Caramelo de Navidad', price: 320, image: 'assets/UI/Store/VIP/Bundles/Christmas/Caramelo_de_Navidad.png', rolling: true }
         ]
     }
 ];
 
+const NORMAL_STORE_SKINS = [
+    { id: 'skin_neon_ace', name: 'Neon Ace', color: '#00ffe7', rarity: 'ESPECIAL', price: 650, priceType: 'coins', imageRight: 'assets/UI/Store/Skins/skin_neon_ace.png', archetype: 'Neon', ability: 'Aspecto de tienda normal.' },
+    { id: 'skin_volt_star', name: 'Volt Star', color: '#ffee00', rarity: 'ESPECIAL', price: 650, priceType: 'coins', imageRight: 'assets/UI/Store/Skins/skin_volt_star.png', archetype: 'Neon', ability: 'Aspecto de tienda normal.' },
+    { id: 'skin_pixel_gold', name: 'Pixel Gold', color: '#ffd95a', rarity: 'EPICA', price: 1200, priceType: 'coins', altPrice: 40, altType: 'gems', fragments: 3, imageRight: 'assets/UI/Store/Skins/skin_pixel_gold.png', archetype: 'Pixel', ability: 'Aspecto epico de tienda normal.' },
+    { id: 'skin_diamante_rojo', name: 'Diamante Rojo', color: '#ff2448', rarity: 'EPICA', price: 1400, priceType: 'coins', altPrice: 45, altType: 'gems', fragments: 3, imageRight: 'assets/UI/Store/Skins/skin_diamante_rojo.png', archetype: 'Ruby', ability: 'Aspecto epico de tienda normal.' },
+    { id: 'skin_dama_ruby', name: 'Dama Ruby', color: '#ff4d6d', rarity: 'EPICA', price: 1500, priceType: 'coins', altPrice: 50, altType: 'gems', fragments: 3, imageRight: 'assets/UI/Store/Skins/skin_dama_ruby.png', archetype: 'Ruby', ability: 'Aspecto epico de tienda normal.' },
+    { id: 'skin_guardian_oro', name: 'Guardian Oro', color: '#ffcc33', rarity: 'EPICA', price: 1600, priceType: 'coins', altPrice: 55, altType: 'gems', fragments: 3, imageRight: 'assets/UI/Store/Skins/skin_guardian_oro.png', archetype: 'Guardian', ability: 'Aspecto epico de tienda normal.' },
+    { id: 'skin_oraculo', name: 'Oraculo', color: '#cc44ff', rarity: 'EPICA', price: 1700, priceType: 'coins', altPrice: 60, altType: 'gems', fragments: 3, imageRight: 'assets/UI/Store/Skins/skin_oraculo.png', archetype: 'Misterio', ability: 'Aspecto epico de tienda normal.' },
+    { id: 'skin_rey_sombra', name: 'Rey Sombra', color: '#7b3cff', rarity: 'DEMON', price: 4600, priceType: 'coins', altPrice: 150, altType: 'gems', fragments: 3, imageRight: 'assets/UI/Store/Skins/skin_rey_sombra.png', archetype: 'Demon', ability: 'Aspecto demon de tienda normal.' },
+    { id: 'skin_lux_void', name: 'Lux Void', color: '#78e8ff', rarity: 'DEMON', price: 4800, priceType: 'coins', altPrice: 160, altType: 'gems', fragments: 3, imageRight: 'assets/UI/Store/Skins/skin_lux_void.png', archetype: 'Void', ability: 'Aspecto demon de tienda normal.' },
+    { id: 'skin_nucleo_negro', name: 'Nucleo Negro', color: '#ffffff', rarity: 'DEMON', price: 5000, priceType: 'coins', altPrice: 165, altType: 'gems', fragments: 3, imageRight: 'assets/UI/Store/Skins/skin_nucleo_negro.png', archetype: 'Void', ability: 'Aspecto demon de tienda normal.' },
+    { id: 'skin_emperador', name: 'Emperador', color: '#ffd700', rarity: 'DEMON', price: 5200, priceType: 'coins', altPrice: 170, altType: 'gems', fragments: 3, imageRight: 'assets/UI/Store/Skins/skin_emperador.png', archetype: 'Royal', ability: 'Aspecto demon de tienda normal.' },
+    { id: 'skin_leyenda_ruby', name: 'Leyenda Ruby', color: '#ff2448', rarity: 'DEMON', price: 5400, priceType: 'coins', altPrice: 180, altType: 'gems', fragments: 3, imageRight: 'assets/UI/Store/Skins/skin_leyenda_ruby.png', archetype: 'Ruby', ability: 'Aspecto demon de tienda normal.' }
+];
+
+function getSkinStorageKey(id) {
+    return id && id.startsWith('skin_') ? id : `skin_${id}`;
+}
+
+function isSkinOwned(s) {
+    return s?.owned === true || s?.id === 'cyan' || localStorage.getItem(getSkinStorageKey(s?.id)) === 'true';
+}
+
+function getVIPSkinCatalog() {
+    const byId = new Map();
+    const add = item => {
+        if (!item || !(item.type === 'vipSkin' || item.type === 'skin') || !item.id) return;
+        if (byId.has(item.id)) return;
+        const gameplaySkin = withGameplaySkinAssets(item);
+        byId.set(item.id, {
+            id: gameplaySkin.id,
+            name: gameplaySkin.name,
+            color: '#ffee00',
+            rarity: 'VIP',
+            price: gameplaySkin.price || VIP_ITEM_PRICE,
+            priceType: 'gems',
+            image: gameplaySkin.image,
+            imageSide: gameplaySkin.imageSide,
+            imageRight: gameplaySkin.imageRight,
+            imageLeft: gameplaySkin.imageLeft,
+            rolling: gameplaySkin.rolling,
+            archetype: 'Tienda VIP',
+            ability: 'Disponible desde Tienda VIP.',
+            vipOnly: true,
+            sourceItem: gameplaySkin
+        });
+    };
+    const walk = items => (items || []).forEach(item => {
+        add(item);
+        walk(item.items);
+    });
+    VIP_CAROUSEL_DATA.forEach(panel => walk(panel.items));
+    VIP_PACKAGES_DATA.forEach(pack => walk(pack.items));
+    return [...byId.values()];
+}
+
+function getAllShopSkins() {
+    const byId = new Map();
+    [...SKINS_DATA, ...NORMAL_STORE_SKINS, ...getVIPSkinCatalog()].forEach(s => {
+        if (!s?.id || byId.has(s.id)) return;
+        const base = s.image ? s : { ...s, image: s.imageRight || s.imageLeft };
+        const gameplaySkin = withGameplaySkinAssets(base);
+        byId.set(s.id, { ...gameplaySkin, owned: isSkinOwned(s) });
+    });
+    return [...byId.values()];
+}
+
+function findShopSkin(id) {
+    return getAllShopSkins().find(s => s.id === id);
+}
+
+window.getAllShopSkins = getAllShopSkins;
+window.findShopSkin = findShopSkin;
+window.SKINS_DATA = getAllShopSkins();
+
 let gambitState = null;
 let selectedChestId = null;
 let vipCarouselIndex = 0;
+let selectedVIPGameplayId = VIP_GAMEPLAY_PLACEHOLDERS[0]?.id || 'boosters';
 
 let trailAnimId = null; // Control para el memory leak de animaciones
 
+function isShopPerformanceMode() {
+    return localStorage.getItem('reducedMotion') === 'true' ||
+        document.body.classList.contains('performance-mode') ||
+        document.body.classList.contains('is-touch-device');
+}
+
+function isCanvasPreviewVisible(canvas) {
+    if (!canvas || document.hidden || !document.body.contains(canvas)) return false;
+    const rect = canvas.getBoundingClientRect();
+    return rect.bottom > 0 && rect.right > 0 && rect.top < innerHeight && rect.left < innerWidth;
+}
+
+function optimizeShopMedia(root = document) {
+    root.querySelectorAll?.('img').forEach(img => {
+        img.loading = img.closest('.vip-feature, .shop-vip-access-banner') ? 'eager' : 'lazy';
+        img.decoding = 'async';
+        if ('fetchPriority' in img) img.fetchPriority = img.loading === 'eager' ? 'high' : 'low';
+    });
+}
+
 function openShop() {
     window.playSfx?.('menuSelect', 0.6);
-    SKINS_DATA.forEach(s => {
+    [...SKINS_DATA, ...NORMAL_STORE_SKINS].forEach(s => {
         if (s.id === 'cyan') return;
-        s.owned = localStorage.getItem('skin_' + s.id) === 'true';
+        s.owned = localStorage.getItem(getSkinStorageKey(s.id)) === 'true';
     });
     BANNERS_DATA.forEach(b => {
         b.owned = localStorage.getItem('banner_' + b.id) === 'true';
         if (b.id === 'Banner_Deafult') b.owned = true;
     });
+    window.SKINS_DATA = getAllShopSkins();
     const panel = document.getElementById('shopPanel');
     panel.style.display = 'flex';
     panel.classList.remove('entering');
@@ -1017,6 +1229,7 @@ function openShop() {
     updateEquippedSkinPreview();
 
     showShopSection('home');
+    optimizeShopMedia(panel);
     updateMenuHUD();
 }
 
@@ -1048,7 +1261,7 @@ function showShopSection(section) {
         previewTrailAnim = null;
     }
 
-    ['home', 'skins', 'trails', 'banners', 'cofres', 'emotes', 'daily', 'ofertas', 'conversion'].forEach(s => {
+    ['home', 'skins', 'trails', 'powerups', 'banners', 'cofres', 'emotes', 'daily', 'ofertas', 'conversion'].forEach(s => {
         const el = document.getElementById('nav-' + s);
         if (!el) return;
         if (s === section) {
@@ -1067,6 +1280,10 @@ function showShopSection(section) {
     if (section === 'home') renderHome(content);
     else if (section === 'skins') renderSkinsPage(content);
     else if (section === 'trails') renderTrailsPage(content);
+    else if (section === 'powerups') {
+        window.showPowerupIntroModal?.();
+        window.renderPowerupsShop?.(content, 'normal');
+    }
     else if (section === 'banners') renderBannersPage(content);
     else if (section === 'cofres') renderChestsPage(content);
     else if (section === 'emotes') renderEmotesPage(content);
@@ -1080,6 +1297,7 @@ function showShopSection(section) {
             <div ...>PRÓXIMAMENTE</div>
         `;
     }
+    optimizeShopMedia(content);
 }
 
 function renderHome(container) {
@@ -1087,6 +1305,7 @@ function renderHome(container) {
     const panels = [
         { section: 'skins', image: 'assets/UI/Store/Panels/portada_panel_skins_tienda_normal.png' },
         { section: 'trails', image: 'assets/UI/Store/Panels/portada_panel_trails_tienda_normal.png' },
+        { section: 'powerups', image: 'assets/powerups/icons/proteccion.png', label: 'POTENCIADORES' },
         { section: 'cofres', image: 'assets/UI/Store/Panels/portada_panel_cofres_tienda_normal.png' },
         { section: 'banners', image: 'assets/UI/Store/Panels/portada_panel_banners_tienda_normal.png' },
         { section: 'emotes', image: 'assets/UI/Store/Panels/portada_panel_emotes_tienda_normal.png' },
@@ -1095,14 +1314,10 @@ function renderHome(container) {
     ];
     container.innerHTML = `
         <div style="display:grid; grid-template-columns:minmax(0,1fr) minmax(260px,380px); gap:16px; margin-bottom:32px;">
-            <div class="shop-vip-access-banner" style="background-image:linear-gradient(90deg, rgba(18,11,5,0.88), rgba(12,9,7,0.68)), url('assets/UI/Store/VIP/Banners/banner_tienda_vip_home.png');">
+            <div class="shop-vip-access-banner" style="background-image:url('assets/UI/Store/VIP/Banners/banner_tienda_vip_home.png');">
                 <div style="position:absolute; right:0; top:0; bottom:0; width:300px; background:linear-gradient(90deg, transparent, rgba(255,180,0,0.06)); pointer-events:none;"></div>
                 <div style="position:absolute; left:0; top:0; bottom:0; width:4px; background:linear-gradient(to bottom, #ffcc00, #ff8800);"></div>
-                <div style="margin-left:12px;">
-                    <div style="color:white; font-family:monospace; font-size:22px; font-weight:900; letter-spacing:3px;">TIENDA VIP</div>
-                    <div style="color:rgba(255,255,255,0.5); font-family:monospace; font-size:12px; margin-top:6px;">Skins, trails y mas contenido exclusivo.</div>
-                </div>
-                <button onclick="openVIP()" style="margin-left:auto; padding:10px 24px; background:rgba(255,180,0,0.15); border:1px solid rgba(255,200,0,0.4); border-radius:8px; color:#ffcc00; font-family:monospace; font-size:12px; letter-spacing:2px; cursor:pointer; pointer-events:all;">VER</button>
+                <button onclick="openVIP()" style="margin-left:auto; padding:10px 24px; background:rgba(255,255,255,0.64); border:1px solid rgba(0,0,0,0.22); border-radius:8px; color:#050505; font-family:monospace; font-size:12px; font-weight:900; letter-spacing:2px; cursor:pointer; pointer-events:all;">VER</button>
             </div>
 
             <button onclick="openRubyPass()" class="ruby-pass-access ${rubyClaimable ? 'has-ruby-claim' : ''}" type="button" style="${RUBY_PASS_ASSETS.accessBanner ? `background-image:linear-gradient(90deg, rgba(25,0,8,0.78), rgba(8,6,10,0.52)), url('${RUBY_PASS_ASSETS.accessBanner}'); background-size:cover; background-position:center;` : ''}">
@@ -1125,6 +1340,7 @@ function renderHome(container) {
             ${panels.map(panel => `
                 <button class="store-category-panel" onclick="showShopSection('${panel.section}')" type="button">
                     <img src="${panel.image}" alt="" draggable="false">
+                    ${panel.label ? `<span class="store-category-label">${panel.label}</span>` : ''}
                 </button>
             `).join('')}
         </div>
@@ -1132,13 +1348,14 @@ function renderHome(container) {
 }
 function renderSkinsPage(container) {
     const equipped = localStorage.getItem('equippedSkin') || 'cyan';
+    const skins = getAllShopSkins();
     container.innerHTML = `
         <div style="display:flex; align-items:center; gap:16px; margin-bottom:24px;">
             <button onclick="showShopSection('home')" style="padding:8px 16px; background:none; border:1px solid rgba(255,255,255,0.12); border-radius:8px; color:rgba(255,255,255,0.5); font-family:monospace; font-size:11px; letter-spacing:2px; cursor:pointer;">← VOLVER</button>
             <div style="color:rgba(255,255,255,0.4); font-family:monospace; font-size:11px; letter-spacing:4px;">SKINS</div>
         </div>
         <div style="display:grid; grid-template-columns:repeat(5,1fr); gap:14px;">
-            ${SKINS_DATA.map(s => renderSkinCard(s, equipped)).join('')}
+            ${skins.map(s => renderSkinCard(s, equipped)).join('')}
         </div>
     `;
 }
@@ -1146,6 +1363,7 @@ function renderSkinsPage(container) {
 function renderSkinCard(s, equipped) {
     const isEquipped = equipped === s.id;
     const rarityColor = RARITY_COLORS[s.rarity] || '#aaa';
+    const owned = isSkinOwned(s);
 
     if (s.soon) {
         return `
@@ -1163,20 +1381,21 @@ function renderSkinCard(s, equipped) {
     const gems = parseInt(localStorage.getItem('gems') || '0');
     const canBuyMain = s.priceType === 'gems' ? gems >= s.price : coins >= s.price;
     const canBuyAlt = s.altPrice ? (s.altType === 'gems' ? gems >= s.altPrice : coins >= s.altPrice) : false;
-    const canBuy = !s.owned && (canBuyMain || canBuyAlt);
+    const canBuy = !owned && (s.vipOnly || canBuyMain || canBuyAlt);
     const mainIcon = CURRENCY_ICONS[s.priceType || 'coins'];
     const altIcon = s.altType ? CURRENCY_ICONS[s.altType] : null;
+    const previewImage = s.image || s.imageRight || s.imageLeft;
 
     return `
     <div style="background:rgba(255,255,255,0.03); border:1px solid ${isEquipped ? rarityColor + '66' : 'rgba(255,255,255,0.08)'}; border-radius:14px; padding:20px 12px; display:flex; flex-direction:column; align-items:center; gap:10px; transition:0.2s; ${isEquipped ? 'box-shadow:0 0 20px ' + rarityColor + '22' : ''}">
-        <div style="width:76px; height:76px; border-radius:10px; background:${s.color}22; border:2px solid ${s.color}66; display:flex; align-items:center; justify-content:center; font-size:24px; overflow:hidden;">
-            ${s.imageRight ? `<img src="${s.imageRight}" style="width:100%;height:100%;object-fit:contain;">` : (s.emoji ? s.emoji : `<div style="width:24px;height:24px;border-radius:50%;background:${s.color};box-shadow:0 0 10px ${s.color}88;"></div>`)}
+        <div class="shop-skin-orb" style="--skin-glow:${s.color || rarityColor};">
+            ${previewImage ? `<img src="${previewImage}" alt="" draggable="false">` : (s.emoji ? s.emoji : `<div style="width:24px;height:24px;border-radius:50%;background:${s.color};box-shadow:0 0 10px ${s.color}88;"></div>`)}
         </div>
         <div style="color:white; font-family:monospace; font-size:11px; letter-spacing:1px;">${s.name}</div>
         <div style="color:${rarityColor}; font-family:monospace; font-size:9px; letter-spacing:2px;">${s.rarity}</div>
         <div style="min-height:34px; color:rgba(255,255,255,0.32); font-family:monospace; font-size:9px; line-height:1.35; text-align:center;">${s.archetype || 'Sin arquetipo'}<br>${s.ability || ''}</div>
-        ${s.fragments ? `<div style="color:rgba(255,255,255,0.22); font-family:monospace; font-size:9px;">${s.fragments} FRAGMENTOS</div>` : ''}
-        ${s.owned
+        ${s.vipOnly && !owned ? `<div style="color:#ffee00; font-family:monospace; font-size:9px; letter-spacing:1px;">SOLO EN TIENDA VIP</div>` : (s.fragments ? `<div style="color:rgba(255,255,255,0.22); font-family:monospace; font-size:9px;">${s.fragments} FRAGMENTOS</div>` : '')}
+        ${owned
             ? `<button onclick="equipSkin('${s.id}')" style="width:100%; padding:6px 0; border-radius:8px; border:1px solid ${isEquipped ? rarityColor + '66' : 'rgba(255,255,255,0.12)'}; background:${isEquipped ? rarityColor + '15' : 'none'}; color:${isEquipped ? rarityColor : 'rgba(255,255,255,0.4)'}; font-family:monospace; font-size:9px; cursor:pointer; letter-spacing:1px;">${isEquipped ? '✔ EQUIPADA' : 'EQUIPAR'}</button>`
             : `<button onclick="buySkin('${s.id}')" ${!canBuy ? 'disabled' : ''} style="width:100%; padding:6px 0; border-radius:8px; border:1px solid ${canBuy ? 'rgba(255,238,0,0.4)' : 'rgba(255,255,255,0.08)'}; background:none; color:${canBuy ? '#ffee00' : 'rgba(255,255,255,0.2)'}; font-family:monospace; font-size:9px; cursor:${canBuy ? 'pointer' : 'default'}; letter-spacing:1px; display:flex; align-items:center; justify-content:center; gap:5px; flex-wrap:wrap;"><img src="${mainIcon}" style="width:14px;height:14px;object-fit:contain;"> ${s.price}${s.altPrice ? ` <span style="opacity:.45;">/</span> <img src="${altIcon}" style="width:14px;height:14px;object-fit:contain;"> ${s.altPrice}` : ''}</button>`
         }
@@ -1196,8 +1415,9 @@ function equipSkin(id) {
 }
 
 function buySkin(id) {
-    const skin = SKINS_DATA.find(s => s.id === id);
+    const skin = findShopSkin(id);
     if (!skin) return;
+    if (skin.vipOnly) return openVIP();
     let coins = parseInt(localStorage.getItem('deadCoins') || '0');
     let gems = parseInt(localStorage.getItem('gems') || '0');
     playerData.deadCoins = coins;
@@ -1220,8 +1440,8 @@ function buySkin(id) {
 }
 
 function completeSkinPurchase(id) {
-    const skin = SKINS_DATA.find(s => s.id === id);
-    if (!skin) return;
+    const skin = findShopSkin(id);
+    if (!skin || skin.vipOnly) return;
     let coins = parseInt(localStorage.getItem('deadCoins') || '0');
     let gems = parseInt(localStorage.getItem('gems') || '0');
     playerData.deadCoins = coins;
@@ -1241,8 +1461,10 @@ function completeSkinPurchase(id) {
     localStorage.setItem('deadCoins', coins);
     localStorage.setItem('gems', gems);
     window.playSfx?.('spend');
-    localStorage.setItem('skin_' + id, 'true');
-    skin.owned = true;
+    localStorage.setItem(getSkinStorageKey(id), 'true');
+    const skinData = [...SKINS_DATA, ...NORMAL_STORE_SKINS].find(s => s.id === id);
+    if (skinData) skinData.owned = true;
+    window.SKINS_DATA = getAllShopSkins();
     document.getElementById('shop-coins').textContent = coins;
     document.getElementById('shop-gems').textContent = gems;
     renderSkinsPage(document.getElementById('shopContent'));
@@ -1267,7 +1489,8 @@ function renderBannerCard(b, equipped) {
     const owned = b.id === 'Banner_Deafult' || localStorage.getItem('banner_' + b.id) === 'true' || b.owned === true;
     const isEquipped = equipped === b.id;
     const isVIP = b.rarity === 'VIP';
-    const canBuy = !b.exclusive && parseInt(localStorage.getItem('deadCoins') || '0') >= b.price;
+    const vipOnly = isVIPBannerOnly(b);
+    const canBuy = !vipOnly && parseInt(localStorage.getItem('deadCoins') || '0') >= b.price;
     const bannerBg = b.cover ? `url('${b.cover}')` : `linear-gradient(135deg, rgba(0,255,231,0.18), rgba(255,77,109,0.14))`;
 
     let borderStyle = '';
@@ -1297,7 +1520,7 @@ function renderBannerCard(b, equipped) {
     return `
         <div style="background:${isVIP && isEquipped ? 'rgb(18,18,24)' : 'rgba(255,255,255,0.03)'}; border:${borderStyle}; border-radius:14px; padding:14px; display:flex; flex-direction:column; gap:12px; box-shadow:${boxShadow}; ${extraStyle}">
             <div style="height:104px; border-radius:10px; border:1px solid rgba(0,0,0,0.45); background:${bannerBg}; background-size:cover; background-position:center; display:flex; align-items:center; justify-content:center; color:rgba(255,255,255,0.48); font-family:monospace; font-size:10px; letter-spacing:3px;">
-                ${b.cover ? '' : 'ESPACIO PNG PORTADA'}
+                ${b.cover ? '' : 'PORTADA'}
             </div>
             <div style="display:flex; justify-content:space-between; gap:10px; align-items:center;">
                 <div>
@@ -1306,7 +1529,9 @@ function renderBannerCard(b, equipped) {
                 </div>
                 ${owned
             ? `<button onclick="equipBanner('${b.id}')" style="padding:8px 12px; border-radius:8px; border:1px solid ${isEquipped ? (isVIP ? 'rgba(255,204,0,0.6)' : 'rgba(0,255,231,0.6)') : 'rgba(255,255,255,0.12)'}; background:${isEquipped ? (isVIP ? 'rgba(255,204,0,0.12)' : 'rgba(0,255,231,0.12)') : 'none'}; color:${isEquipped ? (isVIP ? '#ffd700' : '#00ffe7') : 'rgba(255,255,255,0.5)'}; font-family:monospace; font-size:9px; cursor:pointer;">${isEquipped ? 'EQUIPADO' : 'EQUIPAR'}</button>`
-            : `<button onclick="buyBanner('${b.id}')" ${(!canBuy || b.exclusive) ? 'disabled' : ''} style="padding:8px 12px; border-radius:8px; border:1px solid ${canBuy && !b.exclusive ? 'rgba(255,238,0,0.45)' : 'rgba(255,255,255,0.08)'}; background:none; color:${canBuy && !b.exclusive ? '#ffee00' : 'rgba(255,255,255,0.22)'}; font-family:monospace; font-size:9px; cursor:${canBuy && !b.exclusive ? 'pointer' : 'default'};">${b.exclusive ? 'RESERVADO' : b.price}</button>`
+            : vipOnly
+                ? `<button onclick="openVIP(); setTimeout(() => renderVIPPromoDetail('vip_specials'), 40)" style="padding:8px 12px; border-radius:8px; border:1px solid rgba(255,238,0,0.36); background:rgba(255,238,0,0.08); color:#ffee00; font-family:monospace; font-size:9px; cursor:pointer;">SOLO EN TIENDA VIP</button>`
+                : `<button onclick="buyBanner('${b.id}')" ${!canBuy ? 'disabled' : ''} style="padding:8px 12px; border-radius:8px; border:1px solid ${canBuy ? 'rgba(255,238,0,0.45)' : 'rgba(255,255,255,0.08)'}; background:none; color:${canBuy ? '#ffee00' : 'rgba(255,255,255,0.22)'}; font-family:monospace; font-size:9px; cursor:${canBuy ? 'pointer' : 'default'};">${b.price}</button>`
         }
             </div>
         </div>
@@ -1316,7 +1541,8 @@ function renderBannerCard(b, equipped) {
 
 function buyBanner(id) {
     const banner = BANNERS_DATA.find(b => b.id === id);
-    if (!banner || banner.exclusive) return;
+    if (!banner) return;
+    if (isVIPBannerOnly(banner)) return openVIP();
     let coins = parseInt(localStorage.getItem('deadCoins') || '0');
     if (coins < banner.price) return;
     coins -= banner.price;
@@ -1860,7 +2086,7 @@ function rollDrop(drops) {
 
 function updateEquippedSkinPreview() {
     const equippedId = localStorage.getItem('equippedSkin') || 'cyan';
-    const skin = SKINS_DATA.find(s => s.id === equippedId);
+    const skin = findShopSkin(equippedId);
     if (!skin) return;
 
     const preview = document.getElementById('sidebar-skin-preview');
@@ -2048,6 +2274,14 @@ function openVIP() {
 }
 
 function closeVIP() {
+    Object.keys(vipTrailAnims || {}).forEach(key => {
+        if (vipTrailAnims[key]) cancelAnimationFrame(vipTrailAnims[key]);
+        vipTrailAnims[key] = null;
+    });
+    if (customTextTrailAnim) {
+        cancelAnimationFrame(customTextTrailAnim);
+        customTextTrailAnim = null;
+    }
     const panel = document.getElementById('vipPanel');
     panel.classList.add('leaving');
     setTimeout(() => {
@@ -2077,6 +2311,7 @@ function renderVIPShell(panel) {
             <div id="vipContent" class="vip-content"></div>
         </div>
     `;
+    optimizeShopMedia(panel);
 }
 
 function renderVIPHome() {
@@ -2088,7 +2323,7 @@ function renderVIPHome() {
         <section class="vip-hero">
             <button class="vip-arrow" onclick="moveVIPCarousel(-1)" type="button">&lt;</button>
             <div class="vip-feature vip-carousel-glow" style="--vip-glow-a:${active.glowA || '#ffee00'}; --vip-glow-b:${active.glowB || '#ff8800'};" onclick="renderVIPCarouselDetail('${active.id}')">
-                <div class="vip-feature-cover" style="background-image:linear-gradient(90deg, rgba(0,0,0,.58), rgba(0,0,0,.12)), url('${active.cover}');"></div>
+                <div class="vip-feature-cover" style="background-image:linear-gradient(90deg, rgba(0,0,0,.35), rgba(0,0,0,.05)), url('${active.cover}');"></div>
                 <div class="vip-feature-copy">
                     <div class="vip-kicker">PANEL DESTACADO</div>
                     <h2>${active.title}</h2>
@@ -2105,9 +2340,19 @@ function renderVIPHome() {
             ${VIP_PROMO_BANNERS.map(renderVIPPromoBanner).join('')}
         </section>
         <section class="vip-package-grid">
+            <article class="vip-pack-card powerups-vip-entry" style="--vip-accent:#FFD700;" onclick="renderVIPPowerups()">
+                <div class="vip-pack-cover powerups-vip-cover"></div>
+                <div class="vip-pack-copy">
+                    <div class="vip-kicker">MEJORAS DE PARTIDA</div>
+                    <h3>POTENCIADORES</h3>
+                    <p>Compra usos, sube niveles y desbloquea versiones VIP.</p>
+                    <strong>ABRIR</strong>
+                </div>
+            </article>
             ${VIP_PACKAGES_DATA.map(renderVIPPackageCard).join('')}
         </section>
     `;
+    optimizeShopMedia(content);
 }
 
 function moveVIPCarousel(direction) {
@@ -2138,7 +2383,7 @@ function renderVIPCarouselDetail(id) {
     const panel = VIP_CAROUSEL_DATA.find(item => item.id === id);
     if (!panel) return renderVIPHome();
     window.currentVIPDetailRenderer = () => renderVIPCarouselDetail(id);
-    renderVIPDetail(panel.title, panel.subtitle, panel.price, panel.cover, panel.items, () => buyVIPCollection('carousel', panel), panel.detailBackground);
+    renderVIPCarouselShowcase(panel);
 }
 
 function renderVIPPromoBanner(banner) {
@@ -2155,15 +2400,179 @@ function renderVIPPromoDetail(id) {
     const content = document.getElementById('vipContent');
     if (!content) return;
     window.currentVIPDetailRenderer = () => renderVIPPromoDetail(id);
+    const isBannerShop = id === 'vip_specials';
     content.innerHTML = `
         <button class="vip-back" onclick="renderVIPHome()" type="button">VOLVER A VIP</button>
-        <section class="vip-detail-head" style="background-image:linear-gradient(90deg, rgba(8,8,14,.86), rgba(8,8,14,.52)), url('${banner.detailBackground}'); background-size:cover; background-position:center;">
-            <div class="vip-detail-cover" style="background-image:url('${banner.cover}');"></div>
+        ${isBannerShop
+            ? renderVIPLegendRoom(banner)
+            : renderVIPGameplayLab(banner)}
+    `;
+    optimizeShopMedia(content);
+}
+
+function renderVIPGameplayPlaceholder(item) {
+    const selected = selectedVIPGameplayId === item.id;
+    return `
+        <article class="vip-gameplay-module ${item.rarity || 'rare'} ${selected ? 'selected' : ''}" onclick="selectVIPGameplayModule('${item.id}')">
+            <div class="vip-placeholder-core">
+                <span>${item.type}</span>
+            </div>
+            <div class="vip-module-copy">
+                <div class="vip-mini-type">PROXIMO CONTENIDO</div>
+                <h3>${item.name}</h3>
+                <p>${item.detail}</p>
+            </div>
+        </article>
+    `;
+}
+
+function selectVIPGameplayModule(id) {
+    selectedVIPGameplayId = id;
+    renderVIPPromoDetail('vip_powerups');
+}
+
+function renderVIPGameplayLab(banner) {
+    const active = VIP_GAMEPLAY_PLACEHOLDERS.find(item => item.id === selectedVIPGameplayId) || VIP_GAMEPLAY_PLACEHOLDERS[0];
+    return `
+        <section class="vip-reactor-hero" style="background-image:linear-gradient(90deg, rgba(2,5,12,0.82), rgba(4,10,16,0.58)), url('${banner.detailBackground || banner.cover}');">
+            <div class="vip-reactor-orb"><span>${active?.type || 'CORE'}</span></div>
+            <div>
+                <div class="vip-kicker">LABORATORIO VIP</div>
+                <h2>${banner.title}</h2>
+                <p>${active?.detail || banner.subtitle}</p>
+            </div>
         </section>
-        <section class="vip-empty-slot">
-            <div class="vip-kicker">CONTENIDO</div>
+        <section class="vip-hex-lab">
+            <div class="vip-hex-links"></div>
+            ${VIP_GAMEPLAY_PLACEHOLDERS.map(renderVIPGameplayPlaceholder).join('')}
         </section>
     `;
+}
+
+function renderVIPLegendRoom(banner) {
+    const catalog = getVIPBannerCatalog();
+    return `
+        <section class="vip-legend-room">
+            <div class="vip-legend-core" style="background-image:linear-gradient(135deg, rgba(0,0,0,0.52), rgba(0,0,0,0.18)), url('${banner.detailBackground || banner.cover}');">
+                <div class="vip-core-rings"></div>
+                <div class="vip-kicker">SALA LEGENDARIA</div>
+                <h2>${banner.title}</h2>
+                <p>${banner.subtitle}</p>
+                <button class="vip-tech-button" onclick="document.querySelector('.vip-banner-catalog-chamber')?.scrollIntoView({behavior:'smooth', block:'start'})" type="button">VER BANNERS</button>
+            </div>
+            <div class="vip-floating-stations">
+                <button class="vip-station" onclick="renderVIPPromoDetail('vip_powerups')" type="button">POTENCIADORES</button>
+                <button class="vip-station active" type="button">BANNERS VIP</button>
+                <button class="vip-station" onclick="renderVIPHome()" type="button">COLECCIONES</button>
+                <button class="vip-station" onclick="renderVIPHome()" type="button">PAQUETES</button>
+            </div>
+        </section>
+        <section class="vip-banner-catalog-chamber">
+            ${catalog.map(renderVIPStationBanner).join('')}
+        </section>
+    `;
+}
+
+function renderVIPStationBanner(banner) {
+    const owned = localStorage.getItem('banner_' + banner.id) === 'true';
+    const equipped = localStorage.getItem('equippedBanner') === banner.id;
+    return `
+        <article class="vip-station-card ${owned ? 'owned' : ''}">
+            <div class="vip-station-banner" style="background-image:url('${banner.cover}');"></div>
+            <h3>${banner.name}</h3>
+            <div class="vip-mini-type">${banner.animated || String(banner.cover).endsWith('.gif') ? 'ANIMADO' : 'VIP'}</div>
+            <button class="vip-tech-button" onclick="${owned ? `equipBanner('${banner.id}')` : `buyVIPBanner('${banner.id}')`}" ${equipped ? 'disabled' : ''} type="button">${equipped ? 'EQUIPADO' : owned ? 'EQUIPAR' : `COMPRAR ${renderPrice(banner.price || 420, 'gems')}`}</button>
+        </article>
+    `;
+}
+
+function renderVIPCarouselShowcase(panel) {
+    const content = document.getElementById('vipContent');
+    if (!content) return;
+    window.currentVIPBuyAll = () => buyVIPCollection('carousel', panel);
+    content.innerHTML = `
+        <button class="vip-back" onclick="renderVIPHome()" type="button">VOLVER A VIP</button>
+        <section class="vip-carousel-room" style="--vip-glow-a:${panel.glowA || '#ffee00'}; --vip-glow-b:${panel.glowB || '#ff8800'}; background-image:linear-gradient(90deg, rgba(3,4,10,0.86), rgba(3,4,10,0.58)), url('${panel.detailBackground || panel.cover}');">
+            <button class="vip-show-arrow left" onclick="moveVIPCarouselDetail(-1)" type="button">&lt;</button>
+            <div class="vip-carousel-core">
+                <div class="vip-kicker">SHOWCASE VIP</div>
+                <h2>${panel.title}</h2>
+                <p>${panel.subtitle || 'Coleccion exclusiva'}</p>
+                <button onclick="currentVIPBuyAll()" class="vip-tech-button" type="button">COMPRAR TODO ${renderPrice(panel.price, 'gems')}</button>
+            </div>
+            <div class="vip-parallax-panels">
+                ${panel.items.map((item, index) => renderVIPParallelogramItem(item, index)).join('')}
+            </div>
+            <button class="vip-show-arrow right" onclick="moveVIPCarouselDetail(1)" type="button">&gt;</button>
+        </section>
+    `;
+    optimizeShopMedia(content);
+    setTimeout(() => {
+        panel.items.forEach(item => {
+            if ((item.type === 'trail' || item.type === 'elementTrail' || item.type === 'vipTrailPng') && item.trailId) {
+                startVIPTrailCanvas(item.trailId, item.previewColor || vipSelectedColors[item.trailId] || 'cyan', `vip-show-trail-${item.trailId}`);
+            }
+        });
+    }, 50);
+}
+
+function moveVIPCarouselDetail(direction) {
+    vipCarouselIndex = (vipCarouselIndex + direction + VIP_CAROUSEL_DATA.length) % VIP_CAROUSEL_DATA.length;
+    renderVIPCarouselDetail(VIP_CAROUSEL_DATA[vipCarouselIndex].id);
+}
+
+function renderVIPParallelogramItem(item, index) {
+    const itemKey = getVIPItemStorageKey(item);
+    const owned = localStorage.getItem(itemKey) === 'true';
+    const lane = index % 3;
+    const media = item.trailId
+        ? `<canvas id="vip-show-trail-${item.trailId}" width="220" height="90" class="vip-trail-preview"></canvas>`
+        : `<img src="${item.image || SHOP_PLACEHOLDER_IMAGE}" alt="" draggable="false">`;
+    return `
+        <article class="vip-show-card lane-${lane} ${index === 0 ? 'selected' : ''} ${owned ? 'owned' : ''}">
+            <div class="vip-show-media">${media}</div>
+            <div class="vip-mini-type">${(item.type || 'VIP').toUpperCase()}</div>
+            <h3>${item.name}</h3>
+            ${item.price ? `<button class="vip-tech-button" onclick="buyVIPMiniItemById('${item.id || item.trailId || item.name}')" ${owned ? 'disabled' : ''} type="button">${owned ? 'OBTENIDO' : `COMPRAR ${renderPrice(item.price, 'gems')}`}</button>` : ''}
+        </article>
+    `;
+}
+
+function renderVIPBannerItem(banner) {
+    const owned = localStorage.getItem('banner_' + banner.id) === 'true';
+    const equipped = localStorage.getItem('equippedBanner') === banner.id;
+    return `
+        <article class="vip-mini-item vip-banner-item ${owned ? 'owned' : ''}">
+            <div class="vip-banner-preview" style="background-image:url('${banner.cover}');"></div>
+            <div class="vip-mini-type">${banner.animated || String(banner.cover).endsWith('.gif') ? 'BANNER ANIMADO' : 'BANNER VIP'}</div>
+            <h3>${banner.name}</h3>
+            <button onclick="${owned ? `equipBanner('${banner.id}')` : `buyVIPBanner('${banner.id}')`}" ${equipped ? 'disabled' : ''} type="button">${equipped ? 'EQUIPADO' : owned ? 'EQUIPAR' : `COMPRAR ${renderPrice(banner.price || 420, 'gems')}`}</button>
+        </article>
+    `;
+}
+
+function buyVIPBanner(id) {
+    const banner = getVIPBannerCatalog().find(item => item.id === id);
+    if (!banner) return;
+    const price = banner.price || 420;
+    showShopModal({
+        kicker: banner.animated || String(banner.cover).endsWith('.gif') ? 'BANNER ANIMADO VIP' : 'BANNER VIP',
+        title: banner.name,
+        image: banner.cover,
+        background: banner.cover,
+        body: `Seguro comprar por ${price} rubies?`,
+        confirmText: 'SI',
+        cancelText: 'NO',
+        onConfirm: () => {
+            if (!canAfford(price, 'gems')) return alert('No tienes suficientes rubies.');
+            spendCurrency(price, 'gems');
+            window.playSfx?.('vipBuy');
+            localStorage.setItem('banner_' + banner.id, 'true');
+            localStorage.setItem('equippedBanner', banner.id);
+            renderVIPPromoDetail('vip_specials');
+            updateMenuHUD();
+        }
+    });
 }
 
 function renderVIPPackageDetail(id) {
@@ -2179,14 +2588,14 @@ function renderVIPDetail(title, subtitle, price, cover, items, buyAll, detailBac
     window.currentVIPBuyAll = buyAll;
     content.innerHTML = `
         <button class="vip-back" onclick="renderVIPHome()" type="button">VOLVER A VIP</button>
-        <section class="vip-detail-head" style="background-image:linear-gradient(90deg, rgba(8,8,14,.86), rgba(8,8,14,.52)), url('${detailBackground}'); background-size:cover; background-position:center;">
-            <div class="vip-detail-cover" style="background-image:url('${cover}');"></div>
+        <section class="vip-detail-head" style="background-image:url('${detailBackground}'); background-size:cover; background-position:center;">
         </section>
         <button onclick="currentVIPBuyAll()" class="vip-buy-all vip-buy-all-detail" type="button">COMPRAR TODO ${renderPrice(price, 'gems')}</button>
         <section class="vip-item-grid">
             ${items.map(item => renderVIPMiniItem(item)).join('')}
         </section>
     `;
+    optimizeShopMedia(content);
     setTimeout(() => {
         items.forEach(item => {
             if ((item.type === 'trail' || item.type === 'elementTrail' || item.type === 'vipTrailPng') && item.trailId) {
@@ -2240,11 +2649,11 @@ function renderVIPMiniItem(item) {
         </article>`;
     }
 
+    const isSkinItem = item.type === 'vipSkin' || item.type === 'skin';
     return `
         <article class="vip-mini-item ${owned ? 'owned' : ''}">
-            <div class="vip-mini-image">
+            <div class="${isSkinItem ? 'vip-skin-orb' : 'vip-mini-image'}">
                 <img src="${item.image}" alt="" draggable="false">
-                <span>PNG</span>
             </div>
             <div class="vip-mini-type">${(item.type === 'vipSkin' ? 'SKIN' : item.type).toUpperCase()}</div>
             <h3>${item.name}</h3>
@@ -2282,7 +2691,6 @@ function renderVIPPanelItem(item, owned) {
         <article class="vip-mini-item vip-panel-card ${owned ? 'owned' : ''}" onclick="openVIPPanelModal('${item.id || item.name}')">
             <div class="vip-mini-image vip-panel-cover">
                 <img src="${item.image}" alt="" draggable="false">
-                <span>PNG</span>
             </div>
             <div class="vip-mini-type">${item.label || 'PANEL'}</div>
             <h3>${item.name}</h3>
@@ -2316,7 +2724,6 @@ function openVIPPanelModal(id) {
             <div class="vip-panel-modal-item">
                 <div class="${isSkinItem ? 'vip-skin-orb' : 'vip-mini-image'}">
                     <img src="${part.image}" alt="" draggable="false">
-                    <span>PNG</span>
                 </div>
                 <strong>${part.name}</strong>
                 <button onclick="buyVIPMiniItemById('${part.id || part.trailId || part.name}')" ${owned ? 'disabled' : ''} type="button">${owned ? 'OBTENIDO' : `COMPRAR ${renderPrice(part.price, 'gems')}`}</button>
@@ -2399,7 +2806,6 @@ function openVIPBundleModal(id) {
             <div class="vip-panel-modal-item">
                 <div class="${isSkinItem ? 'vip-skin-orb' : 'vip-mini-image'}">
                     <img src="${part.image}" alt="" draggable="false">
-                    <span>PNG</span>
                 </div>
                 <strong>${part.name}</strong>
             </div>
@@ -2447,10 +2853,9 @@ function renderVIPPngTrailItem(item, owned) {
     const isTrailPreview = item.type === 'vipTrailPng' && item.trailId;
     return `
         <article class="vip-mini-item ${owned ? 'owned' : ''}">
-            ${isTrailPreview ? `<canvas id="vip-trail-canvas-${item.trailId}" width="220" height="90" class="vip-trail-preview"></canvas>` : `<div class="${isSkinItem ? 'vip-skin-orb' : 'vip-mini-image'}">
-                <img src="${item.image}" alt="" draggable="false">
-                <span>PNG</span>
-            </div>`}
+            ${isTrailPreview ? `<canvas id="vip-trail-canvas-${item.trailId}" width="220" height="90" class="vip-trail-preview"></canvas>` : `<div class="vip-skin-orb">
+    <img src="${item.image}" alt="" draggable="false">
+</div>`}
             <div class="vip-mini-type">TRAIL</div>
             <h3>${item.name}</h3>
             <button onclick="buyVIPMiniItemById('${item.id || item.trailId}')" ${owned ? 'disabled' : ''} type="button">${owned ? 'OBTENIDO' : `COMPRAR ${renderPrice(item.price, 'gems')}`}</button>
@@ -2477,7 +2882,6 @@ function renderEmojiPackItem(item, owned) {
         <article class="vip-mini-item vip-emoji-pack ${owned ? 'owned' : ''}">
             <div class="vip-mini-image vip-pack-poster" onclick="openEmojiPackModal('${item.id || item.name}')">
                 <img src="${item.image}" alt="" draggable="false">
-                <span>PNG</span>
             </div>
             <div class="vip-mini-type">PANEL 2</div>
             <h3>${item.name}</h3>
@@ -2490,9 +2894,8 @@ function renderEmojiItem(item, owned) {
     const isSkinItem = item.type === 'vipSkin' || item.type === 'skin';
     return `
         <article class="vip-mini-item ${owned ? 'owned' : ''}">
-            <div class="${isSkinItem ? 'vip-skin-orb' : 'vip-mini-image'}">
+            <div class="${isSkinItem ? 'vip-skin-orb' : 'vip-emoji-orb'}">
                 <img src="${item.image}" alt="" draggable="false">
-                <span>PNG</span>
             </div>
             <div class="vip-mini-type">EMOJI</div>
             <h3>${item.name}</h3>
@@ -2613,6 +3016,7 @@ function grantVIPItem(item) {
     }
     if (item.type === 'vipSkin' || item.type === 'skin') {
         localStorage.setItem(item.id || `skin_${item.name.toLowerCase().replaceAll(' ', '_')}`, 'true');
+        window.SKINS_DATA = getAllShopSkins();
     } else if (item.type === 'emoji') {
         localStorage.setItem(item.id || `emoji_${item.name.toLowerCase().replaceAll(' ', '_')}`, 'true');
     } else if (item.type === 'emojiPack') {
@@ -2652,6 +3056,10 @@ function openInventory() {
 }
 
 function closeInventory() {
+    Object.keys(invTrailAnims || {}).forEach(key => {
+        if (invTrailAnims[key]) cancelAnimationFrame(invTrailAnims[key]);
+        invTrailAnims[key] = null;
+    });
     const panel = document.getElementById('inventoryPanel');
     panel.classList.add('leaving');
     setTimeout(() => {
@@ -2678,8 +3086,8 @@ function showInventorySection(section) {
     const content = document.getElementById('inventoryContent');
 
     if (section === 'skins') {
-        const equipped = localStorage.getItem('equippedBanner') || 'Banner_Deafult';
-        const owned = SKINS_DATA.filter(s => s.owned && !s.soon);
+        const equipped = localStorage.getItem('equippedSkin') || 'cyan';
+        const owned = getAllShopSkins().filter(s => isSkinOwned(s) && !s.soon);
         content.innerHTML = `
             <div style="color:rgba(255,255,255,0.4); font-family:monospace; font-size:11px; letter-spacing:4px; margin-bottom:20px;">SKINS OBTENIDAS — ${owned.length}</div>
             <div style="display:grid; grid-template-columns:repeat(5,1fr); gap:14px;">
@@ -2764,10 +3172,12 @@ function showInventorySection(section) {
 
     } else if (section === 'banners') {
         const equipped = localStorage.getItem('equippedBanner') || 'static_core';
-        const owned = BANNERS_DATA.filter(b =>
-            b.id === 'Banner_Deafult' ||
-            localStorage.getItem('banner_' + b.id) === 'true' ||
-            b.owned === true
+        const owned = [...BANNERS_DATA, ...VIP_BANNER_PLACEHOLDERS].filter((b, index, list) =>
+            list.findIndex(candidate => candidate.id === b.id) === index && (
+                b.id === 'Banner_Deafult' ||
+                localStorage.getItem('banner_' + b.id) === 'true' ||
+                b.owned === true
+            )
         );
         content.innerHTML = `
             ${renderInventoryProfileBanner(equipped)}
@@ -2966,8 +3376,8 @@ function renderTrailCard(t) {
         ${t.id === 'trail_custom_text'
             ? `<div style="color:#ffda3a; font-family:monospace; font-size:9px; letter-spacing:1px;">SOLO VIP</div>`
             : isOwned
-            ? `<div style="color:#00ff88; font-family:monospace; font-size:9px;">✔ TIENES COLORES</div>`
-            : `<div style="display:flex;align-items:center;gap:4px;">${priceIcon}<span style="color:rgba(255,255,255,0.3);font-family:monospace;font-size:9px;">${t.price}</span></div>`
+                ? `<div style="color:#00ff88; font-family:monospace; font-size:9px;">✔ TIENES COLORES</div>`
+                : `<div style="display:flex;align-items:center;gap:4px;">${priceIcon}<span style="color:rgba(255,255,255,0.3);font-family:monospace;font-size:9px;">${t.price}</span></div>`
         }
     </div>`;
 }
@@ -2981,7 +3391,8 @@ function animateTrailCards(timestamp = 0) {
         trailAnimId = requestAnimationFrame(animateTrailCards);
         return;
     }
-    if (timestamp && animateTrailCards.lastFrame && timestamp - animateTrailCards.lastFrame < 50) {
+    const frameGap = isShopPerformanceMode() ? 140 : 50;
+    if (timestamp && animateTrailCards.lastFrame && timestamp - animateTrailCards.lastFrame < frameGap) {
         trailAnimId = requestAnimationFrame(animateTrailCards);
         return;
     }
@@ -2989,6 +3400,7 @@ function animateTrailCards(timestamp = 0) {
     TRAILS_DATA.forEach(t => {
         const cvs = document.getElementById('trail-card-' + t.id);
         if (!cvs) return;
+        if (!isCanvasPreviewVisible(cvs)) return;
         const ctx = cvs.getContext('2d');
         ctx.clearRect(0, 0, 80, 80);
 
@@ -3361,7 +3773,12 @@ function showTrailPreview() {
             previewTrailAnim = null;
             return;
         }
-        if (timestamp && previewLastFrame && timestamp - previewLastFrame < 33) {
+        if (!isCanvasPreviewVisible(cvs)) {
+            previewTrailAnim = requestAnimationFrame(animatePreview);
+            return;
+        }
+        const frameGap = isShopPerformanceMode() ? 120 : 33;
+        if (timestamp && previewLastFrame && timestamp - previewLastFrame < frameGap) {
             previewTrailAnim = requestAnimationFrame(animatePreview);
             return;
         }
@@ -3370,7 +3787,7 @@ function showTrailPreview() {
         px += 1.2;
         if (px > 240) px = 30;
 
-        pts.push({ x: px, y: 40, life: 1.0 });
+        pts.push({ x: px, y: 40, life: 1.0, seed: Math.random() });
         if (pts.length > 50) pts.shift();
         for (let p of pts) p.life -= 0.012;
 
@@ -3457,17 +3874,45 @@ function drawPreviewTrailPoint(pctx, p, effect, rgb, colorId) {
         pctx.stroke();
 
     } else if (effect === 'hielo') {
+        for (let i = 0; i < 1; i++) {
+            const size = Math.max(5, (10 + i * 4 + (p.seed || 0.5) * 8) * life);
+            const x = p.x - (i * 11 + 4) * life;
+            const y = p.y + Math.sin((pctx.__previewNow || performance.now()) * 0.006 + i + (p.seed || 0)) * 8 * life;
+            pctx.save();
+            pctx.translate(x, y);
+            pctx.rotate((p.seed || 0.5) * Math.PI * 2 + (pctx.__previewNow || performance.now()) * (0.002 + i * 0.0008));
+            pctx.globalAlpha = Math.min(0.9, life * (0.45 + i * 0.13));
+            if (SHOP_SNOWFLAKE_IMAGE.complete && SHOP_SNOWFLAKE_IMAGE.naturalWidth > 0) {
+                pctx.drawImage(SHOP_SNOWFLAKE_IMAGE, -size / 2, -size / 2, size, size);
+            } else {
+                pctx.strokeStyle = fill(life * 0.55);
+                pctx.lineWidth = Math.max(0.7, size * 0.08);
+                for (let arm = 0; arm < 3; arm++) {
+                    pctx.rotate(Math.PI / 3);
+                    pctx.beginPath();
+                    pctx.moveTo(-size * 0.45, 0);
+                    pctx.lineTo(size * 0.45, 0);
+                    pctx.stroke();
+                }
+            }
+            pctx.restore();
+        }
+    } else if (effect === 'navidad') {
         pctx.beginPath();
-        pctx.arc(p.x, p.y, 11 * life, 0, Math.PI * 2);
-        pctx.strokeStyle = fill(life * 0.46);
+        pctx.ellipse(p.x - 12 * life, p.y, 18 * life, 5 * life, 0, 0, Math.PI * 2);
+        pctx.fillStyle = `rgba(40,255,120,${life * 0.18})`;
+        pctx.fill();
+        pctx.strokeStyle = `rgba(255,55,70,${life * 0.45})`;
         pctx.lineWidth = Math.max(1, 2 * life);
         pctx.stroke();
-        for (let i = 0; i < 3; i++) {
-            pctx.beginPath();
-            pctx.moveTo(p.x - i * 10 * life, p.y);
-            pctx.lineTo(p.x - (i * 10 + 8) * life, p.y - 7 * life);
-            pctx.strokeStyle = fill(life * 0.5);
-            pctx.stroke();
+        if (SHOP_CANDY_PARTICLE_IMAGE.complete && SHOP_CANDY_PARTICLE_IMAGE.naturalWidth > 0 && (p.seed || 0.5) > 0.45) {
+            const size = Math.max(7, (13 + (p.seed || 0.5) * 6) * life);
+            pctx.save();
+            pctx.translate(p.x - 18 * life, p.y + Math.sin(p.x * 0.08) * 6 * life);
+            pctx.rotate((p.seed || 0.5) * Math.PI);
+            pctx.globalAlpha = Math.min(0.8, life * 0.7);
+            pctx.drawImage(SHOP_CANDY_PARTICLE_IMAGE, -size / 2, -size / 2, size, size);
+            pctx.restore();
         }
     } else if (effect === 'toxico') {
         for (let i = 0; i < 4; i++) {
@@ -3494,6 +3939,9 @@ function normalizeTrailEffectId(effect) {
     const id = String(effect).substring('trail_'.length);
     if (id === 'fire') return 'fire';
     if (id === 'ice') return 'hielo';
+    if (id === 'santa' || id === 'mama_claus' || id === 'navidad') return 'navidad';
+    if (id === 'sonrisa_malvada') return 'risa_malvada';
+    if (id === 'circo') return 'risa';
     return id;
 }
 
@@ -4218,7 +4666,12 @@ function startVIPTrailCanvas(trailId, colorId, canvasId = `vip-trail-canvas-${tr
 
     function loop(timestamp = 0) {
         if (!document.body.contains(cvs)) { vipTrailAnims[animKey] = null; return; }
-        if (timestamp && lastFrame && timestamp - lastFrame < 33) {
+        if (!isCanvasPreviewVisible(cvs)) {
+            vipTrailAnims[animKey] = requestAnimationFrame(loop);
+            return;
+        }
+        const frameGap = isShopPerformanceMode() ? 120 : 33;
+        if (timestamp && lastFrame && timestamp - lastFrame < frameGap) {
             vipTrailAnims[animKey] = requestAnimationFrame(loop);
             return;
         }
@@ -4226,7 +4679,7 @@ function startVIPTrailCanvas(trailId, colorId, canvasId = `vip-trail-canvas-${tr
         ctx.clearRect(0, 0, cvs.width, cvs.height);
         px += 1.4;
         if (px > cvs.width - 20) px = 20;
-        pts.push({ x: px, y: cvs.height / 2, life: 1.0 });
+        pts.push({ x: px, y: cvs.height / 2, life: 1.0, seed: Math.random() });
         if (pts.length > 50) pts.shift();
         for (let p of pts) p.life -= 0.014;
 
@@ -4259,30 +4712,113 @@ function validateCustomTrailInput(input) {
     return cleaned;
 }
 
+function drawCustomTextPreviewRibbon(ctx, x, y, phrase, timestamp, width) {
+    const textW = Math.min(178, Math.max(58, phrase.length * 14));
+    const ribbonW = Math.min(232, Math.max(126, textW + 74));
+    const ribbonH = 28;
+    const startX = x - 22;
+    const endX = Math.max(14, startX - ribbonW);
+    const waveAmp = 5;
+    const segments = 16;
+
+    ctx.save();
+    ctx.shadowColor = '#ffda3a';
+    ctx.shadowBlur = 12;
+    ctx.beginPath();
+    for (let i = 0; i <= segments; i++) {
+        const p = i / segments;
+        const px = startX + (endX - startX) * p;
+        const wave = Math.sin(timestamp * 0.007 + p * Math.PI * 4.4) * waveAmp;
+        const taper = 1 - p * 0.18;
+        const py = y - ribbonH * 0.5 * taper + wave;
+        if (i === 0) ctx.moveTo(px, py);
+        else ctx.lineTo(px, py);
+    }
+    ctx.lineTo(Math.max(6, endX - 18), y + Math.sin(timestamp * 0.007 + 2.4) * waveAmp);
+    for (let i = segments; i >= 0; i--) {
+        const p = i / segments;
+        const px = startX + (endX - startX) * p;
+        const wave = Math.sin(timestamp * 0.007 + p * Math.PI * 4.4) * waveAmp;
+        const taper = 1 - p * 0.18;
+        ctx.lineTo(px, y + ribbonH * 0.5 * taper + wave);
+    }
+    ctx.closePath();
+    const grad = ctx.createLinearGradient(endX, 0, startX, 0);
+    grad.addColorStop(0, 'rgba(250,252,255,0.78)');
+    grad.addColorStop(0.22, 'rgba(255,255,255,0.95)');
+    grad.addColorStop(0.76, 'rgba(255,255,255,0.9)');
+    grad.addColorStop(1, 'rgba(255,218,58,0.34)');
+    ctx.fillStyle = grad;
+    ctx.fill();
+    ctx.lineWidth = 2;
+    ctx.strokeStyle = 'rgba(18,22,34,0.42)';
+    ctx.stroke();
+
+    ctx.beginPath();
+    ctx.moveTo(startX + 2, y - 7);
+    ctx.lineTo(x - 8, y - 2);
+    ctx.lineTo(x - 8, y + 2);
+    ctx.lineTo(startX + 2, y + 7);
+    ctx.strokeStyle = 'rgba(255,218,58,0.6)';
+    ctx.lineWidth = 3;
+    ctx.stroke();
+
+    ctx.shadowBlur = 4;
+    ctx.shadowColor = 'rgba(255,255,255,0.78)';
+    ctx.font = '900 15px Geom, monospace';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.lineWidth = 3;
+    ctx.strokeStyle = 'rgba(255,255,255,0.8)';
+    ctx.fillStyle = 'rgba(22,24,34,0.96)';
+    const chars = phrase.split('');
+    const spacing = Math.min(14, Math.max(8, textW / Math.max(1, chars.length)));
+    const textCenter = endX + (startX - endX) * 0.55;
+    const firstX = textCenter - ((chars.length - 1) * spacing) / 2;
+    chars.forEach((ch, index) => {
+        const p = (firstX + index * spacing - endX) / Math.max(1, startX - endX);
+        const wave = Math.sin(timestamp * 0.007 + p * Math.PI * 4.4) * (waveAmp * 0.72);
+        ctx.save();
+        ctx.translate(firstX + index * spacing, y + wave);
+        ctx.rotate(Math.cos(timestamp * 0.007 + p * Math.PI * 4.4) * 0.1);
+        ctx.strokeText(ch, 0, 0);
+        ctx.fillText(ch, 0, 0);
+        ctx.restore();
+    });
+
+    const fade = ctx.createLinearGradient(width - 112, 0, width - 18, 0);
+    fade.addColorStop(0, 'rgba(255,218,58,0)');
+    fade.addColorStop(1, 'rgba(255,218,58,0.22)');
+    ctx.fillStyle = fade;
+    ctx.fillRect(width - 112, 18, 94, 74);
+    ctx.restore();
+}
+
 function startCustomTextTrailPreview(canvasId, inputId) {
     if (customTextTrailAnim) cancelAnimationFrame(customTextTrailAnim);
     const cvs = document.getElementById(canvasId);
     const input = document.getElementById(inputId);
     if (!cvs) return;
     const ctx = cvs.getContext('2d');
-    let x = 38;
-    let pts = [];
+    let x = 96;
     let lastFrame = 0;
 
     function loop(timestamp = 0) {
         if (!document.body.contains(cvs)) { customTextTrailAnim = null; return; }
-        if (timestamp && lastFrame && timestamp - lastFrame < 33) {
+        if (!isCanvasPreviewVisible(cvs)) {
+            customTextTrailAnim = requestAnimationFrame(loop);
+            return;
+        }
+        const frameGap = isShopPerformanceMode() ? 120 : 33;
+        if (timestamp && lastFrame && timestamp - lastFrame < frameGap) {
             customTextTrailAnim = requestAnimationFrame(loop);
             return;
         }
         lastFrame = timestamp || performance.now();
         const phrase = validateCustomTrailInput(input || { value: localStorage.getItem('customTrailText') || 'RUBY' }) || 'RUBY';
         ctx.clearRect(0, 0, cvs.width, cvs.height);
-        x += 2.2;
-        if (x > cvs.width - 34) x = 38;
-        pts.push({ x, y: cvs.height / 2, life: 1 });
-        if (pts.length > 28) pts.shift();
-        pts.forEach(p => p.life -= 0.018);
+        x += 2.4;
+        if (x > cvs.width - 28) x = Math.min(100, cvs.width * 0.38);
 
         ctx.save();
         const bodyGrad = ctx.createLinearGradient(16, 0, cvs.width - 16, 0);
@@ -4298,39 +4834,22 @@ function startCustomTextTrailPreview(canvasId, inputId) {
         ctx.fillRect(cvs.width - 110, 24, 94, cvs.height - 48);
         ctx.restore();
 
-        pts.forEach((p, i) => {
-            if (p.life <= 0) return;
-            const stretch = 1 + Math.min(0.55, Math.abs(window.angVel || 0) * 8);
-            ctx.save();
-            ctx.globalAlpha = Math.max(0, p.life * 0.55);
-            ctx.translate(p.x - (1 - p.life) * 68 * stretch, p.y + Math.sin(lastFrame * 0.006 + i) * 5);
-            ctx.shadowBlur = 14 * p.life;
-            ctx.shadowColor = '#ffda3a';
-            ctx.beginPath();
-            ctx.ellipse(0, 0, 26 * p.life, 7 * p.life, 0, 0, Math.PI * 2);
-            ctx.fillStyle = `rgba(255,218,58,${0.08 + p.life * 0.24})`;
-            ctx.fill();
-            ctx.restore();
-        });
+        const y = cvs.height / 2 + Math.sin(lastFrame * 0.006) * 4;
+        drawCustomTextPreviewRibbon(ctx, x, y, phrase, lastFrame, cvs.width);
 
         ctx.save();
-        ctx.translate(x, cvs.height / 2 + Math.sin(lastFrame * 0.006) * 4);
-        ctx.font = '900 18px Geom, monospace';
-        ctx.textAlign = 'center';
-        ctx.textBaseline = 'middle';
+        ctx.translate(x, y);
         ctx.shadowBlur = 16;
         ctx.shadowColor = '#ffda3a';
-        ctx.lineWidth = 4;
-        ctx.strokeStyle = 'rgba(20,12,0,0.82)';
-        ctx.fillStyle = '#fff0a8';
-        ctx.strokeText(phrase, 0, 0);
-        ctx.fillText(phrase, 0, 0);
-        ctx.restore();
-
         ctx.beginPath();
-        ctx.arc(x, cvs.height / 2, 7, 0, Math.PI * 2);
+        ctx.arc(0, 0, 8, 0, Math.PI * 2);
         ctx.fillStyle = '#ffda3a';
         ctx.fill();
+        ctx.beginPath();
+        ctx.arc(-2, -2, 3, 0, Math.PI * 2);
+        ctx.fillStyle = '#fff7b8';
+        ctx.fill();
+        ctx.restore();
         customTextTrailAnim = requestAnimationFrame(loop);
     }
     loop();
@@ -4448,7 +4967,12 @@ function startInvTrailCanvas(trailId, colorId) {
     let lastFrame = 0;
     function loop(timestamp = 0) {
         if (!document.body.contains(cvs)) { invTrailAnims[trailId] = null; return; }
-        if (timestamp && lastFrame && timestamp - lastFrame < 33) {
+        if (!isCanvasPreviewVisible(cvs)) {
+            invTrailAnims[trailId] = requestAnimationFrame(loop);
+            return;
+        }
+        const frameGap = isShopPerformanceMode() ? 120 : 33;
+        if (timestamp && lastFrame && timestamp - lastFrame < frameGap) {
             invTrailAnims[trailId] = requestAnimationFrame(loop);
             return;
         }
@@ -4456,7 +4980,7 @@ function startInvTrailCanvas(trailId, colorId) {
         ctx.clearRect(0, 0, cvs.width, cvs.height);
         px += 1.2;
         if (px > cvs.width - 20) px = 20;
-        pts.push({ x: px, y: cvs.height / 2, life: 1.0 });
+        pts.push({ x: px, y: cvs.height / 2, life: 1.0, seed: Math.random() });
         if (pts.length > 45) pts.shift();
         for (let p of pts) p.life -= 0.015;
         ctx.__previewNow = lastFrame;
@@ -4492,3 +5016,8 @@ function invEquipTrailColor(trailId, colorId) {
 }
 
 updateMenuHUD();
+
+// Exportar funciones VIP y Ruby Pass a window
+window.openVIP = openVIP;
+window.closeVIP = closeVIP;
+window.openRubyPass = openRubyPass;

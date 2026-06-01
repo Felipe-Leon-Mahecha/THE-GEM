@@ -7,6 +7,7 @@ const dist = join(root, "dist");
 
 const runtimeFiles = [
   "levels.config.js",
+  "powerups.js",
   "ui.js",
   "levelselect.js",
   "shop.js",

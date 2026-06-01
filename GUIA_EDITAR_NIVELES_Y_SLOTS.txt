@@ -78,7 +78,7 @@ Si cambias el nombre, actualiza tambien la ruta en shop.js.
 4. EDITAR SLOTS DE TIENDA NORMAL
 
 Skins:
-assets/Imagenes/Skins/Placeholders/
+assets/UI/Store/Skins/Normal/Placeholders/
 Datos en SKINS_DATA dentro de shop.js.
 
 Trails:

@@ -10,7 +10,10 @@ function preloadLevelImages(lvl) {
 }
 // Precarga todos los niveles al iniciar
 setTimeout(() => {
-    for (let i = 1; i <= 10; i++) preloadLevelImages(i);
+    const lowPowerBoot = localStorage.getItem('reducedMotion') === 'true' ||
+        document.body.classList.contains('is-touch-device');
+    const preloadLimit = lowPowerBoot ? 3 : 10;
+    for (let i = 1; i <= preloadLimit; i++) preloadLevelImages(i);
 }, 1000);
 
 let gameTimerInterval = null;
@@ -459,28 +462,48 @@ const skins = {
 
 const DIRECTIONAL_SKINS = {
     daxor: {
-        right: "assets/Imagenes/Skins/DAXOR Skin DEMON/DAXOR_Skin_Derecha.png",
-        left: "assets/Imagenes/Skins/DAXOR Skin DEMON/DAXOR_Skin_Izquierda.png",
+        side: "assets/UI/Store/Skins/Normal/DAXOR Skin DEMON/DAXOR_Skin_lado.png",
         glow: "#ff2448"
     },
+    brifon: {
+        side: "assets/UI/Store/Skins/Normal/BRIFON Skin EPICO/BRIFON_Skin_lado.png",
+        glow: "#b86cff"
+    },
     kenji: {
-        right: "assets/Imagenes/Skins/KENJI Skin EPICO/Kenji_Skin_Derecha.png",
-        left: "assets/Imagenes/Skins/KENJI Skin EPICO/Kenji_Skin_Izquierda.png",
+        side: "assets/UI/Store/Skins/Normal/KENJI Skin EPICO/Kenji_Skin_lado.png",
         glow: "#845cff"
     }
 };
 
 const directionalSkinImages = {};
 for (const [id, skin] of Object.entries(DIRECTIONAL_SKINS)) {
-    directionalSkinImages[id] = {
-        right: new Image(),
-        left: new Image()
-    };
-    directionalSkinImages[id].right.src = skin.right;
-    directionalSkinImages[id].left.src = skin.left;
+    directionalSkinImages[id] = new Image();
+    directionalSkinImages[id].src = skin.side;
+}
+
+const catalogSkinImages = {};
+function getShopSkinData(id) {
+    return typeof window.findShopSkin === 'function'
+        ? window.findShopSkin(id)
+        : (Array.isArray(window.SKINS_DATA) ? window.SKINS_DATA.find(s => s.id === id) : null);
+}
+
+function getCatalogSkinImage(id, facing = "right") {
+    const skinData = getShopSkinData(id);
+    const src = skinData?.rolling
+        ? (skinData.image || skinData.imageSide || skinData.imageRight || skinData.imageLeft)
+        : (skinData?.imageSide || skinData?.imageRight || skinData?.imageLeft || skinData?.image);
+    if (!src) return null;
+    const cacheKey = `${id}_side`;
+    if (!catalogSkinImages[cacheKey] || catalogSkinImages[cacheKey].src !== src) {
+        catalogSkinImages[cacheKey] = new Image();
+        catalogSkinImages[cacheKey].src = src;
+    }
+    return catalogSkinImages[cacheKey];
 }
 
 window.playerFacing = "right";
+window.playerRollAngle = 0;
 
 // =====================================================
 // RADIOS
@@ -500,6 +523,7 @@ window.angle = Math.PI;
 window.angVel = 0;
 window.offset = 0;
 window.vel = 0;
+window.gravityForce = 1;
 window.adaptiveControls = localStorage.getItem("adaptiveControls") === "true";
 window.lives = 3;
 window.gravityFlipCooldown = 0;
@@ -553,7 +577,9 @@ window.keys = {
     left: false,
     right: false,
     jump: false,
-    gravity: false
+    gravity: false,
+    powerW: false,
+    powerE: false
 };
 
 // =====================================================
@@ -586,6 +612,8 @@ function update() {
     if (!window.running) return;
     if (window.paused) return;
     const levelConfig = window.getCurrentLevelConfig ? window.getCurrentLevelConfig() : {};
+    const powerupTimeScale = window.getPowerupTimeScale?.() ?? 1;
+    if (window.updatePowerups) window.updatePowerups();
 
     if (window.invulnerable) {
         window.invulnerableTimer--;
@@ -627,11 +655,11 @@ function update() {
             window.gravity === 1 ? 1 : -1;
 
     if (window.keys.left) {
-        window.angVel += 0.0026 * moveDir;
+        window.angVel += 0.0026 * moveDir * (window.getPowerupSpeedFactor?.() || 1);
         window.playerFacing = "left";
     }
     if (window.keys.right) {
-        window.angVel -= 0.0026 * moveDir;
+        window.angVel -= 0.0026 * moveDir * (window.getPowerupSpeedFactor?.() || 1);
         window.playerFacing = "right";
     }
 
@@ -640,9 +668,11 @@ function update() {
     if (Math.abs(window.angVel) > 0.0015) {
         window.playerFacing = window.angVel > 0 ? "left" : "right";
     }
+    window.playerRollAngle = (window.playerRollAngle || 0) - window.angVel * 9;
 
     // GRAVITY
-    window.vel += 0.38 * window.gravity;
+    window.gravityForce += (window.gravity - window.gravityForce) * 0.18;
+    window.vel += 0.38 * window.gravityForce;
     window.offset += window.vel;
 
     if (window.offset <= 0) { window.offset = 0; window.vel = 0; }
@@ -657,16 +687,26 @@ function update() {
     // GRAVITY SWITCH
     if (window.keys.gravity) {
         window.gravity *= -1;
-        window.vel = window.gravity * 2.6;
-        window.gravityFlipCooldown = 5;
+        window.gravityForce += (window.gravity - window.gravityForce) * 0.35;
+        window.vel = window.vel * 0.45 + window.gravity * 1.15;
+        window.gravityFlipCooldown = 7;
         window.gravityPulse = 1;
         window.keys.gravity = false;
+    }
+
+    if (window.keys.powerW) {
+        window.activatePowerupSlot?.(0);
+        window.keys.powerW = false;
+    }
+    if (window.keys.powerE) {
+        window.activatePowerupSlot?.(1);
+        window.keys.powerE = false;
     }
 
     updateTrail();
 
     // SPAWN OBSTACLES
-    window.spawnTimer++;
+    window.spawnTimer += powerupTimeScale;
     let spawnRate = levelConfig.spawnRate || 140;
 
     if (levelConfig.obstacles && levelConfig.obstacles.spikes && window.spawnTimer > spawnRate) {
@@ -703,7 +743,7 @@ function update() {
         let radialDist = Math.abs(r - c.radius);
 
         if (Math.abs(rel) < 0.08 && radialDist < 18) {
-            playerData.deadCoins++;
+            playerData.deadCoins += Math.max(1, Math.round(window.powerupEffects?.coinMultiplier || 1));
             localStorage.setItem("deadCoins", playerData.deadCoins);
             window.deadCoins.splice(i, 1);
         }
@@ -721,7 +761,7 @@ function update() {
         let radialDist = Math.abs(r - rby.radius);
 
         if (Math.abs(rel) < 0.08 && radialDist < 20) {
-            playerData.gems++;
+            playerData.gems += Math.max(1, Math.round(window.powerupEffects?.gemMultiplier || 1));
             localStorage.setItem("gems", playerData.gems);
             window.rubies.splice(i, 1);
         }
@@ -730,30 +770,30 @@ function update() {
     // UPDATE OBSTACLES
     for (let i = window.obstacles.length - 1; i >= 0; i--) {
         let o = window.obstacles[i];
-        if (o.state === "warning") { o.warningTime--; if (o.warningTime <= 0) { o.warning = false; o.state = "enter"; } }
-        else if (o.state === "enter") { o.progress += 0.08; if (o.progress >= 1) { o.progress = 1; o.state = "alive"; } }
-        else if (o.state === "alive") { o.life--; if (o.life <= 0) o.state = "leave"; }
-        else if (o.state === "leave") { o.progress -= 0.08; if (o.progress <= 0) { window.obstacles.splice(i, 1); continue; } }
+        if (o.state === "warning") { o.warningTime -= powerupTimeScale; if (o.warningTime <= 0) { o.warning = false; o.state = "enter"; } }
+        else if (o.state === "enter") { o.progress += 0.08 * powerupTimeScale; if (o.progress >= 1) { o.progress = 1; o.state = "alive"; } }
+        else if (o.state === "alive") { o.life -= powerupTimeScale; if (o.life <= 0) o.state = "leave"; }
+        else if (o.state === "leave") { o.progress -= 0.08 * powerupTimeScale; if (o.progress <= 0) { window.obstacles.splice(i, 1); continue; } }
     }
 
     // SIERRA SPAWN
     if (levelConfig.obstacles && levelConfig.obstacles.saws) {
-        window.sierraSpawnTimer++;
+        window.sierraSpawnTimer += powerupTimeScale;
         if (window.sierraSpawnTimer > 180) {
             window.sierraSpawnTimer = 0;
             spawnSierra();
         }
-        updateSierras();
+        if (powerupTimeScale > 0) updateSierras(powerupTimeScale);
     }
 
     if (levelConfig.obstacles && levelConfig.obstacles.lasers) {
-        window.laserSpawnTimer++;
+        window.laserSpawnTimer += powerupTimeScale;
         const laserRate = levelConfig.lasers?.spawnInterval || levelConfig.laserSpawnInterval || 360;
         if (window.laserSpawnTimer > laserRate) {
             window.laserSpawnTimer = 0;
             spawnIceLaser();
         }
-        updateIceLasers();
+        if (powerupTimeScale > 0) updateIceLasers(powerupTimeScale);
     }
 
     checkCollisions();
@@ -839,17 +879,17 @@ function spawnIceLaser() {
     window.lasers.push(laser);
 }
 
-function updateIceLasers() {
+function updateIceLasers(timeScale = 1) {
     for (let i = window.lasers.length - 1; i >= 0; i--) {
         const laser = window.lasers[i];
         if (laser.mobility === "sweep" && laser.state !== "fade") {
-            laser.angle += laser.speed * laser.direction;
+            laser.angle += laser.speed * laser.direction * timeScale;
             if (laser.range && Math.abs(laser.angle - laser.startAngle) > laser.range) {
                 laser.direction *= -1;
             }
         }
         if (laser.state === 'warning') {
-            laser.warningTime--;
+            laser.warningTime -= timeScale;
             if (laser.warningTime <= 0) {
                 laser.state = 'active';
                 if (!laser.played) {
@@ -860,8 +900,8 @@ function updateIceLasers() {
             continue;
         }
         if (laser.state === 'active') {
-            laser.activeTime--;
-            if (!window.invulnerable) {
+            laser.activeTime -= timeScale;
+            if (!window.invulnerable && !window.isPowerupInvulnerable?.()) {
                 if (laserHitsPlayer(laser)) {
                     playerHit();
                 }
@@ -869,7 +909,7 @@ function updateIceLasers() {
             if (laser.activeTime <= 0) laser.state = 'fade';
             continue;
         }
-        laser.fadeTime--;
+        laser.fadeTime -= timeScale;
         if (laser.fadeTime <= 0) window.lasers.splice(i, 1);
     }
 }
@@ -1020,6 +1060,8 @@ function draw() {
         ctx.restore();
     }
 
+    if (window.drawPowerupWorldEffects) drawPowerupWorldEffects(ctx, cx, cy);
+
     // 5) PLAYER
     if (window.running) {
         drawPlayer(cx, cy);
@@ -1070,6 +1112,7 @@ function draw() {
     ctx.font = `${compactHud ? 10 : 13}px Geom, monospace`;
     ctx.fillText("NIVEL " + window.level, hudX + hudPad, hudY + hudH - 10);
     ctx.restore();
+    if (window.drawPowerupHud) drawPowerupHud(ctx);
 }
 
 function drawPlayer(cx, cy) {
@@ -1093,14 +1136,34 @@ function drawPlayer(cx, cy) {
         cool: { color: '#ffffff', glow: '#ffff00' },
     };
     const skin = SKIN_COLORS[equippedId] || SKIN_COLORS.cyan;
-    const directionalSkin = directionalSkinImages[equippedId]?.[window.playerFacing || "right"];
+    if (window.powerupEffects?.chaosUntil && performance.now() < window.powerupEffects.chaosUntil) {
+        skin.color = `hsl(${(performance.now() / 7) % 360},100%,62%)`;
+        skin.glow = skin.color;
+    }
+    const facingLeft = (window.playerFacing || "right") === "left";
+    const directionalSkin = directionalSkinImages[equippedId];
+    const catalogSkinData = getShopSkinData(equippedId);
+    const catalogSkin = getCatalogSkinImage(equippedId, window.playerFacing || "right");
     if (directionalSkin && directionalSkin.complete && directionalSkin.naturalWidth > 0) {
         const skinSize = 48;
         if (!lowPower) {
             ctx.shadowBlur = 18;
             ctx.shadowColor = DIRECTIONAL_SKINS[equippedId].glow;
         }
+        if (facingLeft) ctx.scale(-1, 1);
         ctx.drawImage(directionalSkin, -skinSize / 2, -skinSize / 2, skinSize, skinSize);
+    } else if (catalogSkin && catalogSkin.complete && catalogSkin.naturalWidth > 0) {
+        const skinSize = 48;
+        if (!lowPower) {
+            ctx.shadowBlur = 18;
+            ctx.shadowColor = skin.glow || '#ffee00';
+        }
+        if (catalogSkinData?.rolling) {
+            ctx.rotate(window.playerRollAngle || 0);
+        } else if (facingLeft) {
+            ctx.scale(-1, 1);
+        }
+        ctx.drawImage(catalogSkin, -skinSize / 2, -skinSize / 2, skinSize, skinSize);
     } else {
         if (!lowPower) {
             ctx.shadowBlur = 20;
@@ -1297,6 +1360,16 @@ loop();
 // START GAME
 // =====================================================
 window.startGame = function (levelIndex = 0, skipStartSound = false) {
+    if (!window.__powerupSelectionConfirmed && !window.__powerupSelectionOpen && window.showPowerupSelection) {
+        window.__powerupSelectionOpen = true;
+        window.showPowerupSelection(levelIndex, () => {
+            window.__powerupSelectionOpen = false;
+            window.__powerupSelectionConfirmed = true;
+            window.startGame(levelIndex, skipStartSound);
+            window.__powerupSelectionConfirmed = false;
+        });
+        return;
+    }
     window.level = levelIndex + 1;
     const levelConfig = window.getCurrentLevelConfig ? window.getCurrentLevelConfig() : {};
 
@@ -1333,14 +1406,17 @@ window.startGame = function (levelIndex = 0, skipStartSound = false) {
     const spawn = levelConfig.playerSpawn || {};
     window.angle = typeof spawn.angle === "number" ? spawn.angle : Math.PI / 2;
     window.angVel = 0;
+    window.playerRollAngle = 0;
     window.offset = typeof spawn.offset === "number" ? spawn.offset : 0;
     window.vel = 0;
     window.gravity = 1;
+    window.gravityForce = 1;
     window.lives = 3;
     window.reviveCount = 0;
 
     window.invulnerable = false;
     window.invulnerableTimer = 0;
+    window.createPowerupRuntime?.(window.getEquippedPowerups?.() || []);
 
 
     window.worldRotationSpeed = levelConfig.rotationSpeed || 0.016;
@@ -1375,6 +1451,7 @@ window.startGame = function (levelIndex = 0, skipStartSound = false) {
     gameTimerInterval = null;
 
     window.gravity = 1;
+    window.gravityForce = 1;
     window.worldRotationSpeed = levelConfig.rotationSpeed || 0.01;
     window.targetWorldSpeed = levelConfig.rotationSpeed || 0.01;
 };
@@ -1662,11 +1739,21 @@ addEventListener("keydown", e => {
         e.preventDefault();
         window.keys.gravity = true;
     }
+    if (e.key === "w" || e.key === "W") {
+        e.preventDefault();
+        window.keys.powerW = true;
+    }
+    if (e.key === "e" || e.key === "E") {
+        e.preventDefault();
+        window.keys.powerE = true;
+    }
 });
 
 addEventListener("keyup", e => {
     if (e.key === "a" || e.key === "A" || e.key === "ArrowLeft") window.keys.left = false;
     if (e.key === "d" || e.key === "D" || e.key === "ArrowRight") window.keys.right = false;
+    if (e.key === "w" || e.key === "W") window.keys.powerW = false;
+    if (e.key === "e" || e.key === "E") window.keys.powerE = false;
 });
 
 document.addEventListener('visibilitychange', () => {
@@ -1680,5 +1767,18 @@ document.addEventListener('visibilitychange', () => {
         if (!window.running && !window.isMuted) {
             window.menuMusic?.play().catch(() => { });
         }
+    }
+});
+
+
+window.canvas?.addEventListener('mousemove', (e) => {
+    if (window.running && window.handlePowerupTooltipMouse) {
+        window.handlePowerupTooltipMouse(e);
+    }
+});
+
+window.canvas?.addEventListener('mouseleave', () => {
+    if (window.hidePowerupTooltip) {
+        window.hidePowerupTooltip();
     }
 });

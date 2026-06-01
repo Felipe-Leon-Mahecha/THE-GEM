@@ -27,29 +27,29 @@ document.getElementById("play-btn").onclick = () => {
 
     }
 
-    const overlay =
-        document.getElementById("overlay");
+    const overlay = document.getElementById("overlay");
 
-    overlay.classList.add("slide-down");
+    overlay?.classList.add("slide-down");
 
     setTimeout(() => {
 
-        overlay.style.display = "none";
-
-        overlay.classList.remove("slide-down");
+        if (overlay) {
+            overlay.style.display = "none";
+            overlay.classList.remove("slide-down");
+        }
 
         window.showLevelSelect();
 
-        drawCarousel();
+        window.drawCarousel?.();
 
         const ls =
             document.getElementById("levelSelect");
 
-        ls.classList.add("slide-up");
+        ls?.classList.add("slide-up");
 
         setTimeout(() => {
 
-            ls.classList.remove("slide-up");
+            ls?.classList.remove("slide-up");
 
         }, 500);
 
@@ -200,6 +200,94 @@ function updateControlsText() {
 // Inicializar texto al cargar
 updateControlsText();
 
+// =====================================================
+// KEYBIND SYSTEM
+// =====================================================
+
+const DEFAULT_KEYBINDS = {
+    left: 'a',
+    right: 'd',
+    gravity: 's',
+    powerW: 'w',
+    powerE: 'e'
+};
+
+let customKeybinds = JSON.parse(localStorage.getItem('customKeybinds') || '{}');
+let currentKeybindAction = null;
+let keybindListener = null;
+
+function loadKeybinds() {
+    const saved = localStorage.getItem('customKeybinds');
+    if (saved) {
+        customKeybinds = JSON.parse(saved);
+    } else {
+        customKeybinds = { ...DEFAULT_KEYBINDS };
+    }
+    updateKeybindButtons();
+}
+
+function saveKeybinds() {
+    localStorage.setItem('customKeybinds', JSON.stringify(customKeybinds));
+}
+
+function updateKeybindButtons() {
+    document.querySelectorAll('.keybind-btn').forEach(btn => {
+        const action = btn.dataset.action;
+        const key = customKeybinds[action] || DEFAULT_KEYBINDS[action];
+        btn.textContent = key.toUpperCase();
+    });
+}
+
+function startKeybind(btn) {
+    if (currentKeybindAction) {
+        cancelKeybind();
+        return;
+    }
+
+    currentKeybindAction = btn.dataset.action;
+    btn.classList.add('listening');
+    btn.textContent = '...';
+
+    keybindListener = (e) => {
+        e.preventDefault();
+        const key = e.key.toLowerCase();
+
+        if (key === 'escape') {
+            cancelKeybind();
+            return;
+        }
+
+        customKeybinds[currentKeybindAction] = key;
+        saveKeybinds();
+        updateKeybindButtons();
+        cancelKeybind();
+    };
+
+    document.addEventListener('keydown', keybindListener);
+}
+
+function cancelKeybind() {
+    if (keybindListener) {
+        document.removeEventListener('keydown', keybindListener);
+        keybindListener = null;
+    }
+    currentKeybindAction = null;
+    document.querySelectorAll('.keybind-btn').forEach(btn => btn.classList.remove('listening'));
+    updateKeybindButtons();
+}
+
+function resetKeybinds() {
+    customKeybinds = { ...DEFAULT_KEYBINDS };
+    saveKeybinds();
+    updateKeybindButtons();
+}
+
+function getKeybind(action) {
+    return customKeybinds[action] || DEFAULT_KEYBINDS[action];
+}
+
+loadKeybinds();
+
 function syncOptionsPanel() {
     const music = document.getElementById('music-volume');
     const sfx = document.getElementById('sfx-volume');
@@ -210,7 +298,24 @@ function syncOptionsPanel() {
     if (side) side.value = localStorage.getItem('touchSideOffset') || '50';
     if (gravity) gravity.value = localStorage.getItem('touchGravityOffset') || '50';
     updateMotionText();
+    updateMusicShuffleText();
 }
+
+function toggleLevelMusicShuffle() {
+    const next = localStorage.getItem('levelMusicShuffle') !== 'true';
+    localStorage.setItem('levelMusicShuffle', next ? 'true' : 'false');
+    updateMusicShuffleText();
+}
+
+function updateMusicShuffleText() {
+    const el = document.getElementById('music-shuffle-text');
+    if (!el) return;
+    el.textContent = localStorage.getItem('levelMusicShuffle') === 'true'
+        ? 'Aleatoria al iniciar nivel'
+        : 'Pista fija del nivel';
+}
+
+window.toggleLevelMusicShuffle = toggleLevelMusicShuffle;
 
 function bindOptionSliders() {
     const music = document.getElementById('music-volume');
@@ -230,14 +335,15 @@ function toggleReducedMotion() {
     const next = localStorage.getItem('reducedMotion') !== 'true';
     localStorage.setItem('reducedMotion', next ? 'true' : 'false');
     document.body.classList.toggle('reduced-motion', next);
+    document.body.classList.toggle('performance-mode', next);
     updateMotionText();
 }
 
 function updateMotionText() {
     const el = document.getElementById('motion-mode-text');
     if (el) el.textContent = localStorage.getItem('reducedMotion') === 'true'
-        ? 'Animaciones suaves'
-        : 'Animaciones normales';
+        ? 'Rendimiento alto'
+        : 'Visuales completos';
 }
 
 function saveTouchLayout() {
@@ -284,6 +390,7 @@ bindOptionSliders();
 bindTouchControls();
 applyTouchLayout();
 document.body.classList.toggle('reduced-motion', localStorage.getItem('reducedMotion') === 'true');
+document.body.classList.toggle('performance-mode', localStorage.getItem('reducedMotion') === 'true');
 document.querySelector('.ls-play-btn')?.addEventListener('mouseenter', () => window.playSfx?.('levelHover', 0.55));
 
 // =====================================================
@@ -317,13 +424,14 @@ document.body.addEventListener('click', () => {
 
 document.getElementById('go-retry').onclick = () => {
     document.getElementById('gameOver').style.display = 'none';
+    document.getElementById('go-retry')?.classList.remove('go-primary-pulse');
     window.startGame(window.currentLevel);
 };
 
 document.getElementById('go-menu').onclick = () => {
     document.getElementById('gameOver').style.display = 'none';
     document.getElementById("gameCanvas").style.visibility = "hidden";
-    document.body.classList.remove('is-playing-touch');
+    document.body.classList.remove('is-playing-touch', 'is-gameplay-active');
     document.getElementById('pause-btn').classList.remove('is-playing');
     document.getElementById('overlay').style.display = 'flex';
     window.menuMusic.currentTime = 0;
@@ -350,6 +458,9 @@ document.getElementById('go-levels').onclick = () => {
 
 document.getElementById('gw-menu').onclick = () => {
     document.getElementById('gameWin').style.display = 'none';
+    document.body.classList.remove('is-gameplay-active');
+    document.getElementById("gameCanvas").style.visibility = "hidden";
+    document.getElementById('pause-btn').classList.remove('is-playing');
     window.menuMusic.currentTime = 0;
     if (window.menuMusic.paused)
         if (
@@ -368,7 +479,7 @@ document.getElementById('gw-menu').onclick = () => {
 document.getElementById('gw-levels').onclick = () => {
     document.getElementById('gameWin').style.display = 'none';
     document.getElementById("gameCanvas").style.visibility = "hidden";
-    document.body.classList.remove('is-playing-touch');
+    document.body.classList.remove('is-playing-touch', 'is-gameplay-active');
     document.getElementById('pause-btn').classList.remove('is-playing');
     if (typeof window.showLevelSelect === "function") window.showLevelSelect();
 };
@@ -393,6 +504,12 @@ window.resumeGame = function () {
 };
 
 document.getElementById('pause-continue').onclick = () => window.resumeGame();
+document.getElementById('pause-restart').onclick = () => {
+    const level = typeof window.currentLevel === 'number' ? window.currentLevel : 0;
+    document.getElementById('pausePanel').classList.remove('showing');
+    window.paused = false;
+    window.startGame(level);
+};
 document.getElementById('pause-options').onclick = () => openOptionsPanel();
 document.getElementById('pause-levels').onclick = () => {
     window.paused = false;
@@ -400,7 +517,7 @@ document.getElementById('pause-levels').onclick = () => {
     document.getElementById('pausePanel').classList.remove('showing');
     document.getElementById('pause-btn').classList.remove('is-playing');
     document.getElementById("gameCanvas").style.visibility = "hidden";
-    document.body.classList.remove('is-playing-touch');
+    document.body.classList.remove('is-playing-touch', 'is-gameplay-active');
     if (window.bgMusic) window.bgMusic.pause();
     if (typeof window.showLevelSelect === "function") window.showLevelSelect();
 };
@@ -409,7 +526,7 @@ document.getElementById('pause-menu').onclick = () => {
     window.running = false;
     document.getElementById('pausePanel').classList.remove('showing');
     document.getElementById("gameCanvas").style.visibility = "hidden";
-    document.body.classList.remove('is-playing-touch');
+    document.body.classList.remove('is-playing-touch', 'is-gameplay-active');
     document.getElementById('pause-btn').classList.remove('is-playing');
     document.getElementById('overlay').style.display = 'flex';
     if (window.bgMusic) {
@@ -460,6 +577,195 @@ function toggleMute() {
 }
 
 applyMuteState();
+
+window.startKeybind = startKeybind;
+window.resetKeybinds = resetKeybinds;
+window.getKeybind = getKeybind;
+
+// =====================================================
+// ACHIEVEMENTS SYSTEM
+// =====================================================
+
+const ACHIEVEMENTS_STORAGE_KEY = 'achievements';
+
+const ACHIEVEMENTS_DATA = [
+    { id: 'first_win', name: 'Primera Victoria', description: 'Completa tu primer nivel', icon: '🏆', unlocked: false },
+    { id: 'combo_10', name: 'Combo x10', description: 'Alcanza un combo de 10', icon: '🔥', unlocked: false },
+    { id: 'combo_50', name: 'Combo x50', description: 'Alcanza un combo de 50', icon: '💥', unlocked: false },
+    { id: 'survival_5min', name: 'Superviviente', description: 'Sobrevive 5 minutos en Modo Supervivencia', icon: '⏱️', unlocked: false },
+    { id: 'all_powerups', name: 'Coleccionista', description: 'Desbloquea todos los potenciadores', icon: '💎', unlocked: false },
+    { id: 'max_level', name: 'Maestro', description: 'Alcanza el nivel máximo en cualquier potenciador', icon: '⭐', unlocked: false },
+    { id: 'no_damage', name: 'Intocable', description: 'Completa un nivel sin recibir daño', icon: '🛡️', unlocked: false },
+    { id: 'gems_100', name: 'Riqueza', description: 'Acumula 100 gemas', icon: '💰', unlocked: false }
+];
+
+function loadAchievements() {
+    const saved = localStorage.getItem(ACHIEVEMENTS_STORAGE_KEY);
+    if (saved) {
+        const savedAchievements = JSON.parse(saved);
+        ACHIEVEMENTS_DATA.forEach(achievement => {
+            const saved = savedAchievements.find(a => a.id === achievement.id);
+            if (saved) {
+                achievement.unlocked = saved.unlocked;
+                achievement.progress = saved.progress || 0;
+            }
+        });
+    }
+}
+
+function saveAchievements() {
+    localStorage.setItem(ACHIEVEMENTS_STORAGE_KEY, JSON.stringify(ACHIEVEMENTS_DATA));
+}
+
+function unlockAchievement(id) {
+    const achievement = ACHIEVEMENTS_DATA.find(a => a.id === id);
+    if (achievement && !achievement.unlocked) {
+        achievement.unlocked = true;
+        saveAchievements();
+        showAchievementNotification(achievement);
+    }
+}
+
+function renderRewardCircle(reward) {
+    const meta = window.Progression?.describeReward?.(reward) || { label: 'Recompensa', icons: [] };
+    const iconsHtml = meta.icons.slice(0, 4).map(icon => {
+        if (icon.src) return `<img src="${icon.src}" alt="">`;
+        if (icon.emoji) return `<span>${icon.emoji}</span>`;
+        return '';
+    }).join('') || '<span>★</span>';
+    return `<div class="ach-reward-orbit" title="${meta.label}">${iconsHtml}</div>`;
+}
+
+function renderAchievementsPanel() {
+    const panel = document.getElementById('achievementsPanel');
+    const body = document.getElementById('achievementsBody');
+    if (!panel || !body) return;
+
+    const list = (window.Progression?.getAchievements?.() || ACHIEVEMENTS_DATA).slice().sort((a, b) => {
+        if (a.claimable && !b.claimable) return -1;
+        if (!a.claimable && b.claimable) return 1;
+        if (a.unlocked && !b.unlocked) return -1;
+        if (!a.unlocked && b.unlocked) return 1;
+        return 0;
+    });
+    const unlockedCount = list.filter(a => a.unlocked).length;
+    const claimableCount = list.filter(a => a.claimable).length;
+    const totalCount = list.length;
+
+    body.innerHTML = `
+        <div class="achievements-stats">
+            <span>Desbloqueados: ${unlockedCount}/${totalCount}</span>
+            ${claimableCount ? `<span class="ach-claimable-pill">${claimableCount} por reclamar</span>` : ''}
+        </div>
+        <div class="achievements-grid">
+            ${list.map(achievement => {
+        const pct = achievement.goal
+            ? Math.min(100, Math.round(((achievement.current || 0) / achievement.goal) * 100))
+            : 0;
+        const tier = achievement.tier || 'medio';
+        const tierLabel = tier === 'facil' ? 'FACIL' : tier === 'dificil' ? 'DIFICIL' : 'MEDIO';
+        const classes = [
+            'achievement-item',
+            `tier-${tier}`,
+            achievement.claimable ? 'claimable' : '',
+            achievement.claimed ? 'claimed' : '',
+            achievement.unlocked ? 'unlocked' : 'locked'
+        ].filter(Boolean).join(' ');
+        return `
+                <article class="${classes}" data-achievement-id="${achievement.id}">
+                    <div class="achievement-item-head">
+                        <span class="achievement-icon">${achievement.icon || '★'}</span>
+                        <div class="achievement-info">
+                            <div class="achievement-title-row">
+                                <strong>${achievement.name || achievement.title}</strong>
+                                <span>${tierLabel}</span>
+                            </div>
+                            <p>${achievement.description || achievement.desc || ''}</p>
+                            ${achievement.goal && !achievement.claimable ? `
+                                <div class="prog-bar"><span style="width:${achievement.unlocked ? 100 : pct}%"></span></div>
+                                <small>${achievement.current || 0}/${achievement.goal}</small>
+                            ` : ''}
+                        </div>
+                    </div>
+                    ${achievement.claimable ? `
+                        <div class="ach-claim-zone">
+                            ${renderRewardCircle(achievement.reward)}
+                            <button type="button" class="ach-claim-btn" onclick="claimAchievementRewardUi('${achievement.id}')">RECLAMAR</button>
+                        </div>
+                    ` : (achievement.claimed ? '<span class="achievement-status">RECLAMADO</span>' : '')}
+                </article>`;
+    }).join('')}
+        </div>
+    `;
+}
+
+function showAchievementsPanel() {
+    const panel = document.getElementById('achievementsPanel');
+    if (!panel) return;
+    renderAchievementsPanel();
+    panel.style.display = 'grid';
+    panel.classList.add('showing');
+    window.onAchievementsPanelOpened?.();
+    window.playSfx?.('menuSelect', 0.5);
+}
+
+function closeAchievementsPanel() {
+    const panel = document.getElementById('achievementsPanel');
+    if (panel) {
+        panel.classList.remove('showing');
+        setTimeout(() => panel.style.display = 'none', 300);
+    }
+    window.onAchievementsPanelClosed?.();
+}
+
+loadAchievements();
+
+window.renderAchievementsPanel = renderAchievementsPanel;
+window.showAchievementsPanel = showAchievementsPanel;
+window.closeAchievementsPanel = closeAchievementsPanel;
+window.unlockAchievement = unlockAchievement;
+
+// =====================================================
+// AUTO SAVE SYSTEM
+// =====================================================
+
+const AUTO_SAVE_INTERVAL = 60000; // 60 segundos
+
+function autoSave() {
+    // Guardar datos del jugador
+    if (window.playerData) {
+        localStorage.setItem('deadCoins', window.playerData.deadCoins);
+        localStorage.setItem('gems', window.playerData.gems);
+    }
+
+    // Guardar potenciadores
+    window.savePowerups?.();
+
+    // Guardar keybinds
+    localStorage.setItem('customKeybinds', JSON.stringify(window.customKeybinds || {}));
+
+    // Guardar logros
+    localStorage.setItem('achievements', JSON.stringify(window.ACHIEVEMENTS_DATA || []));
+
+    // Guardar combo stats
+    window.saveComboStats?.();
+
+    console.log('Auto-save completado');
+}
+
+function startAutoSave() {
+    autoSave();
+    setInterval(autoSave, AUTO_SAVE_INTERVAL);
+}
+
+// Iniciar auto-save cuando el DOM esté cargado
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', startAutoSave);
+} else {
+    startAutoSave();
+}
+
+window.autoSave = autoSave;
 
 window.addEventListener(
     "DOMContentLoaded",

@@ -200,6 +200,94 @@ function updateControlsText() {
 // Inicializar texto al cargar
 updateControlsText();
 
+// =====================================================
+// KEYBIND SYSTEM
+// =====================================================
+
+const DEFAULT_KEYBINDS = {
+    left: 'a',
+    right: 'd',
+    gravity: 's',
+    powerW: 'w',
+    powerE: 'e'
+};
+
+let customKeybinds = JSON.parse(localStorage.getItem('customKeybinds') || '{}');
+let currentKeybindAction = null;
+let keybindListener = null;
+
+function loadKeybinds() {
+    const saved = localStorage.getItem('customKeybinds');
+    if (saved) {
+        customKeybinds = JSON.parse(saved);
+    } else {
+        customKeybinds = { ...DEFAULT_KEYBINDS };
+    }
+    updateKeybindButtons();
+}
+
+function saveKeybinds() {
+    localStorage.setItem('customKeybinds', JSON.stringify(customKeybinds));
+}
+
+function updateKeybindButtons() {
+    document.querySelectorAll('.keybind-btn').forEach(btn => {
+        const action = btn.dataset.action;
+        const key = customKeybinds[action] || DEFAULT_KEYBINDS[action];
+        btn.textContent = key.toUpperCase();
+    });
+}
+
+function startKeybind(btn) {
+    if (currentKeybindAction) {
+        cancelKeybind();
+        return;
+    }
+    
+    currentKeybindAction = btn.dataset.action;
+    btn.classList.add('listening');
+    btn.textContent = '...';
+    
+    keybindListener = (e) => {
+        e.preventDefault();
+        const key = e.key.toLowerCase();
+        
+        if (key === 'escape') {
+            cancelKeybind();
+            return;
+        }
+        
+        customKeybinds[currentKeybindAction] = key;
+        saveKeybinds();
+        updateKeybindButtons();
+        cancelKeybind();
+    };
+    
+    document.addEventListener('keydown', keybindListener);
+}
+
+function cancelKeybind() {
+    if (keybindListener) {
+        document.removeEventListener('keydown', keybindListener);
+        keybindListener = null;
+    }
+    currentKeybindAction = null;
+    document.querySelectorAll('.keybind-btn').forEach(btn => btn.classList.remove('listening'));
+    updateKeybindButtons();
+}
+
+function resetKeybinds() {
+    customKeybinds = { ...DEFAULT_KEYBINDS };
+    saveKeybinds();
+    updateKeybindButtons();
+}
+
+function getKeybind(action) {
+    return customKeybinds[action] || DEFAULT_KEYBINDS[action];
+}
+
+loadKeybinds();
+
 function syncOptionsPanel() {
     const music = document.getElementById('music-volume');
     const sfx = document.getElementById('sfx-volume');
@@ -230,14 +318,15 @@ function toggleReducedMotion() {
     const next = localStorage.getItem('reducedMotion') !== 'true';
     localStorage.setItem('reducedMotion', next ? 'true' : 'false');
     document.body.classList.toggle('reduced-motion', next);
+    document.body.classList.toggle('performance-mode', next);
     updateMotionText();
 }
 
 function updateMotionText() {
     const el = document.getElementById('motion-mode-text');
     if (el) el.textContent = localStorage.getItem('reducedMotion') === 'true'
-        ? 'Animaciones suaves'
-        : 'Animaciones normales';
+        ? 'Rendimiento alto'
+        : 'Visuales completos';
 }
 
 function saveTouchLayout() {
@@ -284,6 +373,7 @@ bindOptionSliders();
 bindTouchControls();
 applyTouchLayout();
 document.body.classList.toggle('reduced-motion', localStorage.getItem('reducedMotion') === 'true');
+document.body.classList.toggle('performance-mode', localStorage.getItem('reducedMotion') === 'true');
 document.querySelector('.ls-play-btn')?.addEventListener('mouseenter', () => window.playSfx?.('levelHover', 0.55));
 
 // =====================================================
@@ -460,6 +550,158 @@ function toggleMute() {
 }
 
 applyMuteState();
+
+window.startKeybind = startKeybind;
+window.resetKeybinds = resetKeybinds;
+window.getKeybind = getKeybind;
+
+// =====================================================
+// ACHIEVEMENTS SYSTEM
+// =====================================================
+
+const ACHIEVEMENTS_STORAGE_KEY = 'achievements';
+
+const ACHIEVEMENTS_DATA = [
+    { id: 'first_win', name: 'Primera Victoria', description: 'Completa tu primer nivel', icon: '🏆', unlocked: false },
+    { id: 'combo_10', name: 'Combo x10', description: 'Alcanza un combo de 10', icon: '🔥', unlocked: false },
+    { id: 'combo_50', name: 'Combo x50', description: 'Alcanza un combo de 50', icon: '💥', unlocked: false },
+    { id: 'survival_5min', name: 'Superviviente', description: 'Sobrevive 5 minutos en Modo Supervivencia', icon: '⏱️', unlocked: false },
+    { id: 'all_powerups', name: 'Coleccionista', description: 'Desbloquea todos los potenciadores', icon: '💎', unlocked: false },
+    { id: 'max_level', name: 'Maestro', description: 'Alcanza el nivel máximo en cualquier potenciador', icon: '⭐', unlocked: false },
+    { id: 'no_damage', name: 'Intocable', description: 'Completa un nivel sin recibir daño', icon: '🛡️', unlocked: false },
+    { id: 'gems_100', name: 'Riqueza', description: 'Acumula 100 gemas', icon: '💰', unlocked: false }
+];
+
+function loadAchievements() {
+    const saved = localStorage.getItem(ACHIEVEMENTS_STORAGE_KEY);
+    if (saved) {
+        const savedAchievements = JSON.parse(saved);
+        ACHIEVEMENTS_DATA.forEach(achievement => {
+            const saved = savedAchievements.find(a => a.id === achievement.id);
+            if (saved) {
+                achievement.unlocked = saved.unlocked;
+                achievement.progress = saved.progress || 0;
+            }
+        });
+    }
+}
+
+function saveAchievements() {
+    localStorage.setItem(ACHIEVEMENTS_STORAGE_KEY, JSON.stringify(ACHIEVEMENTS_DATA));
+}
+
+function unlockAchievement(id) {
+    const achievement = ACHIEVEMENTS_DATA.find(a => a.id === id);
+    if (achievement && !achievement.unlocked) {
+        achievement.unlocked = true;
+        saveAchievements();
+        showAchievementNotification(achievement);
+    }
+}
+
+function showAchievementNotification(achievement) {
+    const notification = document.createElement('div');
+    notification.className = 'achievement-notification';
+    notification.innerHTML = `
+        <span class="achievement-icon">${achievement.icon}</span>
+        <div class="achievement-info">
+            <strong>¡LOGRO DESBLOQUEADO!</strong>
+            <span>${achievement.name}</span>
+        </div>
+    `;
+    document.body.appendChild(notification);
+    notification.classList.add('showing');
+    setTimeout(() => {
+        notification.classList.remove('showing');
+        setTimeout(() => notification.remove(), 300);
+    }, 3000);
+}
+
+function showAchievementsPanel() {
+    const panel = document.getElementById('achievementsPanel');
+    const body = document.getElementById('achievementsBody');
+    if (!panel || !body) return;
+    
+    const unlockedCount = ACHIEVEMENTS_DATA.filter(a => a.unlocked).length;
+    const totalCount = ACHIEVEMENTS_DATA.length;
+    
+    body.innerHTML = `
+        <div class="achievements-stats">
+            <span>Desbloqueados: ${unlockedCount}/${totalCount}</span>
+        </div>
+        <div class="achievements-grid">
+            ${ACHIEVEMENTS_DATA.map(achievement => `
+                <div class="achievement-item ${achievement.unlocked ? 'unlocked' : 'locked'}">
+                    <span class="achievement-icon">${achievement.icon}</span>
+                    <div class="achievement-info">
+                        <strong>${achievement.name}</strong>
+                        <p>${achievement.description}</p>
+                    </div>
+                    ${achievement.unlocked ? '<span class="achievement-status">✓</span>' : ''}
+                </div>
+            `).join('')}
+        </div>
+    `;
+    
+    panel.style.display = 'grid';
+    panel.classList.add('showing');
+}
+
+function closeAchievementsPanel() {
+    const panel = document.getElementById('achievementsPanel');
+    if (panel) {
+        panel.classList.remove('showing');
+        setTimeout(() => panel.style.display = 'none', 300);
+    }
+}
+
+loadAchievements();
+
+window.showAchievementsPanel = showAchievementsPanel;
+window.closeAchievementsPanel = closeAchievementsPanel;
+window.unlockAchievement = unlockAchievement;
+
+// =====================================================
+// AUTO SAVE SYSTEM
+// =====================================================
+
+const AUTO_SAVE_INTERVAL = 60000; // 60 segundos
+
+function autoSave() {
+    // Guardar datos del jugador
+    if (window.playerData) {
+        localStorage.setItem('deadCoins', window.playerData.deadCoins);
+        localStorage.setItem('gems', window.playerData.gems);
+    }
+    
+    // Guardar potenciadores
+    window.savePowerups?.();
+    
+    // Guardar keybinds
+    localStorage.setItem('customKeybinds', JSON.stringify(window.customKeybinds || {}));
+    
+    // Guardar logros
+    localStorage.setItem('achievements', JSON.stringify(window.ACHIEVEMENTS_DATA || []));
+    
+    // Guardar combo stats
+    window.saveComboStats?.();
+    
+    console.log('Auto-save completado');
+}
+
+function startAutoSave() {
+    autoSave();
+    setInterval(autoSave, AUTO_SAVE_INTERVAL);
+}
+
+// Iniciar auto-save cuando el DOM esté cargado
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', startAutoSave);
+} else {
+    startAutoSave();
+}
+
+window.autoSave = autoSave;
 
 window.addEventListener(
     "DOMContentLoaded",

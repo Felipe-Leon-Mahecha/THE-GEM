@@ -312,7 +312,12 @@
     };
 
     window.preloadLevelAssets = function () {
-        window.LEVEL_CONFIGS.forEach(level => {
+        const lowPowerBoot = localStorage.getItem('reducedMotion') === 'true' ||
+            document.body.classList.contains('is-touch-device');
+        const levelsToPreload = lowPowerBoot
+            ? window.LEVEL_CONFIGS.slice(0, 3)
+            : window.LEVEL_CONFIGS;
+        levelsToPreload.forEach(level => {
             const assets = level.assets || {};
             Object.keys(assets).forEach(key => window.getLevelImage(assets[key]));
         });
