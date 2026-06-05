@@ -210,7 +210,7 @@ function updateSierras(timeScale = 1) {
             }
 
             // Colision
-            if (!window.invulnerable && !window.isPowerupInvulnerable?.()) {
+            if (!window.invulnerable && !window.isPowerupInvulnerable?.() && !window.isZeroGravityActive?.()) {
                 let r = window.BASE_RADIUS + window.offset;
                 let sr = s.fromGround ? window.BASE_RADIUS : window.DOME_RADIUS;
                 let rel = ((s.angle + window.worldRotation - window.angle + Math.PI * 2) % (Math.PI * 2));

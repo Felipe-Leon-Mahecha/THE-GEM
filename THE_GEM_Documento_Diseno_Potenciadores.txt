@@ -1,0 +1,316 @@
+
+=======================================================================
+                THE GEM - DOCUMENTO DE DISEÑO DE POTENCIADORES
+=======================================================================
+
+TOTAL ACTUAL: 22 POTENCIADORES
+
+=======================================================================
+🛡️ DEFENSIVOS
+=======================================================================
+
+1. PROTECCIÓN
+ID: proteccion
+Color: #AAE3D8
+
+Descripción:
+Genera un escudo temporal que vuelve al jugador completamente invulnerable.
+Permite atravesar cualquier obstáculo sin recibir daño.
+
+Mejora principal:
+Aumenta la duración del escudo.
+
+Nivel máximo:
+4.2 segundos de invulnerabilidad y escudos adicionales.
+
+-----------------------------------------------------------------------
+
+2. FANTASMA
+ID: fantasma
+Color: #DEAAF0
+
+Descripción:
+Convierte temporalmente al jugador en una entidad intangible capaz de
+atravesar obstáculos sin sufrir daño.
+
+Mejora principal:
+Incrementa el tiempo de intangibilidad.
+
+Nivel máximo:
+Mayor duración y usos adicionales.
+
+-----------------------------------------------------------------------
+
+3. VIDA EXTRA
+ID: vida_extra
+Color: #DE21C8
+
+Descripción:
+Otorga vidas adicionales que permiten sobrevivir a más errores durante
+la partida.
+
+Mejora principal:
+Aumenta la cantidad de vidas obtenidas y añade protección extra.
+
+Nivel máximo:
+Hasta 3 vidas adicionales y escudo reforzado.
+
+-----------------------------------------------------------------------
+
+4. ÁNGEL GUARDIÁN
+ID: angel_guardian
+Color: #4BC0EB
+
+Descripción:
+Activa una resurrección automática cuando el jugador recibe un golpe fatal.
+
+Mejora principal:
+Aumenta las vidas recuperadas tras revivir.
+
+Nivel máximo:
+Revive con 4 vidas.
+
+-----------------------------------------------------------------------
+
+5. BURBUJA FANTASMA
+ID: burbuja
+Color: #FF6EB4
+
+Descripción:
+Rodea al jugador con una burbuja protectora que bloquea impactos y genera
+espacio para reaccionar.
+
+Mejora principal:
+Aumenta la duración del efecto.
+
+Nivel máximo:
+También atrae monedas cercanas.
+
+-----------------------------------------------------------------------
+
+6. SALTO CUÁNTICO
+ID: dash
+Color: #4E2A84
+
+Descripción:
+Realiza un desplazamiento instantáneo sobre la órbita para esquivar peligros
+o cruzar zonas complicadas.
+
+Mejora principal:
+Más alcance, cargas e invulnerabilidad.
+
+Nivel máximo:
+5 cargas por partida.
+
+-----------------------------------------------------------------------
+
+7. CÁPSULA DE REBOBINADO
+ID: rebobinado
+Color: #00A896
+
+Descripción:
+Guarda temporalmente tu estado. Si mueres durante la ventana activa,
+regresas automáticamente al punto registrado.
+
+Mejora principal:
+Amplía la ventana de protección.
+
+Nivel máximo:
+9 segundos de registro.
+
+-----------------------------------------------------------------------
+
+8. GRAVEDAD CERO
+ID: gravedad_cero
+Color: #7CB342
+
+Descripción:
+Hace flotar al jugador en el centro de la pista evitando ciertos peligros
+de la órbita principal.
+
+Mejora principal:
+Aumenta la duración y movilidad.
+
+Nivel máximo:
+Movimiento normal mientras flota.
+
+-----------------------------------------------------------------------
+
+9. SOMBRA
+ID: sombra
+Color: #2D2D2D
+
+Descripción:
+Invoca un clon protector que absorbe golpes fatales en lugar del jugador.
+
+Mejora principal:
+Más duración y absorción de impactos.
+
+Nivel máximo:
+También ayuda a recoger monedas.
+
+=======================================================================
+⏱️ CONTROL Y ESPACIO
+=======================================================================
+
+10. HORA DE PARADA
+ID: stop_time
+
+Descripción:
+Detiene completamente el movimiento de los obstáculos durante unos segundos.
+
+Nivel máximo:
+Mayor duración y múltiples usos.
+
+-----------------------------------------------------------------------
+
+11. CÁMARA LENTA
+ID: camara_lenta
+
+Descripción:
+Reduce drásticamente la velocidad del mundo para facilitar esquivas y
+movimientos precisos.
+
+Nivel máximo:
+Ralentización prolongada.
+
+-----------------------------------------------------------------------
+
+12. DESTRUCCIÓN LETAL
+ID: destruccion_letal
+
+Descripción:
+Desactiva una zona de la órbita impidiendo la aparición de obstáculos.
+
+Nivel máximo:
+Área segura más amplia y duradera.
+
+-----------------------------------------------------------------------
+
+13. CAOS
+ID: caos
+
+Descripción:
+Potenciador extremo que vuelve invencible al jugador y además concede vidas.
+
+Nivel máximo:
+Invencibilidad prolongada y múltiples vidas extra.
+
+-----------------------------------------------------------------------
+
+14. SOBRECARGA
+ID: sobrecarga
+
+Descripción:
+Incrementa enormemente la velocidad del jugador permitiendo atravesar el mapa
+a gran ritmo.
+
+Nivel máximo:
+Sin penalización de aturdimiento.
+
+-----------------------------------------------------------------------
+
+15. ONDA REPULSORA
+ID: onda_repulsora
+
+Descripción:
+Libera una onda expansiva que empuja los obstáculos lejos del jugador.
+
+Nivel máximo:
+Afecta prácticamente toda la pantalla.
+
+-----------------------------------------------------------------------
+
+16. TORMENTA DE CLAVOS
+ID: tormenta_clavos
+
+Descripción:
+Dispara proyectiles radiales que destruyen obstáculos al impactar.
+
+Nivel máximo:
+Gran cantidad de clavos y ráfagas adicionales.
+
+=======================================================================
+💰 UTILIDAD Y ECONOMÍA
+=======================================================================
+
+17. IMÁN
+ID: iman
+
+Descripción:
+Atrae automáticamente monedas cercanas.
+
+Nivel máximo:
+Recoge monedas de toda la pantalla.
+
+-----------------------------------------------------------------------
+
+18. MONEDAS x2
+ID: monedas_x2
+
+Descripción:
+Multiplica las recompensas obtenidas durante la partida.
+
+Nivel máximo:
+Bonificaciones masivas de monedas y gemas.
+
+-----------------------------------------------------------------------
+
+19. PUNTO DE TELETRANSPORTE
+ID: teletransporte
+
+Descripción:
+Permite marcar una ubicación y regresar a ella posteriormente.
+
+Nivel máximo:
+Mayor tiempo de permanencia del marcador y retorno más seguro.
+
+-----------------------------------------------------------------------
+
+20. LLUVIA DE ORO
+ID: tierra
+
+Descripción:
+Transforma obstáculos en recompensas, llenando la pantalla de monedas.
+
+Nivel máximo:
+Alta probabilidad de generar gemas.
+
+-----------------------------------------------------------------------
+
+21. ESPEJO DE RUBÍES
+ID: espejo_rubies
+
+Descripción:
+Convierte temporalmente las monedas obtenidas en rubíes.
+
+Nivel máximo:
+Duplica rubíes visibles al activarse.
+
+=======================================================================
+⚠️ ALTO RIESGO
+=======================================================================
+
+22. SÚPER VÍNCULO
+ID: super_vinculo
+
+Descripción:
+Genera un clon opuesto que multiplica las recompensas obtenidas.
+Sin embargo, los errores del clon pueden afectar al jugador.
+
+Mejora principal:
+Aumenta duración y multiplicador.
+
+Nivel máximo:
+x6 recompensas sin daño compartido.
+
+=======================================================================
+RESUMEN
+=======================================================================
+
+Defensivos: 9
+Control y Espacio: 7
+Utilidad y Economía: 5
+Alto Riesgo: 1
+
+TOTAL: 22 POTENCIADORES

@@ -75,15 +75,12 @@ const levelImages = levels.map(lv => {
 // Precarga del fondo del level select para transición sin parpadeo
 const levelSelectBg = new Image();
 levelSelectBg.src = "assets/Imagenes/Select Nivel Fondo/Select_Nivel_Image.png";
-const levelPlayButtonImg = new Image();
-levelPlayButtonImg.src = "assets/Imagenes/Boton Play/Play_Button.png";
 
 let selectedLevel = 0;
 window.selectedLevel = selectedLevel;
 let carouselX = 0;
 let carouselTarget = 0;
 let selectVisible = false;
-let selectedPlayButtonBounds = null;
 
 // Variable global para el trail del banner (usada también en shop.js)
 var bannerTrail = [];
@@ -123,15 +120,8 @@ window.moveLevelSelection = moveLevelSelection;
 
 window.playSelectedLevel = function () {
     if (!levels[selectedLevel]?.unlocked) return;
-    const launchLevel = () => {
-        window.hideLevelSelect();
-        window.startGame(selectedLevel);
-    };
-    if (typeof window.showPowerupSelection === 'function') {
-        window.showPowerupSelection(selectedLevel, launchLevel);
-        return;
-    }
-    launchLevel();
+    window.hideLevelSelect();
+    (window.startLevelWithTransition || window.startGame)(selectedLevel);
 };
 
 const systemMessages = [
@@ -178,8 +168,8 @@ window.showLevelSelect = function () {
     const ls =
         document.getElementById("levelSelect");
 
-    const overlay = document.getElementById("overlay");
-    if (overlay) overlay.style.display = "none";
+    document.getElementById("overlay")
+        .style.display = "none";
 
     const nameEl =
         document.getElementById("playerName");
@@ -271,8 +261,7 @@ if (menuMusic) {
 
 window.hideLevelSelect = function () {
     selectVisible = false;
-    const ls = document.getElementById("levelSelect");
-    if (ls) ls.style.display = "none";
+    document.getElementById("levelSelect").style.display = "none";
     if (carouselAnimId) cancelAnimationFrame(carouselAnimId);
     clearInterval(window.systemMsgLoop); // Prevenir ejecución fantasma en fondo
     clearTimeout(window.systemMsgTimeout);
@@ -392,7 +381,6 @@ function drawCarousel(timestamp = 0) {
     const centerY = compact ? H * 0.58 : H / 2 + 70;
 
     carouselX += (carouselTarget - carouselX) * 0.12;
-    selectedPlayButtonBounds = null;
 
     levels.forEach((lv, i) => {
 
@@ -651,35 +639,6 @@ function drawCarousel(timestamp = 0) {
 
             }
 
-            if (i === selectedLevel) {
-                const btnW = 178 * scale;
-                const btnH = 48 * scale;
-                const btnX = centerX + offsetX - btnW / 2;
-                const btnY = y + h - 76 * scale;
-                selectedPlayButtonBounds = { x: btnX, y: btnY, w: btnW, h: btnH };
-
-                ctx2.save();
-                ctx2.shadowColor = "rgba(0,255,231,0.45)";
-                ctx2.shadowBlur = 18;
-                if (levelPlayButtonImg.complete && levelPlayButtonImg.naturalWidth) {
-                    ctx2.drawImage(levelPlayButtonImg, btnX, btnY, btnW, btnH);
-                } else {
-                    const playGrad = ctx2.createLinearGradient(btnX, btnY, btnX + btnW, btnY + btnH);
-                    playGrad.addColorStop(0, "#00ffe7");
-                    playGrad.addColorStop(1, "#0088ff");
-                    ctx2.fillStyle = playGrad;
-                    ctx2.beginPath();
-                    ctx2.roundRect(btnX, btnY, btnW, btnH, 14 * scale);
-                    ctx2.fill();
-                }
-                ctx2.shadowBlur = 0;
-                ctx2.fillStyle = "#050507";
-                ctx2.font = `900 ${15 * scale}px Geom, monospace`;
-                ctx2.letterSpacing = "0px";
-                ctx2.fillText("JUGAR", centerX + offsetX, btnY + btnH * 0.62);
-                ctx2.restore();
-            }
-
         } else {
 
             // overlay oscuro
@@ -784,8 +743,8 @@ document.addEventListener("keydown", e => {
 
         window.hideLevelSelect();
 
-        const overlay = document.getElementById("overlay");
-        if (overlay) overlay.style.display = "flex";
+        document.getElementById("overlay").style.display =
+            "flex";
 
     }
 

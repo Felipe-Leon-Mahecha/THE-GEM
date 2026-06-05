@@ -398,6 +398,14 @@
                 </div>
             </div>
 
+            <button onclick="openMissionsPanel()" class="shop-missions-entry" type="button">
+                <span>
+                    <b>MISIONES</b>
+                    <small>Diarias y racha</small>
+                </span>
+                <strong id="shop-missions-ready">0</strong>
+            </button>
+
             <div style="padding:20px 24px; border-bottom:1px solid rgba(255,255,255,0.06);">
                 <div
                     style="color:rgba(255,255,255,0.25); font-family:monospace; font-size:9px; letter-spacing:4px; margin-bottom:14px;">
@@ -500,6 +508,10 @@
                 <div onclick="showInventorySection('emotes')" id="inv-nav-emotes"
                     style="display:flex; align-items:center; gap:12px; padding:10px 14px; border-radius:10px; cursor:pointer; color:rgba(255,255,255,0.5); font-family:monospace; font-size:12px; letter-spacing:2px;">
                     <span>◌</span> EMOTES
+                </div>
+                <div onclick="showInventorySection('powerups')" id="inv-nav-powerups"
+                    style="display:flex; align-items:center; gap:12px; padding:10px 14px; border-radius:10px; cursor:pointer; color:rgba(255,255,255,0.5); font-family:monospace; font-size:12px; letter-spacing:2px;">
+                    <span>◆</span> POTENCIADORES
                 </div>
                 <div onclick="showInventorySection('cofres')" id="inv-nav-cofres"
                     style="display:flex; align-items:center; gap:12px; padding:10px 14px; border-radius:10px; cursor:pointer; color:rgba(255,255,255,0.5); font-family:monospace; font-size:12px; letter-spacing:2px;">

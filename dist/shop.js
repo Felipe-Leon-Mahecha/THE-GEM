@@ -626,21 +626,20 @@ const EMOTES_DATA = [
     { id: 'emote_sorprendido', name: 'Sorprendido', image: 'assets/UI/Store/Emotes/emote_brifon_sorprendido.png', rarity: 'BASICA', price: EMOTE_STANDARD_PRICE_COINS, priceType: 'coins', slot: 'SHOP_EMOTE_ASSET_SLOT_BASIC_SORPRENDIDO' },
     { id: 'emote_mudo', name: 'Mudo', image: 'assets/UI/Store/Emotes/emote_brifon_mudo.png', rarity: 'BASICA', price: EMOTE_STANDARD_PRICE_COINS, priceType: 'coins', slot: 'SHOP_EMOTE_ASSET_SLOT_BASIC_MUDO' },
     { id: 'emote_ruby_pass_01', name: 'Ruby Pass', image: RUBY_PASS_ASSETS.premiumEmote01, rarity: 'VIP', vip: true, passOnly: true, rubyPassLane: 'premium', rubyPassLevel: 8, slot: 'SHOP_EMOTE_ASSET_SLOT_RUBY_PASS_01' },
-    { id: 'emote_daxor_enojado', name: 'Daxor Enojado', image: 'assets/UI/Store/Emotes/emote_daxor_enojado.png', rarity: 'DEMON', packId: 'pack_daxor', slot: 'SHOP_EMOTE_DAXOR_ENOJADO' },
-    { id: 'emote_daxor_feliz', name: 'Daxor Feliz', image: 'assets/UI/Store/Emotes/emote_daxor_feliz.png', rarity: 'DEMON', packId: 'pack_daxor', slot: 'SHOP_EMOTE_DAXOR_FELIZ' },
-    { id: 'emote_daxor_triste', name: 'Daxor Triste', image: 'assets/UI/Store/Emotes/emote_daxor_triste.png', rarity: 'DEMON', packId: 'pack_daxor', slot: 'SHOP_EMOTE_DAXOR_TRISTE' },
-    { id: 'emote_daxor_sorprendido', name: 'Daxor Sorprendido', image: 'assets/UI/Store/Emotes/emote_daxor_sorprendido.png', rarity: 'DEMON', packId: 'pack_daxor', slot: 'SHOP_EMOTE_DAXOR_SORPRENDIDO' },
-    { id: 'emote_daxor_saludo', name: 'Daxor Saludo', image: 'assets/UI/Store/Emotes/emote_daxor_saludo.png', rarity: 'DEMON', packId: 'pack_daxor', slot: 'SHOP_EMOTE_DAXOR_SALUDO' },
-    { id: 'emote_daxor_risa', name: 'Daxor Risa', image: 'assets/UI/Store/Emotes/emote_daxor_risa.png', rarity: 'DEMON', packId: 'pack_daxor', slot: 'SHOP_EMOTE_DAXOR_RISA' },
+    { id: 'emoji_fachero', name: 'Fachero', image: 'assets/UI/Store/VIP/Bundles/Emojis/emoji_fachero.png', rarity: 'VIP', vip: true, price: 200, priceType: 'gems', slot: 'SHOP_EMOTE_ASSET_SLOT_VIP_FACHERO' },
+    { id: 'emoji_enamorado', name: 'Enamorado', image: 'assets/UI/Store/VIP/Bundles/Emojis/emoji_enamorado.png', rarity: 'VIP', vip: true, price: 200, priceType: 'gems', slot: 'SHOP_EMOTE_ASSET_SLOT_VIP_ENAMORADO' },
+    { id: 'emoji_asustado', name: 'Asustado', image: 'assets/UI/Store/VIP/Bundles/Emojis/emoji_asustado.png', rarity: 'VIP', vip: true, price: 200, priceType: 'gems', slot: 'SHOP_EMOTE_ASSET_SLOT_VIP_ASUSTADO' },
+    { id: 'emoji_skull_pack', name: 'Skull', image: 'assets/UI/Store/VIP/Bundles/Emojis/emoji_skull_pack.png', rarity: 'VIP', vip: true, price: 200, priceType: 'gems', slot: 'SHOP_EMOTE_ASSET_SLOT_VIP_SKULL' },
+    { id: 'emoji_derretido', name: 'Derretido', image: 'assets/UI/Store/VIP/Bundles/Emojis/emoji_derretido.png', rarity: 'VIP', vip: true, price: 200, priceType: 'gems', slot: 'SHOP_EMOTE_ASSET_SLOT_VIP_DERRETIDO' },
+    { id: 'emoji_serio', name: 'Serio', image: 'assets/UI/Store/VIP/Bundles/Emojis/emoji_serio.png', rarity: 'VIP', vip: true, price: 200, priceType: 'gems', slot: 'SHOP_EMOTE_ASSET_SLOT_VIP_SERIO' },
+    { id: 'emoji_llorando', name: 'Llorando VIP', image: 'assets/UI/Store/VIP/Bundles/Emojis/emoji_llorando.png', rarity: 'VIP', vip: true, price: 200, priceType: 'gems', slot: 'SHOP_EMOTE_ASSET_SLOT_VIP_LLORANDO' },
+    { id: 'emoji_enojado', name: 'Enojado VIP', image: 'assets/UI/Store/VIP/Bundles/Emojis/emoji_enojado.png', rarity: 'VIP', vip: true, price: 200, priceType: 'gems', slot: 'SHOP_EMOTE_ASSET_SLOT_VIP_ENOJADO' },
+    { id: 'emoji_triste', name: 'Triste', image: 'assets/UI/Store/VIP/Bundles/Emojis/emoji_triste.png', rarity: 'VIP', vip: true, price: 200, priceType: 'gems', slot: 'SHOP_EMOTE_ASSET_SLOT_VIP_TRISTE' },
+    { id: 'emoji_feliz', name: 'Feliz', image: 'assets/UI/Store/VIP/Bundles/Emojis/emoji_feliz.png', rarity: 'VIP', vip: true, price: 200, priceType: 'gems', slot: 'SHOP_EMOTE_ASSET_SLOT_VIP_FELIZ' },
+    { id: 'emoji_guino', name: 'Guino', image: 'assets/UI/Store/VIP/Bundles/Emojis/emoji_guino.png', rarity: 'VIP', vip: true, price: 200, priceType: 'gems', slot: 'SHOP_EMOTE_ASSET_SLOT_VIP_GUINO' },
+    { id: 'emoji_sonriente', name: 'Sonriente', image: 'assets/UI/Store/VIP/Bundles/Emojis/emoji_sonriente.png', rarity: 'VIP', vip: true, price: 200, priceType: 'gems', slot: 'SHOP_EMOTE_ASSET_SLOT_VIP_SONRIENTE' },
+    { id: 'emoji_bomito', name: 'Bomito', image: 'assets/UI/Store/VIP/Bundles/Emojis/emoji_bomito.png', rarity: 'VIP', vip: true, price: 200, priceType: 'gems', slot: 'SHOP_EMOTE_ASSET_SLOT_VIP_BOMITO' },
 ];
-
-const DAXOR_EMOTE_PACK = {
-    id: 'pack_daxor',
-    name: 'Pack Daxor',
-    price: 420,
-    priceType: 'gems',
-    emoteIds: ['emote_daxor_enojado', 'emote_daxor_feliz', 'emote_daxor_triste', 'emote_daxor_sorprendido', 'emote_daxor_saludo', 'emote_daxor_risa']
-};
 
 const VIP_ASSET_BASE = 'assets/UI/Store/VIP/Bundles';
 const VIP_ITEM_PRICE = 300;
@@ -728,6 +727,34 @@ const VIP_PROMO_BANNERS = [
         detailBackground: 'assets/UI/Store/VIP/Banners/bg_vip_specials.png'
     }
 ];
+
+function renderVIPPowerupPromoBanner(banner) {
+    const fallback = [
+        { id: 'proteccion', name: 'Proteccion', color: '#AAE3D8' },
+        { id: 'fantasma', name: 'Fantasma', color: '#DEAAF0' },
+        { id: 'stop_time', name: 'Stop Time', color: '#B09C54' },
+        { id: 'camara_lenta', name: 'Camara Lenta', color: '#D9C938' },
+        { id: 'vida_extra', name: 'Vida Extra', color: '#DE21C8' }
+    ];
+    const source = (window.POWERUPS_DATA || fallback).slice(0, 5);
+
+    return `
+        <article class="vip-promo-banner vip-powerup-promo-banner" onclick="renderVIPPowerups()">
+            <div class="vip-powerup-promo-backdrop"></div>
+            <div class="vip-powerup-promo-copy">
+                <span>POTENCIADORES</span>
+                <strong>VIP</strong>
+            </div>
+            <div class="vip-powerup-promo-grid">
+                ${source.map((powerup, index) => `
+                    <div class="vip-powerup-promo-hex hex-${index + 1}" style="--powerup-color:${powerup.color || '#ffee00'};" onclick="event.stopPropagation(); openPowerupDetail('${powerup.id}', 'vip');">
+                        <img src="assets/powerups/icons/${powerup.id}.png" alt="${powerup.name || ''}" draggable="false">
+                    </div>
+                `).join('')}
+            </div>
+        </article>
+    `;
+}
 
 const VIP_GAMEPLAY_PLACEHOLDERS = [
     { id: 'boosters', name: 'Potenciadores', type: 'BOOSTERS', detail: 'Slots para boosts del gameplay', rarity: 'rare' },
@@ -1241,12 +1268,11 @@ function openShop() {
         parseInt(localStorage.getItem('gems') || '0');
 
     updateEquippedSkinPreview();
+    updateMissionBadge();
 
     showShopSection('home');
     optimizeShopMedia(panel);
     updateMenuHUD();
-    window.refreshMissionChip?.();
-    window.refreshAchievementNavHints?.();
 }
 
 function closeShop() {
@@ -1264,7 +1290,6 @@ function closeShop() {
         panel.style.display = 'none';
         panel.classList.remove('leaving');
         updateMenuHUD();
-        window.onShopClosedForAchievements?.();
     }, 300);
 }
 
@@ -1410,7 +1435,7 @@ function renderSkinCard(s, equipped) {
         </div>
         <div style="color:white; font-family:monospace; font-size:11px; letter-spacing:1px;">${s.name}</div>
         <div style="color:${rarityColor}; font-family:monospace; font-size:9px; letter-spacing:2px;">${s.rarity}</div>
-        <div style="min-height:34px; color:rgba(255,255,255,0.32); font-family:monospace; font-size:9px; line-height:1.35; text-align:center;">Skin coleccionable<br><span style="color:${rarityColor}88;">${s.rarity}</span></div>
+        <div style="min-height:34px; color:rgba(255,255,255,0.32); font-family:monospace; font-size:9px; line-height:1.35; text-align:center;">${s.archetype || 'Sin arquetipo'}<br>${s.ability || ''}</div>
         ${s.vipOnly && !owned ? `<div style="color:#ffee00; font-family:monospace; font-size:9px; letter-spacing:1px;">SOLO EN TIENDA VIP</div>` : (s.fragments ? `<div style="color:rgba(255,255,255,0.22); font-family:monospace; font-size:9px;">${s.fragments} FRAGMENTOS</div>` : '')}
         ${owned
             ? `<button onclick="equipSkin('${s.id}')" style="width:100%; padding:6px 0; border-radius:8px; border:1px solid ${isEquipped ? rarityColor + '66' : 'rgba(255,255,255,0.12)'}; background:${isEquipped ? rarityColor + '15' : 'none'}; color:${isEquipped ? rarityColor : 'rgba(255,255,255,0.4)'}; font-family:monospace; font-size:9px; cursor:pointer; letter-spacing:1px;">${isEquipped ? '✔ EQUIPADA' : 'EQUIPAR'}</button>`
@@ -1487,7 +1512,6 @@ function completeSkinPurchase(id) {
     renderSkinsPage(document.getElementById('shopContent'));
     playerData.deadCoins = coins;
     updateMenuHUD();
-    window.Progression?.trackShopPurchase();
 }
 
 function renderBannersPage(container) {
@@ -1589,70 +1613,14 @@ function equipBanner(id) {
     }
 }
 
-function isDaxorPackOwned() {
-    return localStorage.getItem('emote_pack_' + DAXOR_EMOTE_PACK.id) === 'true';
-}
-
-function buyDaxorEmotePack() {
-    if (isDaxorPackOwned()) return;
-    const pack = DAXOR_EMOTE_PACK;
-    showShopModal({
-        kicker: 'PACK DE EMOTES',
-        title: pack.name,
-        image: 'assets/UI/Store/Emotes/emote_daxor_feliz.png',
-        body: `Incluye ${pack.emoteIds.length} emotes Daxor por ${pack.price} rubies.`,
-        confirmText: 'COMPRAR PACK',
-        cancelText: 'CANCELAR',
-        onConfirm: () => {
-            if (!canAfford(pack.price, pack.priceType)) return alert('No tienes suficientes rubies.');
-            spendCurrency(pack.price, pack.priceType);
-            localStorage.setItem('emote_pack_' + pack.id, 'true');
-            pack.emoteIds.forEach(eid => localStorage.setItem('emote_' + eid, 'true'));
-            window.playSfx?.('vipBuy', 0.85);
-            window.Progression?.trackShopPurchase();
-            refreshShopBalances();
-            renderEmotesPage(document.getElementById('shopContent'));
-            renderIngameEmotes();
-            updateMenuHUD();
-        }
-    });
-}
-window.buyDaxorEmotePack = buyDaxorEmotePack;
-
-function renderDaxorEmotePackBanner() {
-    const pack = DAXOR_EMOTE_PACK;
-    const owned = isDaxorPackOwned();
-    const previews = pack.emoteIds.map(id => EMOTES_DATA.find(e => e.id === id)).filter(Boolean);
-    return `
-        <div class="emote-pack-banner">
-            <div>
-                <div style="color:#ff2448;font-family:monospace;font-size:10px;letter-spacing:4px;">PACK EXCLUSIVO</div>
-                <div style="color:white;font-family:monospace;font-size:22px;font-weight:900;letter-spacing:2px;margin:6px 0;">${pack.name}</div>
-                <div style="color:rgba(255,255,255,0.45);font-family:monospace;font-size:10px;">6 emotes · reemplaza los PNG en assets/UI/Store/Emotes/</div>
-                <div class="emote-pack-grid" style="margin-top:12px;">
-                    ${previews.map(e => `<img src="${e.image}" alt="${e.name}" title="${e.name}">`).join('')}
-                </div>
-            </div>
-            <div style="display:flex;flex-direction:column;gap:10px;align-items:flex-end;">
-                ${owned
-        ? '<span style="color:#00ffe7;font-family:monospace;font-size:11px;letter-spacing:2px;">PACK DESBLOQUEADO</span>'
-        : `<button type="button" onclick="buyDaxorEmotePack()" style="padding:12px 18px;border-radius:8px;border:1px solid rgba(255,36,72,0.5);background:rgba(255,36,72,0.15);color:#ff6b8a;font-family:monospace;font-size:11px;letter-spacing:2px;cursor:pointer;">${renderPrice(pack.price, pack.priceType)}</button>`}
-            </div>
-        </div>`;
-}
-
 function renderEmotesPage(container) {
-    const retail = EMOTES_DATA.filter(e => !e.packId);
-    const packEmotes = EMOTES_DATA.filter(e => e.packId === DAXOR_EMOTE_PACK.id);
     container.innerHTML = `
         <div style="display:flex; align-items:center; gap:16px; margin-bottom:24px;">
             <button onclick="showShopSection('home')" style="padding:8px 16px; background:none; border:1px solid rgba(255,255,255,0.12); border-radius:8px; color:rgba(255,255,255,0.5); font-family:monospace; font-size:11px; letter-spacing:2px; cursor:pointer;">VOLVER</button>
             <div style="color:rgba(255,255,255,0.4); font-family:monospace; font-size:11px; letter-spacing:4px;">EMOTES</div>
         </div>
-        <div style="margin-bottom:20px;">${renderDaxorEmotePackBanner()}</div>
         <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(170px,1fr)); gap:16px;">
-            ${retail.map(renderEmoteSlot).join('')}
-            ${packEmotes.map(renderEmoteSlot).join('')}
+            ${EMOTES_DATA.map(renderEmoteSlot).join('')}
         </div>
     `;
 }
@@ -1661,11 +1629,9 @@ function renderEmoteSlot(emote) {
     const color = emote.vip ? '#ffcc00' : '#57b7dd';
     const owned = isEmoteOwned(emote);
     const equipped = localStorage.getItem('equippedEmote') === emote.id;
-    const canBuy = !owned && !emote.passOnly && !emote.packId && canAfford(emote.price || EMOTE_STANDARD_PRICE_COINS, emote.priceType || 'coins');
+    const canBuy = !owned && !emote.passOnly && canAfford(emote.price || EMOTE_STANDARD_PRICE_COINS, emote.priceType || 'coins');
     const action = owned
         ? `<button onclick="equipEmote('${emote.id}')" type="button">${equipped ? 'ACTIVO' : 'USAR'}</button>`
-        : emote.packId
-            ? `<button class="is-pass-only" type="button" onclick="buyDaxorEmotePack()">EN PACK DAXOR</button>`
         : emote.passOnly
             ? `<button class="is-pass-only" type="button" disabled>EN EL PASE</button>`
             : `<button onclick="buyEmote('${emote.id}')" type="button" ${canBuy ? '' : 'disabled'}>${renderPrice(emote.price || EMOTE_STANDARD_PRICE_COINS, emote.priceType || 'coins')}</button>`;
@@ -1683,7 +1649,6 @@ function renderEmoteSlot(emote) {
 
 function isEmoteOwned(emote) {
     if (!emote) return false;
-    if (emote.packId && localStorage.getItem('emote_pack_' + emote.packId) === 'true') return true;
     if (localStorage.getItem('emote_' + emote.id) === 'true') return true;
     if (emote.passOnly && emote.rubyPassLane && emote.rubyPassLevel) {
         return localStorage.getItem(`rubyPassClaimed_${emote.rubyPassLane}_${emote.rubyPassLevel}`) === 'true';
@@ -1697,7 +1662,7 @@ function getOwnedEmotes() {
 
 function buyEmote(id) {
     const emote = EMOTES_DATA.find(e => e.id === id);
-    if (!emote || emote.passOnly || emote.packId || isEmoteOwned(emote)) return;
+    if (!emote || emote.passOnly || isEmoteOwned(emote)) return;
     const price = emote.price || EMOTE_STANDARD_PRICE_COINS;
     const currency = emote.priceType || 'coins';
     showShopModal({
@@ -1951,7 +1916,6 @@ function openChestReward(chest) {
 
 function showChestResult(chest) {
     const { coins, gems, drop } = openChestReward(chest);
-    window.Progression?.trackChestOpen?.();
     const rewardView = getChestRewardView(drop, coins, gems);
     const currencyHTML = renderCurrencyRewardPiles({ coins, gems });
     window.playSfx?.('reward');
@@ -2126,12 +2090,17 @@ function canAfford(amount, currency) {
 function spendCurrency(amount, currency) {
     const key = currency === 'gems' ? 'gems' : 'deadCoins';
     localStorage.setItem(key, parseInt(localStorage.getItem(key) || '0') - amount);
+    window.trackMissionProgress?.('shop_purchase', 1);
     refreshShopBalances();
 }
 
 function addCurrency(amount, currency) {
     const key = currency === 'gems' ? 'gems' : 'deadCoins';
     localStorage.setItem(key, parseInt(localStorage.getItem(key) || '0') + amount);
+    if (window.playerData) {
+        if (currency === 'gems') window.playerData.gems = parseInt(localStorage.getItem(key) || '0');
+        else window.playerData.deadCoins = parseInt(localStorage.getItem(key) || '0');
+    }
 }
 
 function refreshShopBalances() {
@@ -2456,6 +2425,8 @@ function renderVIPCarouselDetail(id) {
 }
 
 function renderVIPPromoBanner(banner) {
+    if (banner.id === 'vip_powerups') return renderVIPPowerupPromoBanner(banner);
+
     return `
         <article class="vip-promo-banner" onclick="renderVIPPromoDetail('${banner.id}')">
             <img src="${banner.cover}" alt="" draggable="false">
@@ -2469,11 +2440,6 @@ function renderVIPPromoDetail(id) {
     const content = document.getElementById('vipContent');
     if (!content) return;
     window.currentVIPDetailRenderer = () => renderVIPPromoDetail(id);
-    if (id === 'vip_powerups' && typeof window.renderVIPPowerupColmenaPanel === 'function') {
-        window.renderVIPPowerupColmenaPanel(content, banner);
-        optimizeShopMedia(content);
-        return;
-    }
     const isBannerShop = id === 'vip_specials';
     content.innerHTML = `
         <button class="vip-back" onclick="renderVIPHome()" type="button">VOLVER A VIP</button>
@@ -2966,6 +2932,10 @@ function renderEmojiPackItem(item, owned) {
 
 function renderEmojiItem(item, owned) {
     const isSkinItem = item.type === 'vipSkin' || item.type === 'skin';
+    const equipped = item.type === 'emoji' && localStorage.getItem('equippedEmote') === item.id;
+    const action = item.type === 'emoji' && owned
+        ? `<button onclick="equipEmote('${item.id}')" ${equipped ? 'disabled' : ''} type="button">${equipped ? 'ACTIVO' : 'EQUIPAR'}</button>`
+        : `<button onclick="buyVIPMiniItemById('${item.id}')" ${owned ? 'disabled' : ''} type="button">${owned ? 'OBTENIDO' : `COMPRAR ${renderPrice(item.price, 'gems')}`}</button>`;
     return `
         <article class="vip-mini-item ${owned ? 'owned' : ''}">
             <div class="${isSkinItem ? 'vip-skin-orb' : 'vip-emoji-orb'}">
@@ -2973,7 +2943,7 @@ function renderEmojiItem(item, owned) {
             </div>
             <div class="vip-mini-type">EMOJI</div>
             <h3>${item.name}</h3>
-            <button onclick="buyVIPMiniItemById('${item.id}')" ${owned ? 'disabled' : ''} type="button">${owned ? 'OBTENIDO' : `COMPRAR ${renderPrice(item.price, 'gems')}`}</button>
+            ${action}
         </article>
     `;
 }
@@ -3092,9 +3062,17 @@ function grantVIPItem(item) {
         localStorage.setItem(item.id || `skin_${item.name.toLowerCase().replaceAll(' ', '_')}`, 'true');
         window.SKINS_DATA = getAllShopSkins();
     } else if (item.type === 'emoji') {
-        localStorage.setItem(item.id || `emoji_${item.name.toLowerCase().replaceAll(' ', '_')}`, 'true');
+        const emoteId = item.id || `emoji_${item.name.toLowerCase().replaceAll(' ', '_')}`;
+        localStorage.setItem(emoteId, 'true');
+        localStorage.setItem('emote_' + emoteId, 'true');
+        localStorage.setItem('equippedEmote', emoteId);
     } else if (item.type === 'emojiPack') {
-        (item.items || []).forEach(part => localStorage.setItem(part.id, 'true'));
+        (item.items || []).forEach(part => {
+            localStorage.setItem(part.id, 'true');
+            localStorage.setItem('emote_' + part.id, 'true');
+        });
+        const first = item.items?.[0]?.id;
+        if (first) localStorage.setItem('equippedEmote', first);
     } else if (item.type === 'vipTrailPng') {
         const trailId = item.trailId || item.id;
         localStorage.setItem(`trail_${trailId}_png`, 'true');
@@ -3143,7 +3121,7 @@ function closeInventory() {
 }
 
 function showInventorySection(section) {
-    ['skins', 'trails', 'banners', 'emotes', 'cofres'].forEach(s => {
+    ['skins', 'trails', 'banners', 'emotes', 'powerups', 'cofres'].forEach(s => {
         const el = document.getElementById('inv-nav-' + s);
         if (!el) return;
         if (s === section) {
@@ -3268,6 +3246,8 @@ function showInventorySection(section) {
                 ${owned.map(renderEmoteSlot).join('')}
             </div>
         `;
+    } else if (section === 'powerups') {
+        content.innerHTML = renderInventoryPowerups();
     } else if (section === 'cofres') {
         const stored = CHESTS_DATA.filter(c => !c.upgradeable).map(chest => ({
             ...chest,
@@ -3286,6 +3266,33 @@ function showInventorySection(section) {
             </div>
         ` : `<div style="display:grid;place-items:center;height:300px;color:rgba(255,255,255,.25);font-family:monospace;letter-spacing:4px;">NO TIENES COFRES GUARDADOS</div>`;
     }
+}
+
+function renderInventoryPowerups() {
+    if (!window.POWERUPS_DATA || !window.readPowerups) {
+        return `<div style="display:grid;place-items:center;height:300px;color:rgba(255,255,255,.25);font-family:monospace;letter-spacing:4px;">POTENCIADORES NO DISPONIBLES</div>`;
+    }
+    const inventory = window.readPowerups();
+    const owned = window.POWERUPS_DATA.filter(powerup => inventory[powerup.id]?.desbloqueado || inventory[powerup.id]?.usos > 0);
+    if (!owned.length) {
+        return `<div style="display:grid;place-items:center;height:300px;color:rgba(255,255,255,.25);font-family:monospace;letter-spacing:4px;">NO TIENES POTENCIADORES</div>`;
+    }
+    return `
+        <div style="color:rgba(255,255,255,0.4); font-family:monospace; font-size:11px; letter-spacing:4px; margin-bottom:20px;">POTENCIADORES - ${owned.length}</div>
+        <div class="inventory-powerup-grid">
+            ${owned.map(powerup => {
+                const state = inventory[powerup.id] || {};
+                const isVipShape = !window.NORMAL_SHOP_POWERUP_IDS?.includes(powerup.id);
+                return `
+                    <button class="inventory-powerup-card ${isVipShape ? 'hex' : 'rect'}" style="--powerup-color:${powerup.color}" onclick="openPowerupDetail('${powerup.id}','${isVipShape ? 'vip' : 'normal'}')" type="button">
+                        <img src="assets/powerups/icons/${powerup.id}.png" alt="">
+                        <strong>${powerup.name}</strong>
+                        <span>x${state.usos || 0}</span>
+                    </button>
+                `;
+            }).join('')}
+        </div>
+    `;
 }
 
 function renderInventoryProfileBanner(equipped) {
@@ -3341,7 +3348,6 @@ function openInventoryChestAmount(id, amount) {
         summary.gems += result.gems;
         summary.drops[result.drop] = (summary.drops[result.drop] || 0) + 1;
     }
-    window.Progression?.trackChestOpen?.(total);
     window.playSfx?.('reward');
     showInventorySection('cofres');
     showShopModal({
@@ -4333,10 +4339,6 @@ function renderBattlePassPage(container, options = {}) {
                     </div>
                 </div>
                 <div class="ruby-pass-season">
-                    ${(() => {
-                        const season = window.Progression?.getRubyPassSeason?.() || { name: 'Temporada Beta', subtitle: 'Pre-lanzamiento' };
-                        return `<div class="ruby-pass-season-banner"><strong>${season.name}</strong>${season.subtitle || ''}<br><span>${season.endsLabel || ''}</span></div>`;
-                    })()}
                     <span>NIVEL ${currentLevel}</span>
                     <strong>${currentXp} XP</strong>
                 </div>
@@ -4627,10 +4629,231 @@ function claimDailyGift(day) {
     ];
     rewards[(day - 1) % rewards.length]();
     localStorage.setItem(key, 'true');
-    window.Progression?.trackDailyClaim();
     updateMenuHUD();
     renderDailyGiftPage(document.getElementById('shopContent'));
 }
+
+const MISSIONS_STORAGE_KEY = 'shopMissionsState_v1';
+const MISSION_STREAK_STORAGE_KEY = 'shopMissionStreak_v1';
+const DAILY_MISSIONS = [
+    { id: 'distance', title: 'Recorre distancia', text: 'Avanza 1800 metros en partidas.', metric: 'distance', goal: 1800, reward: { coins: 90, gems: 1 } },
+    { id: 'shop_purchase', title: 'Compra algo', text: 'Haz 1 compra en la tienda.', metric: 'shop_purchase', goal: 1, reward: { coins: 60, gems: 1 } },
+    { id: 'coin_collect', title: 'Cazador de oro', text: 'Recoge 35 monedas.', metric: 'coin_collect', goal: 35, reward: { coins: 120, gems: 0 } },
+    { id: 'powerup_use', title: 'Activa poder', text: 'Usa 3 potenciadores en partida.', metric: 'powerup_use', goal: 3, reward: { coins: 70, gems: 2 } }
+];
+const MISSION_STREAK_REWARDS = [
+    { day: 1, coins: 70, gems: 1 },
+    { day: 3, coins: 180, gems: 3 },
+    { day: 5, coins: 320, gems: 5 },
+    { day: 7, coins: 520, gems: 9 }
+];
+
+function getMissionDateKey(date = new Date()) {
+    return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
+}
+
+function readMissionState() {
+    const today = getMissionDateKey();
+    let state = {};
+    try {
+        state = JSON.parse(localStorage.getItem(MISSIONS_STORAGE_KEY) || '{}') || {};
+    } catch (error) {
+        state = {};
+    }
+    if (state.date !== today) {
+        state = {
+            date: today,
+            progress: {},
+            claimed: {}
+        };
+        localStorage.setItem(MISSIONS_STORAGE_KEY, JSON.stringify(state));
+    }
+    return state;
+}
+
+function saveMissionState(state) {
+    localStorage.setItem(MISSIONS_STORAGE_KEY, JSON.stringify(state));
+    updateMissionBadge();
+}
+
+function readMissionStreak() {
+    let streak = {};
+    try {
+        streak = JSON.parse(localStorage.getItem(MISSION_STREAK_STORAGE_KEY) || '{}') || {};
+    } catch (error) {
+        streak = {};
+    }
+    return {
+        count: Math.max(0, parseInt(streak.count || 0, 10)),
+        lastDate: streak.lastDate || '',
+        claimed: streak.claimed || {}
+    };
+}
+
+function saveMissionStreak(streak) {
+    localStorage.setItem(MISSION_STREAK_STORAGE_KEY, JSON.stringify(streak));
+    updateMissionBadge();
+}
+
+function touchMissionSessionStreak() {
+    const today = getMissionDateKey();
+    const streak = readMissionStreak();
+    if (streak.lastDate === today) return streak;
+    const yesterday = new Date();
+    yesterday.setDate(yesterday.getDate() - 1);
+    const isConsecutive = streak.lastDate === getMissionDateKey(yesterday);
+    streak.count = isConsecutive ? streak.count + 1 : 1;
+    streak.lastDate = today;
+    saveMissionStreak(streak);
+    return streak;
+}
+
+function trackMissionProgress(metric, amount = 1) {
+    const state = readMissionState();
+    state.progress[metric] = Math.max(0, (parseFloat(state.progress[metric]) || 0) + amount);
+    saveMissionState(state);
+}
+
+function trackMissionDistance(px = 0) {
+    if (!px || px < 0.2) return;
+    trackMissionProgress('distance', px / 20);
+}
+
+function getMissionReadyCount() {
+    const state = readMissionState();
+    const streak = readMissionStreak();
+    const missionReady = DAILY_MISSIONS.filter(mission => {
+        const progress = parseFloat(state.progress[mission.metric] || 0);
+        return progress >= mission.goal && state.claimed[mission.id] !== true;
+    }).length;
+    const streakReady = MISSION_STREAK_REWARDS.filter(reward => streak.count >= reward.day && streak.claimed[reward.day] !== true).length;
+    return missionReady + streakReady;
+}
+
+function updateMissionBadge() {
+    const badge = document.getElementById('shop-missions-ready');
+    if (!badge) return;
+    badge.textContent = getMissionReadyCount();
+    badge.classList.toggle('is-ready', getMissionReadyCount() > 0);
+}
+
+function renderMissionReward(reward = {}) {
+    return [
+        reward.coins ? `${reward.coins} monedas` : '',
+        reward.gems ? `${reward.gems} rubies` : ''
+    ].filter(Boolean).join(' + ');
+}
+
+function openMissionsPanel() {
+    touchMissionSessionStreak();
+    const state = readMissionState();
+    const streak = readMissionStreak();
+    let modal = document.getElementById('missionsPanel');
+    if (!modal) {
+        modal = document.createElement('div');
+        modal.id = 'missionsPanel';
+        modal.className = 'missions-modal';
+        modal.addEventListener('click', event => {
+            if (event.target === modal) closeMissionsPanel();
+        });
+        document.body.appendChild(modal);
+    }
+    modal.innerHTML = `
+        <section class="missions-panel">
+            <button class="missions-close" onclick="closeMissionsPanel()" type="button">X</button>
+            <div class="missions-header">
+                <span>MISIONES DIARIAS</span>
+                <strong>Racha ${streak.count} dia${streak.count === 1 ? '' : 's'}</strong>
+            </div>
+            <div class="missions-grid">
+                ${DAILY_MISSIONS.map(mission => renderMissionCard(mission, state)).join('')}
+            </div>
+            <div class="missions-streak">
+                <div>
+                    <span>RACHA DE SESION</span>
+                    <strong>${streak.count}/7</strong>
+                </div>
+                <div class="missions-streak-track">
+                    ${MISSION_STREAK_REWARDS.map(reward => renderStreakReward(reward, streak)).join('')}
+                </div>
+            </div>
+        </section>
+    `;
+    modal.style.display = 'grid';
+    updateMissionBadge();
+}
+
+function renderMissionCard(mission, state) {
+    const rawProgress = parseFloat(state.progress[mission.metric] || 0);
+    const progress = Math.min(mission.goal, rawProgress);
+    const pct = Math.max(0, Math.min(100, (progress / mission.goal) * 100));
+    const claimed = state.claimed[mission.id] === true;
+    const ready = rawProgress >= mission.goal && !claimed;
+    return `
+        <article class="mission-card ${ready ? 'ready' : ''} ${claimed ? 'claimed' : ''}">
+            <div class="mission-card-top">
+                <div>
+                    <strong>${mission.title}</strong>
+                    <p>${mission.text}</p>
+                </div>
+                <span>${Math.floor(progress)}/${mission.goal}</span>
+            </div>
+            <div class="mission-progress"><i style="width:${pct}%"></i></div>
+            <div class="mission-card-bottom">
+                <small>${renderMissionReward(mission.reward)}</small>
+                <button onclick="claimMissionReward('${mission.id}')" ${ready ? '' : 'disabled'} type="button">${claimed ? 'OK' : 'RECLAMAR'}</button>
+            </div>
+        </article>
+    `;
+}
+
+function renderStreakReward(reward, streak) {
+    const claimed = streak.claimed[reward.day] === true;
+    const ready = streak.count >= reward.day && !claimed;
+    return `
+        <button class="streak-node ${ready ? 'ready' : ''} ${claimed ? 'claimed' : ''}" onclick="claimMissionStreakReward(${reward.day})" ${ready ? '' : 'disabled'} type="button">
+            <b>${reward.day}</b>
+            <span>${reward.gems}R</span>
+        </button>
+    `;
+}
+
+function claimMissionReward(id) {
+    const mission = DAILY_MISSIONS.find(item => item.id === id);
+    if (!mission) return;
+    const state = readMissionState();
+    if (state.claimed[id] === true) return;
+    if ((parseFloat(state.progress[mission.metric] || 0)) < mission.goal) return;
+    if (mission.reward.coins) addCurrency(mission.reward.coins, 'coins');
+    if (mission.reward.gems) addCurrency(mission.reward.gems, 'gems');
+    state.claimed[id] = true;
+    saveMissionState(state);
+    window.playSfx?.('reward', 0.85);
+    refreshShopBalances();
+    openMissionsPanel();
+}
+
+function claimMissionStreakReward(day) {
+    const reward = MISSION_STREAK_REWARDS.find(item => item.day === day);
+    const streak = readMissionStreak();
+    if (!reward || streak.count < day || streak.claimed[day] === true) return;
+    if (reward.coins) addCurrency(reward.coins, 'coins');
+    if (reward.gems) addCurrency(reward.gems, 'gems');
+    streak.claimed[day] = true;
+    saveMissionStreak(streak);
+    window.playSfx?.('reward', 0.85);
+    refreshShopBalances();
+    openMissionsPanel();
+}
+
+window.openMissionsPanel = openMissionsPanel;
+window.closeMissionsPanel = function closeMissionsPanel() {
+    const modal = document.getElementById('missionsPanel');
+    if (modal) modal.style.display = 'none';
+};
+window.trackMissionProgress = trackMissionProgress;
+window.trackMissionDistance = trackMissionDistance;
+window.updateMissionBadge = updateMissionBadge;
 
 function convertCoins() {
     const input = parseInt(document.getElementById('conv-input').value || '0');

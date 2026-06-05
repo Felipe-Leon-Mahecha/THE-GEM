@@ -445,8 +445,8 @@ window.player = {
 };
 
 if ((window.player.name || "").toUpperCase() === "LEX") {
-    if (playerData.deadCoins < 9999) playerData.deadCoins = 9999;
-    if (playerData.gems < 9999) playerData.gems = 9999;
+    if (playerData.deadCoins < 999999) playerData.deadCoins = 999999;
+    if (playerData.gems < 999999) playerData.gems = 999999;
     localStorage.setItem("deadCoins", playerData.deadCoins);
     localStorage.setItem("gems", playerData.gems);
 }
@@ -631,22 +631,6 @@ function update() {
     }
 
     window.gameTimer = (window.gameTimer || 0) + 1 / 60;
-    if (levelConfig.isSurvival) {
-        window.Progression?.tickSurvival(1 / 60);
-    }
-    if (window.running && !window.invulnerable) {
-        window._rachaTimer = (window._rachaTimer || 0) + 1 / 60;
-        if (window._rachaTimer >= 2) {
-            window._rachaTimer = 0;
-            window.incrementCombo?.();
-            const comboCount = window.comboSystem?.count || 0;
-            if (comboCount >= 3) {
-                window.comboFloater = { text: `COMBO x${comboCount}`, alpha: 1, life: 75 };
-                window.playSfx?.('menuHover', 0.3);
-                window.Progression?.trackCombo(comboCount);
-            }
-        }
-    }
     if (!window.paused && window.gameTimer >= (levelConfig.winTime || LEVEL_WIN_TIME)) {
         winGame();
         return;
@@ -680,16 +664,26 @@ function update() {
     }
 
     window.angVel = Math.max(-0.062, Math.min(0.062, window.angVel * 0.925));
+    const previousAngle = window.angle;
     window.angle += window.angVel;
+    window.trackMissionDistance?.(Math.abs(window.angle - previousAngle) * (BASE_RADIUS + window.offset));
     if (Math.abs(window.angVel) > 0.0015) {
         window.playerFacing = window.angVel > 0 ? "left" : "right";
     }
     window.playerRollAngle = (window.playerRollAngle || 0) - window.angVel * 9;
 
     // GRAVITY
-    window.gravityForce += (window.gravity - window.gravityForce) * 0.18;
-    window.vel += 0.38 * window.gravityForce;
-    window.offset += window.vel;
+    if (window.isZeroGravityActive?.()) {
+        const midTrack = MAX_OFFSET / 2;
+        window.gravityForce += (0 - window.gravityForce) * 0.24;
+        window.vel += (midTrack - window.offset) * 0.045;
+        window.vel *= 0.72;
+        window.offset += window.vel;
+    } else {
+        window.gravityForce += (window.gravity - window.gravityForce) * 0.18;
+        window.vel += 0.38 * window.gravityForce;
+        window.offset += window.vel;
+    }
 
     if (window.offset <= 0) { window.offset = 0; window.vel = 0; }
     if (window.offset >= MAX_OFFSET) { window.offset = MAX_OFFSET; window.vel = 0; }
@@ -759,9 +753,15 @@ function update() {
         let radialDist = Math.abs(r - c.radius);
 
         if (Math.abs(rel) < 0.08 && radialDist < 18) {
-            playerData.deadCoins += Math.max(1, Math.round(window.powerupEffects?.coinMultiplier || 1));
-            localStorage.setItem("deadCoins", playerData.deadCoins);
-            window.Progression?.trackCoins(1);
+            if (performance.now() < (window.powerupEffects?.rubyMirrorUntil || 0)) {
+                playerData.gems += Math.max(1, Math.round(window.powerupEffects?.gemMultiplier || 1));
+                localStorage.setItem("gems", playerData.gems);
+                window.trackMissionProgress?.('ruby_collect', 1);
+            } else {
+                playerData.deadCoins += Math.max(1, Math.round(window.powerupEffects?.coinMultiplier || 1));
+                localStorage.setItem("deadCoins", playerData.deadCoins);
+                window.trackMissionProgress?.('coin_collect', 1);
+            }
             window.deadCoins.splice(i, 1);
         }
     }
@@ -780,7 +780,7 @@ function update() {
         if (Math.abs(rel) < 0.08 && radialDist < 20) {
             playerData.gems += Math.max(1, Math.round(window.powerupEffects?.gemMultiplier || 1));
             localStorage.setItem("gems", playerData.gems);
-            window.Progression?.trackRubies(1);
+            window.trackMissionProgress?.('ruby_collect', 1);
             window.rubies.splice(i, 1);
         }
     }
@@ -824,6 +824,10 @@ function update() {
 function spawnDeadCoin() {
     let a = Math.random() * Math.PI * 2;
     let r = BASE_RADIUS + 30 + Math.random() * (MAX_OFFSET - 60);
+    if (performance.now() < (window.powerupEffects?.rubyMirrorUntil || 0)) {
+        window.rubies.push({ angle: a, radius: r, life: 420, pulse: Math.random() * 10 });
+        return;
+    }
     window.deadCoins.push({ angle: a, radius: r, life: 240, pulse: Math.random() * 10 });
 }
 
@@ -1007,22 +1011,6 @@ function distanceToSegment(px, py, x1, y1, x2, y2) {
 
 function draw() {
     if (!window.running && !window.paused) return;
-
-    // Si el canvas no tiene tamaño válido, forzar resize antes de dibujar
-    if (!canvas.width || !canvas.height || canvas.width < 10 || canvas.height < 10) {
-        resize(true);
-    }
-
-    // Si backgroundCanvas está vacío o desincronizado, reconstruirlo
-    if (backgroundCanvas.width !== canvas.width || backgroundCanvas.height !== canvas.height) {
-        buildBackgroundCanvas(window.level || 1);
-    }
-
-    // Si offscreen está vacío o desincronizado, reconstruirlo
-    if (offscreen.width !== canvas.width || offscreen.height !== canvas.height) {
-        buildStaticCanvas(window.level || 1);
-    }
-
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     const levelConfig = window.getCurrentLevelConfig ? window.getCurrentLevelConfig() : { assets: {} };
     const levelAssets = levelConfig.assets || {};
@@ -1041,7 +1029,7 @@ function draw() {
     ctx.arc(cx, cy, DOME_RADIUS, 0, Math.PI * 2);
     ctx.clip();
     ctx.translate(cx, cy);
-    ctx.rotate(window.worldRotation);
+    ctx.rotate(worldRotation);
     ctx.drawImage(offscreen, -offscreen.width / 2, -offscreen.height / 2);
     ctx.restore();
 
@@ -1051,16 +1039,16 @@ function draw() {
     ctx.arc(cx, cy, DOME_RADIUS, 0, Math.PI * 2);
     ctx.clip();
     for (let c of window.deadCoins) {
-        let x = cx + Math.cos(c.angle + window.worldRotation) * c.radius;
-        let y = cy + Math.sin(c.angle + window.worldRotation) * c.radius;
+        let x = cx + Math.cos(c.angle + worldRotation) * c.radius;
+        let y = cy + Math.sin(c.angle + worldRotation) * c.radius;
         ctx.save();
         ctx.translate(x, y);
         ctx.drawImage(skullCoinImg, -22, -22, 44, 44);
         ctx.restore();
     }
     for (let rby of window.rubies) {
-        let x = cx + Math.cos(rby.angle + window.worldRotation) * rby.radius;
-        let y = cy + Math.sin(rby.angle + window.worldRotation) * rby.radius;
+        let x = cx + Math.cos(rby.angle + worldRotation) * rby.radius;
+        let y = cy + Math.sin(rby.angle + worldRotation) * rby.radius;
         let size = 30 + Math.sin(rby.pulse) * 3;
         ctx.save();
         ctx.translate(x, y);
@@ -1114,6 +1102,7 @@ function draw() {
 
     // 9) HUD
     if (!window.running) return;
+    drawAbilityIntro();
     const compactHud = !!window.compactHud;
     const hudX = compactHud ? 10 : 20;
     const hudY = Math.max(compactHud ? 10 : 18, canvas.height * (compactHud ? 0.035 : 0.08));
@@ -1146,7 +1135,6 @@ function draw() {
     ctx.fillText("NIVEL " + window.level, hudX + hudPad, hudY + hudH - 10);
     ctx.restore();
     if (window.drawPowerupHud) drawPowerupHud(ctx);
-    if (window.drawComboFloater) window.drawComboFloater(ctx, canvas);
 }
 
 function drawPlayer(cx, cy) {
@@ -1225,7 +1213,7 @@ function drawSpikesLayer(cx, cy) {
     ctx.clip();
 
     for (let o of window.obstacles) {
-        let a = o.angle + window.worldRotation;
+        let a = o.angle + worldRotation;
         if (o.warning) {
             let wr = typeof getObstacleBaseRadius === "function"
                 ? getObstacleBaseRadius(o.fromGround)
@@ -1393,59 +1381,18 @@ loop();
 // =====================================================
 // START GAME
 // =====================================================
-function dismissGameplayBlockers() {
-    const blockingPanels = [
-        'powerupSelectionOverlay',
-        'powerupHelpPanel',
-        'achievementsPanel',
-        'inventoryPanel',
-        'categoryPanel',
-        'profilePanel',
-        'optionsPanel',
-        'shopPanel',
-        'vipPanel',
-        'rubyPassPanel',
-        'missionsPanel',
-        'statsPanel',
-        'helpGuidePanel',
-        'shopModal',
-        'powerupIntroModal'
-    ];
-    blockingPanels.forEach(id => {
-        const panel = document.getElementById(id);
-        if (!panel) return;
-        panel.classList.remove('showing', 'open', 'entering', 'leaving');
-        panel.style.display = 'none';
-        panel.style.opacity = '';
-        panel.style.visibility = '';
-        panel.style.pointerEvents = '';
-        if (id === 'powerupSelectionOverlay') panel.innerHTML = '';
-    });
-    const veil = document.getElementById('level-start-transition');
-    if (veil) {
-        veil.remove();
-    }
-    const menuOverlay = document.getElementById('overlay');
-    if (menuOverlay) menuOverlay.style.display = 'none';
-    const levelSelect = document.getElementById('levelSelect');
-    if (levelSelect) levelSelect.style.display = 'none';
-    document.querySelectorAll('.powerup-detail-overlay.open, .shop-modal.showing').forEach(panel => {
-        panel.classList.remove('showing', 'open');
-        panel.style.display = 'none';
-    });
-    document.getElementById('loading-screen')?.remove();
-    window.__powerupSelectionPool = null;
-    window.__powerupSelectionOpen = false;
-}
-
-window.dismissGameplayBlockers = dismissGameplayBlockers;
-
 window.startGame = function (levelIndex = 0, skipStartSound = false) {
-    dismissGameplayBlockers();
-    window.showingIntro = false;
-    window.introTimer = 0;
+    if (!window.__powerupSelectionConfirmed && !window.__powerupSelectionOpen && window.showPowerupSelection) {
+        window.__powerupSelectionOpen = true;
+        window.showPowerupSelection(levelIndex, () => {
+            window.__powerupSelectionOpen = false;
+            window.__powerupSelectionConfirmed = true;
+            window.startGame(levelIndex, skipStartSound);
+            window.__powerupSelectionConfirmed = false;
+        });
+        return;
+    }
     window.level = levelIndex + 1;
-    window.currentLevel = levelIndex;
     const levelConfig = window.getCurrentLevelConfig ? window.getCurrentLevelConfig() : {};
 
     clearInterval(window.reviveTimer);
@@ -1462,25 +1409,12 @@ window.startGame = function (levelIndex = 0, skipStartSound = false) {
 
     document.getElementById("gameCanvas").style.visibility = "visible";
     document.getElementById('pause-btn').classList.add('is-playing');
-    document.body.classList.add('is-gameplay-active');
     document.body.classList.toggle('is-playing-touch', isTouchLayout());
-    window.worldRotation = 0;
-    resize(true);
-    buildBackgroundCanvas(window.level);
-    buildStaticCanvas(window.level);
 
     if (!skipStartSound) window.playSfx?.('startGame', 0.9);
     window.menuMusic.pause();
     window.menuMusic.currentTime = 0;
-    const levelTracks = [
-        'assets/Musica/Gravity Well.mp3',
-        'assets/Musica/Nebula Rift (MENU).mp3',
-        'assets/Musica/Chrome Lullaby 2 (MENU).mp3'
-    ];
-    let musicSrc = levelConfig.assets && levelConfig.assets.music ? levelConfig.assets.music : levelTracks[0];
-    if (localStorage.getItem('levelMusicShuffle') === 'true') {
-        musicSrc = levelTracks[Math.floor(Math.random() * levelTracks.length)];
-    }
+    const musicSrc = levelConfig.assets && levelConfig.assets.music ? levelConfig.assets.music : 'assets/Musica/Gravity Well.mp3';
     if (!window.currentLevelMusicSrc || !window.currentLevelMusicSrc.endsWith(musicSrc)) {
         window.bgMusic.pause();
         window.bgMusic = new Audio(musicSrc);
@@ -1524,6 +1458,11 @@ window.startGame = function (levelIndex = 0, skipStartSound = false) {
     window.paused = false;
     document.getElementById('pausePanel').classList.remove('showing');
 
+    // ── Intro desactivada para que no congele ──────────
+    showAbilityIntro();
+
+    window.currentLevel = levelIndex;   // nivel 0 → level=1, nivel 1 → level=2, etc.
+
     resize(true);
     if (typeof resetTrail === "function") resetTrail();
 
@@ -1537,21 +1476,22 @@ window.startGame = function (levelIndex = 0, skipStartSound = false) {
     window.gravityForce = 1;
     window.worldRotationSpeed = levelConfig.rotationSpeed || 0.01;
     window.targetWorldSpeed = levelConfig.rotationSpeed || 0.01;
-
-    window._rachaTimer = 0;
-    window.comboFloater = null;
-    window.Progression?.trackGameStart(levelConfig);
-    (window.getEquippedPowerups?.() || []).forEach(() => window.Progression?.trackPowerupUse());
-
-    requestAnimationFrame(() => {
-        buildBackgroundCanvas(window.level);
-        buildStaticCanvas(window.level);
-        if (typeof draw === 'function' && (window.running || window.paused)) draw();
-    });
 };
 
 window.startLevelWithTransition = function (levelIndex = 0) {
-    window.startGame(levelIndex);
+    let veil = document.getElementById('level-start-transition');
+    if (!veil) {
+        veil = document.createElement('div');
+        veil.id = 'level-start-transition';
+        document.body.appendChild(veil);
+    }
+    window.playSfx?.('startGame', 0.9);
+    veil.className = 'showing';
+    setTimeout(() => {
+        window.startGame(levelIndex, true);
+        veil.className = 'leaving';
+        setTimeout(() => veil.className = '', 420);
+    }, 420);
 };
 
 function showAbilityIntro() {
@@ -1569,13 +1509,8 @@ function showAbilityIntro() {
 }
 
 window.showGameOverWithRevive = function () {
-    window.Progression?.trackDeath();
-    window.resetCombo?.();
-    window._rachaTimer = 0;
-    const retryBtn = document.getElementById('go-retry');
-    if (retryBtn) retryBtn.classList.add('go-primary-pulse');
     window.running = false;
-    document.body.classList.remove('is-playing-touch', 'is-gameplay-active');
+    document.body.classList.remove('is-playing-touch');
     clearInterval(gameTimerInterval);
     clearInterval(window.reviveTimer);
     document.getElementById("gameCanvas").style.visibility = "hidden";
@@ -1646,7 +1581,6 @@ window.revivePlayer = function (currency) {
     document.getElementById('gameOver').style.display = 'none';
     document.getElementById("gameCanvas").style.visibility = "visible";
     document.getElementById('pause-btn').classList.add('is-playing');
-    document.body.classList.add('is-gameplay-active');
     document.body.classList.toggle('is-playing-touch', isTouchLayout());
     window.lives = 1;
     window.invulnerable = true;
@@ -1682,9 +1616,8 @@ function drawAbilityIntro() {
 
 function winGame() {
     if (window.paused) return;
-    window.Progression?.trackWin();
     window.running = false;
-    document.body.classList.remove('is-playing-touch', 'is-gameplay-active');
+    document.body.classList.remove('is-playing-touch');
     clearInterval(gameTimerInterval);
     window.bgMusic.pause();
     window.bgMusic.currentTime = 0;

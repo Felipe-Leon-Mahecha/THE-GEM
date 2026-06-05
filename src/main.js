@@ -445,8 +445,8 @@ window.player = {
 };
 
 if ((window.player.name || "").toUpperCase() === "LEX") {
-    if (playerData.deadCoins < 9999) playerData.deadCoins = 9999;
-    if (playerData.gems < 9999) playerData.gems = 9999;
+    if (playerData.deadCoins < 999999) playerData.deadCoins = 999999;
+    if (playerData.gems < 999999) playerData.gems = 999999;
     localStorage.setItem("deadCoins", playerData.deadCoins);
     localStorage.setItem("gems", playerData.gems);
 }
@@ -664,16 +664,26 @@ function update() {
     }
 
     window.angVel = Math.max(-0.062, Math.min(0.062, window.angVel * 0.925));
+    const previousAngle = window.angle;
     window.angle += window.angVel;
+    window.trackMissionDistance?.(Math.abs(window.angle - previousAngle) * (BASE_RADIUS + window.offset));
     if (Math.abs(window.angVel) > 0.0015) {
         window.playerFacing = window.angVel > 0 ? "left" : "right";
     }
     window.playerRollAngle = (window.playerRollAngle || 0) - window.angVel * 9;
 
     // GRAVITY
-    window.gravityForce += (window.gravity - window.gravityForce) * 0.18;
-    window.vel += 0.38 * window.gravityForce;
-    window.offset += window.vel;
+    if (window.isZeroGravityActive?.()) {
+        const midTrack = MAX_OFFSET / 2;
+        window.gravityForce += (0 - window.gravityForce) * 0.24;
+        window.vel += (midTrack - window.offset) * 0.045;
+        window.vel *= 0.72;
+        window.offset += window.vel;
+    } else {
+        window.gravityForce += (window.gravity - window.gravityForce) * 0.18;
+        window.vel += 0.38 * window.gravityForce;
+        window.offset += window.vel;
+    }
 
     if (window.offset <= 0) { window.offset = 0; window.vel = 0; }
     if (window.offset >= MAX_OFFSET) { window.offset = MAX_OFFSET; window.vel = 0; }
@@ -743,8 +753,15 @@ function update() {
         let radialDist = Math.abs(r - c.radius);
 
         if (Math.abs(rel) < 0.08 && radialDist < 18) {
-            playerData.deadCoins += Math.max(1, Math.round(window.powerupEffects?.coinMultiplier || 1));
-            localStorage.setItem("deadCoins", playerData.deadCoins);
+            if (performance.now() < (window.powerupEffects?.rubyMirrorUntil || 0)) {
+                playerData.gems += Math.max(1, Math.round(window.powerupEffects?.gemMultiplier || 1));
+                localStorage.setItem("gems", playerData.gems);
+                window.trackMissionProgress?.('ruby_collect', 1);
+            } else {
+                playerData.deadCoins += Math.max(1, Math.round(window.powerupEffects?.coinMultiplier || 1));
+                localStorage.setItem("deadCoins", playerData.deadCoins);
+                window.trackMissionProgress?.('coin_collect', 1);
+            }
             window.deadCoins.splice(i, 1);
         }
     }
@@ -763,6 +780,7 @@ function update() {
         if (Math.abs(rel) < 0.08 && radialDist < 20) {
             playerData.gems += Math.max(1, Math.round(window.powerupEffects?.gemMultiplier || 1));
             localStorage.setItem("gems", playerData.gems);
+            window.trackMissionProgress?.('ruby_collect', 1);
             window.rubies.splice(i, 1);
         }
     }
@@ -806,6 +824,10 @@ function update() {
 function spawnDeadCoin() {
     let a = Math.random() * Math.PI * 2;
     let r = BASE_RADIUS + 30 + Math.random() * (MAX_OFFSET - 60);
+    if (performance.now() < (window.powerupEffects?.rubyMirrorUntil || 0)) {
+        window.rubies.push({ angle: a, radius: r, life: 420, pulse: Math.random() * 10 });
+        return;
+    }
     window.deadCoins.push({ angle: a, radius: r, life: 240, pulse: Math.random() * 10 });
 }
 
