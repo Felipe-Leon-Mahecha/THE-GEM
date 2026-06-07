@@ -1283,12 +1283,12 @@ function drawComboIndicator(ctx, x, y, radius) {
     ctx.font = `900 ${Math.max(14, radius * 0.7)}px Geom, monospace`;
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
-    ctx.fillText(`x${combo.count}`, x, y - 4);
+    ctx.fillText(`x${combo.count || 0}`, x, y - 4);
     
     // Multiplier
     ctx.fillStyle = 'rgba(255, 215, 0, 0.8)';
     ctx.font = `700 ${Math.max(10, radius * 0.45)}px monospace`;
-    ctx.fillText(`${combo.multiplier.toFixed(1)}x`, x, y + 12);
+    ctx.fillText(`${(combo.multiplier || 1).toFixed(1)}x`, x, y + 12);
     
     ctx.restore();
 }
