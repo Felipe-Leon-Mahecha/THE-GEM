@@ -269,9 +269,9 @@ function getStats() {
 // NEAR-MISS SYSTEM THRESHOLDS (AÑADIDOS)
 // =====================================================
 const NEAR_MISS_ANGULAR_THRESHOLD = 0.25; // Distancia angular adicional para near miss general
-const SPIKE_NEAR_MISS_RADIAL_MARGIN = 10; // Margen adicional para near miss radial de spikes (píxeles)
-const SAW_NEAR_MISS_RADIAL_MARGIN = 15; // Margen adicional para near miss radial de sierras (píxeles)
-const LASER_NEAR_MISS_RADIAL_MARGIN = 20; // Margen adicional para near miss radial de láseres (píxeles)
+const SPIKE_NEAR_MISS_RADIAL_MARGIN = 40; // Margen adicional para near miss radial de spikes (píxeles)
+const SAW_NEAR_MISS_RADIAL_MARGIN = 45; // Margen adicional para near miss radial de sierras (píxeles)
+const LASER_NEAR_MISS_RADIAL_MARGIN = 50; // Margen adicional para near miss radial de láseres (píxeles)
 
 // Inicializar sistema
 initComboSystem();
