@@ -194,6 +194,29 @@ function showPerfectDodgeEffect() {
     }
 }
 
+// Mostrar efecto visual de near miss (rozamiento)
+function showNearMissEffect() {
+    if (!window.createParticles) return;
+
+    const cx = window.canvas?.width / 2 || 0;
+    const cy = window.canvas?.height / 2 || 0;
+    const r = window.BASE_RADIUS + window.offset || 0;
+    const px = cx + Math.cos(window.angle) * r;
+    const py = cy + Math.sin(window.angle) * r;
+
+    // Partículas azules/blancas para near miss
+    for (let i = 0; i < 4; i++) {
+        const angle = (i / 4) * Math.PI * 2 + Math.random() * Math.PI / 4;
+        const speed = 2 + Math.random() * 1.5;
+        window.createParticles?.(px, py, '#00FFE7', 4, {
+            vx: Math.cos(angle) * speed,
+            vy: Math.sin(angle) * speed,
+            life: 25,
+            size: 3 + Math.random() * 2
+        });
+    }
+}
+
 // =====================================================
 // STATS SYSTEM
 // =====================================================
@@ -214,6 +237,17 @@ function recordGemCollected(amount = 1) {
     saveComboStats();
 }
 
+// Función global para manejar el evento de near miss
+function onNearMiss(isPerfect = false) {
+    incrementCombo(isPerfect); // Usa la lógica existente de incremento de combo
+    
+    if (isPerfect) {
+        showPerfectDodgeEffect(); // Ya incluye feedback visual para perfecto
+    } else {
+        showNearMissEffect(); // Nuevo feedback visual para near miss general
+    }
+}
+
 function getStats() {
     return {
         ...comboSystem,
@@ -221,6 +255,14 @@ function getStats() {
         perfectDodgeRate: comboSystem.totalDodges > 0 ? ((comboSystem.totalPerfectDodges / comboSystem.totalDodges) * 100).toFixed(1) : 0
     };
 }
+
+// =====================================================
+// NEAR-MISS SYSTEM THRESHOLDS (AÑADIDOS)
+// =====================================================
+const NEAR_MISS_ANGULAR_THRESHOLD = 0.25; // Distancia angular adicional para near miss general
+const SPIKE_NEAR_MISS_RADIAL_MARGIN = 10; // Margen adicional para near miss radial de spikes (píxeles)
+const SAW_NEAR_MISS_RADIAL_MARGIN = 15; // Margen adicional para near miss radial de sierras (píxeles)
+const LASER_NEAR_MISS_RADIAL_MARGIN = 20; // Margen adicional para near miss radial de láseres (píxeles)
 
 // Inicializar sistema
 initComboSystem();
@@ -234,7 +276,15 @@ window.updateComboTimer = updateComboTimer;
 window.getCoinMultiplier = getCoinMultiplier;
 window.checkPerfectDodge = checkPerfectDodge;
 window.showPerfectDodgeEffect = showPerfectDodgeEffect;
+window.showNearMissEffect = showNearMissEffect; // Exportar el nuevo efecto
+window.onNearMiss = onNearMiss; // Exportar la nueva función de near miss
 window.recordGamePlayed = recordGamePlayed;
 window.recordCoinCollected = recordCoinCollected;
 window.recordGemCollected = recordGemCollected;
 window.getStats = getStats;
+
+// Exportar los nuevos umbrales para uso global en otros archivos
+window.NEAR_MISS_ANGULAR_THRESHOLD = NEAR_MISS_ANGULAR_THRESHOLD;
+window.SPIKE_NEAR_MISS_RADIAL_MARGIN = SPIKE_NEAR_MISS_RADIAL_MARGIN;
+window.SAW_NEAR_MISS_RADIAL_MARGIN = SAW_NEAR_MISS_RADIAL_MARGIN;
+window.LASER_NEAR_MISS_RADIAL_MARGIN = LASER_NEAR_MISS_RADIAL_MARGIN;

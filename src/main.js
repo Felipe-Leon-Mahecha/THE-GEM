@@ -881,7 +881,8 @@ function spawnIceLaser() {
         direction: Math.random() < 0.5 ? -1 : 1,
         warningType: variant.warningType || cfg.warningType || "emitter",
         beamType: variant.beamType || cfg.beamType || "standard",
-        played: false
+        played: false,
+        proximityChecked: false // Nueva bandera para el sistema de near miss
     };
 
     if (type === "outerChord") {
@@ -924,8 +925,35 @@ function updateIceLasers(timeScale = 1) {
         if (laser.state === 'active') {
             laser.activeTime -= timeScale;
             if (!window.invulnerable && !window.isPowerupInvulnerable?.()) {
-                if (laserHitsPlayer(laser)) {
+                const hit = laserHitsPlayer(laser);
+                if (hit) {
                     playerHit();
+                    laser.proximityChecked = true; // Si hay hit, también lo marcamos para no disparar near miss
+                } else if (!laser.proximityChecked && window.onNearMiss) { // Si no hay colisión y no se ha verificado ya el near miss
+                    const cx = canvas.width / 2;
+                    const cy = canvas.height / 2;
+                    const playerR = window.BASE_RADIUS + window.offset;
+                    const px = cx + Math.cos(window.angle) * playerR;
+                    const py = cy + Math.sin(window.angle) * playerR;
+                    const p = getLaserPoints(laser, cx, cy);
+
+                    const currentLaserDistance = distanceToSegment(px, py, p.sx, p.sy, p.ex, p.ey);
+                    const collisionThreshold = Math.max(10, laser.thickness * 1.4);
+
+                    const isRadialNearMiss = currentLaserDistance > collisionThreshold &&
+                                             currentLaserDistance <= collisionThreshold + window.LASER_NEAR_MISS_RADIAL_MARGIN;
+
+                    // Para láseres, una aproximación de cercanía angular
+                    const angularDistance = Math.abs(normalizeAngle(laser.angle + window.worldRotation) - normalizeAngle(window.angle));
+                    const isAngularNearMiss = angularDistance < (laser.width || 0.045) + window.NEAR_MISS_ANGULAR_THRESHOLD;
+
+                    if (isRadialNearMiss && isAngularNearMiss) { // Requiere cercanía radial Y angular
+                        // Para láseres, consideramos "perfect" si el rozamiento es muy cercano
+                        const isPerfect = currentLaserDistance <= collisionThreshold + (window.LASER_NEAR_MISS_RADIAL_MARGIN / 2) && 
+                                          angularDistance < (laser.width || 0.045) + (window.PERFECT_DODGE_THRESHOLD / 2);
+                        window.onNearMiss(isPerfect);
+                        laser.proximityChecked = true;
+                    }
                 }
             }
             if (laser.activeTime <= 0) laser.state = 'fade';

@@ -65,7 +65,8 @@ function spawnObstacleGroup() {
             fromGround:
                 config.ringInset > 0 ? false : Math.random() < 0.5,
 
-            color: config.theme === "frozen" ? "#a9efff" : (config.ringInset > 0 ? "#c8c8c8" : "#ff2f92")
+            color: config.theme === "frozen" ? "#a9efff" : (config.ringInset > 0 ? "#c8c8c8" : "#ff2f92"),
+            proximityChecked: false // Nueva bandera para el sistema de near miss
         });
     }
 }
@@ -78,13 +79,13 @@ function checkCollisions() {
 
     if (window.invulnerable || window.isPowerupInvulnerable?.()) return;
 
-    let r = window.BASE_RADIUS + window.offset;
+    let r = window.BASE_RADIUS + window.offset; // Posición radial del jugador
 
     for (let o of window.obstacles) {
 
         if (o.warning) continue;
 
-        if (o.progress < 0.9) continue;
+        if (o.progress < 0.9) continue; // Solo cuando el obstáculo es "activo"
 
         let obstacleAngle =
             o.angle + window.worldRotation;
@@ -95,9 +96,6 @@ function checkCollisions() {
 
         if (rel > Math.PI)
             rel -= Math.PI * 2;
-
-        if (Math.abs(rel) > o.width * 0.75)
-            continue;
 
         const baseR = getObstacleBaseRadius(o.fromGround);
         let from =
@@ -110,12 +108,33 @@ function checkCollisions() {
                 ? baseR + o.height * o.progress
                 : baseR;
 
-        if (r > from - 5 &&
-            r < to + 5) {
+        // Determinar si hay colisión
+        const collisionAngularThreshold = o.width * 0.75;
+        const collisionRadialThreshold = 5; // Margen de colisión en píxeles
 
+        const isCollisionAngular = Math.abs(rel) <= collisionAngularThreshold;
+        const isCollisionRadial = (r > from - collisionRadialThreshold && r < to + collisionRadialThreshold);
+
+        if (isCollisionAngular && isCollisionRadial) {
             playerHit();
+            o.proximityChecked = true; // Si hay hit, también lo marcamos para no disparar near miss
+            return; // Colisión, no hay near miss
+        }
 
-            return;
+        // Si no hay colisión, verificar near miss (solo una vez por obstáculo)
+        if (!o.proximityChecked && o.progress >= 0.95 && window.onNearMiss) { 
+            const angularDistance = Math.abs(rel);
+            // Distancia al borde más cercano del obstáculo radialmente
+            const radialDistanceToClosestEdge = Math.min(Math.abs(r - (from - collisionRadialThreshold)), Math.abs(r - (to + collisionRadialThreshold)));
+
+            const isAngularNearMiss = angularDistance < (collisionAngularThreshold + window.NEAR_MISS_ANGULAR_THRESHOLD);
+            const isRadialNearMiss = radialDistanceToClosestEdge < window.SPIKE_NEAR_MISS_RADIAL_MARGIN;
+            
+            if (isAngularNearMiss && isRadialNearMiss) {
+                const isPerfect = window.checkPerfectDodge?.(obstacleAngle, window.angle);
+                window.onNearMiss(isPerfect);
+                o.proximityChecked = true; // Marcar como verificado para no repetir
+            }
         }
     }
 }
@@ -182,7 +201,8 @@ function spawnSierra() {
         progress: 0,
         traveled: 0,
         rotation: 0,
-        size: SIERRA_SIZE
+        size: SIERRA_SIZE,
+        proximityChecked: false // Nueva bandera para el sistema de near miss
     });
 }
 
@@ -209,17 +229,39 @@ function updateSierras(timeScale = 1) {
                 s.state = "leave";
             }
 
-            // Colision
+            // Colision y Near Miss
             if (!window.invulnerable && !window.isPowerupInvulnerable?.() && !window.isZeroGravityActive?.()) {
-                let r = window.BASE_RADIUS + window.offset;
-                let sr = s.fromGround ? window.BASE_RADIUS : window.DOME_RADIUS;
+                let r = window.BASE_RADIUS + window.offset; // Posición radial del jugador
+                let sr = s.fromGround ? window.BASE_RADIUS : window.DOME_RADIUS; // Radio central de la sierra
                 let rel = ((s.angle + window.worldRotation - window.angle + Math.PI * 2) % (Math.PI * 2));
                 if (rel > Math.PI) rel -= Math.PI * 2;
-                if (Math.abs(rel) < 0.15 && Math.abs(r - sr) < s.size * 0.8) {
+
+                const collisionAngularThreshold = 0.15;
+                const collisionRadialThreshold = s.size * 0.8; // Margen de colisión en píxeles
+
+                const isCollisionAngular = Math.abs(rel) < collisionAngularThreshold;
+                const isCollisionRadial = Math.abs(r - sr) < collisionRadialThreshold;
+
+                if (isCollisionAngular && isCollisionRadial) {
                     playerHit();
+                    s.proximityChecked = true; // Si hay hit, también lo marcamos para no disparar near miss
+                } else if (!s.proximityChecked && s.state === "moving" && window.onNearMiss) { // Solo si no hay colisión y no se ha verificado ya el near miss
+                    const angularDistance = Math.abs(rel);
+                    const radialDistance = Math.abs(r - sr);
+
+                    const isAngularNearMiss = angularDistance < (collisionAngularThreshold + window.NEAR_MISS_ANGULAR_THRESHOLD);
+                    const isRadialNearMiss = radialDistance < (collisionRadialThreshold + window.SAW_NEAR_MISS_RADIAL_MARGIN);
+
+                    if (isAngularNearMiss && isRadialNearMiss) {
+                        const isPerfect = window.checkPerfectDodge?.(s.angle + window.worldRotation, window.angle);
+                        window.onNearMiss(isPerfect);
+                        s.proximityChecked = true;
+                    }
                 }
             }
-        } else if (s.state === "leave") {
+        }
+        
+        if (s.state === "leave") {
             s.progress += 0.02 * timeScale;
             if (s.progress >= 1) {
                 window.sierras.splice(i, 1);
