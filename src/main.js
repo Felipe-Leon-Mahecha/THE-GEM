@@ -1503,7 +1503,7 @@ function showAbilityIntro() {
         : null;
     window.activeAbilityIntro = {
         skin: skinData?.name || equippedId.toUpperCase(),
-        ability: skinData?.ability || 'Habilidad activa'
+        ability: '¡PREPARATE!'
     };
     window.playSfx?.('powerUp', 0.75);
 }

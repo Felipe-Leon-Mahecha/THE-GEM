@@ -129,7 +129,7 @@ function playerHit() {
     window.lives--;
     window.hitFlash = 1;
     window.invulnerable = true;
-    window.invulnerableTimer = 60;
+    window.invulnerableTimer = 60;`n    `n    // Resetear combo cuando es golpeado`n    window.resetComboOnHit?.();
 
     if (window.lives <= 0) {
         if (typeof window.showGameOverWithRevive === 'function') {
@@ -276,3 +276,5 @@ function drawSierras() {
         window.ctx.restore();
     }
 }
+
+
