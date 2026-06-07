@@ -528,6 +528,7 @@ window.adaptiveControls = localStorage.getItem("adaptiveControls") === "true";
 window.lives = 3;
 window.gravityFlipCooldown = 0;
 window.gravityPulse = 0;
+window.styleCombo = 0; // Inicialización de variable de combo de estilo solicitada.
 
 // =====================================================
 // INVULNERABILITY

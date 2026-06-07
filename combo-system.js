@@ -27,7 +27,13 @@ function loadComboStats() {
         const saved = localStorage.getItem(COMBO_STATS_STORAGE_KEY);
         if (saved) {
             const parsed = JSON.parse(saved);
-            comboSystem = { ...comboSystem, ...parsed };
+            // Fusionar las propiedades cargadas, evitando sobrescribir valores por defecto con `undefined`.
+            // Esto asegura que propiedades como `comboMultiplier` siempre tengan un valor numérico.
+            for (const key in parsed) {
+                if (parsed[key] !== undefined) {
+                    comboSystem[key] = parsed[key];
+                }
+            }
         }
     } catch (e) {
         console.error('Error loading combo stats:', e);
@@ -46,6 +52,9 @@ function saveComboStats() {
 // Iniciar combo system
 function initComboSystem() {
     loadComboStats();
+    // Asegurarse de que el multiplicador se actualice después de cargar los stats,
+    // garantizando que `comboMultiplier` tenga un valor numérico válido.
+    updateComboMultiplier();
     window.comboSystem = comboSystem;
 }
 
