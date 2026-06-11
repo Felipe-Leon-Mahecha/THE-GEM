@@ -109,8 +109,8 @@ function checkCollisions() {
                 : baseR;
 
         // Determinar si hay colisión
-        const collisionAngularThreshold = o.width * 0.75;
-        const collisionRadialThreshold = 5; // Margen de colisión en píxeles
+        const collisionAngularThreshold = o.width * 0.615; /* Reducido 18% para hitbox más justa */
+        const collisionRadialThreshold = 4.1; /* Reducido 18% para hitbox más justa */
 
         const isCollisionAngular = Math.abs(rel) <= collisionAngularThreshold;
         const isCollisionRadial = (r > from - collisionRadialThreshold && r < to + collisionRadialThreshold);
@@ -122,14 +122,14 @@ function checkCollisions() {
         }
 
         // Si no hay colisión, verificar near miss (solo una vez por obstáculo)
-        if (!o.proximityChecked && o.progress >= 0.95 && window.onNearMiss) { 
+        if (!o.proximityChecked && o.progress >= 0.95 && window.onNearMiss) {
             const angularDistance = Math.abs(rel);
             // Distancia al borde más cercano del obstáculo radialmente
             const radialDistanceToClosestEdge = Math.min(Math.abs(r - (from - collisionRadialThreshold)), Math.abs(r - (to + collisionRadialThreshold)));
 
             const isAngularNearMiss = angularDistance < (collisionAngularThreshold + window.NEAR_MISS_ANGULAR_THRESHOLD);
             const isRadialNearMiss = radialDistanceToClosestEdge < window.SPIKE_NEAR_MISS_RADIAL_MARGIN;
-            
+
             if (isAngularNearMiss && isRadialNearMiss) {
                 const isPerfect = window.checkPerfectDodge?.(obstacleAngle, window.angle);
                 window.onNearMiss(isPerfect);
@@ -148,7 +148,9 @@ function playerHit() {
     window.lives--;
     window.hitFlash = 1;
     window.invulnerable = true;
-    window.invulnerableTimer = 60;`n    `n    // Resetear combo cuando es golpeado`n    window.resetComboOnHit?.();
+    window.invulnerableTimer = 60;
+    // Resetear combo cuando es golpeado
+    window.resetComboOnHit?.();
 
     if (window.lives <= 0) {
         if (typeof window.showGameOverWithRevive === 'function') {
@@ -236,8 +238,8 @@ function updateSierras(timeScale = 1) {
                 let rel = ((s.angle + window.worldRotation - window.angle + Math.PI * 2) % (Math.PI * 2));
                 if (rel > Math.PI) rel -= Math.PI * 2;
 
-                const collisionAngularThreshold = 0.15;
-                const collisionRadialThreshold = s.size * 0.8; // Margen de colisión en píxeles
+                const collisionAngularThreshold = 0.123; /* Reducido 18% para hitbox más justa */
+                const collisionRadialThreshold = s.size * 0.656; /* Reducido 18% para hitbox más justa */
 
                 const isCollisionAngular = Math.abs(rel) < collisionAngularThreshold;
                 const isCollisionRadial = Math.abs(r - sr) < collisionRadialThreshold;
@@ -260,7 +262,7 @@ function updateSierras(timeScale = 1) {
                 }
             }
         }
-        
+
         if (s.state === "leave") {
             s.progress += 0.02 * timeScale;
             if (s.progress >= 1) {

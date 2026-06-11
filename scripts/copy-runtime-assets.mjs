@@ -14,7 +14,11 @@ const runtimeFiles = [
   "obstacles.js",
   "particles.js",
   "menuball.js",
-  "src/main.js"
+  "src/main.js",
+  "combo-system.js",
+  "fragment-system.js",
+  "src/keybinds-integration.js",
+  "style.css"
 ];
 
 await mkdir(join(dist, "src"), { recursive: true });

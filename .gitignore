@@ -1,0 +1,10 @@
+node_modules/
+dist/
+.gradle/
+build/
+captures/
+*.apk
+*.aar
+android/.gradle/
+android/app/build/
+android/gradle/wrapper/gradle-*-all.zip

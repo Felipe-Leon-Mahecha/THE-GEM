@@ -71,7 +71,7 @@ function incrementCombo(isPerfect = false) {
     comboSystem.currentCombo++;
     comboSystem.totalDodges++;
     comboSystem.comboTimer = COMBO_TIMEOUT;
-    
+
     if (isPerfect) {
         comboSystem.totalPerfectDodges++;
         comboSystem.perfectDodgesInARow++;
@@ -81,22 +81,42 @@ function incrementCombo(isPerfect = false) {
     } else {
         comboSystem.perfectDodgesInARow = 0;
     }
-    
+
     // Actualizar combo máximo
     if (comboSystem.currentCombo > comboSystem.maxCombo) {
         comboSystem.maxCombo = comboSystem.currentCombo;
     }
-    
+
     if (comboSystem.currentCombo > comboSystem.longestCombo) {
         comboSystem.longestCombo = comboSystem.currentCombo;
     }
-    
+
     // Calcular multiplicador basado en combo
     updateComboMultiplier();
-    
+
+    // Otorgar XP del pase rubí basado en el multiplicador
+    if (typeof window.addRubyPassXp === 'function') {
+        const baseXp = 5; // XP base por cada near-miss
+        const xpGained = baseXp * comboSystem.comboMultiplier;
+        const result = window.addRubyPassXp(xpGained);
+
+        // Actualizar la visualización del pase rubí si está abierto
+        const rubyPassPanel = document.getElementById('rubyPassPanel');
+        const rubyPassContent = document.getElementById('rubyPassContent');
+        if (rubyPassPanel?.style.display !== 'none' && rubyPassContent && typeof window.renderBattlePassPage === 'function') {
+            window.renderBattlePassPage(rubyPassContent, {
+                animateFrom: {
+                    xp: result.previousXp,
+                    freeLevel: result.previousLevel,
+                    premiumLevel: result.previousPremiumLevel
+                }
+            });
+        }
+    }
+
     // Feedback visual
     showComboFeedback(isPerfect);
-    
+
     saveComboStats();
 }
 
@@ -131,14 +151,20 @@ function getCoinMultiplier() {
     return comboSystem.comboMultiplier;
 }
 
+function getComboMultiplier() {
+    return comboSystem.comboMultiplier;
+}
+function getComboMultiplier() {
+    return comboSystem.comboMultiplier;
+}
 // Mostrar feedback visual de combo
 function showComboFeedback(isPerfect) {
     if (!window.showFloatingText) return;
-    
+
     const text = isPerfect ? `PERFECT! x${comboSystem.comboMultiplier}` : `x${comboSystem.comboMultiplier}`;
     const color = isPerfect ? '#FFD700' : '#00FFE7';
     const size = isPerfect ? 28 : 24;
-    
+
     window.showFloatingText?.(text, color, size);
 }
 
@@ -161,26 +187,26 @@ function checkPerfectDodge(obstacleAngle, playerAngle) {
     const distance = Math.abs(obstacleAngle - playerAngle);
     lastDodgeDistance = distance;
     lastDodgeTime = Date.now();
-    
+
     // Perfect dodge si el obstáculo pasó muy cerca
     if (distance < PERFECT_DODGE_THRESHOLD) {
         return true;
     }
-    
+
     return false;
 }
 
 // Mostrar efecto visual de perfect dodge
 function showPerfectDodgeEffect() {
     if (!window.createParticles) return;
-    
+
     // Crear partículas doradas
     const cx = window.canvas?.width / 2 || 0;
     const cy = window.canvas?.height / 2 || 0;
     const r = window.BASE_RADIUS + window.offset || 0;
     const px = cx + Math.cos(window.angle) * r;
     const py = cy + Math.sin(window.angle) * r;
-    
+
     // Partículas en forma de cruz
     for (let i = 0; i < 8; i++) {
         const angle = (i / 8) * Math.PI * 2;
@@ -192,7 +218,7 @@ function showPerfectDodgeEffect() {
             size: 4 + Math.random() * 3
         });
     }
-    
+
     // Flash effect
     if (window.ctx) {
         window.ctx.save();
@@ -249,7 +275,7 @@ function recordGemCollected(amount = 1) {
 // Función global para manejar el evento de near miss
 function onNearMiss(isPerfect = false) {
     incrementCombo(isPerfect); // Usa la lógica existente de incremento de combo
-    
+
     if (isPerfect) {
         showPerfectDodgeEffect(); // Ya incluye feedback visual para perfecto
     } else {
@@ -283,6 +309,7 @@ window.resetCombo = resetCombo;
 window.resetComboOnHit = resetComboOnHit;
 window.updateComboTimer = updateComboTimer;
 window.getCoinMultiplier = getCoinMultiplier;
+window.getComboMultiplier = getComboMultiplier;
 window.checkPerfectDodge = checkPerfectDodge;
 window.showPerfectDodgeEffect = showPerfectDodgeEffect;
 window.showNearMissEffect = showNearMissEffect; // Exportar el nuevo efecto

@@ -293,10 +293,18 @@ function syncOptionsPanel() {
     const sfx = document.getElementById('sfx-volume');
     const side = document.getElementById('touch-side-offset');
     const gravity = document.getElementById('touch-gravity-offset');
+    const size = document.getElementById('touch-size');
+    const opacity = document.getElementById('touch-opacity');
+    const powerupX = document.getElementById('powerup-offset-x');
+    const powerupY = document.getElementById('powerup-offset-y');
     if (music) music.value = Math.round((parseFloat(localStorage.getItem('musicVolume') || '0.45')) * 100);
     if (sfx) sfx.value = Math.round((parseFloat(localStorage.getItem('sfxVolume') || '0.75')) * 100);
     if (side) side.value = localStorage.getItem('touchSideOffset') || '50';
     if (gravity) gravity.value = localStorage.getItem('touchGravityOffset') || '50';
+    if (size) size.value = localStorage.getItem('touchSize') || '100';
+    if (opacity) opacity.value = localStorage.getItem('touchOpacity') || '100';
+    if (powerupX) powerupX.value = localStorage.getItem('powerupOffsetX') || '0';
+    if (powerupY) powerupY.value = localStorage.getItem('powerupOffsetY') || '0';
     updateMotionText();
 }
 
@@ -332,8 +340,16 @@ function updateMotionText() {
 function saveTouchLayout() {
     const side = document.getElementById('touch-side-offset');
     const gravity = document.getElementById('touch-gravity-offset');
+    const size = document.getElementById('touch-size');
+    const opacity = document.getElementById('touch-opacity');
+    const powerupX = document.getElementById('powerup-offset-x');
+    const powerupY = document.getElementById('powerup-offset-y');
     if (side) localStorage.setItem('touchSideOffset', side.value);
     if (gravity) localStorage.setItem('touchGravityOffset', gravity.value);
+    if (size) localStorage.setItem('touchSize', size.value);
+    if (opacity) localStorage.setItem('touchOpacity', opacity.value);
+    if (powerupX) localStorage.setItem('powerupOffsetX', powerupX.value);
+    if (powerupY) localStorage.setItem('powerupOffsetY', powerupY.value);
     applyTouchLayout();
     window.playSfx?.('avatarBanner', 0.6);
 }
@@ -341,6 +357,8 @@ function saveTouchLayout() {
 function applyTouchLayout() {
     document.documentElement.style.setProperty('--touch-side', localStorage.getItem('touchSideOffset') || '50');
     document.documentElement.style.setProperty('--touch-gravity', localStorage.getItem('touchGravityOffset') || '50');
+    document.documentElement.style.setProperty('--touch-size', localStorage.getItem('touchSize') || '100');
+    document.documentElement.style.setProperty('--touch-opacity', localStorage.getItem('touchOpacity') || '100');
 }
 
 function bindTouchControls() {

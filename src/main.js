@@ -225,8 +225,13 @@ function buildStaticCanvas(lvl = window.level || 1) {
     offscreen.width = window.canvas.width;
     offscreen.height = window.canvas.height;
 
-    const cx = offscreen.width / 2;
-    const cy = offscreen.height / 2;
+    offCtx.setTransform(1, 0, 0, 1, 0, 0);
+    const _dprS = window.canvasDPR || 1;
+    offCtx.scale(_dprS, _dprS);
+
+    const dpr = window.canvasDPR || 1;
+    const cx = (offscreen.width / dpr) / 2;
+    const cy = (offscreen.height / dpr) / 2;
 
     offCtx.save();
     offCtx.translate(cx, cy);
@@ -347,10 +352,17 @@ function syncPlayfieldSize(width, height, compact) {
         window.BASE_RADIUS = 150;
         window.DOME_RADIUS = 300;
     } else {
+        // En móvil landscape: width > height. Usar el lado más corto (height) pero con factor mayor.
+        // En móvil portrait: width < height. Usar width.
+        const isLandscape = width > height;
         const shortestSide = Math.min(width, height);
-        const dome = Math.max(135, Math.min(270, shortestSide * 0.37));
+        const longestSide = Math.max(width, height);
+        // Landscape: la esfera debe ser generosa respecto al alto disponible
+        // Portrait: usar el ancho como referencia
+        const reference = isLandscape ? shortestSide : shortestSide;
+        const dome = Math.max(130, Math.min(220, reference * 0.34));
         window.DOME_RADIUS = dome;
-        window.BASE_RADIUS = dome * 0.5;
+        window.BASE_RADIUS = Math.round(dome * 0.46);
     }
     window.MAX_OFFSET = Math.max(30, window.DOME_RADIUS - window.BASE_RADIUS - 30);
     if (window.offset > window.MAX_OFFSET) window.offset = window.MAX_OFFSET;
@@ -374,9 +386,13 @@ function resize(force = false) {
     window.compactHud = touchLayout && Math.min(targetWidth, targetHeight) < 520;
     if (sameSize && !force) return;
 
+    // DPR: escalar el canvas para pantallas de alta densidad (Oppo, Samsung, etc.)
+    const dpr = Math.min(window.devicePixelRatio || 1, 2); // máx 2x para no matar el rendimiento
+    window.canvasDPR = dpr;
+
     if (touchLayout) {
-        window.canvas.width = targetWidth;
-        window.canvas.height = targetHeight;
+        window.canvas.width = Math.round(targetWidth * dpr);
+        window.canvas.height = Math.round(targetHeight * dpr);
         window.canvas.style.width = targetWidth + "px";
         window.canvas.style.height = targetHeight + "px";
         window.canvas.style.position = "fixed";
@@ -384,14 +400,20 @@ function resize(force = false) {
         window.canvas.style.top = "0";
         window.canvas.style.transform = "none";
     } else {
-        window.canvas.width = targetWidth;
-        window.canvas.height = targetHeight;
-        window.canvas.style.width = '';
-        window.canvas.style.height = '';
+        window.canvas.width = Math.round(targetWidth * dpr);
+        window.canvas.height = Math.round(targetHeight * dpr);
+        window.canvas.style.width = targetWidth + "px";
+        window.canvas.style.height = targetHeight + "px";
         window.canvas.style.position = '';
         window.canvas.style.left = '';
         window.canvas.style.top = '';
         window.canvas.style.transform = '';
+    }
+    // Escalar el contexto para que todo se dibuje al tamaño correcto
+    const ctx2d = window.canvas.getContext('2d');
+    if (ctx2d) {
+        ctx2d.setTransform(1, 0, 0, 1, 0, 0); // reset
+        ctx2d.scale(dpr, dpr);
     }
     lastCanvasWidth = targetWidth;
     lastCanvasHeight = targetHeight;
@@ -931,8 +953,8 @@ function updateIceLasers(timeScale = 1) {
                     playerHit();
                     laser.proximityChecked = true; // Si hay hit, también lo marcamos para no disparar near miss
                 } else if (!laser.proximityChecked && window.onNearMiss) { // Si no hay colisión y no se ha verificado ya el near miss
-                    const cx = canvas.width / 2;
-                    const cy = canvas.height / 2;
+                    const dpr = window.canvasDPR || 1; const cx = canvas.width / dpr / 2;
+                    const cy = canvas.height / (window.canvasDPR || 1) / 2;
                     const playerR = window.BASE_RADIUS + window.offset;
                     const px = cx + Math.cos(window.angle) * playerR;
                     const py = cy + Math.sin(window.angle) * playerR;
@@ -942,7 +964,7 @@ function updateIceLasers(timeScale = 1) {
                     const collisionThreshold = Math.max(10, laser.thickness * 1.4);
 
                     const isRadialNearMiss = currentLaserDistance > collisionThreshold &&
-                                             currentLaserDistance <= collisionThreshold + window.LASER_NEAR_MISS_RADIAL_MARGIN;
+                        currentLaserDistance <= collisionThreshold + window.LASER_NEAR_MISS_RADIAL_MARGIN;
 
                     // Para láseres, una aproximación de cercanía angular
                     const angularDistance = Math.abs(normalizeAngle(laser.angle + window.worldRotation) - normalizeAngle(window.angle));
@@ -950,8 +972,8 @@ function updateIceLasers(timeScale = 1) {
 
                     if (isRadialNearMiss && isAngularNearMiss) { // Requiere cercanía radial Y angular
                         // Para láseres, consideramos "perfect" si el rozamiento es muy cercano
-                        const isPerfect = currentLaserDistance <= collisionThreshold + (window.LASER_NEAR_MISS_RADIAL_MARGIN / 2) && 
-                                          angularDistance < (laser.width || 0.045) + (window.PERFECT_DODGE_THRESHOLD / 2);
+                        const isPerfect = currentLaserDistance <= collisionThreshold + (window.LASER_NEAR_MISS_RADIAL_MARGIN / 2) &&
+                            angularDistance < (laser.width || 0.045) + (window.PERFECT_DODGE_THRESHOLD / 2);
                         window.onNearMiss(isPerfect);
                         laser.proximityChecked = true;
                     }
@@ -996,8 +1018,8 @@ function getLaserPoints(laser, cx, cy) {
 }
 
 function laserHitsPlayer(laser) {
-    const cx = canvas.width / 2;
-    const cy = canvas.height / 2;
+    const dpr = window.canvasDPR || 1; const cx = canvas.width / dpr / 2;
+    const cy = canvas.height / (window.canvasDPR || 1) / 2;
     const playerR = window.BASE_RADIUS + window.offset;
     const px = cx + Math.cos(window.angle) * playerR;
     const py = cy + Math.sin(window.angle) * playerR;
@@ -1049,8 +1071,8 @@ function draw() {
         ctx.drawImage(backgroundCanvas, 0, 0);
     }
 
-    const cx = canvas.width / 2;
-    const cy = canvas.height / 2;
+    const dpr = window.canvasDPR || 1; const cx = canvas.width / dpr / 2;
+    const cy = canvas.height / (window.canvasDPR || 1) / 2;
 
     // 1) OFFSCREEN rotando, centrado, con clip al círculo
     ctx.save();
@@ -1059,7 +1081,9 @@ function draw() {
     ctx.clip();
     ctx.translate(cx, cy);
     ctx.rotate(worldRotation);
-    ctx.drawImage(offscreen, -offscreen.width / 2, -offscreen.height / 2);
+    // Dividir por DPR para que el offscreen se dibuje en coordenadas lógicas
+    const _dprR = window.canvasDPR || 1;
+    ctx.drawImage(offscreen, -offscreen.width / (2 * _dprR), -offscreen.height / (2 * _dprR), offscreen.width / _dprR, offscreen.height / _dprR);
     ctx.restore();
 
     // 2) DEAD COINS — clip al círculo, sin rotar (ángulo ya tiene worldRotation)
@@ -1113,6 +1137,9 @@ function draw() {
 
     if (window.drawPowerupWorldEffects) drawPowerupWorldEffects(ctx, cx, cy);
 
+    // 4.5) COMBO PARTICLES
+    if (window.updateAndDrawParticles) window.updateAndDrawParticles();
+
     // 5) PLAYER
     if (window.running) {
         drawPlayer(cx, cy);
@@ -1133,11 +1160,12 @@ function draw() {
     if (!window.running) return;
     drawAbilityIntro();
     const compactHud = !!window.compactHud;
-    const hudX = compactHud ? 10 : 20;
-    const hudY = Math.max(compactHud ? 10 : 18, canvas.height * (compactHud ? 0.035 : 0.08));
-    const hudW = compactHud ? 178 : 240;
-    const hudH = compactHud ? 94 : 125;
-    const hudPad = compactHud ? 10 : 14;
+    const safeTop = compactHud ? 52 : 60; /* Debajo del reloj/notch del sistema */
+    const hudX = compactHud ? 12 : 35;
+    const hudY = Math.max(safeTop, canvas.height / (window.canvasDPR || 1) * (compactHud ? 0.07 : 0.1));
+    const hudW = compactHud ? 162 : 240;
+    const hudH = compactHud ? 86 : 125;
+    const hudPad = compactHud ? 9 : 14;
     ctx.save();
     ctx.fillStyle = "rgba(0,0,0,0.45)";
     ctx.beginPath();
@@ -1196,7 +1224,7 @@ function drawPlayer(cx, cy) {
     const catalogSkinData = getShopSkinData(equippedId);
     const catalogSkin = getCatalogSkinImage(equippedId, window.playerFacing || "right");
     if (directionalSkin && directionalSkin.complete && directionalSkin.naturalWidth > 0) {
-        const skinSize = 48;
+        const skinSize = Math.round(Math.max(32, Math.min(52, window.DOME_RADIUS * 0.22)));
         if (!lowPower) {
             ctx.shadowBlur = 18;
             ctx.shadowColor = DIRECTIONAL_SKINS[equippedId].glow;
@@ -1204,7 +1232,7 @@ function drawPlayer(cx, cy) {
         if (facingLeft) ctx.scale(-1, 1);
         ctx.drawImage(directionalSkin, -skinSize / 2, -skinSize / 2, skinSize, skinSize);
     } else if (catalogSkin && catalogSkin.complete && catalogSkin.naturalWidth > 0) {
-        const skinSize = 48;
+        const skinSize = Math.round(Math.max(32, Math.min(52, window.DOME_RADIUS * 0.22)));
         if (!lowPower) {
             ctx.shadowBlur = 18;
             ctx.shadowColor = skin.glow || '#ffee00';
@@ -1220,12 +1248,13 @@ function drawPlayer(cx, cy) {
             ctx.shadowBlur = 20;
             ctx.shadowColor = skin.glow;
         }
+        const pr = Math.round(Math.max(10, Math.min(18, window.DOME_RADIUS * 0.075)));
         ctx.beginPath();
-        ctx.arc(0, 0, 16, 0, Math.PI * 2);
+        ctx.arc(0, 0, pr, 0, Math.PI * 2);
         ctx.fillStyle = skin.color;
         ctx.fill();
         ctx.beginPath();
-        ctx.arc(0, 0, 6, 0, Math.PI * 2);
+        ctx.arc(0, 0, Math.round(pr * 0.38), 0, Math.PI * 2);
         ctx.fillStyle = '#ffffff';
         ctx.fill();
     }
@@ -1436,7 +1465,17 @@ window.startGame = function (levelIndex = 0, skipStartSound = false) {
     }
     if (winChestBox) winChestBox.innerHTML = '';
 
+    // Ocultar todos los paneles y elementos de UI para limpiar pantalla
+    ['levelSelect', 'overlay', 'shopPanel', 'inventoryPanel', 'pausePanel', 'profilePanel', 'vipPanel', 'rubyPassPanel', 'settingsPanel', 'emote-menu', 'emote-more-panel'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) {
+            el.style.display = 'none';
+            el.classList.remove('showing', 'entering', 'leaving');
+        }
+    });
+
     document.getElementById("gameCanvas").style.visibility = "visible";
+    document.getElementById("gameCanvas").style.display = "block";
     document.getElementById('pause-btn').classList.add('is-playing');
     document.body.classList.toggle('is-playing-touch', isTouchLayout());
 
@@ -1505,6 +1544,12 @@ window.startGame = function (levelIndex = 0, skipStartSound = false) {
     window.gravityForce = 1;
     window.worldRotationSpeed = levelConfig.rotationSpeed || 0.01;
     window.targetWorldSpeed = levelConfig.rotationSpeed || 0.01;
+
+    // Inicializar imagen del botón de gravedad (al inicio gravity=1, jugador en núcleo → muestra "subir")
+    const gravityImg = document.getElementById('gravity-img');
+    if (gravityImg) {
+        gravityImg.src = 'assets/Imagenes/Botones HUD/Gravedad_arriba.png';
+    }
 };
 
 window.startLevelWithTransition = function (levelIndex = 0) {
@@ -1625,7 +1670,7 @@ function drawAbilityIntro() {
     ctx.globalAlpha = alpha;
     ctx.fillStyle = 'rgba(0,0,0,0.48)';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
-    ctx.translate(canvas.width / 2, canvas.height / 2);
+    ctx.translate(canvas.width / (window.canvasDPR || 1) / 2, canvas.height / (window.canvasDPR || 1) / 2);
     ctx.fillStyle = '#ffffff';
     ctx.textAlign = 'center';
     ctx.font = '900 30px Geom, monospace';
@@ -1806,6 +1851,110 @@ addEventListener("keyup", e => {
     if (e.key === "w" || e.key === "W") window.keys.powerW = false;
     if (e.key === "e" || e.key === "E") window.keys.powerE = false;
 });
+
+// =====================================================
+// PAUSE / RESUME
+// =====================================================
+
+window.pauseGame = function () {
+    if (!window.running) return;
+    window.paused = true;
+    window.bgMusic?.pause();
+    document.getElementById('pausePanel')?.classList.add('showing');
+};
+
+window.resumeGame = function () {
+    window.paused = false;
+    document.getElementById('pausePanel')?.classList.remove('showing');
+    if (!window.isMuted) window.bgMusic?.play().catch(() => { });
+};
+
+// Botones dentro del panel de pausa
+document.getElementById('pause-continue')?.addEventListener('click', () => window.resumeGame());
+document.getElementById('pause-options')?.addEventListener('click', () => openOptionsPanel?.());
+document.getElementById('pause-levels')?.addEventListener('click', () => {
+    window.resumeGame();
+    window.running = false;
+    document.getElementById('pausePanel')?.classList.remove('showing');
+    document.getElementById('pause-btn')?.classList.remove('is-playing');
+    document.getElementById('gameCanvas').style.visibility = 'hidden';
+    document.body.classList.remove('is-playing-touch');
+    window.bgMusic?.pause();
+    window.bgMusic.currentTime = 0;
+    showLevelSelect?.();
+});
+document.getElementById('pause-menu')?.addEventListener('click', () => {
+    window.paused = false;
+    window.running = false;
+    document.getElementById('pausePanel')?.classList.remove('showing');
+    document.getElementById('pause-btn')?.classList.remove('is-playing');
+    document.getElementById('gameCanvas').style.visibility = 'hidden';
+    document.body.classList.remove('is-playing-touch');
+    window.bgMusic?.pause();
+    window.bgMusic.currentTime = 0;
+    document.getElementById('overlay').style.display = 'flex';
+    window.ensureMenuMusic?.();
+});
+
+// =====================================================
+// TOUCH CONTROLS
+// =====================================================
+
+(function setupTouchControls() {
+    const btnLeft = document.getElementById('touch-left');
+    const btnRight = document.getElementById('touch-right');
+    const btnGravity = document.getElementById('touch-gravity');
+
+    function held(key, active) {
+        if (window.paused) return;
+        window.keys[key] = active;
+    }
+
+    function onGravityPress() {
+        if (window.paused || window.gravityFlipCooldown > 0) return;
+        window.keys.gravity = true;
+
+        // Cambiar imagen según el estado ACTUAL de la gravedad
+        // gravity=1 → jugador cae hacia abajo (en núcleo) → botón muestra "subir" (Gravedad_arriba)
+        // gravity=-1 → jugador cae hacia arriba (exterior) → botón muestra "bajar" (Gravedad_abajo)
+        updateGravityButtonImage();
+    }
+
+    function updateGravityButtonImage() {
+        const gravityImg = document.getElementById('gravity-img');
+        if (!gravityImg) return;
+        // Después del flip la gravedad ya cambió, mostramos la dirección opuesta disponible
+        const currentGravity = window.gravity || 1;
+        gravityImg.src = currentGravity === 1
+            ? 'assets/Imagenes/Botones HUD/Gravedad_abajo.png'
+            : 'assets/Imagenes/Botones HUD/Gravedad_arriba.png';
+    }
+
+    window.updateGravityButtonImage = updateGravityButtonImage;
+
+    // Left button
+    btnLeft?.addEventListener('touchstart', (e) => { e.preventDefault(); held('left', true); }, { passive: false });
+    btnLeft?.addEventListener('touchend', (e) => { e.preventDefault(); held('left', false); }, { passive: false });
+    btnLeft?.addEventListener('touchcancel', (e) => { e.preventDefault(); held('left', false); }, { passive: false });
+
+    // Right button
+    btnRight?.addEventListener('touchstart', (e) => { e.preventDefault(); held('right', true); }, { passive: false });
+    btnRight?.addEventListener('touchend', (e) => { e.preventDefault(); held('right', false); }, { passive: false });
+    btnRight?.addEventListener('touchcancel', (e) => { e.preventDefault(); held('right', false); }, { passive: false });
+
+    // Gravity button
+    btnGravity?.addEventListener('touchstart', (e) => { e.preventDefault(); onGravityPress(); }, { passive: false });
+    btnGravity?.addEventListener('touchend', (e) => { e.preventDefault(); }, { passive: false });
+
+    // Mouse fallback (para probar en browser)
+    btnLeft?.addEventListener('mousedown', () => held('left', true));
+    btnLeft?.addEventListener('mouseup', () => held('left', false));
+    btnLeft?.addEventListener('mouseleave', () => held('left', false));
+    btnRight?.addEventListener('mousedown', () => held('right', true));
+    btnRight?.addEventListener('mouseup', () => held('right', false));
+    btnRight?.addEventListener('mouseleave', () => held('right', false));
+    btnGravity?.addEventListener('mousedown', onGravityPress);
+})();
 
 document.addEventListener('visibilitychange', () => {
     if (document.hidden) {

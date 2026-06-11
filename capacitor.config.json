@@ -1,0 +1,17 @@
+{
+  "appId": "com.felixcompany.thegem",
+  "appName": "THE GEM",
+  "webDir": "dist",
+  "android": {
+    "backgroundColor": "#050505",
+    "allowMixedContent": true,
+    "initialFocus": true
+  },
+  "plugins": {
+    "StatusBar": {
+      "overlaysWebView": false,
+      "style": "DARK",
+      "backgroundColor": "#00000000"
+    }
+  }
+}

@@ -371,11 +371,12 @@ function getPowerupDuration(id, level) {
 }
 
 function createPowerupRuntime(slots = getEquippedPowerups()) {
+    const isTouch = document.body.classList.contains('is-touch-device');
     window.activePowerupSlots = slots.map((id, index) => {
         const state = id ? getPowerupLevelState(id) : null;
         return {
             id,
-            key: index === 0 ? 'W' : 'E',
+            key: isTouch ? '' : (index === 0 ? 'W' : 'E'), /* Eliminar letras en móvil */
             active: false,
             startedAt: 0,
             duration: 0,
@@ -446,82 +447,10 @@ function isZeroGravityActive() {
 }
 
 // =====================================================
-// COMBO SYSTEM
+// COMBO SYSTEM - Usa combo-system.js
 // =====================================================
-
-const COMBO_STORAGE_KEY = 'comboSystem';
-
-function initComboSystem() {
-    window.comboSystem = {
-        count: 0,
-        multiplier: 1,
-        lastDodgeTime: 0,
-        maxCombo: 0,
-        totalComboXP: 0
-    };
-}
-
-function incrementCombo() {
-    if (!window.comboSystem) initComboSystem();
-    const now = performance.now();
-    const comboTimeout = 3000; // 3 segundos para mantener combo
-    
-    if (now - window.comboSystem.lastDodgeTime < comboTimeout) {
-        window.comboSystem.count++;
-    } else {
-        window.comboSystem.count = 1;
-    }
-    
-    window.comboSystem.lastDodgeTime = now;
-    window.comboSystem.multiplier = Math.min(5, 1 + Math.floor(window.comboSystem.count / 5) * 0.5);
-    window.comboSystem.maxCombo = Math.max(window.comboSystem.maxCombo, window.comboSystem.count);
-    
-    return window.comboSystem.multiplier;
-}
-
-function resetCombo() {
-    if (!window.comboSystem) initComboSystem();
-    window.comboSystem.count = 0;
-    window.comboSystem.multiplier = 1;
-}
-
-function getComboMultiplier() {
-    if (!window.comboSystem) initComboSystem();
-    const now = performance.now();
-    const comboTimeout = 3000;
-    
-    if (now - window.comboSystem.lastDodgeTime > comboTimeout) {
-        resetCombo();
-    }
-    
-    return window.comboSystem.multiplier;
-}
-
-function getComboXPBonus() {
-    if (!window.comboSystem) initComboSystem();
-    return Math.floor(window.comboSystem.maxCombo * 10);
-}
-
-function saveComboStats() {
-    if (!window.comboSystem) initComboSystem();
-    window.comboSystem.totalComboXP += getComboXPBonus();
-    localStorage.setItem(COMBO_STORAGE_KEY, JSON.stringify({
-        maxCombo: window.comboSystem.maxCombo,
-        totalComboXP: window.comboSystem.totalComboXP
-    }));
-}
-
-function loadComboStats() {
-    const saved = localStorage.getItem(COMBO_STORAGE_KEY);
-    if (saved) {
-        const data = JSON.parse(saved);
-        if (!window.comboSystem) initComboSystem();
-        window.comboSystem.totalComboXP = data.totalComboXP || 0;
-    }
-}
-
-initComboSystem();
-loadComboStats();
+// El sistema de combo se maneja en combo-system.js
+// Este archivo solo usa las funciones exportadas desde allí
 
 function activatePowerupSlot(slotIndex) {
     const slot = window.activePowerupSlots?.[slotIndex];
@@ -1185,13 +1114,25 @@ function drawPlayerAuras(ctx, cx, cy, effects, now) {
 function drawPowerupHud(ctx) {
     if (!window.activePowerupSlots) return;
     const compact = !!window.compactHud;
+    const isTouch = document.body.classList.contains('is-touch-device');
+    
+    // Get custom position, size and opacity from localStorage for mobile
+    const powerupOffsetX = isTouch ? (parseInt(localStorage.getItem('powerupOffsetX') || '0')) : 0;
+    const powerupOffsetY = isTouch ? (parseInt(localStorage.getItem('powerupOffsetY') || '0')) : 0;
+    const powerupSize = isTouch ? (parseInt(localStorage.getItem('powerupSize') || '100') / 100) : 1;
+    const powerupOpacity = isTouch ? (parseInt(localStorage.getItem('powerupOpacity') || '100') / 100) : 1;
+    
     const hudX = compact ? 10 : 20;
     const hudW = compact ? 178 : 240;
-    const baseX = hudX + hudW + 12;
-    const y = Math.max(compact ? 22 : 34, window.canvas.height * (compact ? 0.035 : 0.08) + 14);
-    const radius = compact ? 22 : 29;
-    const gap = compact ? 10 : 14;
+    const baseX = hudX + hudW + 12 + powerupOffsetX;
+    const y = Math.max(compact ? 22 : 34, window.canvas.height * (compact ? 0.035 : 0.08) + 14) + powerupOffsetY;
+    const radius = (compact ? 22 : 29) * powerupSize;
+    const gap = (compact ? 10 : 14) * powerupSize;
     const inventory = readPowerups();
+    
+    ctx.save();
+    ctx.globalAlpha = powerupOpacity;
+    
     window.activePowerupSlots.forEach((slot, index) => {
         const x = baseX + index * (radius * 2 + gap);
         const powerup = getPowerupById(slot.id);
@@ -1201,6 +1142,8 @@ function drawPowerupHud(ctx) {
     
     // Draw combo indicator
     drawComboIndicator(ctx, baseX + 2 * (radius * 2 + gap), y + radius, radius);
+    
+    ctx.restore();
 }
 
 function drawPowerupHudCircle(ctx, x, y, radius, slot, powerup, state) {
@@ -1264,11 +1207,11 @@ function drawPowerupHudCircle(ctx, x, y, radius, slot, powerup, state) {
 }
 
 function drawComboIndicator(ctx, x, y, radius) {
-    const combo = window.comboSystem || { count: 0, multiplier: 1 };
-    if (combo.count <= 0) return;
-    
+    const combo = window.comboSystem || { currentCombo: 0, comboMultiplier: 1 };
+    if (combo.currentCombo <= 0) return;
+
     ctx.save();
-    
+
     // Background circle
     ctx.fillStyle = 'rgba(255, 215, 0, 0.15)';
     ctx.strokeStyle = '#FFD700';
@@ -1277,19 +1220,19 @@ function drawComboIndicator(ctx, x, y, radius) {
     ctx.arc(x, y, radius, 0, Math.PI * 2);
     ctx.fill();
     ctx.stroke();
-    
+
     // Combo count
     ctx.fillStyle = '#FFD700';
     ctx.font = `900 ${Math.max(14, radius * 0.7)}px Geom, monospace`;
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
-    ctx.fillText(`x${combo.count || 0}`, x, y - 4);
-    
+    ctx.fillText(`x${combo.currentCombo || 0}`, x, y - 4);
+
     // Multiplier
     ctx.fillStyle = 'rgba(255, 215, 0, 0.8)';
     ctx.font = `700 ${Math.max(10, radius * 0.45)}px monospace`;
-    ctx.fillText(`${(combo.multiplier || 1).toFixed(1)}x`, x, y + 12);
-    
+    ctx.fillText(`${(combo.comboMultiplier || 1).toFixed(1)}x`, x, y + 12);
+
     ctx.restore();
 }
 

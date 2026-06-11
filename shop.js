@@ -2,6 +2,10 @@
 // SHOP SYSTEM
 // =====================================================
 
+// Hoisted declarations to prevent "before initialization" errors in bundled APK
+var VIP_GAMEPLAY_PLACEHOLDERS = [];
+var previewTrailAnim = null;
+
 const SHOP_PLACEHOLDER_IMAGE = 'assets/UI/Store/Placeholders/placeholder_store_item.png';
 const RUBY_PASS_REWARD_PLACEHOLDER = 'assets/UI/Store/Placeholders/placeholder_ruby_pass_reward.png';
 const EMOTE_STANDARD_PRICE_COINS = 150;
@@ -10,23 +14,303 @@ SHOP_SNOWFLAKE_IMAGE.src = 'assets/UI/Efectos de trails/Efecto copo de nieve.png
 const SHOP_CANDY_PARTICLE_IMAGE = new Image();
 SHOP_CANDY_PARTICLE_IMAGE.src = 'assets/UI/Efectos de trails/Particulas/particula_dulce.png';
 
-const SKINS_DATA = [
-    { id: 'cyan', name: 'Cian', color: '#00ffe7', rarity: 'BASICA', price: 0, priceType: 'coins', owned: true, archetype: 'Supervivencia', ability: 'Sobrevive a 1 pinchazo por partida.' },
-    { id: 'red', name: 'Rojo', color: '#ff4444', rarity: 'BASICA', price: 50, priceType: 'coins', owned: false, archetype: 'Supervivencia', ability: 'Sobrevive a 1 pinchazo por partida.' },
-    { id: 'blue', name: 'Azul', color: '#5045eb', rarity: 'BASICA', price: 50, priceType: 'coins', owned: false, archetype: 'Supervivencia', ability: 'Sobrevive a 1 pinchazo por partida.' },
-    { id: 'yellow', name: 'Amarillo', color: '#ffee00', rarity: 'BASICA', price: 50, priceType: 'coins', owned: false, archetype: 'Supervivencia', ability: 'Sobrevive a 1 pinchazo por partida.' },
-    { id: 'orange', name: 'Naranja', color: '#ff8800', rarity: 'BASICA', price: 50, priceType: 'coins', owned: false, archetype: 'Supervivencia', ability: 'Sobrevive a 1 pinchazo por partida.' },
-    { id: 'green', name: 'Verde', color: '#3fe969', rarity: 'BASICA', price: 50, priceType: 'coins', owned: false, archetype: 'Supervivencia', ability: 'Sobrevive a 1 pinchazo por partida.' },
-    { id: 'purple', name: 'Morado', color: '#cc44ff', rarity: 'BASICA', price: 50, priceType: 'coins', owned: false, archetype: 'Supervivencia', ability: 'Sobrevive a 1 pinchazo por partida.' },
-    { id: 'cool', name: 'Cool', color: '#ffffff', rarity: 'ESPECIAL', price: 300, priceType: 'coins', altPrice: 10, altType: 'gems', owned: false, emoji: 'C', archetype: 'Magnetismo', ability: 'Atrae recursos en radio pequeno.' },
-    { id: 'frank', name: 'Frankenstein', color: '#78ff8f', rarity: 'EPICA', price: 1200, priceType: 'coins', altPrice: 40, altType: 'gems', fragments: 3, owned: false, emoji: 'F', archetype: 'Magnetismo', ability: 'Atrae recursos en radio grande.' },
-    { id: 'shield', name: 'Centinela', color: '#7fd8ff', rarity: 'EPICA', price: 1200, priceType: 'coins', altPrice: 40, altType: 'gems', fragments: 3, owned: false, emoji: 'S', archetype: 'Supervivencia', ability: 'Escudo que regenera cada 60 segundos.' },
-    { id: 'kenji', name: 'KENJI', color: '#845cff', rarity: 'EPICA', price: 1500, priceType: 'coins', altPrice: 50, altType: 'gems', fragments: 3, owned: false, image: 'assets/UI/Store/Skins/Normal/KENJI Skin EPICO/Kenji_Skin.png', imageSide: 'assets/UI/Store/Skins/Normal/KENJI Skin EPICO/Kenji_Skin_lado.png', archetype: 'Tecnica', ability: 'Movimiento preciso con estela epica.' },
-    { id: 'brifon', name: 'BRIFON', color: '#b86cff', rarity: 'EPICA', price: 0, priceType: 'coins', owned: false, soon: true, image: 'assets/UI/Store/Skins/Normal/Brifon.png', imageSide: 'assets/UI/Store/Skins/Normal/BRIFON Skin EPICO/BRIFON_Skin_lado.png', archetype: 'Pendiente', ability: 'Apartado reservado.' },
-    { id: 'demon_ember', name: 'Demon Ember', color: '#cf0000', rarity: 'DEMON', price: 4500, priceType: 'coins', altPrice: 150, altType: 'gems', fragments: 3, owned: false, emoji: 'D', archetype: 'Inmortalidad', ability: 'Invulnerable 3 segundos.' },
-    { id: 'daxor', name: 'DAXOR', color: '#ff2448', rarity: 'DEMON', price: 5200, priceType: 'coins', altPrice: 170, altType: 'gems', fragments: 3, owned: false, image: 'assets/UI/Store/Skins/Normal/DAXOR_Skin.png', imageSide: 'assets/UI/Store/Skins/Normal/DAXOR Skin DEMON/DAXOR_Skin_lado.png', archetype: 'Demon', ability: 'Aspecto demon con doble direccion.' },
-    { id: 'vip_time', name: 'Crono VIP', color: '#ffee00', rarity: 'VIP', price: 500, priceType: 'gems', fragments: 4, owned: false, emoji: 'V', archetype: 'Control del Tiempo', ability: 'Ralentiza la pista 40% por 5 segundos.' },
+// =====================================================
+// GLOBAL VARIABLES
+// =====================================================
+
+let trailAnimId = null;
+
+// =====================================================
+// VIP CONSTANTS
+// =====================================================
+
+const VIP_ASSET_BASE = 'assets/UI/Store/VIP/Bundles';
+const VIP_ITEM_PRICE = 300;
+const VIP_PANEL_PRICE = 620;
+
+// =====================================================
+// VIP HELPER FUNCTIONS
+// =====================================================
+
+function vipSkin(folder, id, name, price = VIP_ITEM_PRICE, options = {}) {
+    return {
+        type: 'vipSkin',
+        id,
+        name,
+        price,
+        image: `${VIP_ASSET_BASE}/${folder}/${id}.png`,
+        ...options
+    };
+}
+
+function vipTrail(folder, id, name, price = 320) {
+    return { type: 'vipTrailPng', id, name, price, image: `${VIP_ASSET_BASE}/${folder}/${id}.png`, trailId: id };
+}
+
+// =====================================================
+// TRAILS DATA
+// =====================================================
+
+const TRAILS_DATA = [
+    { id: 'basic', name: 'Basica', rarity: 'BASICA', rarityColor: '#57b7dd', price: 30, priceType: 'coins' },
+    { id: 'ghost', name: 'Ghost', rarity: 'EPICA', rarityColor: '#cc44ff', price: 800, priceType: 'coins' },
+    { id: 'fractura', name: 'Fractura', rarity: 'EPICA', rarityColor: '#cc44ff', price: 1000, priceType: 'coins' },
+    { id: 'hielo', name: 'Hielo', rarity: 'ESPECIAL', rarityColor: '#7fd8ff', price: 260, priceType: 'coins' },
+    { id: 'toxico', name: 'Toxico', rarity: 'ESPECIAL', rarityColor: '#8dff5a', price: 320, priceType: 'coins' },
+    { id: 'trail_vampiro', name: 'Vampiro', rarity: 'VIP', rarityColor: '#ff4d6d', price: 0, priceType: 'gems' },
+    { id: 'trail_zombie', name: 'Zombie', rarity: 'VIP', rarityColor: '#78ff8f', price: 0, priceType: 'gems' },
+    { id: 'trail_fire', name: 'Elemento Fuego', rarity: 'VIP', rarityColor: '#ff8a00', price: 0, priceType: 'gems' },
+    { id: 'trail_water', name: 'Elemento Agua', rarity: 'VIP', rarityColor: '#4488ff', price: 0, priceType: 'gems' },
+    { id: 'trail_wind', name: 'Elemento Viento', rarity: 'VIP', rarityColor: '#00ffe7', price: 0, priceType: 'gems' },
+    { id: 'trail_ice', name: 'Elemento Hielo', rarity: 'VIP', rarityColor: '#7fd8ff', price: 0, priceType: 'gems' },
+    { id: 'trail_lava', name: 'Elemento Lava', rarity: 'VIP', rarityColor: '#ff4444', price: 0, priceType: 'gems' },
+    { id: 'trail_nature', name: 'Elemento Naturaleza', rarity: 'VIP', rarityColor: '#44ff88', price: 0, priceType: 'gems' },
+    { id: 'trail_custom_text', name: 'Texto Personalizado', rarity: 'VIP', rarityColor: '#ffda3a', price: 0, priceType: 'gems' },
 ];
+
+// =====================================================
+// VIP CAROUSEL DATA
+// =====================================================
+
+const VIP_CAROUSEL_DATA = [
+    {
+        id: 'la_realeza',
+        title: 'LA REALEZA',
+        subtitle: 'Corona, corte y poder real',
+        price: 3200,
+        cover: 'assets/UI/Store/VIP/CarouselPanels/panel_carousel_la_realeza.png',
+        detailBackground: 'assets/UI/Store/VIP/Backgrounds/bg_carousel_la_realeza.png',
+        popupBackground: 'assets/UI/Store/VIP/PopupBackgrounds/popup_carousel_la_realeza.png',
+        glowA: '#ffe45c',
+        glowB: '#b47a00',
+        items: [
+            {
+                type: 'vipPanel',
+                id: 'panel_los_reyes',
+                name: 'LOS REYES',
+                label: 'PANEL',
+                price: VIP_PANEL_PRICE,
+                image: 'assets/UI/Store/VIP/Bundles/Royal/panel_los_reyes.png',
+                popupBackground: 'assets/UI/Store/VIP/Bundles/Royal/popup_los_reyes_bg.png',
+                items: [
+                    vipSkin('Royal', 'skin_rey', 'Rey'),
+                    vipSkin('Royal', 'skin_reina', 'Reina')
+                ]
+            },
+            vipSkin('Royal', 'skin_caballero_bronce', 'Caballero Bronce'),
+            vipSkin('Royal', 'skin_caballero_plata', 'Caballero Plata'),
+            vipSkin('Royal', 'skin_caballero_dorado', 'Caballero Dorado', 340),
+            vipSkin('Royal', 'skin_bufon', 'Bufon'),
+            vipSkin('Royal', 'skin_emperador_oscuro', 'Emperador Oscuro', 380),
+            vipSkin('Royal', 'skin_principe_helado', 'Principe Helado', 340),
+            vipSkin('Royal', 'skin_mago', 'Mago'),
+            vipSkin('Royal', 'skin_arquera', 'Arquera'),
+            vipSkin('Royal', 'skin_noble', 'Noble')
+        ]
+    },
+    {
+        id: 'mitologia_y_dioses',
+        title: 'MITOLOGIA Y DIOSES',
+        subtitle: 'Dioses, faraones y reliquias del Nilo',
+        price: 3600,
+        cover: 'assets/UI/Store/VIP/CarouselPanels/panel_carousel_mitologia_dioses.png',
+        detailBackground: 'assets/UI/Store/VIP/Backgrounds/bg_carousel_mitologia_dioses.png',
+        popupBackground: 'assets/UI/Store/VIP/PopupBackgrounds/popup_carousel_mitologia_dioses.png',
+        glowA: '#244dff',
+        glowB: '#00f5ff',
+        items: [
+            {
+                type: 'vipPanel',
+                id: 'panel_dioses',
+                name: 'DIOSES',
+                label: 'PANEL',
+                price: 0,
+                image: 'assets/UI/Store/VIP/Bundles/Mythology/panel_dioses.png',
+                popupBackground: 'assets/UI/Store/VIP/Bundles/Mythology/popup_dioses_bg.png',
+                items: [
+                    vipSkin('Mythology', 'skin_zeus', 'Zeus', 380),
+                    vipSkin('Mythology', 'skin_hades', 'Hades', 380),
+                    vipSkin('Mythology', 'skin_poseidon', 'Poseidon', 380),
+                    vipSkin('Mythology', 'skin_ares', 'Ares', 360),
+                    vipSkin('Mythology', 'skin_medusa', 'Medusa', 360)
+                ]
+            },
+            {
+                type: 'vipPanel',
+                id: 'panel_nilo',
+                name: 'NILO REAL',
+                label: 'PANEL',
+                price: VIP_PANEL_PRICE,
+                image: 'assets/UI/Store/VIP/Bundles/Mythology/panel_nilo_real.png',
+                popupBackground: 'assets/UI/Store/VIP/Bundles/Mythology/popup_nilo_real_bg.png',
+                items: [
+                    {
+                        type: 'bundle',
+                        id: 'bundle_faraon',
+                        name: 'Faraon',
+                        price: 520,
+                        image: 'assets/UI/Store/VIP/Bundles/Mythology/skin_faraon.png',
+                        items: [
+                            vipSkin('Mythology', 'skin_faraon', 'Faraon'),
+                            vipTrail('Mythology', 'trail_faraon', 'Trail Faraon')
+                        ]
+                    },
+                    {
+                        type: 'bundle',
+                        id: 'bundle_reina_nilo',
+                        name: 'Reina del Nilo',
+                        price: 520,
+                        image: 'assets/UI/Store/VIP/Bundles/Mythology/skin_reina_nilo.png',
+                        items: [
+                            vipSkin('Mythology', 'skin_reina_nilo', 'Reina del Nilo'),
+                            vipTrail('Mythology', 'trail_nilo', 'Trail Nilo')
+                        ]
+                    }
+                ]
+            },
+            vipSkin('Mythology', 'skin_guardian_dorado', 'Guardian Dorado', 340),
+            vipSkin('Mythology', 'skin_momia', 'Momia'),
+            vipSkin('Mythology', 'skin_momia_malvada', 'Momia Malvada', 340),
+            vipSkin('Mythology', 'skin_sarcofago', 'Sarcofago'),
+            vipSkin('Mythology', 'skin_escarabajo', 'Escarabajo')
+        ]
+    },
+    {
+        id: 'criaturas_mitologicas',
+        title: 'CRIATURAS MITOLOGICAS',
+        subtitle: 'Bestias legendarias compradas una por una',
+        price: 3500,
+        cover: 'assets/UI/Store/VIP/CarouselPanels/panel_carousel_criaturas_mitologicas.png',
+        detailBackground: 'assets/UI/Store/VIP/Backgrounds/bg_carousel_criaturas_mitologicas.png',
+        popupBackground: 'assets/UI/Store/VIP/PopupBackgrounds/popup_carousel_criaturas_mitologicas.png',
+        glowA: '#ff8a00',
+        glowB: '#ffffff',
+        items: [
+            vipSkin('Creatures', 'skin_dragon', 'Dragon', 380),
+            vipSkin('Creatures', 'skin_hydra', 'Hydra', 360),
+            vipSkin('Creatures', 'skin_fenix', 'Fenix', 360),
+            vipSkin('Creatures', 'skin_quimera', 'Quimera', 360),
+            vipSkin('Creatures', 'skin_leviatan', 'Leviatan', 380),
+            vipSkin('Creatures', 'skin_grifo', 'Grifo', 340),
+            vipSkin('Creatures', 'skin_minotauro', 'Minotauro', 340),
+            vipSkin('Creatures', 'skin_gargola', 'Gargola'),
+            vipSkin('Creatures', 'skin_manticora', 'Manticora', 340),
+            vipSkin('Creatures', 'skin_serpiente_marina', 'Serpiente Marina', 340),
+            vipSkin('Creatures', 'skin_ciclope', 'Ciclope')
+        ]
+    },
+    {
+        id: 'carnaval_oscuro',
+        title: 'CARNAVAL OSCURO',
+        subtitle: 'Trails de circo y skins malditas',
+        price: 2900,
+        cover: 'assets/UI/Store/VIP/CarouselPanels/panel_carousel_carnaval_oscuro.png',
+        detailBackground: 'assets/UI/Store/VIP/Backgrounds/bg_carousel_carnaval_oscuro.png',
+        popupBackground: 'assets/UI/Store/VIP/PopupBackgrounds/popup_carousel_carnaval_oscuro.png',
+        glowA: '#ff1f3d',
+        glowB: '#030000',
+        items: [
+            { ...vipTrail('DarkCarnival', 'trail_sonrisa_malvada', 'Trail Sonrisa Malvada'), previewColor: 'red' },
+            { ...vipTrail('DarkCarnival', 'trail_circo', 'Trail Circo'), previewColor: 'orange' },
+            vipSkin('DarkCarnival', 'skin_bufon_maldito', 'Bufon Maldito', 340),
+            vipSkin('DarkCarnival', 'skin_payaso_oscuro', 'Payaso Oscuro', 340),
+            vipSkin('DarkCarnival', 'skin_marioneta', 'Marioneta'),
+            vipSkin('DarkCarnival', 'skin_mascara_sonriente', 'Mascara Sonriente'),
+            vipSkin('DarkCarnival', 'skin_titiritero', 'Titiritero', 340),
+            vipSkin('DarkCarnival', 'skin_arlequin', 'Arlequin'),
+            vipSkin('DarkCarnival', 'skin_mascara_veneciana', 'Mascara Veneciana'),
+            vipSkin('DarkCarnival', 'skin_sonrisa_rota', 'Sonrisa Rota', 340)
+        ]
+    }
+];
+
+// =====================================================
+// PRELOAD SHOP IMAGES
+// =====================================================
+
+function preloadShopImages() {
+    const shopImages = [];
+
+    // Preload emote images
+    EMOTES_DATA.forEach(emote => {
+        if (emote.image) {
+            const img = new Image();
+            img.src = emote.image;
+            shopImages.push(img);
+        }
+    });
+
+    // Preload skin images
+    SKINS_DATA.forEach(skin => {
+        if (skin.image) {
+            const img = new Image();
+            img.src = skin.image;
+            shopImages.push(img);
+        }
+    });
+
+    // Preload trail images
+    TRAILS_DATA.forEach(trail => {
+        if (trail.image) {
+            const img = new Image();
+            img.src = trail.image;
+            shopImages.push(img);
+        }
+    });
+
+    // Preload banner images
+    BANNERS_DATA.forEach(banner => {
+        if (banner.image) {
+            const img = new Image();
+            img.src = banner.image;
+            shopImages.push(img);
+        }
+    });
+
+    // Preload VIP images
+    VIP_GAMEPLAY_PLACEHOLDERS.forEach(vip => {
+        if (vip.image) {
+            const img = new Image();
+            img.src = vip.image;
+            shopImages.push(img);
+        }
+    });
+
+    return shopImages;
+}
+
+const SKINS_DATA = [
+    { id: 'cyan', name: 'Cian', color: '#00ffe7', rarity: 'BASICA', price: 0, priceType: 'coins', owned: true },
+    { id: 'red', name: 'Rojo', color: '#ff4444', rarity: 'BASICA', price: 50, priceType: 'coins', owned: false },
+    { id: 'blue', name: 'Azul', color: '#5045eb', rarity: 'BASICA', price: 50, priceType: 'coins', owned: false },
+    { id: 'yellow', name: 'Amarillo', color: '#ffee00', rarity: 'BASICA', price: 50, priceType: 'coins', owned: false },
+    { id: 'orange', name: 'Naranja', color: '#ff8800', rarity: 'BASICA', price: 50, priceType: 'coins', owned: false },
+    { id: 'green', name: 'Verde', color: '#3fe969', rarity: 'BASICA', price: 50, priceType: 'coins', owned: false },
+    { id: 'purple', name: 'Morado', color: '#cc44ff', rarity: 'BASICA', price: 50, priceType: 'coins', owned: false },
+    { id: 'cool', name: 'Cool', color: '#ffffff', rarity: 'ESPECIAL', price: 300, priceType: 'coins', altPrice: 10, altType: 'gems', owned: false },
+    { id: 'controlador', name: 'Controlador', color: '#00ffe7', rarity: 'ESPECIAL', price: 650, priceType: 'coins', imageRight: 'assets/UI/Store/Skins/skin_neon_ace.png' },
+    { id: 'metalman', name: 'Metalman', color: '#ffee00', rarity: 'ESPECIAL', price: 650, priceType: 'coins', imageRight: 'assets/UI/Store/Skins/skin_volt_star.png' },
+    { id: 'el_chivo_relajado', name: 'El Chivo Relajado', color: '#ffffff', rarity: 'ESPECIAL', price: 800, priceType: 'coins', imageRight: 'assets/UI/Store/Skins/skin_chivo.png' },
+    { id: 'frank', name: 'Frankenstein', color: '#78ff8f', rarity: 'EPICA', price: 1200, priceType: 'coins', altPrice: 40, altType: 'gems', fragments: 3, owned: false },
+    { id: 'shield', name: 'Centinela', color: '#7fd8ff', rarity: 'EPICA', price: 1200, priceType: 'coins', altPrice: 40, altType: 'gems', fragments: 3, owned: false },
+    { id: 'kenji', name: 'KENJI', color: '#845cff', rarity: 'EPICA', price: 1500, priceType: 'coins', altPrice: 50, altType: 'gems', fragments: 3, owned: false, image: 'assets/UI/Store/Skins/Normal/KENJI Skin EPICO/Kenji_Skin.png', imageSide: 'assets/UI/Store/Skins/Normal/KENJI Skin EPICO/Kenji_Skin_lado.png' },
+    { id: 'brifon', name: 'BRIFON', color: '#b86cff', rarity: 'EPICA', price: 1600, priceType: 'coins', owned: false, image: 'assets/UI/Store/Skins/Normal/Brifon.png', imageSide: 'assets/UI/Store/Skins/Normal/BRIFON Skin EPICO/BRIFON_Skin_lado.png' },
+    { id: 'demon_ember', name: 'Demon Ember', color: '#cf0000', rarity: 'DEMON', price: 4500, priceType: 'coins', altPrice: 150, altType: 'gems', fragments: 3, owned: false },
+    { id: 'daxor', name: 'DAXOR', color: '#ff2448', rarity: 'DEMON', price: 5200, priceType: 'coins', altPrice: 170, altType: 'gems', fragments: 3, owned: false, image: 'assets/UI/Store/Skins/Normal/DAXOR_Skin.png', imageSide: 'assets/UI/Store/Skins/Normal/DAXOR Skin DEMON/DAXOR_Skin_lado.png' }
+];
+
+const FRAGMENT_SKINS_LIST = [
+    { id: 'skin_caballero_dorado', name: 'Caballero Dorado', rarity: 'VIP', vipOnly: true, imageRight: 'assets/UI/Store/VIP/Bundles/Royal/skin_caballero_dorado.png' },
+    { id: 'skin_reina', name: 'Reina', rarity: 'VIP', vipOnly: true, imageRight: 'assets/UI/Store/VIP/Bundles/Royal/skin_reina.png' },
+    { id: 'skin_emperador_oscuro', name: 'Principe Oscuro', rarity: 'VIP', vipOnly: true, imageRight: 'assets/UI/Store/VIP/Bundles/Royal/skin_emperador_oscuro.png' },
+    { id: 'skin_fantasma', name: 'Fantasma', rarity: 'VIP', vipOnly: true, imageRight: 'assets/UI/Store/VIP/Bundles/Monsters/skin_fantasma.png' },
+    { id: 'skin_limon_toxico', name: 'Limon', rarity: 'VIP', vipOnly: true, imageRight: 'assets/UI/Store/VIP/Bundles/Food/skin_limon_toxico.png' },
+    { id: 'skin_planeta_marte', name: 'Marte', rarity: 'VIP', vipOnly: true, imageRight: 'assets/UI/Store/VIP/Bundles/Space/skin_planeta_marte.png' },
+    { id: 'skin_planeta_tierra', name: 'Tierra', rarity: 'VIP', vipOnly: true, imageRight: 'assets/UI/Store/VIP/Bundles/Space/skin_planeta_tierra.png' },
+    { id: 'skin_cuervo', name: 'Cuervo', rarity: 'VIP', vipOnly: true, imageRight: 'assets/UI/Store/VIP/Bundles/Wild/skin_cuervo.png' },
+    { id: 'skin_mama_claus', name: 'Mama Claus', rarity: 'VIP', vipOnly: true, imageRight: 'assets/UI/Store/VIP/Bundles/Christmas/skin_mama_claus.png' }
+];
+
 window.SKINS_DATA = SKINS_DATA;
 
 const RARITY_COLORS = {
@@ -639,12 +923,16 @@ const EMOTES_DATA = [
     { id: 'emoji_guino', name: 'Guino', image: 'assets/UI/Store/VIP/Bundles/Emojis/emoji_guino.png', rarity: 'VIP', vip: true, price: 200, priceType: 'gems', slot: 'SHOP_EMOTE_ASSET_SLOT_VIP_GUINO' },
     { id: 'emoji_sonriente', name: 'Sonriente', image: 'assets/UI/Store/VIP/Bundles/Emojis/emoji_sonriente.png', rarity: 'VIP', vip: true, price: 200, priceType: 'gems', slot: 'SHOP_EMOTE_ASSET_SLOT_VIP_SONRIENTE' },
     { id: 'emoji_bomito', name: 'Bomito', image: 'assets/UI/Store/VIP/Bundles/Emojis/emoji_bomito.png', rarity: 'VIP', vip: true, price: 200, priceType: 'gems', slot: 'SHOP_EMOTE_ASSET_SLOT_VIP_BOMITO' },
+
+    // Fragment Emotes
+    { id: 'emote_risa', name: 'Risa', image: 'assets/UI/Efectos de trails/Particulas/particula_risa.png', rarity: 'ESPECIAL', slot: 'SHOP_EMOTE_ASSET_SLOT_FRAGMENT_RISA' },
+    { id: 'emote_risa_malvada', name: 'Risa Malvada', image: 'assets/UI/Efectos de trails/Particulas/particula_risa_malvada.png', rarity: 'EPICA', slot: 'SHOP_EMOTE_ASSET_SLOT_FRAGMENT_RISA_MALVADA' },
 ];
 
-const VIP_ASSET_BASE = 'assets/UI/Store/VIP/Bundles';
-const VIP_ITEM_PRICE = 300;
-const VIP_PANEL_PRICE = 620;
-const ROLLING_SKIN_IDS = new Set([
+// Preload shop images at game start (after SKINS_DATA and EMOTES_DATA are defined)
+window.preloadedShopImages = preloadShopImages();
+
+var ROLLING_SKIN_IDS = new Set([
     'skin_sol',
     'skin_luna',
     'skin_galaxia',
@@ -696,21 +984,6 @@ function withGameplaySkinAssets(item) {
     };
 }
 
-function vipSkin(folder, id, name, price = VIP_ITEM_PRICE, options = {}) {
-    return withGameplaySkinAssets({
-        type: 'vipSkin',
-        id,
-        name,
-        price,
-        image: `${VIP_ASSET_BASE}/${folder}/${id}.png`,
-        ...options
-    });
-}
-
-function vipTrail(folder, id, name, price = 320) {
-    return { type: 'vipTrailPng', id, name, price, image: `${VIP_ASSET_BASE}/${folder}/${id}.png`, trailId: id };
-}
-
 const VIP_PROMO_BANNERS = [
     {
         id: 'vip_powerups',
@@ -756,164 +1029,12 @@ function renderVIPPowerupPromoBanner(banner) {
     `;
 }
 
-const VIP_GAMEPLAY_PLACEHOLDERS = [
+VIP_GAMEPLAY_PLACEHOLDERS = [
     { id: 'boosters', name: 'Potenciadores', type: 'BOOSTERS', detail: 'Slots para boosts del gameplay', rarity: 'rare' },
     { id: 'bots', name: 'Bots VIP', type: 'BOTS', detail: 'Slots para ayudantes automaticos', rarity: 'epic' },
     { id: 'perks', name: 'Ventajas', type: 'PERKS', detail: 'Slots para ventajas temporales', rarity: 'rare' },
     { id: 'power', name: 'Especiales', type: 'POWER', detail: 'Slots para poderes premium', rarity: 'legendary' },
     { id: 'reactor', name: 'Reactor', type: 'CORE', detail: 'Slots para energia de partida', rarity: 'epic' }
-];
-
-const VIP_CAROUSEL_DATA = [
-    {
-        id: 'la_realeza',
-        title: 'LA REALEZA',
-        subtitle: 'Corona, corte y poder real',
-        price: 3200,
-        cover: 'assets/UI/Store/VIP/CarouselPanels/panel_carousel_la_realeza.png',
-        detailBackground: 'assets/UI/Store/VIP/Backgrounds/bg_carousel_la_realeza.png',
-        popupBackground: 'assets/UI/Store/VIP/PopupBackgrounds/popup_carousel_la_realeza.png',
-        glowA: '#ffe45c',
-        glowB: '#b47a00',
-        items: [
-            {
-                type: 'vipPanel',
-                id: 'panel_los_reyes',
-                name: 'LOS REYES',
-                label: 'PANEL',
-                price: VIP_PANEL_PRICE,
-                image: 'assets/UI/Store/VIP/Bundles/Royal/panel_los_reyes.png',
-                popupBackground: 'assets/UI/Store/VIP/Bundles/Royal/popup_los_reyes_bg.png',
-                items: [
-                    vipSkin('Royal', 'skin_rey', 'Rey'),
-                    vipSkin('Royal', 'skin_reina', 'Reina')
-                ]
-            },
-            vipSkin('Royal', 'skin_caballero_bronce', 'Caballero Bronce'),
-            vipSkin('Royal', 'skin_caballero_plata', 'Caballero Plata'),
-            vipSkin('Royal', 'skin_caballero_dorado', 'Caballero Dorado', 340),
-            vipSkin('Royal', 'skin_bufon', 'Bufon'),
-            vipSkin('Royal', 'skin_emperador_oscuro', 'Emperador Oscuro', 380),
-            vipSkin('Royal', 'skin_principe_helado', 'Principe Helado', 340),
-            vipSkin('Royal', 'skin_mago', 'Mago'),
-            vipSkin('Royal', 'skin_arquera', 'Arquera'),
-            vipSkin('Royal', 'skin_noble', 'Noble')
-        ]
-    },
-    {
-        id: 'mitologia_y_dioses',
-        title: 'MITOLOGIA Y DIOSES',
-        subtitle: 'Dioses, faraones y reliquias del Nilo',
-        price: 3600,
-        cover: 'assets/UI/Store/VIP/CarouselPanels/panel_carousel_mitologia_dioses.png',
-        detailBackground: 'assets/UI/Store/VIP/Backgrounds/bg_carousel_mitologia_dioses.png',
-        popupBackground: 'assets/UI/Store/VIP/PopupBackgrounds/popup_carousel_mitologia_dioses.png',
-        glowA: '#244dff',
-        glowB: '#00f5ff',
-        items: [
-            {
-                type: 'vipPanel',
-                id: 'panel_dioses',
-                name: 'DIOSES',
-                label: 'PANEL',
-                price: 0,
-                image: 'assets/UI/Store/VIP/Bundles/Mythology/panel_dioses.png',
-                popupBackground: 'assets/UI/Store/VIP/Bundles/Mythology/popup_dioses_bg.png',
-                items: [
-                    vipSkin('Mythology', 'skin_zeus', 'Zeus', 380),
-                    vipSkin('Mythology', 'skin_hades', 'Hades', 380),
-                    vipSkin('Mythology', 'skin_poseidon', 'Poseidon', 380),
-                    vipSkin('Mythology', 'skin_ares', 'Ares', 360),
-                    vipSkin('Mythology', 'skin_medusa', 'Medusa', 360)
-                ]
-            },
-            {
-                type: 'vipPanel',
-                id: 'panel_nilo',
-                name: 'NILO REAL',
-                label: 'PANEL',
-                price: VIP_PANEL_PRICE,
-                image: 'assets/UI/Store/VIP/Bundles/Mythology/panel_nilo_real.png',
-                popupBackground: 'assets/UI/Store/VIP/Bundles/Mythology/popup_nilo_real_bg.png',
-                items: [
-                    {
-                        type: 'bundle',
-                        id: 'bundle_faraon',
-                        name: 'Faraon',
-                        price: 520,
-                        image: 'assets/UI/Store/VIP/Bundles/Mythology/skin_faraon.png',
-                        items: [
-                            vipSkin('Mythology', 'skin_faraon', 'Faraon'),
-                            vipTrail('Mythology', 'trail_faraon', 'Trail Faraon')
-                        ]
-                    },
-                    {
-                        type: 'bundle',
-                        id: 'bundle_reina_nilo',
-                        name: 'Reina del Nilo',
-                        price: 520,
-                        image: 'assets/UI/Store/VIP/Bundles/Mythology/skin_reina_nilo.png',
-                        items: [
-                            vipSkin('Mythology', 'skin_reina_nilo', 'Reina del Nilo'),
-                            vipTrail('Mythology', 'trail_nilo', 'Trail Nilo')
-                        ]
-                    }
-                ]
-            },
-            vipSkin('Mythology', 'skin_guardian_dorado', 'Guardian Dorado', 340),
-            vipSkin('Mythology', 'skin_momia', 'Momia'),
-            vipSkin('Mythology', 'skin_momia_malvada', 'Momia Malvada', 340),
-            vipSkin('Mythology', 'skin_sarcofago', 'Sarcofago'),
-            vipSkin('Mythology', 'skin_escarabajo', 'Escarabajo')
-        ]
-    },
-    {
-        id: 'criaturas_mitologicas',
-        title: 'CRIATURAS MITOLOGICAS',
-        subtitle: 'Bestias legendarias compradas una por una',
-        price: 3500,
-        cover: 'assets/UI/Store/VIP/CarouselPanels/panel_carousel_criaturas_mitologicas.png',
-        detailBackground: 'assets/UI/Store/VIP/Backgrounds/bg_carousel_criaturas_mitologicas.png',
-        popupBackground: 'assets/UI/Store/VIP/PopupBackgrounds/popup_carousel_criaturas_mitologicas.png',
-        glowA: '#ff8a00',
-        glowB: '#ffffff',
-        items: [
-            vipSkin('Creatures', 'skin_dragon', 'Dragon', 380),
-            vipSkin('Creatures', 'skin_hydra', 'Hydra', 360),
-            vipSkin('Creatures', 'skin_fenix', 'Fenix', 360),
-            vipSkin('Creatures', 'skin_quimera', 'Quimera', 360),
-            vipSkin('Creatures', 'skin_leviatan', 'Leviatan', 380),
-            vipSkin('Creatures', 'skin_grifo', 'Grifo', 340),
-            vipSkin('Creatures', 'skin_minotauro', 'Minotauro', 340),
-            vipSkin('Creatures', 'skin_gargola', 'Gargola'),
-            vipSkin('Creatures', 'skin_manticora', 'Manticora', 340),
-            vipSkin('Creatures', 'skin_serpiente_marina', 'Serpiente Marina', 340),
-            vipSkin('Creatures', 'skin_ciclope', 'Ciclope')
-        ]
-    },
-    {
-        id: 'carnaval_oscuro',
-        title: 'CARNAVAL OSCURO',
-        subtitle: 'Trails de circo y skins malditas',
-        price: 2900,
-        cover: 'assets/UI/Store/VIP/CarouselPanels/panel_carousel_carnaval_oscuro.png',
-        detailBackground: 'assets/UI/Store/VIP/Backgrounds/bg_carousel_carnaval_oscuro.png',
-        popupBackground: 'assets/UI/Store/VIP/PopupBackgrounds/popup_carousel_carnaval_oscuro.png',
-        glowA: '#ff1f3d',
-        glowB: '#030000',
-        items: [
-            { ...vipTrail('DarkCarnival', 'trail_sonrisa_malvada', 'Trail Sonrisa Malvada'), previewColor: 'red' },
-            { ...vipTrail('DarkCarnival', 'trail_circo', 'Trail Circo'), previewColor: 'orange' },
-            vipSkin('DarkCarnival', 'skin_bufon_maldito', 'Bufon Maldito', 340),
-            vipSkin('DarkCarnival', 'skin_payaso_oscuro', 'Payaso Oscuro', 340),
-            vipSkin('DarkCarnival', 'skin_marioneta', 'Marioneta'),
-            vipSkin('DarkCarnival', 'skin_mascara_sonriente', 'Mascara Sonriente'),
-            vipSkin('DarkCarnival', 'skin_titiritero', 'Titiritero', 340),
-            vipSkin('DarkCarnival', 'skin_arlequin', 'Arlequin'),
-            vipSkin('DarkCarnival', 'skin_mascara_veneciana', 'Mascara Veneciana'),
-            vipSkin('DarkCarnival', 'skin_sonrisa_rota', 'Sonrisa Rota', 340)
-        ]
-    }
 ];
 
 const VIP_PACKAGES_DATA = [
@@ -1143,27 +1264,16 @@ const VIP_PACKAGES_DATA = [
     }
 ];
 
-const NORMAL_STORE_SKINS = [
-    { id: 'skin_neon_ace', name: 'Neon Ace', color: '#00ffe7', rarity: 'ESPECIAL', price: 650, priceType: 'coins', imageRight: 'assets/UI/Store/Skins/skin_neon_ace.png', archetype: 'Neon', ability: 'Aspecto de tienda normal.' },
-    { id: 'skin_volt_star', name: 'Volt Star', color: '#ffee00', rarity: 'ESPECIAL', price: 650, priceType: 'coins', imageRight: 'assets/UI/Store/Skins/skin_volt_star.png', archetype: 'Neon', ability: 'Aspecto de tienda normal.' },
-    { id: 'skin_pixel_gold', name: 'Pixel Gold', color: '#ffd95a', rarity: 'EPICA', price: 1200, priceType: 'coins', altPrice: 40, altType: 'gems', fragments: 3, imageRight: 'assets/UI/Store/Skins/skin_pixel_gold.png', archetype: 'Pixel', ability: 'Aspecto epico de tienda normal.' },
-    { id: 'skin_diamante_rojo', name: 'Diamante Rojo', color: '#ff2448', rarity: 'EPICA', price: 1400, priceType: 'coins', altPrice: 45, altType: 'gems', fragments: 3, imageRight: 'assets/UI/Store/Skins/skin_diamante_rojo.png', archetype: 'Ruby', ability: 'Aspecto epico de tienda normal.' },
-    { id: 'skin_dama_ruby', name: 'Dama Ruby', color: '#ff4d6d', rarity: 'EPICA', price: 1500, priceType: 'coins', altPrice: 50, altType: 'gems', fragments: 3, imageRight: 'assets/UI/Store/Skins/skin_dama_ruby.png', archetype: 'Ruby', ability: 'Aspecto epico de tienda normal.' },
-    { id: 'skin_guardian_oro', name: 'Guardian Oro', color: '#ffcc33', rarity: 'EPICA', price: 1600, priceType: 'coins', altPrice: 55, altType: 'gems', fragments: 3, imageRight: 'assets/UI/Store/Skins/skin_guardian_oro.png', archetype: 'Guardian', ability: 'Aspecto epico de tienda normal.' },
-    { id: 'skin_oraculo', name: 'Oraculo', color: '#cc44ff', rarity: 'EPICA', price: 1700, priceType: 'coins', altPrice: 60, altType: 'gems', fragments: 3, imageRight: 'assets/UI/Store/Skins/skin_oraculo.png', archetype: 'Misterio', ability: 'Aspecto epico de tienda normal.' },
-    { id: 'skin_rey_sombra', name: 'Rey Sombra', color: '#7b3cff', rarity: 'DEMON', price: 4600, priceType: 'coins', altPrice: 150, altType: 'gems', fragments: 3, imageRight: 'assets/UI/Store/Skins/skin_rey_sombra.png', archetype: 'Demon', ability: 'Aspecto demon de tienda normal.' },
-    { id: 'skin_lux_void', name: 'Lux Void', color: '#78e8ff', rarity: 'DEMON', price: 4800, priceType: 'coins', altPrice: 160, altType: 'gems', fragments: 3, imageRight: 'assets/UI/Store/Skins/skin_lux_void.png', archetype: 'Void', ability: 'Aspecto demon de tienda normal.' },
-    { id: 'skin_nucleo_negro', name: 'Nucleo Negro', color: '#ffffff', rarity: 'DEMON', price: 5000, priceType: 'coins', altPrice: 165, altType: 'gems', fragments: 3, imageRight: 'assets/UI/Store/Skins/skin_nucleo_negro.png', archetype: 'Void', ability: 'Aspecto demon de tienda normal.' },
-    { id: 'skin_emperador', name: 'Emperador', color: '#ffd700', rarity: 'DEMON', price: 5200, priceType: 'coins', altPrice: 170, altType: 'gems', fragments: 3, imageRight: 'assets/UI/Store/Skins/skin_emperador.png', archetype: 'Royal', ability: 'Aspecto demon de tienda normal.' },
-    { id: 'skin_leyenda_ruby', name: 'Leyenda Ruby', color: '#ff2448', rarity: 'DEMON', price: 5400, priceType: 'coins', altPrice: 180, altType: 'gems', fragments: 3, imageRight: 'assets/UI/Store/Skins/skin_leyenda_ruby.png', archetype: 'Ruby', ability: 'Aspecto demon de tienda normal.' }
-];
-
 function getSkinStorageKey(id) {
     return id && id.startsWith('skin_') ? id : `skin_${id}`;
 }
 
 function isSkinOwned(s) {
-    return s?.owned === true || s?.id === 'cyan' || localStorage.getItem(getSkinStorageKey(s?.id)) === 'true';
+    if (!s) return false;
+    if (s.id === 'cyan') return true;
+    if (localStorage.getItem(getSkinStorageKey(s.id)) === 'true') return true;
+    if (window.isFragmentItem?.(s.id) && window.fragmentSystem?.isItemUnlocked(s.id)) return true;
+    return false;
 }
 
 function getVIPSkinCatalog() {
@@ -1184,8 +1294,6 @@ function getVIPSkinCatalog() {
             imageRight: gameplaySkin.imageRight,
             imageLeft: gameplaySkin.imageLeft,
             rolling: gameplaySkin.rolling,
-            archetype: 'Tienda VIP',
-            ability: 'Disponible desde Tienda VIP.',
             vipOnly: true,
             sourceItem: gameplaySkin
         });
@@ -1201,7 +1309,7 @@ function getVIPSkinCatalog() {
 
 function getAllShopSkins() {
     const byId = new Map();
-    [...SKINS_DATA, ...NORMAL_STORE_SKINS, ...getVIPSkinCatalog()].forEach(s => {
+    [...SKINS_DATA, ...FRAGMENT_SKINS_LIST, ...getVIPSkinCatalog()].forEach(s => {
         if (!s?.id || byId.has(s.id)) return;
         const base = s.image ? s : { ...s, image: s.imageRight || s.imageLeft };
         const gameplaySkin = withGameplaySkinAssets(base);
@@ -1222,8 +1330,6 @@ let gambitState = null;
 let selectedChestId = null;
 let vipCarouselIndex = 0;
 let selectedVIPGameplayId = VIP_GAMEPLAY_PLACEHOLDERS[0]?.id || 'boosters';
-
-let trailAnimId = null; // Control para el memory leak de animaciones
 
 function isShopPerformanceMode() {
     return localStorage.getItem('reducedMotion') === 'true' ||
@@ -1247,7 +1353,7 @@ function optimizeShopMedia(root = document) {
 
 function openShop() {
     window.playSfx?.('menuSelect', 0.6);
-    [...SKINS_DATA, ...NORMAL_STORE_SKINS].forEach(s => {
+    SKINS_DATA.forEach(s => {
         if (s.id === 'cyan') return;
         s.owned = localStorage.getItem(getSkinStorageKey(s.id)) === 'true';
     });
@@ -1262,28 +1368,19 @@ function openShop() {
     void panel.offsetWidth;
     panel.classList.add('entering');
 
-    document.getElementById('shop-coins').textContent =
-        parseInt(localStorage.getItem('deadCoins') || '0');
-    document.getElementById('shop-gems').textContent =
-        parseInt(localStorage.getItem('gems') || '0');
+    document.getElementById('shop-coins').textContent = parseInt(localStorage.getItem('deadCoins') || '0');
+    document.getElementById('shop-gems').textContent = parseInt(localStorage.getItem('gems') || '0');
 
     updateEquippedSkinPreview();
     updateMissionBadge();
-
     showShopSection('home');
     optimizeShopMedia(panel);
     updateMenuHUD();
 }
 
 function closeShop() {
-    if (trailAnimId) {
-        cancelAnimationFrame(trailAnimId);
-        trailAnimId = null;
-    }
-    if (previewTrailAnim) {
-        cancelAnimationFrame(previewTrailAnim);
-        previewTrailAnim = null;
-    }
+    if (trailAnimId) cancelAnimationFrame(trailAnimId);
+    if (previewTrailAnim) cancelAnimationFrame(previewTrailAnim);
     const panel = document.getElementById('shopPanel');
     panel.classList.add('leaving');
     setTimeout(() => {
@@ -1294,14 +1391,8 @@ function closeShop() {
 }
 
 function showShopSection(section) {
-    if (section !== 'trails' && trailAnimId) {
-        cancelAnimationFrame(trailAnimId);
-        trailAnimId = null;
-    }
-    if (section !== 'trails' && previewTrailAnim) {
-        cancelAnimationFrame(previewTrailAnim);
-        previewTrailAnim = null;
-    }
+    if (section !== 'trails' && trailAnimId) cancelAnimationFrame(trailAnimId);
+    if (section !== 'trails' && previewTrailAnim) cancelAnimationFrame(previewTrailAnim);
 
     ['home', 'skins', 'trails', 'powerups', 'banners', 'cofres', 'emotes', 'daily', 'ofertas', 'conversion'].forEach(s => {
         const el = document.getElementById('nav-' + s);
@@ -1318,7 +1409,6 @@ function showShopSection(section) {
     });
 
     const content = document.getElementById('shopContent');
-
     if (section === 'home') renderHome(content);
     else if (section === 'skins') renderSkinsPage(content);
     else if (section === 'trails') renderTrailsPage(content);
@@ -1332,62 +1422,11 @@ function showShopSection(section) {
     else if (section === 'daily') renderDailyGiftPage(content);
     else if (section === 'conversion') renderConversionPage(content);
     else {
-        content.innerHTML = `
-            <div style="display:flex; align-items:center; gap:16px; margin-bottom:24px;">
-                <button onclick="showShopSection('home')" ...>← VOLVER</button>
-            </div>
-            <div ...>PRÓXIMAMENTE</div>
-        `;
+        content.innerHTML = `<div style="display:flex; align-items:center; gap:16px; margin-bottom:24px;"><button onclick="showShopSection('home')" style="padding:8px 16px; background:none; border:1px solid rgba(255,255,255,0.12); border-radius:8px; color:rgba(255,255,255,0.5); font-family:monospace; font-size:11px; letter-spacing:2px; cursor:pointer;">← VOLVER</button></div><div style="color:rgba(255,255,255,0.2); font-family:monospace; font-size:14px; letter-spacing:4px; height:300px; display:grid; place-items:center;">PRÓXIMAMENTE</div>`;
     }
     optimizeShopMedia(content);
 }
 
-function renderHome(container) {
-    const rubyClaimable = hasRubyPassClaimableRewards();
-    const panels = [
-        { section: 'skins', image: 'assets/UI/Store/Panels/portada_panel_skins_tienda_normal.png' },
-        { section: 'trails', image: 'assets/UI/Store/Panels/portada_panel_trails_tienda_normal.png' },
-        { section: 'powerups', image: 'assets/powerups/icons/proteccion.png', label: 'POTENCIADORES' },
-        { section: 'cofres', image: 'assets/UI/Store/Panels/portada_panel_cofres_tienda_normal.png' },
-        { section: 'banners', image: 'assets/UI/Store/Panels/portada_panel_banners_tienda_normal.png' },
-        { section: 'emotes', image: 'assets/UI/Store/Panels/portada_panel_emotes_tienda_normal.png' },
-        { section: 'daily', image: 'assets/UI/Store/Panels/portada_panel_regalo_diario_tienda_normal.png' },
-        { section: 'conversion', image: 'assets/UI/Store/Panels/portada_panel_conversion_tienda_normal.png' },
-    ];
-    container.innerHTML = `
-        <div style="display:grid; grid-template-columns:minmax(0,1fr) minmax(260px,380px); gap:16px; margin-bottom:32px;">
-            <div class="shop-vip-access-banner" style="background-image:url('assets/UI/Store/VIP/Banners/banner_tienda_vip_home.png');">
-                <div style="position:absolute; right:0; top:0; bottom:0; width:300px; background:linear-gradient(90deg, transparent, rgba(255,180,0,0.06)); pointer-events:none;"></div>
-                <div style="position:absolute; left:0; top:0; bottom:0; width:4px; background:linear-gradient(to bottom, #ffcc00, #ff8800);"></div>
-                <button onclick="openVIP()" style="margin-left:auto; padding:10px 24px; background:rgba(255,255,255,0.64); border:1px solid rgba(0,0,0,0.22); border-radius:8px; color:#050505; font-family:monospace; font-size:12px; font-weight:900; letter-spacing:2px; cursor:pointer; pointer-events:all;">VER</button>
-            </div>
-
-            <button onclick="openRubyPass()" class="ruby-pass-access ${rubyClaimable ? 'has-ruby-claim' : ''}" type="button" style="${RUBY_PASS_ASSETS.accessBanner ? `background-image:linear-gradient(90deg, rgba(25,0,8,0.78), rgba(8,6,10,0.52)), url('${RUBY_PASS_ASSETS.accessBanner}'); background-size:cover; background-position:center;` : ''}">
-                <div class="ruby-pass-access-bg"></div>
-                <div class="ruby-pass-lock-slot">
-                    ${RUBY_PASS_ASSETS.logo ? `<img src="${RUBY_PASS_ASSETS.logo}" alt="">` : '<span></span>'}
-                </div>
-                <div class="ruby-pass-access-copy">
-                    <div class="ruby-pass-access-kicker">PASE DE TEMPORADA</div>
-                    <div class="ruby-pass-access-title">RUBY PASS</div>
-                    ${rubyClaimable ? '<div class="ruby-pass-claim-hint">RECOMPENSA LISTA</div>' : ''}
-                </div>
-                <div class="ruby-pass-access-arrow">></div>
-            </button>
-        </div>
-
-        <div style="color:rgba(255,255,255,0.4); font-family:monospace; font-size:11px; letter-spacing:4px; margin-bottom:16px;">CATEGORIAS</div>
-
-        <div class="store-panel-grid">
-            ${panels.map(panel => `
-                <button class="store-category-panel" onclick="showShopSection('${panel.section}')" type="button">
-                    <img src="${panel.image}" alt="" draggable="false">
-                    ${panel.label ? `<span class="store-category-label">${panel.label}</span>` : ''}
-                </button>
-            `).join('')}
-        </div>
-    `;
-}
 function renderSkinsPage(container) {
     const equipped = localStorage.getItem('equippedSkin') || 'cyan';
     const skins = getAllShopSkins();
@@ -1402,10 +1441,62 @@ function renderSkinsPage(container) {
     `;
 }
 
+function renderHome(container) {
+    const rubyClaimable = hasRubyPassClaimableRewards();
+    const panels = [
+        { section: 'skins', image: 'assets/UI/Store/Panels/portada_panel_skins_tienda_normal.png' },
+        { section: 'trails', image: 'assets/UI/Store/Panels/portada_panel_trails_tienda_normal.png' },
+        { section: 'powerups', image: 'assets/UI/Store/Panels/portada_panel_potenciadores_tienda_normal.png', label: 'POTENCIADORES' },
+        { section: 'cofres', image: 'assets/UI/Store/Panels/portada_panel_cofres_tienda_normal.png' },
+        { section: 'banners', image: 'assets/UI/Store/Panels/portada_panel_banners_tienda_normal.png' },
+        { section: 'emotes', image: 'assets/UI/Store/Panels/portada_panel_emotes_tienda_normal.png' },
+        { section: 'daily', image: 'assets/UI/Store/Panels/portada_panel_regalo_diario_tienda_normal.png' },
+        { section: 'conversion', image: 'assets/UI/Store/Panels/portada_panel_conversion_tienda_normal.png' },
+    ];
+    container.innerHTML = `
+        <div style="display:flex; gap:12px; margin-bottom:24px; align-items:stretch; height:130px;">
+            <div class="shop-vip-access-banner" style="flex:1; background-image:url('assets/UI/Store/VIP/Banners/banner_tienda_vip_home.png');">
+                <div style="position:absolute; right:0; top:0; bottom:0; width:300px; background:linear-gradient(90deg, transparent, rgba(255,180,0,0.06)); pointer-events:none;"></div>
+                <div style="position:absolute; left:0; top:0; bottom:0; width:4px; background:linear-gradient(to bottom, #ffcc00, #ff8800);"></div>
+                <button onclick="openVIP()" style="margin-left:auto; padding:8px 20px; background:rgba(255,255,255,0.64); border:1px solid rgba(0,0,0,0.22); border-radius:8px; color:#050505; font-family:monospace; font-size:11px; font-weight:900; letter-spacing:2px; cursor:pointer; pointer-events:all;">VER</button>
+            </div>
+
+            <button onclick="openRubyPass()" class="ruby-pass-access ${rubyClaimable ? 'has-ruby-claim' : ''}" type="button" style="flex:none; width:130px; height:130px; ${RUBY_PASS_ASSETS.accessBanner ? `background-image:linear-gradient(90deg, rgba(25,0,8,0.78), rgba(8,6,10,0.52)), url('${RUBY_PASS_ASSETS.accessBanner}'); background-size:cover; background-position:center;` : ''}">
+                <div class="ruby-pass-access-bg"></div>
+                <div class="ruby-pass-lock-slot" style="width:52px; height:52px;">
+                    ${RUBY_PASS_ASSETS.logo ? `<img src="${RUBY_PASS_ASSETS.logo}" alt="">` : '<span></span>'}
+                </div>
+                <div class="ruby-pass-access-copy">
+                    <div class="ruby-pass-access-kicker" style="font-size:8px; letter-spacing:2px;">PASE DE TEMPORADA</div>
+                    <div class="ruby-pass-access-title" style="font-size:13px; letter-spacing:2px; margin-top:4px;">RUBY PASS</div>
+                    ${rubyClaimable ? '<div class="ruby-pass-claim-hint">RECOMPENSA LISTA</div>' : ''}
+                </div>
+            </button>
+        </div>
+
+        <div style="display:flex; align-items:center; gap:14px; margin-bottom:16px; padding:0 2px;">
+            <div style="flex:1; height:1px; background:linear-gradient(90deg, transparent, rgba(255,77,109,0.5), rgba(0,255,255,0.3), transparent);"></div>
+            <div style="width:6px; height:6px; border-radius:50%; background:rgba(255,77,109,0.7); box-shadow:0 0 8px rgba(255,77,109,0.6);"></div>
+            <div style="flex:1; height:1px; background:linear-gradient(90deg, transparent, rgba(0,255,255,0.3), rgba(255,77,109,0.5), transparent);"></div>
+        </div>
+
+        <div class="store-panel-grid">
+            ${panels.map(panel => `
+                <button class="store-category-panel" onclick="showShopSection('${panel.section}')" type="button">
+                    <img src="${panel.image}" alt="" draggable="false">
+                    ${panel.label ? `<span class="store-category-label">${panel.label}</span>` : ''}
+                </button>
+            `).join('')}
+        </div>
+    `;
+}
+
 function renderSkinCard(s, equipped) {
     const isEquipped = equipped === s.id;
     const rarityColor = RARITY_COLORS[s.rarity] || '#aaa';
     const owned = isSkinOwned(s);
+    const isFragmentItem = window.isFragmentItem?.(s.id);
+    const isUnlocked = isFragmentItem ? window.fragmentSystem?.isItemUnlocked(s.id) : false;
 
     if (s.soon) {
         return `
@@ -1428,6 +1519,17 @@ function renderSkinCard(s, equipped) {
     const altIcon = s.altType ? CURRENCY_ICONS[s.altType] : null;
     const previewImage = s.image || s.imageRight || s.imageLeft;
 
+    let action;
+    if (owned || isUnlocked) {
+        action = `<button onclick="equipSkin('${s.id}')" style="width:100%; padding:6px 0; border-radius:8px; border:1px solid ${isEquipped ? rarityColor + '66' : 'rgba(255,255,255,0.12)'}; background:${isEquipped ? rarityColor + '15' : 'none'}; color:${isEquipped ? rarityColor : 'rgba(255,255,255,0.4)'}; font-family:Geom, monospace; font-size:9px; cursor:pointer; letter-spacing:1px;">${isEquipped ? '✔ EQUIPADA' : 'EQUIPAR'}</button>`;
+    } else if (isFragmentItem) {
+        action = window.renderFragmentProgressBar?.(s.id) || '<div style="color:rgba(255,255,255,0.3); font-family:monospace; font-size:9px;">FRAGMENTOS</div>';
+    } else if (s.vipOnly) {
+        action = `<button onclick="openVIP('${s.id}')" style="width:100%; padding:6px 0; border-radius:8px; border:1px solid rgba(255, 215, 0, 0.4); background:rgba(255, 215, 0, 0.05); color:#FFD700; font-family:Geom, monospace; font-size:8px; cursor:pointer; letter-spacing:0.5px; transition: 0.2s;" onmouseover="this.style.background='rgba(255, 215, 0, 0.15)'" onmouseout="this.style.background='rgba(255, 215, 0, 0.05)'">DIRIGIR A TIENDA VIP</button>`;
+    } else {
+        action = `<button onclick="buySkin('${s.id}')" ${!canBuy ? 'disabled' : ''} style="width:100%; padding:6px 0; border-radius:8px; border:1px solid ${canBuy ? 'rgba(255,238,0,0.4)' : 'rgba(255,255,255,0.08)'}; background:none; color:${canBuy ? '#ffee00' : 'rgba(255,255,255,0.2)'}; font-family:Geom, monospace; font-size:9px; cursor:${canBuy ? 'pointer' : 'default'}; letter-spacing:1px; display:flex; align-items:center; justify-content:center; gap:5px; flex-wrap:wrap;"><img src="${mainIcon}" style="width:14px;height:14px;object-fit:contain;"> ${s.price}${s.altPrice ? ` <span style="opacity:.45;">/</span> <img src="${altIcon}" style="width:14px;height:14px;object-fit:contain;"> ${s.altPrice}` : ''}</button>`;
+    }
+
     return `
     <div style="background:rgba(255,255,255,0.03); border:1px solid ${isEquipped ? rarityColor + '66' : 'rgba(255,255,255,0.08)'}; border-radius:14px; padding:20px 12px; display:flex; flex-direction:column; align-items:center; gap:10px; transition:0.2s; ${isEquipped ? 'box-shadow:0 0 20px ' + rarityColor + '22' : ''}">
         <div class="shop-skin-orb" style="--skin-glow:${s.color || rarityColor};">
@@ -1435,12 +1537,8 @@ function renderSkinCard(s, equipped) {
         </div>
         <div style="color:white; font-family:monospace; font-size:11px; letter-spacing:1px;">${s.name}</div>
         <div style="color:${rarityColor}; font-family:monospace; font-size:9px; letter-spacing:2px;">${s.rarity}</div>
-        <div style="min-height:34px; color:rgba(255,255,255,0.32); font-family:monospace; font-size:9px; line-height:1.35; text-align:center;">${s.archetype || 'Sin arquetipo'}<br>${s.ability || ''}</div>
-        ${s.vipOnly && !owned ? `<div style="color:#ffee00; font-family:monospace; font-size:9px; letter-spacing:1px;">SOLO EN TIENDA VIP</div>` : (s.fragments ? `<div style="color:rgba(255,255,255,0.22); font-family:monospace; font-size:9px;">${s.fragments} FRAGMENTOS</div>` : '')}
-        ${owned
-            ? `<button onclick="equipSkin('${s.id}')" style="width:100%; padding:6px 0; border-radius:8px; border:1px solid ${isEquipped ? rarityColor + '66' : 'rgba(255,255,255,0.12)'}; background:${isEquipped ? rarityColor + '15' : 'none'}; color:${isEquipped ? rarityColor : 'rgba(255,255,255,0.4)'}; font-family:monospace; font-size:9px; cursor:pointer; letter-spacing:1px;">${isEquipped ? '✔ EQUIPADA' : 'EQUIPAR'}</button>`
-            : `<button onclick="buySkin('${s.id}')" ${!canBuy ? 'disabled' : ''} style="width:100%; padding:6px 0; border-radius:8px; border:1px solid ${canBuy ? 'rgba(255,238,0,0.4)' : 'rgba(255,255,255,0.08)'}; background:none; color:${canBuy ? '#ffee00' : 'rgba(255,255,255,0.2)'}; font-family:monospace; font-size:9px; cursor:${canBuy ? 'pointer' : 'default'}; letter-spacing:1px; display:flex; align-items:center; justify-content:center; gap:5px; flex-wrap:wrap;"><img src="${mainIcon}" style="width:14px;height:14px;object-fit:contain;"> ${s.price}${s.altPrice ? ` <span style="opacity:.45;">/</span> <img src="${altIcon}" style="width:14px;height:14px;object-fit:contain;"> ${s.altPrice}` : ''}</button>`
-        }
+        ${s.vipOnly && !owned ? `<div style="color:#ffee00; font-family:monospace; font-size:9px; letter-spacing:1px;">SOLO EN TIENDA VIP</div>` : (isFragmentItem && !isUnlocked ? `<div style="color:#FFD700; font-family:monospace; font-size:9px; letter-spacing:1px;">🧩 FRAGMENTOS</div>` : (s.fragments ? `<div style="color:rgba(255,255,255,0.22); font-family:monospace; font-size:9px;">${s.fragments} FRAGMENTOS</div>` : ''))}
+        ${action}
     </div>`;
 }
 
@@ -1504,9 +1602,10 @@ function completeSkinPurchase(id) {
     localStorage.setItem('gems', gems);
     window.playSfx?.('spend');
     localStorage.setItem(getSkinStorageKey(id), 'true');
-    const skinData = [...SKINS_DATA, ...NORMAL_STORE_SKINS].find(s => s.id === id);
-    if (skinData) skinData.owned = true;
+
+    // Actualizar catálogo global
     window.SKINS_DATA = getAllShopSkins();
+
     document.getElementById('shop-coins').textContent = coins;
     document.getElementById('shop-gems').textContent = gems;
     renderSkinsPage(document.getElementById('shopContent'));
@@ -1629,12 +1728,26 @@ function renderEmoteSlot(emote) {
     const color = emote.vip ? '#ffcc00' : '#57b7dd';
     const owned = isEmoteOwned(emote);
     const equipped = localStorage.getItem('equippedEmote') === emote.id;
+    const isFragmentItem = window.isFragmentItem?.(emote.id);
+    const isUnlocked = isFragmentItem ? window.fragmentSystem?.isItemUnlocked(emote.id) : false;
+
+    // Mostrar si es propio, si es de fragmentos, o si es un item de tienda normal (no exclusivo de pase)
+    const showItem = owned || isFragmentItem || !emote.passOnly;
+    if (!showItem) return '';
+
     const canBuy = !owned && !emote.passOnly && canAfford(emote.price || EMOTE_STANDARD_PRICE_COINS, emote.priceType || 'coins');
-    const action = owned
-        ? `<button onclick="equipEmote('${emote.id}')" type="button">${equipped ? 'ACTIVO' : 'USAR'}</button>`
-        : emote.passOnly
-            ? `<button class="is-pass-only" type="button" disabled>EN EL PASE</button>`
-            : `<button onclick="buyEmote('${emote.id}')" type="button" ${canBuy ? '' : 'disabled'}>${renderPrice(emote.price || EMOTE_STANDARD_PRICE_COINS, emote.priceType || 'coins')}</button>`;
+
+    let action;
+    if (owned || isUnlocked) {
+        action = `<button onclick="equipEmote('${emote.id}')" type="button">${equipped ? 'ACTIVO' : 'USAR'}</button>`;
+    } else if (isFragmentItem) {
+        action = window.renderFragmentProgressBar?.(emote.id) || '<div style="color:rgba(255,255,255,0.3); font-family:monospace; font-size:9px;">FRAGMENTOS</div>';
+    } else if (emote.passOnly) {
+        action = `<button class="is-pass-only" type="button" disabled>EN EL PASE</button>`;
+    } else {
+        action = `<button onclick="buyEmote('${emote.id}')" type="button" ${canBuy ? '' : 'disabled'}>${renderPrice(emote.price || EMOTE_STANDARD_PRICE_COINS, emote.priceType || 'coins')}</button>`;
+    }
+
     return `
         <div class="emote-card" data-emote-id="${emote.id}">
             <div data-asset-slot="${emote.slot}" style="width:96px; height:96px; border-radius:50%; border:1px dashed ${color}88; background:${color}12; display:grid; place-items:center; overflow:hidden; color:rgba(255,255,255,0.35); font-family:monospace; font-size:10px; letter-spacing:2px;">
@@ -1642,6 +1755,7 @@ function renderEmoteSlot(emote) {
             </div>
             <div style="color:white; font-family:monospace; font-size:12px; letter-spacing:1px;">${emote.name}</div>
             ${emote.passOnly ? `<div style="color:${color}; font-family:monospace; font-size:9px; letter-spacing:2px;">EN EL PASE</div>` : `<div style="color:${color}; font-family:monospace; font-size:9px; letter-spacing:2px;">${emote.rarity}</div>`}
+            ${isFragmentItem && !isUnlocked ? `<div style="color:#FFD700; font-family:monospace; font-size:9px; letter-spacing:1px;">🧩 FRAGMENTOS</div>` : ''}
             ${action}
         </div>
     `;
@@ -1652,6 +1766,10 @@ function isEmoteOwned(emote) {
     if (localStorage.getItem('emote_' + emote.id) === 'true') return true;
     if (emote.passOnly && emote.rubyPassLane && emote.rubyPassLevel) {
         return localStorage.getItem(`rubyPassClaimed_${emote.rubyPassLane}_${emote.rubyPassLevel}`) === 'true';
+    }
+    // Verificar si está desbloqueado por fragmentos
+    if (window.isFragmentItem?.(emote.id) && window.fragmentSystem?.isItemUnlocked(emote.id)) {
+        return true;
     }
     return false;
 }
@@ -1901,7 +2019,7 @@ function buyChest(id) {
     showChestResult(chest);
 }
 
-function openChestReward(chest) {
+function openChestRewardOriginal(chest) {
     const coins = rand(chest.base.coins[0], chest.base.coins[1]);
     const gems = rand(chest.base.gems[0], chest.base.gems[1]);
     addCurrency(coins, 'coins');
@@ -1912,6 +2030,15 @@ function openChestReward(chest) {
     updateMenuHUD();
     refreshShopBalances();
     return { coins, gems, drop };
+}
+
+function openChestReward(chest) {
+    const result = openChestRewardOriginal(chest);
+    // 25% de chance de otorgar fragmento
+    if (Math.random() < 0.25 && window.grantRandomFragment) {
+        window.grantRandomFragment();
+    }
+    return result;
 }
 
 function showChestResult(chest) {
@@ -3239,7 +3366,7 @@ function showInventorySection(section) {
             </div>
         `;
     } else if (section === 'emotes') {
-        const owned = EMOTES_DATA.filter(e => localStorage.getItem('emote_' + e.id) === 'true' || !e.vip);
+        const owned = EMOTES_DATA.filter(isEmoteOwned);
         content.innerHTML = `
             <div style="color:rgba(255,255,255,0.4); font-family:monospace; font-size:11px; letter-spacing:4px; margin-bottom:20px;">EMOTES - ${owned.length}</div>
             <div class="inventory-emote-grid">
@@ -3281,16 +3408,16 @@ function renderInventoryPowerups() {
         <div style="color:rgba(255,255,255,0.4); font-family:monospace; font-size:11px; letter-spacing:4px; margin-bottom:20px;">POTENCIADORES - ${owned.length}</div>
         <div class="inventory-powerup-grid">
             ${owned.map(powerup => {
-                const state = inventory[powerup.id] || {};
-                const isVipShape = !window.NORMAL_SHOP_POWERUP_IDS?.includes(powerup.id);
-                return `
+        const state = inventory[powerup.id] || {};
+        const isVipShape = !window.NORMAL_SHOP_POWERUP_IDS?.includes(powerup.id);
+        return `
                     <button class="inventory-powerup-card ${isVipShape ? 'hex' : 'rect'}" style="--powerup-color:${powerup.color}" onclick="openPowerupDetail('${powerup.id}','${isVipShape ? 'vip' : 'normal'}')" type="button">
                         <img src="assets/powerups/icons/${powerup.id}.png" alt="">
                         <strong>${powerup.name}</strong>
                         <span>x${state.usos || 0}</span>
                     </button>
                 `;
-            }).join('')}
+    }).join('')}
         </div>
     `;
 }
@@ -3366,26 +3493,11 @@ function openInventoryChestAmount(id, amount) {
 }
 window.openInventoryChestAmount = openInventoryChestAmount;
 
-// =====================================================
-// TRAILS DATA
-// =====================================================
-
-const TRAILS_DATA = [
-    { id: 'basic', name: 'Basica', rarity: 'BASICA', rarityColor: '#57b7dd', price: 30, priceType: 'coins' },
-    { id: 'ghost', name: 'Ghost', rarity: 'EPICA', rarityColor: '#cc44ff', price: 800, priceType: 'coins' },
-    { id: 'fractura', name: 'Fractura', rarity: 'EPICA', rarityColor: '#cc44ff', price: 1000, priceType: 'coins' },
-    { id: 'hielo', name: 'Hielo', rarity: 'ESPECIAL', rarityColor: '#7fd8ff', price: 260, priceType: 'coins' },
-    { id: 'toxico', name: 'Toxico', rarity: 'ESPECIAL', rarityColor: '#8dff5a', price: 320, priceType: 'coins' },
-    { id: 'trail_vampiro', name: 'Vampiro', rarity: 'VIP', rarityColor: '#ff4d6d', price: 0, priceType: 'gems' },
-    { id: 'trail_zombie', name: 'Zombie', rarity: 'VIP', rarityColor: '#78ff8f', price: 0, priceType: 'gems' },
-    { id: 'trail_fire', name: 'Elemento Fuego', rarity: 'VIP', rarityColor: '#ff8a00', price: 0, priceType: 'gems' },
-    { id: 'trail_water', name: 'Elemento Agua', rarity: 'VIP', rarityColor: '#4488ff', price: 0, priceType: 'gems' },
-    { id: 'trail_wind', name: 'Elemento Viento', rarity: 'VIP', rarityColor: '#00ffe7', price: 0, priceType: 'gems' },
-    { id: 'trail_ice', name: 'Elemento Hielo', rarity: 'VIP', rarityColor: '#7fd8ff', price: 0, priceType: 'gems' },
-    { id: 'trail_lava', name: 'Elemento Lava', rarity: 'VIP', rarityColor: '#ff4444', price: 0, priceType: 'gems' },
-    { id: 'trail_nature', name: 'Elemento Naturaleza', rarity: 'VIP', rarityColor: '#44ff88', price: 0, priceType: 'gems' },
-    { id: 'trail_custom_text', name: 'Texto Personalizado', rarity: 'VIP', rarityColor: '#ffda3a', price: 0, priceType: 'gems' },
-];
+// Exponer funciones principales al objeto window
+window.openShop = openShop;
+window.closeShop = closeShop;
+window.openInventory = openInventory;
+window.closeInventory = closeInventory;
 
 // ── Sin el color RGB ──────────────────────────────────
 const TRAIL_COLOR_LIST = [
@@ -3741,8 +3853,6 @@ function selectTrailColor(colorId) {
     selectedTrailColor = colorId;
     showTrailPreview();
 }
-
-let previewTrailAnim = null;
 
 function showTrailPreview() {
     const previewContainer = document.getElementById('trail-preview-panel');
@@ -4628,6 +4738,11 @@ function claimDailyGift(day) {
         () => { const k = 'invChest_special'; localStorage.setItem(k, parseInt(localStorage.getItem(k) || '0') + 1); },
     ];
     rewards[(day - 1) % rewards.length]();
+
+    // 20% de chance de otorgar fragmento
+    if (Math.random() < 0.20 && window.grantRandomFragment) {
+        window.grantRandomFragment();
+    }
     localStorage.setItem(key, 'true');
     updateMenuHUD();
     renderDailyGiftPage(document.getElementById('shopContent'));
@@ -4828,6 +4943,12 @@ function claimMissionReward(id) {
     if (mission.reward.gems) addCurrency(mission.reward.gems, 'gems');
     state.claimed[id] = true;
     saveMissionState(state);
+
+    // 15% de chance de otorgar fragmento
+    if (Math.random() < 0.15 && window.grantRandomFragment) {
+        window.grantRandomFragment();
+    }
+
     window.playSfx?.('reward', 0.85);
     refreshShopBalances();
     openMissionsPanel();

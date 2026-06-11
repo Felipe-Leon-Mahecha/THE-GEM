@@ -560,3 +560,102 @@ function drawTrail() {
 
     }
 }
+
+// =====================================================
+// PARTICLE SYSTEM - Para efectos visuales de combo
+// =====================================================
+
+let particles = [];
+let floatingTexts = [];
+
+function createParticles(x, y, color, count, options = {}) {
+    const { vx = 0, vy = 0, life = 30, size = 4 } = options;
+    for (let i = 0; i < count; i++) {
+        const angle = Math.random() * Math.PI * 2;
+        const speed = Math.random() * 2 + 1;
+        particles.push({
+            x, y,
+            vx: vx + Math.cos(angle) * speed,
+            vy: vy + Math.sin(angle) * speed,
+            life: life + Math.random() * 10,
+            maxLife: life + Math.random() * 10,
+            color,
+            size: size + Math.random() * 2
+        });
+    }
+}
+
+function showFloatingText(text, color, size) {
+    const r = window.BASE_RADIUS + window.offset;
+    const cx = window.canvas.width / 2;
+    const cy = window.canvas.height / 2;
+    const px = cx + Math.cos(window.angle) * r;
+    const py = cy + Math.sin(window.angle) * r;
+    
+    floatingTexts.push({
+        text,
+        color,
+        size,
+        x: px,
+        y: py,
+        life: 60,
+        vy: -2
+    });
+}
+
+function updateAndDrawParticles() {
+    const ctx = window.ctx;
+    
+    // Update and draw particles
+    for (let i = particles.length - 1; i >= 0; i--) {
+        const p = particles[i];
+        p.x += p.vx;
+        p.y += p.vy;
+        p.life--;
+        p.vx *= 0.95;
+        p.vy *= 0.95;
+        
+        if (p.life <= 0) {
+            particles.splice(i, 1);
+            continue;
+        }
+        
+        const alpha = p.life / p.maxLife;
+        ctx.save();
+        ctx.globalAlpha = alpha;
+        ctx.fillStyle = p.color;
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.size * alpha, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.restore();
+    }
+    
+    // Update and draw floating texts
+    for (let i = floatingTexts.length - 1; i >= 0; i--) {
+        const ft = floatingTexts[i];
+        ft.y += ft.vy;
+        ft.life--;
+        
+        if (ft.life <= 0) {
+            floatingTexts.splice(i, 1);
+            continue;
+        }
+        
+        const alpha = Math.min(1, ft.life / 20);
+        ctx.save();
+        ctx.globalAlpha = alpha;
+        ctx.fillStyle = ft.color;
+        ctx.font = `900 ${ft.size}px Geom, monospace`;
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.shadowColor = ft.color;
+        ctx.shadowBlur = 10;
+        ctx.fillText(ft.text, ft.x, ft.y);
+        ctx.restore();
+    }
+}
+
+// Export functions to window
+window.createParticles = createParticles;
+window.showFloatingText = showFloatingText;
+window.updateAndDrawParticles = updateAndDrawParticles;

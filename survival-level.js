@@ -32,7 +32,7 @@ setTimeout(() => {
                 sphereBackground: "assets/Imagenes/Diseno Esfera/Fondos Esfera/Fondo_Survival.png",
                 outerBackground: "assets/Imagenes/Fondo de Niveles/Survival_Fondo.png",
                 frame: "assets/Imagenes/Diseno Esfera/Marcos/Marco_Survival.png",
-                music: "assets/Musica/Survival_Mode.mp3"
+                music: "assets/Musica/Frosted_Hammer.mp3"
             },
             obstacles: {
                 spikes: true,

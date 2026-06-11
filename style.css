@@ -1,5 +1,14 @@
 @import url('https://fonts.googleapis.com/css2?family=Audiowide&display=swap');
 
+html {
+    margin: 0;
+    /* Removes default browser margins from the html element */
+    padding: 0;
+    /* Removes default browser padding from the html element */
+    overflow: hidden;
+    /* Prevents scrollbars from appearing on the html element */
+}
+
 * {
     margin: 0;
     padding: 0;
@@ -72,23 +81,33 @@ canvas {
     width: clamp(58px, 14vmin, 76px);
     height: clamp(58px, 14vmin, 76px);
     border-radius: 50%;
-    border: 1px solid rgba(0, 255, 231, 0.34);
-    background: rgba(0, 0, 0, 0.36);
-    color: #00ffe7;
+    border: none;
+    background: transparent;
+    background-image: url('assets/ui_buttons/btn_gravity.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    color: transparent;
     font-family: monospace;
     font-weight: 900;
     font-size: 20px;
     pointer-events: auto;
     touch-action: none;
     backdrop-filter: blur(6px);
+    transform: scale(calc(var(--touch-size, 100) / 100));
+    /* Scale based on user preference */
+    opacity: calc(var(--touch-opacity, 100) / 100);
+    /* Opacity based on user preference */
 }
 
 #touch-left {
+    background-image: url('assets/ui_buttons/btn_move_left.png');
     left: calc(14px + env(safe-area-inset-left) + var(--touch-side, 50) * 0.32vw);
     bottom: calc(20px + env(safe-area-inset-bottom));
 }
 
 #touch-right {
+    background-image: url('assets/ui_buttons/btn_move_right.png');
     left: calc(86px + env(safe-area-inset-left) + var(--touch-side, 50) * 0.32vw);
     bottom: calc(20px + env(safe-area-inset-bottom));
 }
@@ -116,6 +135,26 @@ body.is-touch-device.is-playing-touch #touch-controls {
     z-index: 20;
     overflow: hidden;
     background: #0a0a0f;
+}
+
+#overlay-cover {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 55%;
+    height: 100%;
+}
+
+#overlay-panel {
+    position: absolute;
+    right: 0;
+    top: 0;
+    width: 50%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 0 72px;
 }
 
 .grid {
@@ -219,9 +258,9 @@ body.is-touch-device.is-playing-touch #touch-controls {
 .menu-btn {
     position: relative;
 
-    width: 252px;
+    width: 220px;
 
-    padding: 16px;
+    padding: 12px;
 
     margin-top: 16px;
 
@@ -236,7 +275,7 @@ body.is-touch-device.is-playing-touch #touch-controls {
 
     color: white;
 
-    font-size: 18px;
+    font-size: 16px;
 
     font-weight: bold;
 
@@ -709,6 +748,17 @@ body.is-touch-device #shopPanel {
 body.is-touch-device #mute-btn {
     bottom: calc(14px + env(safe-area-inset-bottom));
     right: calc(14px + env(safe-area-inset-right));
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+}
+
+body.is-touch-device .settings-float-btn {
+    width: 40px;
+    height: 40px;
+    right: calc(62px + env(safe-area-inset-right));
+    bottom: calc(14px + env(safe-area-inset-bottom));
+    border-radius: 10px;
 }
 
 body.is-touch-device #pause-btn {
@@ -722,9 +772,10 @@ body.is-touch-device .emote-float-btn {
 }
 
 body.is-touch-device .ingame-profile-banner {
-    top: calc(72px + env(safe-area-inset-top));
+    top: calc(150px + env(safe-area-inset-top));
+    /* compactHud: safeTop=52 + hudH=86 + 12px gap */
     left: calc(12px + env(safe-area-inset-left));
-    width: min(230px, calc(100vw - 104px));
+    width: min(180px, 36vw);
 }
 
 body.is-touch-device .active-emote-bubble {
@@ -2018,11 +2069,11 @@ body.is-touch-device .vip-emoji-orb img {
     filter: none !important;
 }
 
-.vip-package-grid > *,
-.vip-item-grid > *,
-.store-panel-grid > *,
-.inventory-emote-grid > *,
-.daily-grid > * {
+.vip-package-grid>*,
+.vip-item-grid>*,
+.store-panel-grid>*,
+.inventory-emote-grid>*,
+.daily-grid>* {
     content-visibility: auto;
     contain-intrinsic-size: 240px 260px;
 }
@@ -2126,6 +2177,7 @@ body.is-touch-device .vip-emoji-orb img {
 }
 
 @keyframes vipCapsuleParticles {
+
     0%,
     100% {
         transform: translate3d(-12%, 0, 0);
@@ -2387,6 +2439,7 @@ body.is-touch-device .vip-emoji-orb img {
 }
 
 @keyframes vipGlossSweep {
+
     0%,
     56%,
     100% {
@@ -3026,6 +3079,7 @@ body.is-touch-device .vip-emoji-orb img {
 }
 
 @keyframes vipSlowFloat {
+
     0%,
     100% {
         transform: translateY(0);
@@ -5595,6 +5649,7 @@ body.is-touch-device .ruby-pass-dev {
         background: rgba(10, 10, 15, 0.95);
     }
 }
+
 .store-category-panel {
     position: relative;
 }
@@ -5758,7 +5813,7 @@ body.is-touch-device .ruby-pass-dev {
     overflow: hidden;
 }
 
-.powerup-shop-card > * {
+.powerup-shop-card>* {
     position: relative;
     z-index: 2;
 }
@@ -6289,7 +6344,7 @@ body.is-touch-device .ruby-pass-dev {
     line-height: 1.6;
 }
 
-.powerup-intro-body > p:first-child {
+.powerup-intro-body>p:first-child {
     margin-top: 0;
 }
 
@@ -6666,8 +6721,15 @@ body.is-touch-device .ruby-pass-dev {
 }
 
 @keyframes pulse {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.5; }
+
+    0%,
+    100% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0.5;
+    }
 }
 
 .achievements-content {
@@ -6908,9 +6970,20 @@ body.is-touch-device .ruby-pass-dev {
     box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.04);
 }
 
-.shop-missions-entry span { display: grid; gap: 4px; }
-.shop-missions-entry b { font: 900 12px/1 Geom, monospace; letter-spacing: 2px; }
-.shop-missions-entry small { color: rgba(255, 255, 255, 0.52); font: 10px/1 monospace; }
+.shop-missions-entry span {
+    display: grid;
+    gap: 4px;
+}
+
+.shop-missions-entry b {
+    font: 900 12px/1 Geom, monospace;
+    letter-spacing: 2px;
+}
+
+.shop-missions-entry small {
+    color: rgba(255, 255, 255, 0.52);
+    font: 10px/1 monospace;
+}
 
 .shop-missions-entry strong {
     min-width: 30px;
@@ -6976,9 +7049,23 @@ body.is-touch-device .ruby-pass-dev {
     margin: 0 46px 22px 0;
 }
 
-.missions-header span { color: rgba(255, 255, 255, 0.46); font: 900 11px/1 monospace; letter-spacing: 4px; }
-.missions-header strong { color: #ffda3a; font: 900 18px/1 Geom, monospace; letter-spacing: 2px; }
-.missions-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 14px; }
+.missions-header span {
+    color: rgba(255, 255, 255, 0.46);
+    font: 900 11px/1 monospace;
+    letter-spacing: 4px;
+}
+
+.missions-header strong {
+    color: #ffda3a;
+    font: 900 18px/1 Geom, monospace;
+    letter-spacing: 2px;
+}
+
+.missions-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 14px;
+}
 
 .mission-card {
     border: 1px solid rgba(255, 255, 255, 0.1);
@@ -6989,12 +7076,41 @@ body.is-touch-device .ruby-pass-dev {
     gap: 14px;
 }
 
-.mission-card.ready { border-color: rgba(255, 218, 58, 0.46); box-shadow: 0 0 22px rgba(255, 218, 58, 0.14); }
-.mission-card.claimed { opacity: 0.72; }
-.mission-card-top, .mission-card-bottom { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
-.mission-card strong { display: block; margin-bottom: 6px; font: 900 14px/1 Geom, monospace; }
-.mission-card p, .mission-card small { margin: 0; color: rgba(255, 255, 255, 0.58); font: 11px/1.45 monospace; }
-.mission-card-top > span { color: #5fe7ff; font: 900 13px/1 monospace; white-space: nowrap; }
+.mission-card.ready {
+    border-color: rgba(255, 218, 58, 0.46);
+    box-shadow: 0 0 22px rgba(255, 218, 58, 0.14);
+}
+
+.mission-card.claimed {
+    opacity: 0.72;
+}
+
+.mission-card-top,
+.mission-card-bottom {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+.mission-card strong {
+    display: block;
+    margin-bottom: 6px;
+    font: 900 14px/1 Geom, monospace;
+}
+
+.mission-card p,
+.mission-card small {
+    margin: 0;
+    color: rgba(255, 255, 255, 0.58);
+    font: 11px/1.45 monospace;
+}
+
+.mission-card-top>span {
+    color: #5fe7ff;
+    font: 900 13px/1 monospace;
+    white-space: nowrap;
+}
 
 .mission-progress {
     height: 8px;
@@ -7010,7 +7126,8 @@ body.is-touch-device .ruby-pass-dev {
     background: linear-gradient(90deg, #5fe7ff, #ffda3a);
 }
 
-.mission-card button, .streak-node {
+.mission-card button,
+.streak-node {
     border: 1px solid rgba(255, 218, 58, 0.34);
     border-radius: 8px;
     background: rgba(255, 218, 58, 0.12);
@@ -7020,8 +7137,15 @@ body.is-touch-device .ruby-pass-dev {
     cursor: pointer;
 }
 
-.mission-card button { padding: 10px 12px; }
-.mission-card button:disabled, .streak-node:disabled { opacity: 0.42; cursor: default; }
+.mission-card button {
+    padding: 10px 12px;
+}
+
+.mission-card button:disabled,
+.streak-node:disabled {
+    opacity: 0.42;
+    cursor: default;
+}
 
 .missions-streak {
     margin-top: 16px;
@@ -7031,17 +7155,109 @@ body.is-touch-device .ruby-pass-dev {
     background: rgba(0, 0, 0, 0.24);
 }
 
-.missions-streak > div:first-child {
+.missions-streak>div:first-child {
     display: flex;
     align-items: center;
     justify-content: space-between;
     margin-bottom: 14px;
 }
 
-.missions-streak span { color: rgba(255, 255, 255, 0.46); font: 900 10px/1 monospace; letter-spacing: 3px; }
-.missions-streak strong { color: #5fe7ff; font: 900 15px/1 Geom, monospace; }
-.missions-streak-track { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; }
-.streak-node { min-height: 58px; display: grid; place-items: center; gap: 4px; }
-.streak-node b { font-size: 18px; }
-.streak-node.ready { background: #ffda3a; color: #060606; }
-.streak-node.claimed { border-color: rgba(95, 255, 156, 0.4); color: #5fff9c; background: rgba(95, 255, 156, 0.1); }
+.missions-streak span {
+    color: rgba(255, 255, 255, 0.46);
+    font: 900 10px/1 monospace;
+    letter-spacing: 3px;
+}
+
+.missions-streak strong {
+    color: #5fe7ff;
+    font: 900 15px/1 Geom, monospace;
+}
+
+.missions-streak-track {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 10px;
+}
+
+.streak-node {
+    min-height: 58px;
+    display: grid;
+    place-items: center;
+    gap: 4px;
+}
+
+.streak-node b {
+    font-size: 18px;
+}
+
+.streak-node.ready {
+    background: #ffda3a;
+    color: #060606;
+}
+
+.streak-node.claimed {
+    border-color: rgba(95, 255, 156, 0.4);
+    color: #5fff9c;
+    background: rgba(95, 255, 156, 0.1);
+}
+
+/* =====================================================
+   ESTILOS DE NIVELES - FONDOS Y ANILLOS
+   ===================================================== */
+
+.background-level {
+    position: absolute;
+    /* Positions the background relative to the entire screen container */
+    top: 0;
+    /* Aligns the background to the top edge of the screen */
+    left: 0;
+    /* Aligns the background to the left edge of the screen */
+    width: 100vw;
+    /* Forces the width to take up 100% of the viewport width */
+    height: 100vh;
+    /* Forces the height to take up 100% of the viewport height */
+    object-fit: cover;
+    /* Stretches and scales the image to cover the screen without distortion, eliminating black gaps */
+    z-index: -1;
+    /* Places the background behind all other game elements and the HUD */
+}
+
+.game-ring {
+    position: absolute;
+    /* Positions the ring absolutely relative to its parent container */
+    top: 50%;
+    /* Positions the ring's top edge at the vertical center of the screen */
+    left: 50%;
+    /* Positions the ring's left edge at the horizontal center of the screen */
+    transform: translate(-50%, -50%);
+    /* Perfect mathematical centering for the PNG rings by offsetting by half their dimensions */
+    max-width: 90vh;
+    /* Prevents the ring from clipping on smaller or shorter screens by limiting width to 90% of viewport height */
+    max-height: 90vh;
+    /* Prevents the ring from clipping by limiting height to 90% of viewport height */
+    object-fit: contain;
+    /* Ensures the ring scales proportionally inside its boundaries without distortion */
+}
+
+/* =====================================================
+   BARRA SUPERIOR - HUD
+   ===================================================== */
+
+h1 {
+    position: absolute;
+    /* Positions the header absolutely so it doesn't occupy physical space in the page flow */
+    top: 0;
+    /* Aligns the header to the top edge of the screen */
+    left: 0;
+    /* Aligns the header to the left edge of the screen */
+    width: 100%;
+    /* Forces the header to take up the full width of the screen */
+    z-index: 10;
+    /* Places the header above the game background but below other UI elements */
+    margin: 0;
+    /* Removes default browser margins that could cause spacing issues */
+    padding: 0;
+    /* Removes default browser padding that could cause spacing issues */
+    pointer-events: none;
+    /* Prevents the header from blocking clicks on game elements below it */
+}
