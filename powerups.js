@@ -1,11 +1,17 @@
 // =====================================================
-// POWERUPS SYSTEM
+// SISTEMA DE POWERUPS
 // =====================================================
+// Este archivo maneja todos los powerups del juego: compra, mejora, equipamiento,
+// uso durante la partida, efectos visuales y estadísticas de uso.
 
-const POWERUP_STORAGE_KEY = 'powerups';
-const POWERUP_SLOT_KEY = 'equippedPowerups';
-const POWERUP_MAX_LEVEL = 6;
+// Claves para almacenamiento en localStorage
+const POWERUP_STORAGE_KEY = 'powerups'; // Inventario de powerups
+const POWERUP_SLOT_KEY = 'equippedPowerups'; // Powerups equipados
+const POWERUP_MAX_LEVEL = 6; // Nivel máximo de mejora para powerups
 
+// Datos de todos los powerups disponibles en el juego
+// Cada powerup tiene: id, nombre, color, tipo, costos, descripción base,
+// descripciones por nivel, y efectos específicos por nivel
 const POWERUPS_DATA = [
     {
         id: 'proteccion', name: 'Proteccion', color: '#AAE3D8', type: 'defensivo', buy: { coins: 180, gems: 6 }, upgrade: [0, 8, 13, 20, 30, 48],
@@ -141,25 +147,33 @@ const POWERUPS_DATA = [
     }
 ];
 
+// Caché de imágenes de powerups para optimizar carga
 const powerupImages = {};
 const powerupImageCache = new Map();
 
+// Cargar imagen de powerup (icono o efecto) con caché
+// powerupId: ID del powerup
+// type: 'icon' para icono, cualquier otro valor para efecto
 function loadPowerupImage(powerupId, type = 'icon') {
+    // Verificar si ya está en caché
     const cacheKey = `${powerupId}_${type}`;
     if (powerupImageCache.has(cacheKey)) {
         return powerupImageCache.get(cacheKey);
     }
     
+    // Crear nueva imagen con lazy loading
     const img = new Image();
     img.loading = 'lazy';
     img.decoding = 'async';
     
+    // Cargar icono o efecto según el tipo
     if (type === 'icon') {
         img.src = `assets/powerups/icons/${powerupId}.png`;
     } else {
         img.src = `assets/powerups/effects/${powerupId}_effect.png`;
     }
     
+    // Guardar en caché y retornar
     powerupImageCache.set(cacheKey, img);
     
     if (!powerupImages[powerupId]) {
@@ -171,19 +185,28 @@ function loadPowerupImage(powerupId, type = 'icon') {
 }
 
 // Cargar solo las imágenes de iconos al inicio (lazy loading para efectos)
+// Los efectos se cargarán bajo demanda cuando se necesiten
 POWERUPS_DATA.forEach(powerup => {
     loadPowerupImage(powerup.id, 'icon');
     // Efectos se cargarán bajo demanda
 });
 
+// Exportar datos de powerups para uso global
 window.POWERUPS_DATA = POWERUPS_DATA;
 
+// Obtener datos de un powerup por su ID
+// id: ID del powerup a buscar
+// Retorna el objeto del powerup o null si no existe
 function getPowerupById(id) {
     return POWERUPS_DATA.find(powerup => powerup.id === id) || null;
 }
 
+// Normalizar el inventario de powerups desde localStorage
+// Asegura que todos los powerups tengan las propiedades correctas
+// raw: Objeto crudo del localStorage
 function normalizePowerupsStore(raw = {}) {
     const next = {};
+    // Recorrer todos los powerups y normalizar sus datos
     POWERUPS_DATA.forEach(powerup => {
         const current = raw[powerup.id] || {};
         next[powerup.id] = {
@@ -196,6 +219,8 @@ function normalizePowerupsStore(raw = {}) {
     return next;
 }
 
+// Leer inventario de powerups desde localStorage
+// Retorna el inventario normalizado
 function readPowerups() {
     let parsed = {};
     try {
@@ -203,12 +228,15 @@ function readPowerups() {
     } catch (error) {
         parsed = {};
     }
+    // Normalizar y guardar
     const normalized = normalizePowerupsStore(parsed);
     localStorage.setItem(POWERUP_STORAGE_KEY, JSON.stringify(normalized));
     window.powerupsInventory = normalized;
     return normalized;
 }
 
+// Guardar inventario de powerups en localStorage
+// inventory: Objeto con el inventario a guardar
 function savePowerups(inventory) {
     const normalized = normalizePowerupsStore(inventory);
     localStorage.setItem(POWERUP_STORAGE_KEY, JSON.stringify(normalized));
@@ -216,6 +244,8 @@ function savePowerups(inventory) {
     return normalized;
 }
 
+// Obtener los powerups equipados en los 2 slots
+// Retorna array con [slot1, slot2] (puede ser null si está vacío)
 function getEquippedPowerups() {
     try {
         const slots = JSON.parse(localStorage.getItem(POWERUP_SLOT_KEY) || '[]');
@@ -225,6 +255,8 @@ function getEquippedPowerups() {
     }
 }
 
+// Establecer los powerups equipados en los 2 slots
+// slots: Array con [slot1, slot2]
 function setEquippedPowerups(slots) {
     const clean = [slots?.[0] || null, slots?.[1] || null];
     localStorage.setItem(POWERUP_SLOT_KEY, JSON.stringify(clean));
@@ -232,15 +264,23 @@ function setEquippedPowerups(slots) {
     return clean;
 }
 
+// Obtener el estado completo de un powerup (nivel, usos, desbloqueado)
+// id: ID del powerup
 function getPowerupLevelState(id) {
     const inventory = readPowerups();
     return inventory[id] || normalizePowerupsStore({})[id];
 }
 
+// Obtener el nivel actual de un powerup
+// id: ID del powerup
+// Retorna nivel (mínimo 1)
 function getPowerupLevel(id) {
     return Math.max(1, getPowerupLevelState(id)?.nivel || 1);
 }
 
+// Gastar un uso de powerup durante una partida
+// id: ID del powerup
+// Retorna true si se gastó correctamente, false si no tenía usos
 function spendPowerupUse(id) {
     const inventory = readPowerups();
     if (!inventory[id] || inventory[id].usos <= 0) return false;
@@ -255,28 +295,40 @@ function spendPowerupUse(id) {
     return true;
 }
 
+// Obtener número de cargas por partida para un powerup
+// Algunos powerups como Dash tienen múltiples cargas por partida
+// powerup: Objeto del powerup
+// level: Nivel del powerup
 function getPowerupSessionCharges(powerup, level) {
+    // Solo Dash tiene múltiples cargas
     if (powerup?.id !== 'dash') return 1;
     const idx = Math.max(0, (level || 1) - 1);
     return powerup.effect?.charges?.[idx] || 3;
 }
 
 // =====================================================
-// POWERUP USAGE STATISTICS
+// ESTADÍSTICAS DE USO DE POWERUPS
 // =====================================================
 
+// Clave para almacenar estadísticas de uso
 const POWERUP_STATS_KEY = 'powerupStats';
 
+// Incrementar contador de uso de un powerup
+// powerupId: ID del powerup usado
 function incrementPowerupUsage(powerupId) {
     const stats = JSON.parse(localStorage.getItem(POWERUP_STATS_KEY) || '{}');
     stats[powerupId] = (stats[powerupId] || 0) + 1;
     localStorage.setItem(POWERUP_STATS_KEY, JSON.stringify(stats));
 }
 
+// Obtener estadísticas de uso de todos los powerups
+// Retorna objeto con { powerupId: usos }
 function getPowerupStats() {
     return JSON.parse(localStorage.getItem(POWERUP_STATS_KEY) || '{}');
 }
 
+// Obtener el powerup más usado por el jugador
+// Retorna ID del powerup más usado o null
 function getMostUsedPowerup() {
     const stats = getPowerupStats();
     let maxUses = 0;
@@ -292,11 +344,23 @@ function getMostUsedPowerup() {
     return mostUsed;
 }
 
+// Verificar si el jugador puede pagar por un powerup
+// amount: Cantidad a pagar
+// currency: 'gems' o 'coins' (deadCoins)
+// Retorna true si puede pagar
 function canAffordPowerup(amount, currency) {
     const key = currency === 'gems' ? 'gems' : 'deadCoins';
     return parseInt(localStorage.getItem(key) || '0', 10) >= amount;
 }
 
+// Gastar monedas o gemas para comprar powerup
+// amount: Cantidad a gastar
+// currency: 'gems' o 'coins' (deadCoins)
+// Retorna true si se gastó correctamente
+// Gastar monedas o gemas para comprar powerup
+// amount: Cantidad a gastar
+// currency: 'gems' o 'coins' (deadCoins)
+// Retorna true si se gastó correctamente
 function spendPowerupCurrency(amount, currency) {
     const key = currency === 'gems' ? 'gems' : 'deadCoins';
     const current = parseInt(localStorage.getItem(key) || '0', 10);
@@ -312,6 +376,10 @@ function spendPowerupCurrency(amount, currency) {
     return true;
 }
 
+// Comprar un powerup por primera vez
+// id: ID del powerup
+// source: 'normal' para tienda normal, 'vip' para tienda VIP
+// Retorna true si se compró correctamente
 function buyPowerup(id, source = 'normal') {
     const powerup = getPowerupById(id);
     if (!powerup) return false;
@@ -339,6 +407,9 @@ function buyPowerup(id, source = 'normal') {
     return true;
 }
 
+// Mejorar un powerup al siguiente nivel
+// id: ID del powerup
+// Retorna true si se mejoró correctamente
 function upgradePowerup(id) {
     const powerup = getPowerupById(id);
     const inventory = readPowerups();
@@ -363,6 +434,10 @@ function upgradePowerup(id) {
     return true;
 }
 
+// Obtener la duración de un powerup según su nivel
+// id: ID del powerup
+// level: Nivel del powerup
+// Retorna duración en segundos
 function getPowerupDuration(id, level) {
     const powerup = getPowerupById(id);
     const duration = powerup?.effect?.duration;
@@ -370,8 +445,12 @@ function getPowerupDuration(id, level) {
     return duration[Math.max(0, Math.min(duration.length - 1, level - 1))] || 0;
 }
 
+// Crear el runtime de powerups para una partida
+// Inicializa los slots de powerups y los efectos activos
+// slots: Array con los powerups equipados
 function createPowerupRuntime(slots = getEquippedPowerups()) {
     const isTouch = document.body.classList.contains('is-touch-device');
+    // Inicializar slots de powerups
     window.activePowerupSlots = slots.map((id, index) => {
         const state = id ? getPowerupLevelState(id) : null;
         return {
@@ -384,37 +463,40 @@ function createPowerupRuntime(slots = getEquippedPowerups()) {
             usesAtStart: state?.usos || 0
         };
     });
+    // Inicializar efectos de powerups
     window.powerupEffects = {
-        invulnerableUntil: 0,
-        ghostUntil: 0,
-        stopUntil: 0,
-        slowUntil: 0,
-        magnetUntil: 0,
-        magnetRange: 0,
-        chaosUntil: 0,
-        bubbleUntil: 0,
-        overloadUntil: 0,
-        overloadSpeed: 1,
-        overloadStunUntil: 0,
-        overloadStunFactor: 1,
-        coinMultiplier: 1,
-        gemMultiplier: 1,
-        lethalZone: null,
-        teleport: {},
-        shadowClone: null,
-        guardian: null,
-        rewind: null,
-        repulseWaves: [],
-        zeroGravityUntil: 0,
-        zeroGravitySpeed: 1,
-        rubyMirrorUntil: 0,
-        nailBursts: [],
-        linkedClone: null,
-        dramaFlash: 0,
-        popBursts: []
+        invulnerableUntil: 0, // Tiempo hasta que termina la invulnerabilidad
+        ghostUntil: 0, // Tiempo hasta que termina el modo fantasma
+        stopUntil: 0, // Tiempo hasta que termina el tiempo detenido
+        slowUntil: 0, // Tiempo hasta que termina la cámara lenta
+        magnetUntil: 0, // Tiempo hasta que termina el imán
+        magnetRange: 0, // Rango del imán
+        chaosUntil: 0, // Tiempo hasta que termina el modo caos
+        bubbleUntil: 0, // Tiempo hasta que termina la burbuja
+        overloadUntil: 0, // Tiempo hasta que termina la sobrecarga
+        overloadSpeed: 1, // Multiplicador de velocidad de sobrecarga
+        overloadStunUntil: 0, // Tiempo hasta que termina el aturdimiento
+        overloadStunFactor: 1, // Factor de aturdimiento
+        coinMultiplier: 1, // Multiplicador de monedas
+        gemMultiplier: 1, // Multiplicador de gemas
+        lethalZone: null, // Zona letal activa
+        teleport: {}, // Datos de teletransporte
+        shadowClone: null, // Clon sombra activo
+        guardian: null, // Ángel guardián activo
+        rewind: null, // Datos de rebobinado
+        repulseWaves: [], // Ondas repulsoras activas
+        zeroGravityUntil: 0, // Tiempo hasta que termina gravedad cero
+        zeroGravitySpeed: 1, // Velocidad en gravedad cero
+        rubyMirrorUntil: 0, // Tiempo hasta que termina el espejo de rubies
+        nailBursts: [], // Ráfagas de clavos
+        linkedClone: null, // Clon vinculado activo
+        dramaFlash: 0, // Flash dramático
+        popBursts: [] // Ráfagas de pop
     };
 }
 
+// Verificar si el jugador es invulnerable por algún powerup
+// Retorna true si es invulnerable
 function isPowerupInvulnerable() {
     const now = performance.now();
     const effects = window.powerupEffects || {};
@@ -425,6 +507,8 @@ function isPowerupInvulnerable() {
         now < (effects.dashInvulnerableUntil || 0);
 }
 
+// Obtener la escala de tiempo actual (para slow motion, stop time, etc)
+// Retorna 0 si tiempo detenido, 0.34 si cámara lenta, 1 si normal
 function getPowerupTimeScale() {
     const now = performance.now();
     const effects = window.powerupEffects || {};
@@ -433,6 +517,8 @@ function getPowerupTimeScale() {
     return 1;
 }
 
+// Obtener el factor de velocidad del jugador por powerups
+// Retorna multiplicador de velocidad
 function getPowerupSpeedFactor() {
     const now = performance.now();
     const effects = window.powerupEffects || {};
@@ -442,16 +528,21 @@ function getPowerupSpeedFactor() {
     return 1;
 }
 
+// Verificar si el modo gravedad cero está activo
+// Retorna true si está activo
 function isZeroGravityActive() {
     return performance.now() < (window.powerupEffects?.zeroGravityUntil || 0);
 }
 
 // =====================================================
-// COMBO SYSTEM - Usa combo-system.js
+// SISTEMA DE COMBO - Usa combo-system.js
 // =====================================================
 // El sistema de combo se maneja en combo-system.js
 // Este archivo solo usa las funciones exportadas desde allí
 
+// Activar un powerup en un slot específico
+// slotIndex: Índice del slot (0 o 1)
+// Retorna true si se activó correctamente
 function activatePowerupSlot(slotIndex) {
     const slot = window.activePowerupSlots?.[slotIndex];
     if (!slot?.id || slot.active) return false;
@@ -459,10 +550,12 @@ function activatePowerupSlot(slotIndex) {
     const state = getPowerupLevelState(slot.id);
     if (!powerup || !state?.desbloqueado || state.usos <= 0) return false;
 
+    // Dash tiene lógica especial (múltiples cargas)
     if (slot.id === 'dash') {
         return activateDashPowerupSlot(slotIndex, powerup, state);
     }
 
+    // Teletransporte tiene lógica especial (marcar y volver)
     if (slot.id === 'teletransporte') {
         return handleTeleportPowerup(slotIndex, powerup, state);
     }
@@ -478,19 +571,24 @@ function activatePowerupSlot(slotIndex) {
     window.playSfx?.('powerUp', 0.75);
     window.trackMissionProgress?.('powerup_use', 1);
     
-    // Set cooldown after duration
+    // Establecer cooldown después de la duración
     if (duration > 0) {
-        slot.cooldownDuration = 2000; // 2 seconds cooldown
+        slot.cooldownDuration = 2000; // 2 segundos de cooldown
         slot.cooldownUntil = performance.now() + slot.duration + slot.cooldownDuration;
     }
     
     return true;
 }
 
+// Activar el powerup Dash (Salto Cuántico) con múltiples cargas
+// slotIndex: Índice del slot
+// powerup: Objeto del powerup
+// state: Estado del powerup
 function activateDashPowerupSlot(slotIndex, powerup, state) {
     const slot = window.activePowerupSlots?.[slotIndex];
     if (!slot) return false;
     const level = Math.max(1, state.nivel || 1);
+    // Iniciar sesión de cargas si no ha empezado
     if (!slot.sessionStarted) {
         if (!spendPowerupUse(slot.id)) return false;
         slot.sessionStarted = true;
@@ -505,9 +603,14 @@ function activateDashPowerupSlot(slotIndex, powerup, state) {
     return true;
 }
 
+// Manejar el powerup de Teletransporte (marcar y volver)
+// slotIndex: Índice del slot
+// powerup: Objeto del powerup
+// state: Estado del powerup
 function handleTeleportPowerup(slotIndex, powerup, state) {
     const effects = window.powerupEffects || {};
     const tp = effects.teleport[slotIndex] || null;
+    // Si no hay marca, crear una
     if (!tp) {
         if (!spendPowerupUse(powerup.id)) return false;
         const life = (powerup.effect.markerLife[Math.max(0, (state.nivel || 1) - 1)] || 10) * 1000;
@@ -520,10 +623,12 @@ function handleTeleportPowerup(slotIndex, powerup, state) {
         window.playSfx?.('powerUp', 0.65);
         return true;
     }
+    // Si hay marca, teletransportarse a esa posición
     window.angle = tp.angle;
     window.offset = tp.offset;
     window.vel = 0;
     delete effects.teleport[slotIndex];
+    // Nivel 3+ da escudo breve al teletransportarse
     if ((state.nivel || 1) >= 3) {
         effects.invulnerableUntil = Math.max(effects.invulnerableUntil || 0, performance.now() + 1200);
     }
@@ -531,6 +636,11 @@ function handleTeleportPowerup(slotIndex, powerup, state) {
     return true;
 }
 
+// Ejecutar el efecto de un powerup específico
+// id: ID del powerup
+// level: Nivel del powerup
+// duration: Duración en segundos
+// slotIndex: Índice del slot que lo activó
 function runPowerupEffect(id, level, duration, slotIndex) {
     const now = performance.now();
     const effects = window.powerupEffects;
@@ -538,14 +648,18 @@ function runPowerupEffect(id, level, duration, slotIndex) {
     const levelIdx = Math.max(0, level - 1);
     const until = now + duration * 1000;
 
+    // Powerups defensivos
     if (id === 'proteccion') effects.invulnerableUntil = Math.max(effects.invulnerableUntil || 0, until);
     if (id === 'fantasma') effects.ghostUntil = Math.max(effects.ghostUntil || 0, until);
+    // Powerups de control de tiempo
     if (id === 'stop_time') effects.stopUntil = Math.max(effects.stopUntil || 0, until);
     if (id === 'camara_lenta') effects.slowUntil = Math.max(effects.slowUntil || 0, until);
+    // Vida extra
     if (id === 'vida_extra') {
         window.lives += powerup.effect.lives[levelIdx] || 1;
         if (level >= 2) effects.invulnerableUntil = Math.max(effects.invulnerableUntil || 0, now + 900);
     }
+    // Destrucción letal (zona segura)
     if (id === 'destruccion_letal') {
         effects.lethalZone = {
             angle: Math.random() * Math.PI * 2,
@@ -553,21 +667,26 @@ function runPowerupEffect(id, level, duration, slotIndex) {
             expiresAt: until
         };
     }
+    // Modo caos (invencible + vidas)
     if (id === 'caos') {
         window.lives += powerup.effect.lives[levelIdx] || 1;
         effects.chaosUntil = Math.max(effects.chaosUntil || 0, until);
     }
+    // Imán (atrae monedas)
     if (id === 'iman') {
         effects.magnetUntil = Math.max(effects.magnetUntil || 0, until);
         effects.magnetRange = powerup.effect.range[levelIdx] || 100;
     }
+    // Monedas x2 (multiplicador)
     if (id === 'monedas_x2') {
         effects.coinMultiplier = Math.max(effects.coinMultiplier || 1, powerup.effect.coins[levelIdx] || 2);
         effects.gemMultiplier = Math.max(effects.gemMultiplier || 1, powerup.effect.gems[levelIdx] || 1);
     }
+    // Ángel guardián (revive al morir)
     if (id === 'angel_guardian') {
         effects.guardian = { level, lives: powerup.effect.lives[levelIdx] || 1, slotIndex };
     }
+    // Sobrecarga (velocidad + destrucción)
     if (id === 'sobrecarga') {
         effects.overloadUntil = until;
         effects.overloadSpeed = powerup.effect.speed[levelIdx] || 1.4;
@@ -575,6 +694,7 @@ function runPowerupEffect(id, level, duration, slotIndex) {
         effects.overloadStunFactor = stun > 0 ? 0.58 : 1;
         effects.overloadStunQueued = stun * 1000;
     }
+    // Sombra (clon que absorbe golpes)
     if (id === 'sombra') {
         effects.shadowClone = {
             angle: window.angle,
@@ -586,8 +706,11 @@ function runPowerupEffect(id, level, duration, slotIndex) {
             attractCoins: level >= 6
         };
     }
+    // Lluvia de oro (convierte obstáculos en monedas)
     if (id === 'tierra') convertObstaclesToRewards(level);
+    // Burbuja fantasma (rebota obstáculos)
     if (id === 'burbuja') effects.bubbleUntil = Math.max(effects.bubbleUntil || 0, until);
+    // Dash (salto cuántico con invulnerabilidad)
     if (id === 'dash') {
         const dir = (window.playerFacing || 'right') === 'left' ? 1 : -1;
         const distance = powerup.effect.distance[levelIdx] || 0.34;
@@ -597,9 +720,11 @@ function runPowerupEffect(id, level, duration, slotIndex) {
         effects.dashInvulnerableUntil = Math.max(effects.dashInvulnerableUntil || 0, now + (powerup.effect.invuln[levelIdx] || 0.35) * 1000);
         effects.popBursts.push({ angle: window.angle - window.worldRotation, radius: window.BASE_RADIUS + window.offset, born: now, color: powerup.color });
     }
+    // Onda repulsora (empuja obstáculos)
     if (id === 'onda_repulsora') {
         triggerRepulseWave(level, now, powerup);
     }
+    // Cápsula de rebobinado (vuelve al pasado si mueres)
     if (id === 'rebobinado') {
         effects.rewind = {
             angle: window.angle,
@@ -611,18 +736,22 @@ function runPowerupEffect(id, level, duration, slotIndex) {
             expiresAt: until
         };
     }
+    // Espejo de rubies (convierte monedas en rubies)
     if (id === 'espejo_rubies') {
         effects.rubyMirrorUntil = Math.max(effects.rubyMirrorUntil || 0, until);
         if (level >= 6) duplicateVisibleRubies();
     }
+    // Gravedad cero (flotas en el centro)
     if (id === 'gravedad_cero') {
         effects.zeroGravityUntil = Math.max(effects.zeroGravityUntil || 0, until);
         effects.zeroGravitySpeed = powerup.effect.speed[levelIdx] || 0.55;
         effects.invulnerableUntil = Math.max(effects.invulnerableUntil || 0, now + 220);
     }
+    // Tormenta de clavos (destruye obstáculos)
     if (id === 'tormenta_clavos') {
         triggerNailStorm(level, now, powerup);
     }
+    // Super vínculo (clon a 180° con recompensas x3)
     if (id === 'super_vinculo') {
         effects.linkedClone = {
             angle: window.angle + Math.PI,
@@ -634,6 +763,7 @@ function runPowerupEffect(id, level, duration, slotIndex) {
         };
     }
 
+    // Nivel 6+ regresa 1 uso a ciertos powerups defensivos
     if (level >= 6 && ['proteccion', 'fantasma', 'stop_time'].includes(id)) {
         const inventory = readPowerups();
         inventory[id].usos += 1;
@@ -641,12 +771,18 @@ function runPowerupEffect(id, level, duration, slotIndex) {
     }
 }
 
+// Activar la onda repulsora del powerup
+// Empuja obstáculos y sierras lejos del jugador
+// level: Nivel del powerup
+// now: Tiempo actual
+// powerup: Objeto del powerup
 function triggerRepulseWave(level, now, powerup) {
     const effects = window.powerupEffects;
     const levelIdx = Math.max(0, level - 1);
-    const radius = powerup.effect.radius[levelIdx] || 1;
-    const force = powerup.effect.force[levelIdx] || 0.7;
+    const radius = powerup.effect.radius[levelIdx] || 1; // Radio de la onda
+    const force = powerup.effect.force[levelIdx] || 0.7; // Fuerza del empuje
     const centerAngle = window.angle - window.worldRotation;
+    // Función para empujar un obstáculo
     const repel = item => {
         let rel = ((item.angle - centerAngle + Math.PI * 3) % (Math.PI * 2)) - Math.PI;
         if (Math.abs(rel) > radius) return false;
@@ -655,49 +791,64 @@ function triggerRepulseWave(level, now, powerup) {
         if (item.state === 'moving') item.traveled = Math.max(0, item.traveled - 0.12);
         return true;
     };
+    // Aplicar a todos los obstáculos y sierras
     (window.obstacles || []).forEach(repel);
     (window.sierras || []).forEach(repel);
     effects.slowUntil = Math.max(effects.slowUntil || 0, now + (powerup.effect.duration[levelIdx] || 0.8) * 1000);
     effects.repulseWaves.push({ angle: centerAngle, born: now, color: powerup.color, radius });
 }
 
+// Activar la tormenta de clavos del powerup
+// Dispara clavos radiales que destruyen obstáculos
+// level: Nivel del powerup
+// now: Tiempo actual
+// powerup: Objeto del powerup
 function triggerNailStorm(level, now, powerup) {
     const effects = window.powerupEffects;
     const levelIdx = Math.max(0, level - 1);
-    const nailCount = powerup.effect.nails[levelIdx] || 6;
-    const bursts = powerup.effect.bursts[levelIdx] || 1;
+    const nailCount = powerup.effect.nails[levelIdx] || 6; // Número de clavos
+    const bursts = powerup.effect.bursts[levelIdx] || 1; // Número de ráfagas
+    // Calcular ángulos de los clavos (distribuidos uniformemente)
     const nailAngles = Array.from({ length: nailCount }, (_, i) => window.angle - window.worldRotation + (Math.PI * 2 * i) / nailCount);
+    // Verificar si un obstáculo es golpeado por algún clavo
     const hitByNail = item => nailAngles.some(a => Math.abs(((item.angle - a + Math.PI * 3) % (Math.PI * 2)) - Math.PI) < 0.12);
+    // Eliminar spikes golpeados
     window.obstacles = (window.obstacles || []).filter(item => {
         const hit = hitByNail(item);
         if (hit) effects.popBursts.push({ angle: item.angle, radius: getObstacleRewardRadius(item), born: now, color: powerup.color });
         return !hit;
     });
+    // Eliminar sierras golpeadas
     window.sierras = (window.sierras || []).filter(item => {
         const hit = hitByNail(item);
         if (hit) effects.popBursts.push({ angle: item.angle, radius: item.fromGround ? window.BASE_RADIUS : window.DOME_RADIUS, born: now, color: powerup.color });
         return !hit;
     });
+    // Crear efectos visuales de las ráfagas
     for (let i = 0; i < bursts; i++) {
         effects.nailBursts.push({ born: now + i * 160, count: nailCount, color: powerup.color });
     }
 }
 
+// Duplicar todos los rubies visibles (efecto del nivel 6 del Espejo de Rubies)
 function duplicateVisibleRubies() {
     const clones = (window.rubies || []).map(ruby => ({
         ...ruby,
-        angle: ruby.angle + 0.08,
-        pulse: (ruby.pulse || 0) + Math.PI
+        angle: ruby.angle + 0.08, // Pequeño offset
+        pulse: (ruby.pulse || 0) + Math.PI // Diferente fase de pulso
     }));
     window.rubies.push(...clones);
 }
 
+// Convertir todos los obstáculos en pantalla en monedas o gemas (Lluvia de Oro)
+// level: Nivel del powerup (afecta probabilidad de gemas)
 function convertObstaclesToRewards(level) {
     const effects = window.powerupEffects;
-    const gemChance = getPowerupById('tierra').effect.gemChance[Math.max(0, level - 1)] || 0;
+    const gemChance = getPowerupById('tierra').effect.gemChance[Math.max(0, level - 1)] || 0; // Probabilidad de gemas
     const converted = [...(window.obstacles || [])];
     converted.forEach(obstacle => {
         const radius = getObstacleRewardRadius(obstacle);
+        // Convertir en gema o moneda según probabilidad
         if (Math.random() < gemChance) {
             window.rubies.push({ angle: obstacle.angle, radius, life: 360, pulse: 0 });
         } else {
@@ -708,52 +859,66 @@ function convertObstaclesToRewards(level) {
     window.obstacles = [];
 }
 
+// Obtener el radio donde aparecerá la recompensa de un obstáculo
+// obstacle: Objeto del obstáculo
+// Retorna el radio en píxeles
 function getObstacleRewardRadius(obstacle) {
     const fromGround = obstacle?.fromGround;
     return fromGround ? window.BASE_RADIUS + 30 : window.DOME_RADIUS - 34;
 }
 
+// Actualizar todos los efectos de powerups activos (llamado cada frame)
+// Maneja timers, animaciones y efectos continuos
 function updatePowerups() {
     if (!window.powerupEffects) return;
     const now = performance.now();
     const effects = window.powerupEffects;
 
+    // Actualizar slots de powerups
     window.activePowerupSlots?.forEach(slot => {
         if (slot.active && now - slot.startedAt >= slot.duration) slot.active = false;
         if (slot.flash > 0) slot.flash -= 0.05;
     });
 
+    // Activar aturdimiento después de sobrecarga
     if (effects.overloadStunQueued && now > (effects.overloadUntil || 0)) {
         effects.overloadStunUntil = now + effects.overloadStunQueued;
         effects.overloadStunQueued = 0;
     }
+    // Limpiar efectos expirados
     if (effects.lethalZone && now > effects.lethalZone.expiresAt) effects.lethalZone = null;
     if (effects.rewind && now > effects.rewind.expiresAt) effects.rewind = null;
     effects.repulseWaves = (effects.repulseWaves || []).filter(wave => now - wave.born < 720);
     effects.nailBursts = (effects.nailBursts || []).filter(burst => now - burst.born < 620);
+    // Desvanecer clon vinculado
     if (effects.linkedClone && now > effects.linkedClone.expiresAt) {
         effects.linkedClone.fading = (effects.linkedClone.fading || 0) + 0.05;
         if (effects.linkedClone.fading >= 1) effects.linkedClone = null;
     }
+    // Limpiar marcas de teletransporte expiradas
     Object.keys(effects.teleport || {}).forEach(key => {
         if (now > effects.teleport[key].expiresAt) delete effects.teleport[key];
     });
     effects.popBursts = (effects.popBursts || []).filter(pop => now - pop.born < 520);
     if (effects.dramaFlash > 0) effects.dramaFlash -= 0.025;
 
+    // Actualizar efectos continuos
     updateMagnetEffect();
     updateBubbleEffect();
     updateShadowClone();
     updateLinkedClone();
 }
 
+// Actualizar el efecto del imán (atrae monedas y gemas hacia el jugador)
 function updateMagnetEffect() {
     const effects = window.powerupEffects;
     const now = performance.now();
+    // Verificar si el imán está activo (también funciona con clon sombra y burbuja)
     const active = now < (effects.magnetUntil || 0) || effects.shadowClone?.attractCoins || now < (effects.bubbleUntil || 0);
     if (!active) return;
     const range = now < (effects.magnetUntil || 0) ? effects.magnetRange : 110;
     const playerRadius = window.BASE_RADIUS + window.offset;
+    // Función para atraer y recolectar items
     const pullCollection = (items, isGem = false) => {
         for (let i = items.length - 1; i >= 0; i--) {
             const item = items[i];
@@ -761,15 +926,18 @@ function updateMagnetEffect() {
             if (rel > Math.PI) rel -= Math.PI * 2;
             const arcDistance = Math.abs(rel) * Math.max(item.radius, 1);
             const radialDistance = Math.abs(playerRadius - item.radius);
+            // Si está en rango, atraer hacia el jugador
             if (range >= 9999 || Math.hypot(arcDistance, radialDistance) < range) {
                 item.angle += (window.angle - window.worldRotation - item.angle) * 0.14;
                 item.radius += (playerRadius - item.radius) * 0.12;
+                // Si está muy cerca, recolectar
                 if (Math.abs(rel) < 0.08 && radialDistance < 20) {
                     if (isGem) {
                         const gain = Math.max(1, Math.round(effects.gemMultiplier || 1));
                         window.playerData.gems += gain;
                         localStorage.setItem('gems', window.playerData.gems);
                     } else {
+                        // Verificar si está activo el espejo de rubies
                         if (performance.now() < (effects.rubyMirrorUntil || 0)) {
                             const gain = Math.max(1, Math.round(effects.gemMultiplier || 1));
                             window.playerData.gems += gain;
@@ -789,10 +957,12 @@ function updateMagnetEffect() {
     pullCollection(window.rubies || [], true);
 }
 
+// Actualizar el efecto de la burbuja fantasma (rebota obstáculos)
 function updateBubbleEffect() {
     const effects = window.powerupEffects;
     if (performance.now() > (effects.bubbleUntil || 0)) return;
     const playerRadius = window.BASE_RADIUS + window.offset;
+    // Empujar obstáculos cerca del jugador
     (window.obstacles || []).forEach(obstacle => {
         let rel = ((obstacle.angle + window.worldRotation - window.angle + Math.PI * 2) % (Math.PI * 2));
         if (rel > Math.PI) rel -= Math.PI * 2;
@@ -804,30 +974,39 @@ function updateBubbleEffect() {
     });
 }
 
+// Actualizar el clon sombra (absorbe golpes)
 function updateShadowClone() {
     const clone = window.powerupEffects?.shadowClone;
     if (!clone) return;
+    // Seguir al jugador antes de separarse
     if (!clone.fading && performance.now() < clone.splitAt) {
         clone.angle = window.angle;
         clone.offset = window.offset;
     }
+    // Desvanecer después de separarse
     if (clone.fading) {
         clone.fading += 0.04;
         if (clone.fading >= 1) window.powerupEffects.shadowClone = null;
     }
 }
 
+// Actualizar el clon vinculado (Super Vínculo)
+// Clon a 180° que recolecta recompensas x3 pero puede quitar vida si choca
 function updateLinkedClone() {
     const effects = window.powerupEffects;
     const clone = effects?.linkedClone;
     if (!clone || clone.fading) return;
+    // El clon siempre está a 180° del jugador
     clone.angle = window.angle + Math.PI;
     clone.offset = window.offset;
     const cloneRadius = window.BASE_RADIUS + clone.offset;
+    // Recolectar items con el clon
     collectLinkedCloneItems(window.deadCoins || [], false, clone, cloneRadius);
     collectLinkedCloneItems(window.rubies || [], true, clone, cloneRadius);
+    // Verificar si el clon choca con obstáculos
     if (linkedCloneHitsObstacle(clone, cloneRadius)) {
         clone.fading = 0.05;
+        // Si no es seguro, quitar vida al jugador
         if (!clone.safe) {
             window.lives = Math.max(0, window.lives - 1);
             window.hitFlash = 1;
@@ -838,11 +1017,17 @@ function updateLinkedClone() {
     }
 }
 
+// Recolectar items con el clon vinculado
+// items: Array de items (monedas o gemas)
+// isGem: true si son gemas, false si son monedas
+// clone: Objeto del clon
+// cloneRadius: Radio del clon
 function collectLinkedCloneItems(items, isGem, clone, cloneRadius) {
     for (let i = items.length - 1; i >= 0; i--) {
         const item = items[i];
         let rel = ((item.angle + window.worldRotation - clone.angle + Math.PI * 2) % (Math.PI * 2));
         if (rel > Math.PI) rel -= Math.PI * 2;
+        // Si el item está cerca del clon, recolectar con multiplicador
         if (Math.abs(rel) < 0.08 && Math.abs(cloneRadius - item.radius) < 22) {
             const gain = Math.max(1, Math.round(clone.multiplier || 3));
             if (isGem) {
@@ -857,7 +1042,12 @@ function collectLinkedCloneItems(items, isGem, clone, cloneRadius) {
     }
 }
 
+// Verificar si el clon vinculado choca con algún obstáculo
+// clone: Objeto del clon
+// cloneRadius: Radio del clon
+// Retorna true si hay colisión
 function linkedCloneHitsObstacle(clone, cloneRadius) {
+    // Verificar colisión con spikes
     const hitsSpike = (window.obstacles || []).some(o => {
         if (o.warning || o.progress < 0.9) return false;
         let rel = ((o.angle + window.worldRotation - clone.angle + Math.PI * 2) % (Math.PI * 2));
@@ -869,6 +1059,7 @@ function linkedCloneHitsObstacle(clone, cloneRadius) {
         return cloneRadius > from - 5 && cloneRadius < to + 5;
     });
     if (hitsSpike) return true;
+    // Verificar colisión con sierras
     return (window.sierras || []).some(s => {
         if (s.warning || s.state !== 'moving') return false;
         const sr = s.fromGround ? window.BASE_RADIUS : window.DOME_RADIUS;
@@ -878,20 +1069,26 @@ function linkedCloneHitsObstacle(clone, cloneRadius) {
     });
 }
 
+// Intentar absorber un golpe usando powerups defensivos
+// Retorna true si el golpe fue absorbido
 function absorbPowerupHit() {
     const effects = window.powerupEffects || {};
+    // Si es invulnerable por algún powerup, absorber
     if (isPowerupInvulnerable()) return true;
+    // Si tiene rebobinado y va a morir, rebobinar
     if (effects.rewind && window.lives <= 1) {
         triggerRewindReturn(effects.rewind);
         effects.rewind = null;
         return true;
     }
+    // Si tiene clon sombra con hits, usar un hit
     if (effects.shadowClone?.hits > 0) {
         effects.shadowClone.hits -= 1;
         effects.shadowClone.fading = 0.05;
         window.hitFlash = 0.8;
         return true;
     }
+    // Si tiene ángel guardián, revivir
     if (effects.guardian) {
         triggerGuardianRevive(effects.guardian);
         effects.guardian = null;
@@ -900,7 +1097,10 @@ function absorbPowerupHit() {
     return false;
 }
 
+// Activar el retorno del rebobinado (volver al estado guardado)
+// snapshot: Estado guardado del jugador
 function triggerRewindReturn(snapshot) {
+    // Restaurar posición, velocidad, gravedad, timer y vidas
     window.angle = snapshot.angle;
     window.offset = snapshot.offset;
     window.vel = snapshot.vel || 0;
@@ -908,6 +1108,7 @@ function triggerRewindReturn(snapshot) {
     window.gravityForce = window.gravity;
     window.gameTimer = snapshot.timer || 0;
     window.lives = Math.max(1, snapshot.lives || 1);
+    // Dar invulnerabilidad temporal
     window.invulnerable = true;
     window.invulnerableTimer = 120;
     window.hitFlash = 1;
@@ -916,7 +1117,10 @@ function triggerRewindReturn(snapshot) {
     window.playSfx?.('powerUp', 0.95);
 }
 
+// Activar el revive del Ángel Guardián
+// guardian: Objeto del guardián con nivel y vidas
 function triggerGuardianRevive(guardian) {
+    // Restaurar vidas y dar invulnerabilidad
     window.lives = Math.max(window.lives, guardian.lives || 1);
     window.invulnerable = true;
     window.invulnerableTimer = 150;
@@ -925,6 +1129,9 @@ function triggerGuardianRevive(guardian) {
     window.playSfx?.('powerUp', 0.95);
 }
 
+// Verificar si un ángulo está dentro de la zona letal (Destrucción Letal)
+// angleValue: Ángulo a verificar
+// Retorna true si está en la zona letal
 function isAngleInsideLethalZone(angleValue) {
     const zone = window.powerupEffects?.lethalZone;
     if (!zone) return false;
@@ -932,9 +1139,13 @@ function isAngleInsideLethalZone(angleValue) {
     return Math.abs(rel) < zone.arc / 2;
 }
 
+// Dibujar todos los efectos visuales de powerups en el mundo del juego
+// ctx: Contexto del canvas
+// cx, cy: Coordenadas del centro
 function drawPowerupWorldEffects(ctx, cx, cy) {
     const effects = window.powerupEffects || {};
     const now = performance.now();
+    // Dibujar cada efecto
     drawLethalZone(ctx, cx, cy, effects);
     drawTeleportMarkers(ctx, cx, cy, effects);
     drawRepulseWaves(ctx, cx, cy, effects);
@@ -943,6 +1154,7 @@ function drawPowerupWorldEffects(ctx, cx, cy) {
     drawShadowClone(ctx, cx, cy, effects);
     drawLinkedClone(ctx, cx, cy, effects);
     drawPlayerAuras(ctx, cx, cy, effects, now);
+    // Flash dramático (para revives, etc)
     if (effects.dramaFlash > 0) {
         ctx.save();
         ctx.fillStyle = `rgba(75,192,235,${effects.dramaFlash * 0.28})`;
@@ -951,6 +1163,10 @@ function drawPowerupWorldEffects(ctx, cx, cy) {
     }
 }
 
+// Dibujar las ondas repulsoras (Onda Repulsora)
+// ctx: Contexto del canvas
+// cx, cy: Coordenadas del centro
+// effects: Objeto de efectos de powerups
 function drawRepulseWaves(ctx, cx, cy, effects) {
     (effects.repulseWaves || []).forEach(wave => {
         const life = Math.min(1, (performance.now() - wave.born) / 720);
@@ -967,6 +1183,10 @@ function drawRepulseWaves(ctx, cx, cy, effects) {
     });
 }
 
+// Dibujar las ráfagas de clavos (Tormenta de Clavos)
+// ctx: Contexto del canvas
+// cx, cy: Coordenadas del centro
+// effects: Objeto de efectos de powerups
 function drawNailBursts(ctx, cx, cy, effects) {
     (effects.nailBursts || []).forEach(burst => {
         const elapsed = performance.now() - burst.born;
@@ -979,6 +1199,7 @@ function drawNailBursts(ctx, cx, cy, effects) {
         ctx.shadowBlur = 16;
         ctx.lineWidth = 4;
         ctx.globalAlpha = 1 - life * 0.6;
+        // Dibujar cada clavo como una línea radial
         for (let i = 0; i < burst.count; i++) {
             const a = start + (Math.PI * 2 * i) / burst.count + window.worldRotation;
             const r1 = window.BASE_RADIUS + 18;
@@ -992,11 +1213,16 @@ function drawNailBursts(ctx, cx, cy, effects) {
     });
 }
 
+// Dibujar la zona letal (Destrucción Letal)
+// ctx: Contexto del canvas
+// cx, cy: Coordenadas del centro
+// effects: Objeto de efectos de powerups
 function drawLethalZone(ctx, cx, cy, effects) {
     const zone = effects.lethalZone;
     if (!zone) return;
     ctx.save();
     ctx.beginPath();
+    // Dibujar arco del anillo
     ctx.arc(cx, cy, window.DOME_RADIUS, zone.angle - zone.arc / 2 + window.worldRotation, zone.angle + zone.arc / 2 + window.worldRotation);
     ctx.arc(cx, cy, window.BASE_RADIUS, zone.angle + zone.arc / 2 + window.worldRotation, zone.angle - zone.arc / 2 + window.worldRotation, true);
     ctx.closePath();
@@ -1008,6 +1234,10 @@ function drawLethalZone(ctx, cx, cy, effects) {
     ctx.restore();
 }
 
+// Dibujar las marcas de teletransporte (Punto de Teletransporte)
+// ctx: Contexto del canvas
+// cx, cy: Coordenadas del centro
+// effects: Objeto de efectos de powerups
 function drawTeleportMarkers(ctx, cx, cy, effects) {
     Object.values(effects.teleport || {}).forEach(marker => {
         const x = cx + Math.cos(marker.angle) * (window.BASE_RADIUS + marker.offset);
@@ -1024,6 +1254,10 @@ function drawTeleportMarkers(ctx, cx, cy, effects) {
     });
 }
 
+// Dibujar los efectos de pop (explosiones visuales)
+// ctx: Contexto del canvas
+// cx, cy: Coordenadas del centro
+// effects: Objeto de efectos de powerups
 function drawPowerupPopBursts(ctx, cx, cy, effects) {
     (effects.popBursts || []).forEach(pop => {
         const life = Math.min(1, (performance.now() - pop.born) / 520);
@@ -1042,6 +1276,10 @@ function drawPowerupPopBursts(ctx, cx, cy, effects) {
     });
 }
 
+// Dibujar el clon sombra (Sombra)
+// ctx: Contexto del canvas
+// cx, cy: Coordenadas del centro
+// effects: Objeto de efectos de powerups
 function drawShadowClone(ctx, cx, cy, effects) {
     const clone = effects.shadowClone;
     if (!clone) return;
@@ -1060,6 +1298,10 @@ function drawShadowClone(ctx, cx, cy, effects) {
     ctx.restore();
 }
 
+// Dibujar el clon vinculado (Super Vínculo)
+// ctx: Contexto del canvas
+// cx, cy: Coordenadas del centro
+// effects: Objeto de efectos de powerups
 function drawLinkedClone(ctx, cx, cy, effects) {
     const clone = effects.linkedClone;
     if (!clone) return;
@@ -1082,20 +1324,27 @@ function drawLinkedClone(ctx, cx, cy, effects) {
     ctx.restore();
 }
 
+// Dibujar los auras del jugador (efectos visuales de powerups activos)
+// ctx: Contexto del canvas
+// cx, cy: Coordenadas del centro
+// effects: Objeto de efectos de powerups
+// now: Tiempo actual
 function drawPlayerAuras(ctx, cx, cy, effects, now) {
     const playerRadius = window.BASE_RADIUS + window.offset;
     const x = cx + Math.cos(window.angle) * playerRadius;
     const y = cy + Math.sin(window.angle) * playerRadius;
+    // Lista de auras con sus condiciones, colores y radios
     const activeAuras = [
-        [now < (effects.invulnerableUntil || 0), '#AAE3D8', 26],
-        [now < (effects.ghostUntil || 0), '#DEAAF0', 30],
-        [now < (effects.chaosUntil || 0), `hsl(${(now / 8) % 360},100%,62%)`, 32],
-        [now < (effects.bubbleUntil || 0), '#FF6EB4', 38],
-        [now < (effects.overloadUntil || 0), '#F97316', 31],
-        [now < (effects.zeroGravityUntil || 0), '#7CB342', 34],
-        [now < (effects.rubyMirrorUntil || 0), '#B11226', 36],
-        [!!effects.rewind, '#00A896', 40]
+        [now < (effects.invulnerableUntil || 0), '#AAE3D8', 26], // Protección
+        [now < (effects.ghostUntil || 0), '#DEAAF0', 30], // Fantasma
+        [now < (effects.chaosUntil || 0), `hsl(${(now / 8) % 360},100%,62%)`, 32], // Caos (multicolor)
+        [now < (effects.bubbleUntil || 0), '#FF6EB4', 38], // Burbuja
+        [now < (effects.overloadUntil || 0), '#F97316', 31], // Sobrecarga
+        [now < (effects.zeroGravityUntil || 0), '#7CB342', 34], // Gravedad Cero
+        [now < (effects.rubyMirrorUntil || 0), '#B11226', 36], // Espejo de Rubies
+        [!!effects.rewind, '#00A896', 40] // Rebobinado
     ];
+    // Dibujar cada aura activa
     activeAuras.forEach(([active, color, radius]) => {
         if (!active) return;
         ctx.save();
@@ -1111,12 +1360,14 @@ function drawPlayerAuras(ctx, cx, cy, effects, now) {
     });
 }
 
+// Dibujar el HUD de powerups (los 2 slots en pantalla)
+// ctx: Contexto del canvas
 function drawPowerupHud(ctx) {
     if (!window.activePowerupSlots) return;
     const compact = !!window.compactHud;
     const isTouch = document.body.classList.contains('is-touch-device');
     
-    // Get custom position, size and opacity from localStorage for mobile
+    // Obtener posición, tamaño y opacidad personalizados para móvil
     const powerupOffsetX = isTouch ? (parseInt(localStorage.getItem('powerupOffsetX') || '0')) : 0;
     const powerupOffsetY = isTouch ? (parseInt(localStorage.getItem('powerupOffsetY') || '0')) : 0;
     const powerupSize = isTouch ? (parseInt(localStorage.getItem('powerupSize') || '100') / 100) : 1;
@@ -1133,6 +1384,7 @@ function drawPowerupHud(ctx) {
     ctx.save();
     ctx.globalAlpha = powerupOpacity;
     
+    // Dibujar cada slot
     window.activePowerupSlots.forEach((slot, index) => {
         const x = baseX + index * (radius * 2 + gap);
         const powerup = getPowerupById(slot.id);
@@ -1140,12 +1392,19 @@ function drawPowerupHud(ctx) {
         drawPowerupHudCircle(ctx, x, y + radius, radius, slot, powerup, state);
     });
     
-    // Draw combo indicator
+    // Dibujar indicador de combo
     drawComboIndicator(ctx, baseX + 2 * (radius * 2 + gap), y + radius, radius);
     
     ctx.restore();
 }
 
+// Dibujar un círculo del HUD de powerups (un slot)
+// ctx: Contexto del canvas
+// x, y: Posición del centro
+// radius: Radio del círculo
+// slot: Objeto del slot
+// powerup: Objeto del powerup
+// state: Estado del powerup (usos, etc)
 function drawPowerupHudCircle(ctx, x, y, radius, slot, powerup, state) {
     const color = powerup?.color || '#777777';
     const uses = state?.usos || 0;
@@ -1161,6 +1420,7 @@ function drawPowerupHudCircle(ctx, x, y, radius, slot, powerup, state) {
     ctx.arc(x, y, radius, 0, Math.PI * 2);
     ctx.fill();
     ctx.stroke();
+    // Dibujar icono del powerup
     if (powerup) {
         const img = powerupImages[powerup.id]?.icon;
         if (img?.complete && img.naturalWidth > 0) ctx.drawImage(img, x - radius * 0.54, y - radius * 0.54, radius * 1.08, radius * 1.08);
@@ -1171,6 +1431,7 @@ function drawPowerupHudCircle(ctx, x, y, radius, slot, powerup, state) {
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
     ctx.fillText(slot.key, x, y);
+    // Dibujar barra de duración si está activo
     if (slot.active && slot.duration > 0) {
         const p = Math.max(0, 1 - (performance.now() - slot.startedAt) / slot.duration);
         ctx.strokeStyle = color;
@@ -1181,7 +1442,7 @@ function drawPowerupHudCircle(ctx, x, y, radius, slot, powerup, state) {
         ctx.stroke();
     }
     
-    // Cooldown indicator
+    // Indicador de cooldown
     if (slot.cooldownUntil && performance.now() < slot.cooldownUntil) {
         const cooldownProgress = 1 - (slot.cooldownUntil - performance.now()) / (slot.cooldownDuration || 2000);
         ctx.strokeStyle = '#ff4d6d';
@@ -1194,6 +1455,7 @@ function drawPowerupHudCircle(ctx, x, y, radius, slot, powerup, state) {
         ctx.setLineDash([]);
     }
     
+    // Dibujar contador de usos
     ctx.fillStyle = disabled ? '#9a9a9a' : '#ffffff';
     ctx.beginPath();
     ctx.arc(x + radius * 0.62, y + radius * 0.62, radius * 0.38, 0, Math.PI * 2);
@@ -1203,16 +1465,21 @@ function drawPowerupHudCircle(ctx, x, y, radius, slot, powerup, state) {
     ctx.fillText(String(uses), x + radius * 0.62, y + radius * 0.64);
     ctx.restore();
     
+    // Guardar área del HUD para detección de clics
     slot.hudArea = { x, y, radius };
 }
 
+// Dibujar el indicador de combo en el HUD
+// ctx: Contexto del canvas
+// x, y: Posición del centro
+// radius: Radio del indicador
 function drawComboIndicator(ctx, x, y, radius) {
     const combo = window.comboSystem || { currentCombo: 0, comboMultiplier: 1 };
     if (combo.currentCombo <= 0) return;
 
     ctx.save();
 
-    // Background circle
+    // Círculo de fondo
     ctx.fillStyle = 'rgba(255, 215, 0, 0.15)';
     ctx.strokeStyle = '#FFD700';
     ctx.lineWidth = 2;
@@ -1221,14 +1488,14 @@ function drawComboIndicator(ctx, x, y, radius) {
     ctx.fill();
     ctx.stroke();
 
-    // Combo count
+    // Contador de combo
     ctx.fillStyle = '#FFD700';
     ctx.font = `900 ${Math.max(14, radius * 0.7)}px Geom, monospace`;
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
     ctx.fillText(`x${combo.currentCombo || 0}`, x, y - 4);
 
-    // Multiplier
+    // Multiplicador
     ctx.fillStyle = 'rgba(255, 215, 0, 0.8)';
     ctx.font = `700 ${Math.max(10, radius * 0.45)}px monospace`;
     ctx.fillText(`${(combo.comboMultiplier || 1).toFixed(1)}x`, x, y + 12);
@@ -1236,6 +1503,9 @@ function drawComboIndicator(ctx, x, y, radius) {
     ctx.restore();
 }
 
+// Mostrar el panel de selección de powerups antes de empezar un nivel
+// levelIndex: Índice del nivel
+// onDone: Callback cuando se completa la selección
 function showPowerupSelection(levelIndex, onDone) {
     readPowerups();
     let overlay = document.getElementById('powerupSelectionOverlay');
@@ -1251,6 +1521,7 @@ function showPowerupSelection(levelIndex, onDone) {
     const vip = POWERUPS_DATA.filter(powerup => powerup.buy.gems >= 14).sort(() => Math.random() - 0.5)[0] || POWERUPS_DATA[0];
     const selected = [];
 
+    // Función para renderizar una tarjeta de powerup
     const renderPick = powerup => {
         const state = inventory[powerup.id];
         const selectable = state?.desbloqueado && state.usos > 0;
@@ -1270,6 +1541,7 @@ function showPowerupSelection(levelIndex, onDone) {
         `;
     };
 
+    // Función para redibujar el panel
     const redraw = () => {
         const main = usable.length
             ? usable
@@ -1295,6 +1567,7 @@ function showPowerupSelection(levelIndex, onDone) {
                 </div>
             </section>
         `;
+        // Manejar clics en tarjetas de powerups
         overlay.querySelectorAll('.powerup-pick-card').forEach(button => {
             button.onclick = () => {
                 const id = button.dataset.powerup;
@@ -1309,10 +1582,12 @@ function showPowerupSelection(levelIndex, onDone) {
                 redraw();
             };
         });
+        // Manejar clic en VIP destacado
         overlay.querySelector('.powerup-vip-feature')?.addEventListener('click', () => {
             buyPowerup(vip.id, 'vip');
             showPowerupSelection(levelIndex, onDone);
         });
+        // Manejar botón de empezar
         overlay.querySelector('#powerupSelectionStart').onclick = () => {
             setEquippedPowerups(selected);
             overlay.classList.remove('showing');
@@ -1327,6 +1602,10 @@ function showPowerupSelection(levelIndex, onDone) {
     redraw();
 }
 
+// Renderizar el precio de un powerup como texto
+// powerup: Objeto del powerup
+// source: 'normal' o 'vip'
+// Retorna string con precio y moneda
 function renderPowerupPrice(powerup, source = 'normal') {
     const currency = source === 'vip' ? 'gems' : (powerup.normalCurrency || 'coins');
     const amount = currency === 'gems'
@@ -1335,7 +1614,9 @@ function renderPowerupPrice(powerup, source = 'normal') {
     return `${amount} ${currency === 'gems' ? 'rubies' : 'monedas'}`;
 }
 
+// IDs de powerups disponibles en la tienda normal
 const NORMAL_SHOP_POWERUP_IDS = ['burbuja', 'sobrecarga', 'camara_lenta', 'tierra', 'angel_guardian', 'sombra', 'dash', 'onda_repulsora', 'rebobinado', 'espejo_rubies', 'gravedad_cero', 'tormenta_clavos', 'super_vinculo'];
+// Etiquetas para las categorías de powerups
 const POWERUP_CATEGORY_LABELS = {
     all: 'Todos',
     defensivo: 'Proteccion',
@@ -1344,6 +1625,10 @@ const POWERUP_CATEGORY_LABELS = {
     riesgo: 'Alto riesgo'
 };
 
+// Obtener la lista de powerups para la tienda
+// mode: 'normal' o 'vip'
+// filterType: Tipo de filtro ('all', 'defensivo', 'control', 'utilidad', 'riesgo')
+// Retorna array de powerups filtrados
 function getPowerupShopList(mode = 'normal', filterType = 'all') {
     const source = mode === 'normal'
         ? [
@@ -1356,10 +1641,17 @@ function getPowerupShopList(mode = 'normal', filterType = 'all') {
         : source.filter(powerup => (powerup.type || 'utilidad') === filterType);
 }
 
+// Verificar si un powerup está disponible directamente en la tienda normal
+// powerup: Objeto del powerup
+// Retorna true si está en la tienda normal
 function isNormalShopDirectPowerup(powerup) {
     return NORMAL_SHOP_POWERUP_IDS.includes(powerup?.id);
 }
 
+// Renderizar la tienda de powerups
+// container: Elemento contenedor
+// mode: 'normal' o 'vip'
+// filterType: Tipo de filtro
 function renderPowerupsShop(container, mode = 'normal', filterType = 'all') {
     readPowerups();
     const targetId = mode === 'vip' ? 'vipContent' : 'shopContent';
@@ -1444,7 +1736,7 @@ function renderPowerupShopCard(powerup, mode) {
         ? `jumpToVIPPowerups('${powerup.id}')`
         : `openPowerupDetail('${powerup.id}','${mode}')`;
     return `
-        <button class="powerup-shop-card ${shapeClass} ${isVipRedirect ? 'vip-redirect' : ''}" style="--powerup-color:${powerup.color}" onclick="${action}" type="button" ${isVipRedirect ? 'data-tooltip="&iexcl;dirigir a tienda VIP!"' : ''}>
+        <button class="powerup-shop-card ${shapeClass} ${isVipRedirect ? 'vip-redirect' : ''}" style="--powerup-color:${powerup.color}" onclick="${action}" type="button" ${isVipRedirect ? 'data-tooltip="¡dirigir a tienda VIP!"' : ''}>
             <img src="assets/powerups/icons/${powerup.id}.png" alt="">
             <b>${powerup.name}</b>
             <span>${isVipRedirect ? 'VIP' : state.desbloqueado ? `Nivel ${Math.max(1, state.nivel)} - x${state.usos}` : 'Bloqueado'}</span>
@@ -1452,6 +1744,10 @@ function renderPowerupShopCard(powerup, mode) {
     `;
 }
 
+// Obtener la descripción de un powerup según su nivel
+// powerup: Objeto del powerup
+// selected: Nivel seleccionado
+// Retorna descripción del nivel
 function getPowerupLevelDescription(powerup, selected) {
     return selected === 1 ? powerup.base : `Nivel ${selected}: ${powerup.levels[selected - 1] || powerup.base}`;
 }
@@ -1459,6 +1755,7 @@ function getPowerupLevelDescription(powerup, selected) {
 function openPowerupDetail(id, mode = 'normal', selectedLevel = 1) {
     const powerup = getPowerupById(id);
     if (!powerup) return;
+    // Si es tienda normal y el powerup es VIP, redirigir
     if (mode === 'normal' && !isNormalShopDirectPowerup(powerup)) {
         jumpToVIPPowerups(id);
         return;

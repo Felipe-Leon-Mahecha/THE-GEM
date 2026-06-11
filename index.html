@@ -1,19 +1,27 @@
 <!DOCTYPE html>
+<!-- Página principal del juego THE GEM -->
 <html lang="es">
 
 <head>
     <meta charset="UTF-8">
+    <!-- Configuración de viewport para móviles: sin zoom, ajuste completo -->
     <meta name="viewport"
         content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>THE GEM</title>
+    <!-- Icono de favicon -->
     <link rel="icon" type="image/png" href="assets/Imagenes/Icono/favicon.png">
 
+    <!-- Preconexión a Google Fonts para mejor rendimiento -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <!-- Fuente Geom del juego -->
     <link href="https://fonts.googleapis.com/css2?family=Geom:ital,wght@0,300..900;1,300..900&display=swap"
         rel="stylesheet">
+    <!-- Hoja de estilos principal -->
     <link rel="stylesheet" href="style.css">
+    <!-- Manifest para PWA -->
     <link rel="manifest" href="manifest.json">
+    <!-- Registro de Service Worker para PWA -->
     <script>
         if ('serviceWorker' in navigator) {
             navigator.serviceWorker.register('/service-worker.js');
@@ -23,33 +31,44 @@
 
 <body>
 
+    <!-- Pantalla de carga inicial -->
     <div id="loading-screen" style="
     position:fixed; inset:0; z-index:99999;
     background:#050505;
     display:flex; flex-direction:column;
     align-items:center; justify-content:center; gap:24px;
 ">
+        <!-- Logo del juego -->
         <img src="assets/Imagenes/Logo/Logo_THE_GEM.png" style="width:120px; height:120px; object-fit:contain;">
+        <!-- Texto de carga -->
         <div style="color:rgba(255,255,255,0.5); font-family:monospace; font-size:13px; letter-spacing:6px;">LOADING...
         </div>
+        <!-- Barra de progreso de carga -->
         <div style="width:280px; height:6px; background:rgba(255,255,255,0.08); border-radius:999px; overflow:hidden;">
             <div id="loading-bar"
                 style="height:100%; width:0%; background:linear-gradient(90deg,#ff4d6d,#ff9ab0); border-radius:999px; transition:width 0.3s ease;">
             </div>
         </div>
+        <!-- Porcentaje de carga -->
         <div id="loading-percent" style="color:#ff4d6d; font-family:monospace; font-size:12px; letter-spacing:3px;">0%
         </div>
     </div>
 
 
 
+    <!-- Canvas principal del juego -->
     <canvas id="gameCanvas"></canvas>
+    <!-- Controles táctiles para móviles -->
     <div id="touch-controls">
-        <button id="touch-left" type="button"><img src="assets/Imagenes/Botones HUD/Direccion_izquierda.png" alt="Izquierda"></button>
-        <button id="touch-right" type="button"><img src="assets/Imagenes/Botones HUD/Direccion_derecha.png" alt="Derecha"></button>
-        <button id="touch-gravity" type="button"><img id="gravity-img" src="assets/Imagenes/Botones HUD/Gravedad_abajo.png" alt="Gravedad"></button>
+        <button id="touch-left" type="button"><img src="assets/Imagenes/Botones HUD/Direccion_izquierda.png"
+                alt="Izquierda"></button>
+        <button id="touch-right" type="button"><img src="assets/Imagenes/Botones HUD/Direccion_derecha.png"
+                alt="Derecha"></button>
+        <button id="touch-gravity" type="button"><img id="gravity-img"
+                src="assets/Imagenes/Botones HUD/Gravedad_abajo.png" alt="Gravedad"></button>
     </div>
 
+    <!-- Botón de silenciar/activar sonido -->
     <div id="mute-btn" onclick="toggleMute()" style="
     position:fixed;
     bottom:20px;
@@ -69,10 +88,13 @@
         <img id="mute-icon" src="assets/Imagenes/Icono/Music_On.png" style="width:100%;height:100%;">
     </div>
 
+    <!-- Overlay del menú principal -->
     <div id="overlay">
 
+        <!-- Fondo oscuro del overlay -->
         <div style="position:absolute; inset:0; background:#080810;"></div>
 
+        <!-- Portada del juego con gradientes -->
         <div id="overlay-cover">
             <img src="assets/Imagenes/Portada Juego/Portada_Juego_2.png"
                 style="width:100%; height:100%; object-fit:cover; object-position:center top;">
@@ -83,8 +105,10 @@
             </div>
         </div>
 
+        <!-- Panel principal del menú -->
         <div id="overlay-panel">
 
+            <!-- Avatar y rango del usuario -->
             <div style="position:absolute; top:28px; right:28px; display:flex; align-items:center; gap:10px;">
                 <div style="display:flex; flex-direction:column; align-items:flex-end;">
                     <div id="menu-avatar"
@@ -96,14 +120,16 @@
                 </div>
             </div>
 
+            <!-- Línea decorativa superior -->
             <div style="display:flex; align-items:center; gap:0; margin-bottom:40px;">
                 <div style="width:3px; height:40px; background:linear-gradient(to bottom, transparent, #ff4d6d);"></div>
                 <div style="flex:1; height:3px; background:linear-gradient(to right, #ff4d6d, transparent);"></div>
             </div>
 
+            <!-- Botones del menú principal -->
             <div style="display:flex; flex-direction:column; gap:8px;">
 
-                <!-- JUGAR: fila completa, grande -->
+                <!-- JUGAR: botón principal -->
                 <button id="play-btn" style="
                 position:relative; background:rgba(255,77,109,0.1);
                 border:none; border-left:3px solid #ff4d6d;
@@ -181,12 +207,13 @@
                         onmouseout="this.style.background='rgba(75,192,235,0.08)';this.style.color='rgba(75,192,235,0.9)'"
                         onclick="showPowerupHelpPanel()">
                         AYUDA
-                        <span style="margin-left:auto; color:#4bc0eb; font-size:13px;">→</span>
+                        <span style="margin-left:auto; color:#4bc0eb; font-size:12px;">→</span>
                     </button>
                 </div>
 
             </div>
 
+            <!-- Líneas decorativas inferiores -->
             <div style="margin-top:40px; display:flex; flex-direction:column; gap:10px;">
                 <div style="display:flex; align-items:center; gap:8px;">
                     <div
@@ -209,6 +236,7 @@
                 </div>
             </div>
 
+            <!-- Footer con versión y créditos -->
             <div id="overlay-footer"
                 style="position:absolute; bottom:28px; left:72px; right:28px; display:flex; justify-content:space-between; align-items:center;">
                 <div style="color:rgba(255,255,255,0.15); font-family:monospace; font-size:10px; letter-spacing:3px;">
@@ -223,16 +251,21 @@
 
     </div>
 
+    <!-- Botones flotantes del juego -->
     <button id="pause-btn" type="button" onclick="pauseGame()">PAUSA</button>
     <button id="settings-float-btn" class="settings-float-btn" type="button" onclick="openOptionsPanel()"
         title="Opciones">⚙</button>
     <button id="emote-float-btn" class="emote-float-btn" type="button" onclick="toggleEmoteMenu()"
         title="Emotes">+</button>
+    <!-- Menú de emotes -->
     <div id="emote-menu" class="emote-menu"></div>
     <div id="emote-more-panel" class="emote-more-panel"></div>
+    <!-- Banner de perfil en juego -->
     <div id="ingame-profile-banner" class="ingame-profile-banner"></div>
+    <!-- Burbuja de emote activo -->
     <div id="active-emote-bubble" class="active-emote-bubble"></div>
 
+    <!-- Panel de pausa -->
     <div id="pausePanel">
         <div class="pause-dim" onclick="resumeGame()"></div>
         <aside class="pause-drawer">
@@ -245,6 +278,7 @@
         </aside>
     </div>
 
+    <!-- Panel de perfil -->
     <div id="profilePanel" style="display:none;">
         <div class="profile-dim" onclick="closeProfileMenu()"></div>
         <section class="profile-card">
@@ -261,6 +295,7 @@
         </section>
     </div>
 
+    <!-- Pantalla de Game Over -->
     <div id="gameOver" style="display:none;">
         <div class="go-card">
             <div class="go-mark">!</div>
@@ -275,6 +310,7 @@
         </div>
     </div>
 
+    <!-- Pantalla de Victoria -->
     <div id="gameWin"
         style="display:none; position:absolute; inset:0; background:rgba(0,0,0,0.68); backdrop-filter:blur(10px) saturate(.75); -webkit-backdrop-filter:blur(10px) saturate(.75); flex-direction:column; align-items:center; justify-content:center; z-index:30; gap:16px;">
         <h1 style="color:#00ffe7; font-size:48px; font-weight:900; letter-spacing:6px; text-shadow:0 0 20px #00ffe7;">
@@ -290,6 +326,7 @@
         <button class="menu-btn" id="gw-retry">↺ JUGAR DE NUEVO</button>
     </div>
 
+    <!-- Panel de tienda -->
     <div id="shopPanel" style="display:none; position:fixed; inset:0; z-index:25; flex-direction:row;">
 
         <div style="position:absolute; inset:0; background:#0a0a0f;"></div>
@@ -298,9 +335,11 @@
         </div>
         <div style="position:absolute; inset:0; box-shadow:inset 0 0 120px rgba(0,0,0,0.8);"></div>
 
+        <!-- Sidebar de la tienda -->
         <div
             style="position:relative; z-index:2; width:200px; min-height:100vh; background:rgba(255,255,255,0.02); border-right:1px solid rgba(255,255,255,0.06); display:flex; flex-direction:column; padding:0;">
 
+            <!-- Header de la tienda -->
             <div style="padding:20px 18px 14px; border-bottom:1px solid rgba(255,255,255,0.06);">
                 <div
                     style="color:#ff4d6d; font-family:monospace; font-size:18px; font-weight:900; letter-spacing:4px; margin-bottom:12px;">
@@ -310,6 +349,7 @@
                     VOLVER</button>
             </div>
 
+            <!-- Banner de perfil en tienda -->
             <div style="padding:14px 14px 16px; border-bottom:1px solid rgba(255,255,255,0.06);">
                 <div
                     style="color:rgba(255,255,255,0.25); font-family:monospace; font-size:9px; letter-spacing:4px; margin-bottom:10px;">
@@ -339,6 +379,7 @@
                     style="display:none; margin:-4px 0 10px; padding:8px; border:1px solid rgba(255,255,255,0.09); border-radius:10px; background:rgba(0,0,0,0.28);">
                 </div>
 
+                <!-- Display de monedas y gemas -->
                 <div style="display:flex; flex-direction:column; gap:8px;">
                     <div
                         style="display:flex; align-items:center; justify-content:space-between; background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.07); border-radius:8px; padding:8px 12px;">
@@ -365,6 +406,7 @@
                 </div>
             </div>
 
+            <!-- Botón de misiones -->
             <button onclick="openMissionsPanel()" class="shop-missions-entry" type="button">
                 <span>
                     <b>MISIONES</b>
@@ -373,6 +415,7 @@
                 <strong id="shop-missions-ready">0</strong>
             </button>
 
+            <!-- Skin equipado -->
             <div style="padding:20px 24px; border-bottom:1px solid rgba(255,255,255,0.06);">
                 <div
                     style="color:rgba(255,255,255,0.25); font-family:monospace; font-size:9px; letter-spacing:4px; margin-bottom:14px;">
@@ -395,6 +438,7 @@
             <div style="flex:1;"></div>
         </div>
 
+        <!-- Contenido principal de la tienda -->
         <div style="position:relative; z-index:2; flex:1; display:flex; flex-direction:column; overflow:hidden;">
 
             <div id="shopContent" style="flex:1; overflow-y:auto; padding:22px 24px;">
@@ -402,8 +446,10 @@
         </div>
     </div>
 
+    <!-- Panel VIP -->
     <div id="vipPanel" style="display:none; position:fixed; inset:0; z-index:30; flex-direction:row;"></div>
 
+    <!-- Panel de categorías -->
     <div id="categoryPanel"
         style="display:none; position:absolute; inset:0; background:rgba(0,0,0,0.85); z-index:10; flex-direction:column; align-items:center; padding:40px 20px; overflow-y:auto;">
         <div id="categoryContent"></div>
@@ -412,8 +458,10 @@
             VOLVER</button>
     </div>
 
+    <!-- Overlay de selección de powerups -->
     <div id="powerupSelectionOverlay" style="display:none; place-items:center;"></div>
 
+    <!-- Panel de ayuda de powerups -->
     <div id="powerupHelpPanel"
         style="display:none; position:fixed; inset:0; z-index:35000; place-items:center; padding:28px; background:rgba(0,0,0,0.85); backdrop-filter:blur(12px);">
         <div class="powerup-help-content">
@@ -425,6 +473,7 @@
         </div>
     </div>
 
+    <!-- Panel de logros -->
     <div id="achievementsPanel"
         style="display:none; position:fixed; inset:0; z-index:36000; place-items:center; padding:28px; background:rgba(0,0,0,0.85); backdrop-filter:blur(12px);">
         <div class="achievements-content">
@@ -436,6 +485,7 @@
         </div>
     </div>
 
+    <!-- Panel de inventario -->
     <div id="inventoryPanel" style="display:none; position:fixed; inset:0; z-index:25; flex-direction:row;">
 
         <div style="position:absolute; inset:0; background:#0a0a0f;"></div>
@@ -443,6 +493,7 @@
             style="position:absolute; inset:0; background:radial-gradient(ellipse at 50% 40%, rgba(30,30,60,0.8) 0%, rgba(5,5,10,0.95) 70%);">
         </div>
 
+        <!-- Sidebar del inventario -->
         <div
             style="position:relative; z-index:2; width:220px; min-height:100vh; background:rgba(255,255,255,0.02); border-right:1px solid rgba(255,255,255,0.06); display:flex; flex-direction:column;">
             <div style="padding:28px 24px; border-bottom:1px solid rgba(255,255,255,0.06);">
@@ -453,6 +504,7 @@
                     THE GEM</div>
             </div>
 
+            <!-- Navegación del inventario -->
             <nav style="display:flex; flex-direction:column; gap:4px; padding:16px 12px;">
                 <div onclick="showInventorySection('skins')" id="inv-nav-skins"
                     style="display:flex; align-items:center; gap:12px; padding:10px 14px; border-radius:10px; cursor:pointer; background:rgba(0,255,231,0.1); border:1px solid rgba(0,255,231,0.2); color:#00ffe7; font-family:monospace; font-size:12px; letter-spacing:2px;">
@@ -490,6 +542,7 @@
             </div>
         </div>
 
+        <!-- Contenido del inventario -->
         <div style="position:relative; z-index:2; flex:1; display:flex; flex-direction:column; overflow:hidden;">
             <div
                 style="height:64px; border-bottom:1px solid rgba(255,255,255,0.07); display:flex; align-items:center; padding:0 32px;">
@@ -500,12 +553,14 @@
         </div>
     </div>
 
+    <!-- Panel de opciones -->
     <div class="panel-popup options-card" id="optionsPanel">
 
         <div class="popup-title">
             OPCIONES
         </div>
 
+        <!-- Controles del juego -->
         <p style="line-height:2;">
             A / D → Mover<br>
             S → Invertir gravedad<br>
@@ -525,7 +580,9 @@
 
         </p>
 
+        <!-- Configuración de opciones -->
         <div class="option-settings">
+            <!-- Reasignación de teclas -->
             <div class="keybind-section">
                 <div class="keybind-title">REASIGNAR TECLAS</div>
                 <div class="keybind-row">
@@ -551,23 +608,23 @@
                 <button class="option-action" onclick="resetKeybinds()">RESTAURAR POR DEFECTO</button>
             </div>
 
+            <!-- Volumen de audio -->
             <label class="option-row"><span>MUSICA</span><input id="music-volume" type="range" min="0" max="100"
                     value="45"></label>
             <label class="option-row"><span>EFECTOS</span><input id="sfx-volume" type="range" min="0" max="100"
                     value="75"></label>
             <button class="option-action" onclick="toggleReducedMotion()">MODO RENDIMIENTO</button>
             <p id="motion-mode-text">Animaciones normales</p>
+            <!-- Controles móviles -->
             <div class="option-mobile">
                 <div class="option-mobile-title">CONTROLES CELULAR</div>
                 <label>BOTONES LATERALES <input id="touch-side-offset" type="range" min="0" max="100"
                         value="50"></label>
-                <label>TAMA�O BOTONES <input id="touch-size" type="range" min="50" max="150" value="100"></label>
+                <label>TAMAÑO BOTONES <input id="touch-size" type="range" min="50" max="150" value="100"></label>
                 <label>TRANSPARENCIA <input id="touch-opacity" type="range" min="20" max="100" value="100"></label>
                 <label>BOTON GRAVEDAD <input id="touch-gravity-offset" type="range" min="0" max="100"
                         value="50"></label>
-                <label>TAMA�O BOTONES <input id="touch-size" type="range" min="50" max="150" value="100"></label>
-                <label>TRANSPARENCIA <input id="touch-opacity" type="range" min="20" max="100" value="100"></label>
-                <button class="option-action" onclick="saveTouchLayout()">GUARDAR CONFIGURACI�N</button>
+                <button class="option-action" onclick="saveTouchLayout()">GUARDAR CONFIGURACIÓN</button>
             </div>
         </div>
 
@@ -579,11 +636,13 @@
 
     </div>
 
+    <!-- Pantalla de selección de nivel -->
     <div id="levelSelect">
 
         <div class="ls-bg"></div>
         <div class="ls-overlay"></div>
 
+        <!-- Header de selección de nivel -->
         <div class="ls-header">
 
             <div class="ls-title-zone">
@@ -598,6 +657,7 @@
 
         </div>
 
+        <!-- Barra de información del jugador -->
         <div class="ls-player-bar">
             <div class="avatar" id="playerAvatar"></div>
 
@@ -614,19 +674,23 @@
             </div>
         </div>
 
+        <!-- Banner de nivel -->
         <div class="ls-banner-wrap">
             <canvas id="bannerCanvas" width="1200" height="66"></canvas>
         </div>
 
+        <!-- Carrusel de niveles -->
         <div class="ls-carousel-wrap">
             <canvas id="carouselCanvas" width="1400" height="700"></canvas>
         </div>
 
+        <!-- Botones de navegación de niveles -->
         <button id="ls-prev-btn" class="ls-nav-btn ls-nav-prev" type="button" aria-label="Nivel anterior"
             onclick="window.moveLevelSelection?.(-1)">←</button>
         <button id="ls-next-btn" class="ls-nav-btn ls-nav-next" type="button" aria-label="Nivel siguiente"
             onclick="window.moveLevelSelection?.(1)">→</button>
 
+        <!-- Footer con botón de jugar -->
         <div class="ls-footer">
 
             <div class="ls-system-bar">
@@ -653,6 +717,7 @@
         </div>
     </div>
 
+    <!-- Scripts del juego -->
     <script src="levels.config.js"></script>
     <script src="survival-level.js"></script>
     <script src="combo-system.js"></script>
@@ -666,6 +731,7 @@
     <script src="ui.js"></script>
     <script src="src/keybinds-integration.js"></script>
 
+    <!-- Script de carga inicial -->
     <script>
         let prog = 0;
         const bar = document.getElementById('loading-bar');

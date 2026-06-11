@@ -31,18 +31,18 @@ android {
     }
     
     applicationVariants.all { variant ->
-        variant.outputs.each { output ->
-            def appName = "THE_GEM"
-            def versionName = defaultConfig.versionName
-            def buildType = variant.buildType.name
-            
-            if (buildType == "debug") {
-                output.outputFileName = "${appName}-v${versionName}-debug.apk"
-            } else {
-                output.outputFileName = "${appName}-v${versionName}.apk"
-            }
+    variant.outputs.each { output ->
+        def appName = "THE_GEM"
+        def versionName = defaultConfig.versionName
+        def buildType = variant.buildType.name
+        
+        if (buildType == "debug") {
+            output.outputFileName = "app-debug.apk"
+        } else {
+            output.outputFileName = "${appName}-v${versionName}.apk"
         }
     }
+}
 }
 
 repositories {

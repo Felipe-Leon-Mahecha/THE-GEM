@@ -1,37 +1,49 @@
 // =====================================================
-// SHOP SYSTEM
+// SISTEMA DE TIENDA
 // =====================================================
+// Este archivo maneja la tienda del juego: skins, trails, emotes,
+// contenido VIP, bundles y compras con monedas o gemas.
 
-// Hoisted declarations to prevent "before initialization" errors in bundled APK
+// Declaraciones elevadas para prevenir errores de "antes de inicialización" en APK empaquetada
 var VIP_GAMEPLAY_PLACEHOLDERS = [];
 var previewTrailAnim = null;
 
+// Imagen placeholder para items de tienda
 const SHOP_PLACEHOLDER_IMAGE = 'assets/UI/Store/Placeholders/placeholder_store_item.png';
+// Imagen placeholder para recompensas del pase de rubies
 const RUBY_PASS_REWARD_PLACEHOLDER = 'assets/UI/Store/Placeholders/placeholder_ruby_pass_reward.png';
+// Precio estándar de emotes en monedas
 const EMOTE_STANDARD_PRICE_COINS = 150;
+// Imágenes de efectos visuales para la tienda
 const SHOP_SNOWFLAKE_IMAGE = new Image();
 SHOP_SNOWFLAKE_IMAGE.src = 'assets/UI/Efectos de trails/Efecto copo de nieve.png';
 const SHOP_CANDY_PARTICLE_IMAGE = new Image();
 SHOP_CANDY_PARTICLE_IMAGE.src = 'assets/UI/Efectos de trails/Particulas/particula_dulce.png';
 
 // =====================================================
-// GLOBAL VARIABLES
+// VARIABLES GLOBALES
 // =====================================================
 
-let trailAnimId = null;
+let trailAnimId = null; // ID de la animación del trail en preview
 
 // =====================================================
-// VIP CONSTANTS
+// CONSTANTES VIP
 // =====================================================
 
-const VIP_ASSET_BASE = 'assets/UI/Store/VIP/Bundles';
-const VIP_ITEM_PRICE = 300;
-const VIP_PANEL_PRICE = 620;
+const VIP_ASSET_BASE = 'assets/UI/Store/VIP/Bundles'; // Ruta base de assets VIP
+const VIP_ITEM_PRICE = 300; // Precio estándar de item VIP
+const VIP_PANEL_PRICE = 620; // Precio de panel VIP
 
 // =====================================================
-// VIP HELPER FUNCTIONS
+// FUNCIONES AUXILIARES VIP
 // =====================================================
 
+// Crear objeto de skin VIP
+// folder: Carpeta de assets
+// id: ID del skin
+// name: Nombre del skin
+// price: Precio (opcional)
+// options: Opciones adicionales (opcional)
 function vipSkin(folder, id, name, price = VIP_ITEM_PRICE, options = {}) {
     return {
         type: 'vipSkin',
@@ -43,12 +55,17 @@ function vipSkin(folder, id, name, price = VIP_ITEM_PRICE, options = {}) {
     };
 }
 
+// Crear objeto de trail VIP
+// folder: Carpeta de assets
+// id: ID del trail
+// name: Nombre del trail
+// price: Precio (opcional)
 function vipTrail(folder, id, name, price = 320) {
     return { type: 'vipTrailPng', id, name, price, image: `${VIP_ASSET_BASE}/${folder}/${id}.png`, trailId: id };
 }
 
 // =====================================================
-// TRAILS DATA
+// DATOS DE TRAILS
 // =====================================================
 
 const TRAILS_DATA = [
@@ -69,7 +86,7 @@ const TRAILS_DATA = [
 ];
 
 // =====================================================
-// VIP CAROUSEL DATA
+// DATOS DEL CARRUSEL VIP
 // =====================================================
 
 const VIP_CAROUSEL_DATA = [
@@ -225,13 +242,14 @@ const VIP_CAROUSEL_DATA = [
 ];
 
 // =====================================================
-// PRELOAD SHOP IMAGES
+// PRECARGAR IMÁGENES DE TIENDA
 // =====================================================
 
+// Precargar todas las imágenes de la tienda para mejor rendimiento
 function preloadShopImages() {
     const shopImages = [];
 
-    // Preload emote images
+    // Precargar imágenes de emotes
     EMOTES_DATA.forEach(emote => {
         if (emote.image) {
             const img = new Image();
@@ -240,7 +258,7 @@ function preloadShopImages() {
         }
     });
 
-    // Preload skin images
+    // Precargar imágenes de skins
     SKINS_DATA.forEach(skin => {
         if (skin.image) {
             const img = new Image();
@@ -249,7 +267,7 @@ function preloadShopImages() {
         }
     });
 
-    // Preload trail images
+    // Precargar imágenes de trails
     TRAILS_DATA.forEach(trail => {
         if (trail.image) {
             const img = new Image();
@@ -258,7 +276,7 @@ function preloadShopImages() {
         }
     });
 
-    // Preload banner images
+    // Precargar imágenes de banners
     BANNERS_DATA.forEach(banner => {
         if (banner.image) {
             const img = new Image();
@@ -267,7 +285,7 @@ function preloadShopImages() {
         }
     });
 
-    // Preload VIP images
+    // Precargar imágenes VIP
     VIP_GAMEPLAY_PLACEHOLDERS.forEach(vip => {
         if (vip.image) {
             const img = new Image();
@@ -279,6 +297,7 @@ function preloadShopImages() {
     return shopImages;
 }
 
+// Datos de skins disponibles en la tienda
 const SKINS_DATA = [
     { id: 'cyan', name: 'Cian', color: '#00ffe7', rarity: 'BASICA', price: 0, priceType: 'coins', owned: true },
     { id: 'red', name: 'Rojo', color: '#ff4444', rarity: 'BASICA', price: 50, priceType: 'coins', owned: false },
@@ -299,6 +318,7 @@ const SKINS_DATA = [
     { id: 'daxor', name: 'DAXOR', color: '#ff2448', rarity: 'DEMON', price: 5200, priceType: 'coins', altPrice: 170, altType: 'gems', fragments: 3, owned: false, image: 'assets/UI/Store/Skins/Normal/DAXOR_Skin.png', imageSide: 'assets/UI/Store/Skins/Normal/DAXOR Skin DEMON/DAXOR_Skin_lado.png' }
 ];
 
+// Lista de skins desbloqueables con fragmentos
 const FRAGMENT_SKINS_LIST = [
     { id: 'skin_caballero_dorado', name: 'Caballero Dorado', rarity: 'VIP', vipOnly: true, imageRight: 'assets/UI/Store/VIP/Bundles/Royal/skin_caballero_dorado.png' },
     { id: 'skin_reina', name: 'Reina', rarity: 'VIP', vipOnly: true, imageRight: 'assets/UI/Store/VIP/Bundles/Royal/skin_reina.png' },
@@ -311,8 +331,10 @@ const FRAGMENT_SKINS_LIST = [
     { id: 'skin_mama_claus', name: 'Mama Claus', rarity: 'VIP', vipOnly: true, imageRight: 'assets/UI/Store/VIP/Bundles/Christmas/skin_mama_claus.png' }
 ];
 
+// Exportar datos de skins para uso global
 window.SKINS_DATA = SKINS_DATA;
 
+// Colores de rareza para items
 const RARITY_COLORS = {
     BASICA: '#57b7dd',
     ESPECIAL: '#ff9a17',
@@ -320,6 +342,7 @@ const RARITY_COLORS = {
     DEMON: '#cf0000',
     VIP: '#ffee00',
 };
+// Colores de rareza para banners
 const BANNER_RARITY_COLORS = {
     DEFAULT: 'rgba(255,255,255,0.35)',
     BASICO: '#57b7dd',
@@ -349,9 +372,10 @@ const REWARD_CURRENCY_ASSETS = {
     }
 };
 
+// Datos de banners disponibles en la tienda
 const BANNERS_DATA = [
 
-    //Baner por defecto
+    // Banner por defecto
     {
         id: 'Banner_Deafult',
         name: 'El inicio...',
@@ -361,7 +385,7 @@ const BANNERS_DATA = [
         rarity: 'DEFAULT'
     },
 
-    //Baners Basicos
+    // Banners Básicos
     {
         id: 'Speed_Color_Green',
         name: 'Speed Color Green',
@@ -427,7 +451,7 @@ const BANNERS_DATA = [
         rarity: 'BASICO'
     },
 
-    //Baners Especiales
+    // Banners Especiales
     {
         id: 'Speed_Color_Red_Animado',
         name: 'Speed Color Red Animado',
@@ -509,7 +533,7 @@ const BANNERS_DATA = [
         rarity: 'ESPECIAL'
     },
 
-    //Baners Epicos
+    // Banners Épicos
     {
         id: 'Dark_Lineas_Or_Bck',
         name: 'Tienes calor?',
@@ -543,7 +567,7 @@ const BANNERS_DATA = [
         rarity: 'EPICA'
     },
 
-    //Baners Demon
+    // Banners Demon
     {
         id: 'El_Dragon_Chino',
         name: 'El Dragon Chino',
@@ -569,7 +593,7 @@ const BANNERS_DATA = [
         rarity: 'DEMON'
     },
 
-    //Banners VIP
+    // Banners VIP
     {
         id: 'Dracula_Edition',
         name: 'El Dracula',
@@ -620,6 +644,7 @@ const BANNERS_DATA = [
     },
 ];
 
+// Placeholders de banners VIP
 const VIP_BANNER_PLACEHOLDERS = [
     { id: 'VIP_Placeholder_PNG_1', name: 'VIP Placeholder PNG 1', price: 420, cover: 'assets/Imagenes/Banners/Placeholders/VIP_Placeholder_PNG_1.png', rarity: 'VIP', exclusive: true },
     { id: 'VIP_Placeholder_PNG_2', name: 'VIP Placeholder PNG 2', price: 420, cover: 'assets/Imagenes/Banners/Placeholders/VIP_Placeholder_PNG_2.png', rarity: 'VIP', exclusive: true },
@@ -633,10 +658,15 @@ const VIP_BANNER_PLACEHOLDERS = [
     { id: 'VIP_Placeholder_GIF_5', name: 'VIP Placeholder GIF 5', price: 560, cover: 'assets/Imagenes/Banners/Placeholders/VIP_Placeholder_GIF_5.gif', rarity: 'VIP', exclusive: true, animated: true }
 ];
 
+// Verificar si un banner es exclusivamente VIP
+// banner: Objeto del banner
+// Retorna true si es VIP
 function isVIPBannerOnly(banner) {
     return banner?.rarity === 'VIP' || banner?.exclusive === true || String(banner?.cover || '').toLowerCase().endsWith('.gif');
 }
 
+// Obtener el catálogo de banners VIP
+// Retorna array de banners VIP
 function getVIPBannerCatalog() {
     const byId = new Map();
     [...BANNERS_DATA, ...VIP_BANNER_PLACEHOLDERS].forEach(banner => {
@@ -646,6 +676,7 @@ function getVIPBannerCatalog() {
     return [...byId.values()];
 }
 
+// Datos de cofres disponibles en la tienda
 const CHESTS_DATA = [
     { id: 'basic', name: 'Cofre Basico', image: 'assets/Imagenes/Cofres Imagenes/Cofre BASICO.png', openImage: 'assets/Imagenes/Cofres Imagenes/Cofres Abiertos/Cofre_BASICO_Abierto.png', cost: 150, currency: 'coins', base: { coins: [25, 60], gems: [0, 1] }, drops: [['Item basico', 85], ['Item especial', 14], ['Fragmento epico', 1]] },
     { id: 'special', name: 'Cofre Especial', image: 'assets/Imagenes/Cofres Imagenes/Cofre ESPECIAL.png', openImage: 'assets/Imagenes/Cofres Imagenes/Cofres Abiertos/Cofre_ESPECIAL_Abierto.png', cost: 500, currency: 'coins', altCost: 20, altCurrency: 'gems', base: { coins: [70, 140], gems: [1, 3] }, drops: [['Item especial', 60], ['Fragmento epico', 8], ['Fragmento demon', 2]] },
@@ -656,7 +687,8 @@ const CHESTS_DATA = [
 ];
 window.CHESTS_DATA = CHESTS_DATA;
 
-// RUBY_PASS_ASSET_SLOT: replace null image paths with your final PNG files.
+// Assets del pase de rubies (Ruby Pass)
+// RUBY_PASS_ASSET_SLOT: reemplaza las rutas null con tus archivos PNG finales
 const RUBY_PASS_ASSETS = {
     logo: 'assets/UI/Store/RubyPass/Logo/ruby_pass_lock.png', // RUBY_PASS_ASSET_SLOT_LOGO_LOCK
     accessBanner: 'assets/UI/Store/RubyPass/Access/ruby_pass_banner.png', // RUBY_PASS_ASSET_SLOT_ACCESS_BANNER
@@ -681,7 +713,7 @@ const RUBY_PASS_ASSETS = {
 };
 
 // =====================================================
-// RUBY_PASS_REWARDS — 30 niveles
+// RECOMPENSAS DEL PASE DE RUBIES - 30 niveles
 // Reemplaza SOLO este array en shop.js
 // =====================================================
 
@@ -898,10 +930,13 @@ const RUBY_PASS_REWARDS = [
     },
 ];
 
+// Costo del pase premium en gemas
 const RUBY_PASS_PREMIUM_COST_GEMS = 250;
+// XP ganado por victoria en el pase de rubies
 const RUBY_PASS_XP_PER_WIN = 120;
 
-// SHOP_EMOTE_ASSET_SLOT: add your emote PNG paths here.
+// Datos de emotes disponibles en la tienda
+// SHOP_EMOTE_ASSET_SLOT: agrega tus rutas PNG de emotes aquí
 const EMOTES_DATA = [
     { id: 'emote_normal', name: 'Normal', image: 'assets/UI/Store/Emotes/emote_brifon_normal.png', rarity: 'BASICA', price: EMOTE_STANDARD_PRICE_COINS, priceType: 'coins', slot: 'SHOP_EMOTE_ASSET_SLOT_BASIC_NORMAL' },
     { id: 'emote_saludo', name: 'Saludo', image: 'assets/UI/Store/Emotes/emote_brifon_saludo.png', rarity: 'BASICA', price: EMOTE_STANDARD_PRICE_COINS, priceType: 'coins', slot: 'SHOP_EMOTE_ASSET_SLOT_BASIC_SALUDO' },
@@ -924,14 +959,15 @@ const EMOTES_DATA = [
     { id: 'emoji_sonriente', name: 'Sonriente', image: 'assets/UI/Store/VIP/Bundles/Emojis/emoji_sonriente.png', rarity: 'VIP', vip: true, price: 200, priceType: 'gems', slot: 'SHOP_EMOTE_ASSET_SLOT_VIP_SONRIENTE' },
     { id: 'emoji_bomito', name: 'Bomito', image: 'assets/UI/Store/VIP/Bundles/Emojis/emoji_bomito.png', rarity: 'VIP', vip: true, price: 200, priceType: 'gems', slot: 'SHOP_EMOTE_ASSET_SLOT_VIP_BOMITO' },
 
-    // Fragment Emotes
+    // Emotes de fragmentos
     { id: 'emote_risa', name: 'Risa', image: 'assets/UI/Efectos de trails/Particulas/particula_risa.png', rarity: 'ESPECIAL', slot: 'SHOP_EMOTE_ASSET_SLOT_FRAGMENT_RISA' },
     { id: 'emote_risa_malvada', name: 'Risa Malvada', image: 'assets/UI/Efectos de trails/Particulas/particula_risa_malvada.png', rarity: 'EPICA', slot: 'SHOP_EMOTE_ASSET_SLOT_FRAGMENT_RISA_MALVADA' },
 ];
 
-// Preload shop images at game start (after SKINS_DATA and EMOTES_DATA are defined)
+// Precargar imágenes de la tienda al inicio del juego (después de definir SKINS_DATA y EMOTES_DATA)
 window.preloadedShopImages = preloadShopImages();
 
+// IDs de skins que rotan (animados)
 var ROLLING_SKIN_IDS = new Set([
     'skin_sol',
     'skin_luna',
@@ -961,6 +997,10 @@ var ROLLING_SKIN_IDS = new Set([
     'skin_torta'
 ]);
 
+// Obtener la ruta de la imagen lateral de un skin
+// image: Ruta de la imagen principal
+// id: ID del skin
+// Retorna ruta de la imagen lateral o null
 function getSkinSidePath(image, id) {
     if (!image || !id) return null;
     const slash = image.lastIndexOf('/');
@@ -969,6 +1009,9 @@ function getSkinSidePath(image, id) {
     return `${folder}/${id}/${id}_lado.png`;
 }
 
+// Agregar assets de skins de gameplay a un item
+// item: Objeto del item
+// Retorna el item con assets de gameplay añadidos
 function withGameplaySkinAssets(item) {
     if (!item || !(item.type === 'vipSkin' || item.type === 'skin')) return item;
     const rolling = item.rolling === true || ROLLING_SKIN_IDS.has(item.id);
@@ -984,6 +1027,7 @@ function withGameplaySkinAssets(item) {
     };
 }
 
+// Banners promocionales VIP
 const VIP_PROMO_BANNERS = [
     {
         id: 'vip_powerups',
@@ -1001,6 +1045,9 @@ const VIP_PROMO_BANNERS = [
     }
 ];
 
+// Renderizar banner promocional de powerups VIP
+// banner: Objeto del banner
+// Retorna HTML del banner
 function renderVIPPowerupPromoBanner(banner) {
     const fallback = [
         { id: 'proteccion', name: 'Proteccion', color: '#AAE3D8' },
@@ -1037,6 +1084,7 @@ VIP_GAMEPLAY_PLACEHOLDERS = [
     { id: 'reactor', name: 'Reactor', type: 'CORE', detail: 'Slots para energia de partida', rarity: 'epic' }
 ];
 
+// Datos de paquetes VIP
 const VIP_PACKAGES_DATA = [
     {
         id: 'monsters',
@@ -1264,10 +1312,16 @@ const VIP_PACKAGES_DATA = [
     }
 ];
 
+// Obtener la clave de almacenamiento para un skin
+// id: ID del skin
+// Retorna clave de localStorage
 function getSkinStorageKey(id) {
     return id && id.startsWith('skin_') ? id : `skin_${id}`;
 }
 
+// Verificar si un skin es propiedad del jugador
+// s: Objeto del skin
+// Retorna true si es propiedad del jugador
 function isSkinOwned(s) {
     if (!s) return false;
     if (s.id === 'cyan') return true;
@@ -1276,8 +1330,11 @@ function isSkinOwned(s) {
     return false;
 }
 
+// Obtener el catálogo de skins VIP
+// Retorna array de skins VIP
 function getVIPSkinCatalog() {
     const byId = new Map();
+    // Función para agregar un item al catálogo
     const add = item => {
         if (!item || !(item.type === 'vipSkin' || item.type === 'skin') || !item.id) return;
         if (byId.has(item.id)) return;
@@ -1298,6 +1355,7 @@ function getVIPSkinCatalog() {
             sourceItem: gameplaySkin
         });
     };
+    // Función para recorrer items recursivamente
     const walk = items => (items || []).forEach(item => {
         add(item);
         walk(item.items);
@@ -1307,6 +1365,8 @@ function getVIPSkinCatalog() {
     return [...byId.values()];
 }
 
+// Obtener todos los skins de la tienda
+// Retorna array de todos los skins con estado de propiedad
 function getAllShopSkins() {
     const byId = new Map();
     [...SKINS_DATA, ...FRAGMENT_SKINS_LIST, ...getVIPSkinCatalog()].forEach(s => {
@@ -1318,31 +1378,43 @@ function getAllShopSkins() {
     return [...byId.values()];
 }
 
+// Buscar un skin en la tienda por ID
+// id: ID del skin
+// Retorna el skin o undefined
 function findShopSkin(id) {
     return getAllShopSkins().find(s => s.id === id);
 }
 
+// Exportar funciones y actualizar datos globales
 window.getAllShopSkins = getAllShopSkins;
 window.findShopSkin = findShopSkin;
 window.SKINS_DATA = getAllShopSkins();
 
+// Variables de estado de la tienda
 let gambitState = null;
 let selectedChestId = null;
 let vipCarouselIndex = 0;
 let selectedVIPGameplayId = VIP_GAMEPLAY_PLACEHOLDERS[0]?.id || 'boosters';
 
+// Verificar si está activado el modo de rendimiento
+// Retorna true si el modo rendimiento está activo
 function isShopPerformanceMode() {
     return localStorage.getItem('reducedMotion') === 'true' ||
         document.body.classList.contains('performance-mode') ||
         document.body.classList.contains('is-touch-device');
 }
 
+// Verificar si el canvas de preview es visible
+// canvas: Elemento canvas
+// Retorna true si es visible
 function isCanvasPreviewVisible(canvas) {
     if (!canvas || document.hidden || !document.body.contains(canvas)) return false;
     const rect = canvas.getBoundingClientRect();
     return rect.bottom > 0 && rect.right > 0 && rect.top < innerHeight && rect.left < innerWidth;
 }
 
+// Optimizar carga de media en la tienda
+// root: Elemento raíz (opcional)
 function optimizeShopMedia(root = document) {
     root.querySelectorAll?.('img').forEach(img => {
         img.loading = img.closest('.vip-feature, .shop-vip-access-banner') ? 'eager' : 'lazy';
@@ -1351,12 +1423,15 @@ function optimizeShopMedia(root = document) {
     });
 }
 
+// Abrir el panel de tienda
 function openShop() {
     window.playSfx?.('menuSelect', 0.6);
+    // Actualizar estado de propiedad de skins
     SKINS_DATA.forEach(s => {
         if (s.id === 'cyan') return;
         s.owned = localStorage.getItem(getSkinStorageKey(s.id)) === 'true';
     });
+    // Actualizar estado de propiedad de banners
     BANNERS_DATA.forEach(b => {
         b.owned = localStorage.getItem('banner_' + b.id) === 'true';
         if (b.id === 'Banner_Deafult') b.owned = true;
@@ -1368,6 +1443,7 @@ function openShop() {
     void panel.offsetWidth;
     panel.classList.add('entering');
 
+    // Actualizar monedas y gemas
     document.getElementById('shop-coins').textContent = parseInt(localStorage.getItem('deadCoins') || '0');
     document.getElementById('shop-gems').textContent = parseInt(localStorage.getItem('gems') || '0');
 
@@ -1378,6 +1454,7 @@ function openShop() {
     updateMenuHUD();
 }
 
+// Cerrar el panel de tienda
 function closeShop() {
     if (trailAnimId) cancelAnimationFrame(trailAnimId);
     if (previewTrailAnim) cancelAnimationFrame(previewTrailAnim);
@@ -1390,10 +1467,13 @@ function closeShop() {
     }, 300);
 }
 
+// Mostrar una sección específica de la tienda
+// section: ID de la sección
 function showShopSection(section) {
     if (section !== 'trails' && trailAnimId) cancelAnimationFrame(trailAnimId);
     if (section !== 'trails' && previewTrailAnim) cancelAnimationFrame(previewTrailAnim);
 
+    // Actualizar estilos de navegación
     ['home', 'skins', 'trails', 'powerups', 'banners', 'cofres', 'emotes', 'daily', 'ofertas', 'conversion'].forEach(s => {
         const el = document.getElementById('nav-' + s);
         if (!el) return;
@@ -1408,6 +1488,7 @@ function showShopSection(section) {
         }
     });
 
+    // Renderizar contenido según sección
     const content = document.getElementById('shopContent');
     if (section === 'home') renderHome(content);
     else if (section === 'skins') renderSkinsPage(content);
@@ -1427,6 +1508,8 @@ function showShopSection(section) {
     optimizeShopMedia(content);
 }
 
+// Renderizar la página de skins
+// container: Elemento contenedor
 function renderSkinsPage(container) {
     const equipped = localStorage.getItem('equippedSkin') || 'cyan';
     const skins = getAllShopSkins();
@@ -1441,6 +1524,8 @@ function renderSkinsPage(container) {
     `;
 }
 
+// Renderizar la página de inicio de la tienda
+// container: Elemento contenedor
 function renderHome(container) {
     const rubyClaimable = hasRubyPassClaimableRewards();
     const panels = [

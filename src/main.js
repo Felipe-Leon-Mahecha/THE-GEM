@@ -225,9 +225,12 @@ function buildStaticCanvas(lvl = window.level || 1) {
     offscreen.width = window.canvas.width;
     offscreen.height = window.canvas.height;
 
-    offCtx.setTransform(1, 0, 0, 1, 0, 0);
-    const _dprS = window.canvasDPR || 1;
-    offCtx.scale(_dprS, _dprS);
+    // Escalado DPR solo en móvil - SOLO MÓVIL
+    if (window.canvasDPR && window.canvasDPR > 1) {
+        offCtx.setTransform(1, 0, 0, 1, 0, 0);
+        const _dprS = window.canvasDPR;
+        offCtx.scale(_dprS, _dprS);
+    }
 
     const dpr = window.canvasDPR || 1;
     const cx = (offscreen.width / dpr) / 2;
@@ -386,8 +389,8 @@ function resize(force = false) {
     window.compactHud = touchLayout && Math.min(targetWidth, targetHeight) < 520;
     if (sameSize && !force) return;
 
-    // DPR: escalar el canvas para pantallas de alta densidad (Oppo, Samsung, etc.)
-    const dpr = Math.min(window.devicePixelRatio || 1, 2); // máx 2x para no matar el rendimiento
+    // DPR: escalar el canvas para pantallas de alta densidad (Oppo, Samsung, etc.) - SOLO MÓVIL
+    const dpr = touchLayout ? Math.min(window.devicePixelRatio || 1, 2) : 1; // máx 2x en móvil, 1x en web
     window.canvasDPR = dpr;
 
     if (touchLayout) {
@@ -409,11 +412,13 @@ function resize(force = false) {
         window.canvas.style.top = '';
         window.canvas.style.transform = '';
     }
-    // Escalar el contexto para que todo se dibuje al tamaño correcto
-    const ctx2d = window.canvas.getContext('2d');
-    if (ctx2d) {
-        ctx2d.setTransform(1, 0, 0, 1, 0, 0); // reset
-        ctx2d.scale(dpr, dpr);
+    // Escalar el contexto para que todo se dibuje al tamaño correcto - SOLO MÓVIL
+    if (touchLayout) {
+        const ctx2d = window.canvas.getContext('2d');
+        if (ctx2d) {
+            ctx2d.setTransform(1, 0, 0, 1, 0, 0); // reset
+            ctx2d.scale(dpr, dpr);
+        }
     }
     lastCanvasWidth = targetWidth;
     lastCanvasHeight = targetHeight;
@@ -439,11 +444,17 @@ addEventListener("resize", queueResize, { passive: true });
 
 window.visualViewport?.addEventListener("resize", queueResize, { passive: true });
 
-setTimeout(() => {
-
+function initApp() {
     resize(true);
+}
 
-}, 50);
+if (window.Capacitor) {
+    document.addEventListener('deviceready', initApp, false);
+    // Fallback por si deviceready no dispara
+    setTimeout(initApp, 300);
+} else {
+    setTimeout(initApp, 50);
+}
 
 // =====================================================
 // GAME STATES
@@ -1081,9 +1092,13 @@ function draw() {
     ctx.clip();
     ctx.translate(cx, cy);
     ctx.rotate(worldRotation);
-    // Dividir por DPR para que el offscreen se dibuje en coordenadas lógicas
+    // Dividir por DPR para que el offscreen se dibuje en coordenadas lógicas - SOLO MÓVIL
     const _dprR = window.canvasDPR || 1;
-    ctx.drawImage(offscreen, -offscreen.width / (2 * _dprR), -offscreen.height / (2 * _dprR), offscreen.width / _dprR, offscreen.height / _dprR);
+    if (_dprR > 1) {
+        ctx.drawImage(offscreen, -offscreen.width / (2 * _dprR), -offscreen.height / (2 * _dprR), offscreen.width / _dprR, offscreen.height / _dprR);
+    } else {
+        ctx.drawImage(offscreen, -offscreen.width / 2, -offscreen.height / 2);
+    }
     ctx.restore();
 
     // 2) DEAD COINS — clip al círculo, sin rotar (ángulo ya tiene worldRotation)
@@ -1224,7 +1239,8 @@ function drawPlayer(cx, cy) {
     const catalogSkinData = getShopSkinData(equippedId);
     const catalogSkin = getCatalogSkinImage(equippedId, window.playerFacing || "right");
     if (directionalSkin && directionalSkin.complete && directionalSkin.naturalWidth > 0) {
-        const skinSize = Math.round(Math.max(32, Math.min(52, window.DOME_RADIUS * 0.22)));
+        // Tamaño dinámico solo en móvil, fijo en web
+        const skinSize = window.compactHud ? Math.round(Math.max(32, Math.min(52, window.DOME_RADIUS * 0.22))) : 48;
         if (!lowPower) {
             ctx.shadowBlur = 18;
             ctx.shadowColor = DIRECTIONAL_SKINS[equippedId].glow;
@@ -1232,7 +1248,8 @@ function drawPlayer(cx, cy) {
         if (facingLeft) ctx.scale(-1, 1);
         ctx.drawImage(directionalSkin, -skinSize / 2, -skinSize / 2, skinSize, skinSize);
     } else if (catalogSkin && catalogSkin.complete && catalogSkin.naturalWidth > 0) {
-        const skinSize = Math.round(Math.max(32, Math.min(52, window.DOME_RADIUS * 0.22)));
+        // Tamaño dinámico solo en móvil, fijo en web
+        const skinSize = window.compactHud ? Math.round(Math.max(32, Math.min(52, window.DOME_RADIUS * 0.22))) : 48;
         if (!lowPower) {
             ctx.shadowBlur = 18;
             ctx.shadowColor = skin.glow || '#ffee00';
@@ -1870,8 +1887,6 @@ window.resumeGame = function () {
 };
 
 // Botones dentro del panel de pausa
-document.getElementById('pause-continue')?.addEventListener('click', () => window.resumeGame());
-document.getElementById('pause-options')?.addEventListener('click', () => openOptionsPanel?.());
 document.getElementById('pause-levels')?.addEventListener('click', () => {
     window.resumeGame();
     window.running = false;
@@ -1880,9 +1895,10 @@ document.getElementById('pause-levels')?.addEventListener('click', () => {
     document.getElementById('gameCanvas').style.visibility = 'hidden';
     document.body.classList.remove('is-playing-touch');
     window.bgMusic?.pause();
-    window.bgMusic.currentTime = 0;
+    window.bgMusic?.currentTime = 0; // <--- AQUÍ: Con el ?. evitas que se rompa si no hay música
     showLevelSelect?.();
 });
+
 document.getElementById('pause-menu')?.addEventListener('click', () => {
     window.paused = false;
     window.running = false;
@@ -1891,7 +1907,7 @@ document.getElementById('pause-menu')?.addEventListener('click', () => {
     document.getElementById('gameCanvas').style.visibility = 'hidden';
     document.body.classList.remove('is-playing-touch');
     window.bgMusic?.pause();
-    window.bgMusic.currentTime = 0;
+    window.bgMusic?.currentTime = 0; // <--- AQUÍ TAMBIÉN: Añadido el ?.
     document.getElementById('overlay').style.display = 'flex';
     window.ensureMenuMusic?.();
 });

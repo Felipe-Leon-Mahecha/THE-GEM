@@ -121,7 +121,16 @@ window.moveLevelSelection = moveLevelSelection;
 window.playSelectedLevel = function () {
     if (!levels[selectedLevel]?.unlocked) return;
     window.hideLevelSelect();
-    (window.startLevelWithTransition || window.startGame)(selectedLevel);
+    const launch = window.startLevelWithTransition || window.startGame;
+    if (typeof launch === 'function') {
+        launch(selectedLevel);
+    } else {
+        console.error('[THE GEM] startGame no disponible, reintentando...');
+        setTimeout(() => {
+            const retry = window.startLevelWithTransition || window.startGame;
+            if (typeof retry === 'function') retry(selectedLevel);
+        }, 200);
+    }
 };
 
 const systemMessages = [
@@ -923,7 +932,7 @@ function drawBanner() {
             bctx.drawImage(skinImg, -18, -18, 36, 36);
             bctx.restore();
         } else {
-        bctx.drawImage(skinImg, bx - 18, by - 18, 36, 36);
+            bctx.drawImage(skinImg, bx - 18, by - 18, 36, 36);
         }
     } else {
         bctx.beginPath();
