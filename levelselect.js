@@ -382,12 +382,19 @@ function drawCarousel(timestamp = 0) {
     ctx2.fillRect(0, 0, W, H);
 
     const compact = document.body.classList.contains('is-touch-device') && window.innerWidth > window.innerHeight;
-    const cardW = compact ? 250 : 320;
-    const cardH = compact ? 315 : 420;
-    const spacing = compact ? 315 : 420;
+
+    // ── Leer dimensiones del carrusel desde GEM_CONFIG ──
+    const lsCfg  = window.GEM_CONFIG?.levelSelect || {};
+    const cardCfg = compact ? (lsCfg.card?.landscape || {}) : (lsCfg.card?.desktop || {});
+    const cardW   = cardCfg.width   ?? (compact ? 250 : 320);
+    const cardH   = cardCfg.height  ?? (compact ? 315 : 420);
+    const spacing = cardCfg.spacing ?? (compact ? 315 : 420);
 
     const centerX = W / 2;
-    const centerY = compact ? H * 0.58 : H / 2 + 70;
+    const cyCfg   = compact ? (lsCfg.centerY?.landscape || {}) : (lsCfg.centerY?.desktop || {});
+    const centerY = cyCfg.mode === 'factor'
+        ? H * (cyCfg.value ?? 0.58)
+        : H / 2 + (cyCfg.value ?? 70);
 
     carouselX += (carouselTarget - carouselX) * 0.12;
 
@@ -421,7 +428,8 @@ function drawCarousel(timestamp = 0) {
 
         if (i === selectedLevel) {
 
-            ctx2.shadowColor = "#00ffe7";
+            const glowColor = window.GEM_CONFIG?.levelSelect?.colors?.selectedGlow || "#00ffe7";
+            ctx2.shadowColor = glowColor;
             ctx2.shadowBlur =
                 25 +
                 Math.sin(now * 0.005) * 15;
@@ -449,9 +457,10 @@ function drawCarousel(timestamp = 0) {
         // BORDE
         // =========================================
 
+        const lsColors = window.GEM_CONFIG?.levelSelect?.colors || {};
         ctx2.strokeStyle = i === selectedLevel
-            ? "rgba(0,255,231,0.45)"
-            : "rgba(255,255,255,0.06)";
+            ? (lsColors.selectedBorder || "rgba(0,255,231,0.45)")
+            : (lsColors.idleBorder     || "rgba(255,255,255,0.06)");
 
         ctx2.lineWidth = i === selectedLevel ? 2 : 1.2;
 
@@ -544,7 +553,8 @@ function drawCarousel(timestamp = 0) {
 
         ctx2.fillStyle = "#ffffff";
 
-        ctx2.font = `bold ${24 * scale}px Geom`;
+        const lsFonts = window.GEM_CONFIG?.levelSelect?.fonts || {};
+        ctx2.font = `bold ${(lsFonts.levelName?.size ?? 24) * scale}px Geom`;
 
         ctx2.textAlign = "center";
 
@@ -568,7 +578,7 @@ function drawCarousel(timestamp = 0) {
             // progreso
             ctx2.fillStyle = "rgba(255,255,255,0.45)";
 
-            ctx2.font = `${13 * scale}px monospace`;
+            ctx2.font = `${(window.GEM_CONFIG?.levelSelect?.fonts?.statusText?.size ?? 13) * scale}px monospace`;
 
             ctx2.fillText(
                 lv.completed
@@ -596,9 +606,9 @@ function drawCarousel(timestamp = 0) {
             ctx2.strokeStyle = "rgba(0,255,180,0.25)";
             ctx2.stroke();
 
-            ctx2.fillStyle = "#00ffae";
+            ctx2.fillStyle = window.GEM_CONFIG?.levelSelect?.colors?.unlockedBadge || "#00ffae";
 
-            ctx2.font = `bold ${11 * scale}px monospace`;
+            ctx2.font = `bold ${(window.GEM_CONFIG?.levelSelect?.fonts?.badgeText?.size ?? 11) * scale}px monospace`;
 
             ctx2.fillText(
                 lv.completed
@@ -692,7 +702,7 @@ function drawCarousel(timestamp = 0) {
             ctx2.stroke();
 
             // texto
-            ctx2.fillStyle = "#ff4466";
+            ctx2.fillStyle = window.GEM_CONFIG?.levelSelect?.colors?.lockedText || "#ff4466";
 
             ctx2.font = `bold ${13 * scale}px monospace`;
 

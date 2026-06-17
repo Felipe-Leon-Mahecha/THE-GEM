@@ -146,8 +146,8 @@ body.is-touch-device.is-playing-touch #touch-controls {
     justify-content: flex-start;
     align-items: stretch;
     z-index: 20;
-    overflow: hidden;
-    background: #0a0a0f;
+    /* overflow:hidden removido — cortaba botones con rotateY 3D */
+    background: #09091A;
 }
 
 /* Portada del menú */
@@ -169,7 +169,163 @@ body.is-touch-device.is-playing-touch #touch-controls {
     display: flex;
     flex-direction: column;
     justify-content: center;
-    padding: 0 72px;
+    z-index: 2;
+    /* Perspectiva + inclinación 3D para los botones */
+    transform: perspective(800px) rotateY(-9deg);
+    transform-origin: right center;
+}
+
+.menu-profile-banner {
+    width: 100%;
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    gap: 14px;
+    align-items: center;
+    padding: 14px 18px;
+    border-radius: 18px;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    background: rgba(0, 0, 0, 0.42);
+    backdrop-filter: blur(12px);
+    color: white;
+    text-align: left;
+    cursor: pointer;
+    transition: border-color 0.18s ease, box-shadow 0.18s ease, background 0.18s ease;
+}
+
+.menu-profile-banner:hover {
+    border-color: rgba(0, 255, 231, 0.35);
+    box-shadow: 0 0 30px rgba(0, 255, 231, 0.1);
+    background: rgba(0, 255, 231, 0.05);
+}
+
+.menu-profile-avatar {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    background: rgba(255, 255, 255, 0.08) center / cover no-repeat;
+    cursor: pointer;
+}
+
+.menu-profile-avatar:hover {
+    transform: scale(1.04);
+}
+
+.menu-profile-text {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.menu-profile-name {
+    font-size: 15px;
+    font-weight: 900;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+
+.menu-profile-rank {
+    font-size: 11px;
+    color: rgba(255, 255, 255, 0.72);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+}
+
+.menu-profile-rank.highlight {
+    color: #00ffe7;
+}
+
+.menu-profile-currency {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    justify-content: center;
+    text-align: right;
+    font-size: 12px;
+}
+
+.menu-profile-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 12px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    color: #ffffff;
+}
+
+.profile-section {
+    margin-top: 18px;
+}
+
+.profile-section+.profile-section {
+    margin-top: 18px;
+}
+
+.profile-stat-row {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+    margin-top: 18px;
+    font-family: monospace;
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.8);
+}
+
+.profile-stat-row span {
+    display: block;
+}
+
+.profile-stat-row .value {
+    font-weight: 900;
+    color: #fff;
+    margin-top: 4px;
+}
+
+.profile-stats-grid {
+    display: grid;
+    gap: 12px;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    margin-top: 18px;
+}
+
+.profile-stat-card {
+    padding: 16px 18px;
+    border-radius: 16px;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    color: rgba(255, 255, 255, 0.92);
+    transition: border-color 0.2s, background 0.2s;
+}
+
+.profile-stat-card:hover {
+    border-color: rgba(0, 255, 231, 0.25);
+    background: rgba(0, 255, 231, 0.05);
+}
+
+.profile-stat-card .stat-title {
+    font-size: 11px;
+    color: rgba(255, 255, 255, 0.6);
+    letter-spacing: 2.5px;
+    margin-bottom: 8px;
+}
+
+.profile-stat-card .stat-value {
+    font-size: 22px;
+    font-weight: 800;
+    letter-spacing: 0.5px;
+    color: #ffffff;
+    text-shadow: 0 0 12px rgba(0, 255, 231, 0.15);
+}
+
+/* ── Solo PC: panel más a la izquierda, más abajo y botones más grandes ── */
+@media (hover: hover) and (pointer: fine) and (min-width: 768px) {
+    #overlay-panel {
+        width: 58%;
+        justify-content: flex-end;
+        padding-bottom: 80px;
+    }
 }
 
 /* Grid decorativo de fondo */
@@ -789,9 +945,27 @@ body.is-touch-device #shopPanel {
     height: 100%;
 }
 
+body.is-touch-device #menu-profile-wrap {
+    width: 42% !important;
+    right: calc(24px + env(safe-area-inset-right)) !important;
+    top: calc(12px + env(safe-area-inset-top)) !important;
+    padding: 0 !important;
+}
+
+body.is-touch-device #overlay-panel {
+    transform: none !important;
+    width: 42% !important;
+    right: calc(24px + env(safe-area-inset-right)) !important;
+    padding-top: calc(92px + env(safe-area-inset-top)) !important;
+    padding-bottom: calc(14px + env(safe-area-inset-bottom)) !important;
+    justify-content: flex-start !important;
+    gap: 10px !important;
+}
+
 body.is-touch-device #mute-btn {
-    bottom: calc(14px + env(safe-area-inset-bottom));
-    right: calc(14px + env(safe-area-inset-right));
+    bottom: calc(14px + env(safe-area-inset-bottom)) !important;
+    left: calc(14px + env(safe-area-inset-left)) !important;
+    right: auto !important;
     width: 40px;
     height: 40px;
     border-radius: 10px;
@@ -1123,9 +1297,10 @@ body.is-touch-device .active-emote-bubble {
     position: fixed;
     inset: 0;
     z-index: 10020;
+    display: none;
     align-items: center;
     justify-content: center;
-    padding: 24px;
+    padding: 20px;
 }
 
 #profilePanel.showing {
@@ -1142,29 +1317,171 @@ body.is-touch-device .active-emote-bubble {
 
 .profile-card {
     position: relative;
-    width: min(430px, calc(100vw - 32px));
-    padding: 28px;
-    border-radius: 8px;
+    width: min(760px, calc(100vw - 32px));
+    max-height: min(90vh, 820px);
+    padding: 0;
+    border-radius: 22px;
     border: 1px solid rgba(255, 255, 255, 0.14);
-    background: linear-gradient(180deg, rgba(18, 20, 28, 0.82), rgba(5, 6, 10, 0.7));
-    box-shadow: 0 26px 90px rgba(0, 0, 0, 0.65), inset 0 0 60px rgba(0, 255, 231, 0.05);
-    backdrop-filter: blur(8px) saturate(1.1);
-    -webkit-backdrop-filter: blur(8px) saturate(1.1);
+    background: linear-gradient(180deg, rgba(18, 20, 28, 0.97), rgba(5, 6, 10, 0.92));
+    box-shadow: 0 36px 120px rgba(0, 0, 0, 0.75), inset 0 0 80px rgba(0, 255, 231, 0.06);
+    backdrop-filter: blur(14px) saturate(1.1);
+    -webkit-backdrop-filter: blur(14px) saturate(1.1);
     color: white;
     font-family: monospace;
+    overflow-y: auto;
+    overflow-x: hidden;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(0, 255, 231, 0.25) transparent;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Hero section — avatar grande arriba a la derecha, nombre/rango a la izquierda */
+.profile-hero {
+    display: flex;
+    align-items: center;
+    gap: 22px;
+    padding: 32px 28px 24px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+    background: linear-gradient(135deg, rgba(0, 255, 231, 0.04) 0%, transparent 60%);
+    flex-shrink: 0;
+}
+
+.profile-preview {
+    width: 110px;
+    height: 110px;
+    flex-shrink: 0;
+    border-radius: 50%;
+    border: 3px solid rgba(0, 255, 231, 0.55);
+    background: rgba(255, 255, 255, 0.05) center / cover no-repeat;
+    box-shadow: 0 0 36px rgba(0, 255, 231, 0.28), 0 0 0 6px rgba(0, 255, 231, 0.07);
+}
+
+.profile-hero-info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    min-width: 0;
+}
+
+.profile-hero-name {
+    font-size: 28px;
+    font-weight: 900;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: #ffffff;
+    line-height: 1.1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.profile-hero-rank {
+    font-size: 15px;
+    font-weight: 700;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: #00ffe7;
+    text-shadow: 0 0 12px rgba(0, 255, 231, 0.5);
+}
+
+/* El resto del contenido de la card tiene padding */
+.profile-section-title {
+    padding: 24px 28px 0;
+    font-size: 11px;
+    letter-spacing: 5px;
+    color: rgba(0, 255, 231, 0.55);
+    text-transform: uppercase;
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.profile-section-title::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(90deg, rgba(0, 255, 231, 0.25), transparent);
+}
+
+.profile-stat-row {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0;
+    margin: 14px 28px 0;
+    font-family: monospace;
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.55);
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.07);
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+.profile-stat-row-item {
+    display: flex;
+    flex-direction: column;
+    padding: 14px 16px;
+    border-right: 1px solid rgba(255, 255, 255, 0.06);
+    letter-spacing: 1.5px;
+}
+
+.profile-stat-row-item:last-child {
+    border-right: none;
+}
+
+.profile-stat-row .value {
+    font-weight: 900;
+    font-size: 22px;
+    color: #fff;
+    display: block;
+    margin-top: 4px;
+    text-shadow: 0 0 12px rgba(0, 255, 231, 0.15);
+}
+
+.profile-stats-grid {
+    display: grid;
+    gap: 10px;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    margin: 14px 28px 0;
+}
+
+/* Botón VER RANGOS y rank path dentro del scroll */
+.rank-path-toggle-btn {
+    margin: 14px 28px 0;
+    width: calc(100% - 56px);
+}
+
+.rank-path-panel {
+    margin: 0 28px;
+    width: calc(100% - 56px);
+}
+
+/* Padding inferior de la card para que el último elemento no quede pegado */
+.profile-card>*:last-child {
+    margin-bottom: 28px;
 }
 
 .profile-close {
-    position: absolute;
+    position: sticky;
     top: 14px;
-    right: 14px;
+    float: right;
+    margin: 14px 14px -48px auto;
     width: 34px;
     height: 34px;
     border-radius: 50%;
     border: 1px solid rgba(255, 255, 255, 0.14);
-    background: rgba(255, 255, 255, 0.04);
+    background: rgba(10, 10, 20, 0.7);
     color: rgba(255, 255, 255, 0.72);
     cursor: pointer;
+    z-index: 2;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(4px);
 }
 
 .settings-float-btn {
@@ -1247,83 +1564,12 @@ body.is-touch-device .active-emote-bubble {
     letter-spacing: 6px;
 }
 
-.profile-preview {
-    width: 86px;
-    height: 86px;
-    margin: 0 auto 18px;
-    border-radius: 50%;
-    border: 2px solid rgba(0, 255, 231, 0.38);
-    background: rgba(255, 255, 255, 0.05) center / cover no-repeat;
-    box-shadow: 0 0 30px rgba(0, 255, 231, 0.18);
-}
-
 .profile-label {
     display: block;
     margin: 16px 0 8px;
     color: rgba(255, 255, 255, 0.48);
     font-size: 10px;
     letter-spacing: 3px;
-}
-
-#profileNameInput {
-    width: 100%;
-    height: 46px;
-    border-radius: 8px;
-    border: 1px solid rgba(255, 255, 255, 0.12);
-    background: rgba(255, 255, 255, 0.06);
-    color: white;
-    font-family: monospace;
-    font-size: 16px;
-    padding: 0 14px;
-    outline: none;
-}
-
-#profileNameInput:focus {
-    border-color: rgba(0, 255, 231, 0.5);
-}
-
-.avatar-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 10px;
-}
-
-.avatar-option {
-    aspect-ratio: 1;
-    border-radius: 8px;
-    border: 1px solid rgba(255, 255, 255, 0.12);
-    background: rgba(255, 255, 255, 0.05) center / cover no-repeat;
-    cursor: pointer;
-    transition: transform 0.18s, border-color 0.18s, box-shadow 0.18s;
-}
-
-.avatar-option:hover,
-.avatar-option.selected {
-    transform: translateY(-2px);
-    border-color: rgba(0, 255, 231, 0.62);
-    box-shadow: 0 0 24px rgba(0, 255, 231, 0.16);
-}
-
-.profile-cost {
-    margin-top: 16px;
-    color: rgba(255, 255, 255, 0.42);
-    font-size: 11px;
-    letter-spacing: 2px;
-    text-align: center;
-}
-
-.profile-save {
-    width: 100%;
-    height: 50px;
-    margin-top: 14px;
-    border-radius: 8px;
-    border: 1px solid rgba(0, 255, 231, 0.35);
-    background: linear-gradient(145deg, rgba(0, 255, 231, 0.24), rgba(255, 255, 255, 0.05));
-    color: white;
-    font-family: monospace;
-    font-weight: 900;
-    letter-spacing: 3px;
-    cursor: pointer;
 }
 
 .pause-dim {
@@ -5180,13 +5426,7 @@ body.is-touch-device .ruby-pass-reward-premium {
     top: -28px !important;
 }
 
-body.is-touch-device #play-btn,
-body.is-touch-device #shop-btn,
-body.is-touch-device #options-btn,
-body.is-touch-device #inventory-btn {
-    transform: scale(0.86);
-    transform-origin: center;
-}
+
 
 body.is-touch-device .menu-btn {
     min-height: 36px;
@@ -7307,70 +7547,938 @@ h1 {
 }
 
 /* PRUEBA: Botones del menú en lista diferente solo en PC (no móvil) */
-body:not(.is-touch-device) #overlay-panel>div[style*="flex-direction:column"] {
-    gap: 16px !important;
+
+
+/* =====================================================
+   MENU PNG BUTTONS
+===================================================== */
+
+/*
+   ARQUITECTURA DE CAPAS:
+   .menu-btn-wrap  ← tiene el drop-shadow (glow) + animación de entrada
+       button.menu-png-btn  ← tiene el clip-path (recorte)
+           img  ← el PNG
+   
+   CRÍTICO: clip-path y drop-shadow NO pueden estar en el mismo elemento
+   porque clip-path recorta el efecto. El wrapper recibe el glow DESPUÉS
+   de que el clip-path del hijo ya recortó la forma.
+*/
+
+/* ── Wrapper: maneja glow y animación ── */
+.menu-btn-wrap {
+    width: 100%;
+    display: block;
+    /* Entrada desde la derecha */
+    opacity: 0;
+    transform: translateX(70px);
+    animation: menuBtnEnter 0.45s ease forwards;
+    transition: filter 0.18s ease, transform 0.18s ease;
+    /* Sin overflow:hidden para que el drop-shadow se vea */
 }
 
-body:not(.is-touch-device) #play-btn {
-    width: 280px !important;
-    margin: 0 auto !important;
+/* ── Botón: solo clip-path y shape ── */
+.menu-png-btn {
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    width: 100%;
+    display: block;
+    transition: transform 0.18s ease, filter 0.18s ease;
 }
 
-body:not(.is-touch-device) #overlay-panel>div[style*="flex-direction:column"]>div[style*="grid-template-columns"] {
-    grid-template-columns: 1fr !important;
-    gap: 8px !important;
+.menu-png-btn img {
+    width: 100%;
+    height: auto;
+    display: block;
+    pointer-events: none;
 }
 
-
-
-
-/* PRUEBA: Botones del menú en lista diferente solo en PC (no móvil) */
-body:not(.is-touch-device) #overlay-panel>div[style*='flex-direction:column'] {
-    gap: 16px !important;
+/* ── Clip-path en el BOTÓN (no en el wrapper) ── */
+#play-btn {
+    clip-path: polygon(0 0, calc(100% - 20px) 0, 100% 20px, 100% 100%, 20px 100%, 0 calc(100% - 20px));
 }
 
-body:not(.is-touch-device) #play-btn {
-    width: 280px !important;
-    margin: 0 auto !important;
+#shop-btn,
+#inventory-btn,
+#achievements-btn,
+#help-btn {
+    clip-path: polygon(0 0, calc(100% - 14px) 0, 100% 14px, 100% 100%, 14px 100%, 0 calc(100% - 14px));
 }
 
-body:not(.is-touch-device) #overlay-panel>div[style*='flex-direction:column']>div[style*='grid-template-columns'] {
-    grid-template-columns: 1fr !important;
-    gap: 8px !important;
+/* ── Delays escalonados en el WRAPPER ── */
+#wrap-play {
+    animation-delay: 0.05s;
 }
 
-
-/* Estilos de botones del menú solo para PC (no móvil) */
-body:not(.is-touch-device) #play-btn {
-    padding: 22px 28px !important;
-    font-size: 22px !important;
+#wrap-shop {
+    animation-delay: 0.15s;
 }
 
-body:not(.is-touch-device) #shop-btn,
-body:not(.is-touch-device) #inventory-btn {
-    background: rgba(255, 215, 0, 0.12) !important;
-    border-left: 3px solid #FFD700 !important;
-    padding: 20px 22px !important;
-    color: #FFD700 !important;
-    font-size: 16px !important;
+#wrap-inventory {
+    animation-delay: 0.22s;
 }
 
-body:not(.is-touch-device) #achievements-btn {
-    background: rgba(255, 140, 0, 0.12) !important;
-    border-left: 3px solid #FF8C00 !important;
-    padding: 16px 18px !important;
-    color: #FF8C00 !important;
-    font-size: 13px !important;
+#wrap-achievements {
+    animation-delay: 0.30s;
 }
 
-body:not(.is-touch-device) #help-btn {
-    background: rgba(128, 128, 128, 0.12) !important;
-    border-left: 3px solid #808080 !important;
-    padding: 16px 18px !important;
-    color: #808080 !important;
-    font-size: 13px !important;
+#wrap-help {
+    animation-delay: 0.38s;
 }
 
-body:not(.is-touch-device) #overlay-panel>div[style*='flex-direction:column']>div[style*='grid-template-columns'] {
-    gap: 10px !important;
+@keyframes menuBtnEnter {
+    from {
+        opacity: 0;
+        transform: translateX(70px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+/* ── Hover en el WRAPPER: glow asimétrico por perspectiva 3D ──
+   El panel está rotado hacia la izquierda (rotateY negativo), por lo
+   que el borde DERECHO de cada botón es el que "mira" al espectador
+   → más intenso a la derecha (offset X positivo grande)
+   → más suave a la izquierda (offset X negativo pequeño)
+   Sintaxis drop-shadow: (offset-x  offset-y  blur  color)
+── */
+#wrap-play:hover {
+    transform: scale(1.03);
+    filter: brightness(1.12) drop-shadow(7px 0px 5px rgba(255, 50, 80, 0.85)) drop-shadow(5px 0px 13px rgba(255, 50, 80, 0.6)) drop-shadow(15px 0px 24px rgba(255, 50, 80, 0.3)) drop-shadow(-2px 0px 6px rgba(255, 50, 80, 0.2)) drop-shadow(0px 3px 8px rgba(255, 50, 80, 0.22)) drop-shadow(0px -2px 6px rgba(255, 50, 80, 0.18));
+}
+
+#wrap-shop:hover,
+#wrap-achievements:hover {
+    transform: scale(1.03);
+    filter: brightness(1.12) drop-shadow(7px 0px 5px rgba(255, 200, 0, 0.85)) drop-shadow(5px 0px 13px rgba(255, 200, 0, 0.6)) drop-shadow(15px 0px 24px rgba(255, 200, 0, 0.3)) drop-shadow(-2px 0px 6px rgba(255, 200, 0, 0.2)) drop-shadow(0px 3px 8px rgba(255, 200, 0, 0.22)) drop-shadow(0px -2px 6px rgba(255, 200, 0, 0.18));
+}
+
+#wrap-inventory:hover {
+    transform: scale(1.03);
+    filter: brightness(1.12) drop-shadow(7px 0px 5px rgba(0, 220, 210, 0.85)) drop-shadow(5px 0px 13px rgba(0, 220, 210, 0.6)) drop-shadow(15px 0px 24px rgba(0, 220, 210, 0.3)) drop-shadow(-2px 0px 6px rgba(0, 220, 210, 0.2)) drop-shadow(0px 3px 8px rgba(0, 220, 210, 0.22)) drop-shadow(0px -2px 6px rgba(0, 220, 210, 0.18));
+}
+
+#wrap-help:hover {
+    transform: scale(1.03);
+    filter: brightness(1.12) drop-shadow(7px 0px 4px rgba(220, 220, 220, 0.75)) drop-shadow(5px 0px 12px rgba(200, 200, 200, 0.5)) drop-shadow(14px 0px 22px rgba(200, 200, 200, 0.25)) drop-shadow(-2px 0px 5px rgba(200, 200, 200, 0.18)) drop-shadow(0px 3px 7px rgba(200, 200, 200, 0.2)) drop-shadow(0px -2px 5px rgba(200, 200, 200, 0.15));
+}
+
+/* ── Click ── */
+.menu-btn-wrap:active {
+    transform: scale(0.97);
+    filter: brightness(0.88);
+}
+
+/* =====================================================
+   RANK SYSTEM — THE GEM
+   Pegar al final de style.css
+   ===================================================== */
+
+/* --- Barra de progreso en profilePanel --- */
+.rank-progress-bar {
+    width: 100%;
+    height: 6px;
+    background: rgba(255, 255, 255, 0.12);
+    border-radius: 3px;
+    margin-top: 6px;
+    overflow: hidden;
+}
+
+.rank-progress-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #00ffe7, #cc44ff);
+    border-radius: 3px;
+    transition: width 0.6s ease;
+}
+
+.rank-xp-labels {
+    font-size: 10px;
+    color: rgba(255, 255, 255, 0.55);
+    margin-top: 3px;
+    text-align: left;
+}
+
+/* --- Botón VER RANGOS --- */
+.rank-path-toggle-btn {
+    width: 100%;
+    margin-top: 14px;
+    padding: 10px 0;
+    background: rgba(0, 255, 231, 0.08);
+    border: 1px solid rgba(0, 255, 231, 0.25);
+    border-radius: 8px;
+    color: #00ffe7;
+    font-family: 'Geom', monospace;
+    font-size: 12px;
+    letter-spacing: 1px;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.rank-path-toggle-btn:active {
+    background: rgba(0, 255, 231, 0.18);
+}
+
+/* --- Panel del camino de rangos --- */
+.rank-path-panel {
+    width: 100%;
+    max-height: 340px;
+    overflow-y: auto;
+    margin-top: 10px;
+    padding: 4px 0;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(0, 255, 231, 0.3) transparent;
+}
+
+/* --- Nodo individual --- */
+.rank-path-node {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 6px 4px;
+    position: relative;
+}
+
+.rank-node-connector {
+    width: 2px;
+    min-height: 36px;
+    background: rgba(255, 255, 255, 0.08);
+    position: relative;
+    flex-shrink: 0;
+    margin-left: 16px;
+}
+
+.rank-path-node:first-child .rank-node-connector {
+    visibility: hidden;
+}
+
+.rank-connector-fill {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background: linear-gradient(to top, #00ffe7, #cc44ff);
+    transition: height 0.5s ease;
+}
+
+.rank-node-circle {
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    border: 2px solid var(--rank-color, #555555);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    flex-shrink: 0;
+    background: rgba(0, 0, 0, 0.4);
+    transition: box-shadow 0.3s;
+}
+
+.rank-path-node.unlocked .rank-node-circle {
+    box-shadow: 0 0 10px var(--rank-color, #00ffe7);
+}
+
+.rank-path-node.current .rank-node-circle {
+    box-shadow: 0 0 18px var(--rank-color, #00ffe7), 0 0 4px #ffffff;
+    transform: scale(1.12);
+}
+
+.rank-path-node.locked .rank-node-circle {
+    opacity: 0.35;
+    filter: grayscale(1);
+}
+
+.rank-node-info {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.rank-node-name {
+    font-size: 12px;
+    font-weight: 700;
+    font-family: 'Geom', monospace;
+    letter-spacing: 0.5px;
+}
+
+.rank-node-xp {
+    font-size: 10px;
+    color: rgba(255, 255, 255, 0.4);
+}
+
+.rank-node-badge {
+    margin-left: auto;
+    font-size: 9px;
+    color: #00ffe7;
+    letter-spacing: 1px;
+    padding: 2px 6px;
+    border: 1px solid rgba(0, 255, 231, 0.4);
+    border-radius: 4px;
+}
+
+/* =====================================================
+   PANTALLA DE RANGOS — Mapa de progresión
+   ===================================================== */
+
+/* Header */
+.rs-header {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    padding: 20px 28px 16px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+    background: rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(10px);
+    flex-shrink: 0;
+}
+
+.rs-back-btn {
+    background: rgba(255, 255, 255, 0.07);
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    color: rgba(255, 255, 255, 0.7);
+    font-family: monospace;
+    font-size: 13px;
+    letter-spacing: 2px;
+    padding: 10px 18px;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: background 0.18s, color 0.18s;
+    flex-shrink: 0;
+}
+
+.rs-back-btn:hover {
+    background: rgba(0, 255, 231, 0.12);
+    color: #00ffe7;
+    border-color: rgba(0, 255, 231, 0.3);
+}
+
+.rs-title-block {
+    flex: 1;
+}
+
+.rs-kicker {
+    font-family: monospace;
+    font-size: 10px;
+    letter-spacing: 5px;
+    color: rgba(255, 255, 255, 0.3);
+    text-transform: uppercase;
+}
+
+.rs-title {
+    font-family: monospace;
+    font-size: 20px;
+    font-weight: 900;
+    letter-spacing: 4px;
+    color: #fff;
+    text-transform: uppercase;
+}
+
+.rs-xp-block {
+    text-align: right;
+    flex-shrink: 0;
+}
+
+.rs-xp-label {
+    font-family: monospace;
+    font-size: 9px;
+    letter-spacing: 4px;
+    color: rgba(255, 255, 255, 0.35);
+    text-transform: uppercase;
+}
+
+.rs-xp-value {
+    font-family: monospace;
+    font-size: 22px;
+    font-weight: 900;
+    color: #00ffe7;
+    letter-spacing: 2px;
+}
+
+/* Banner rango actual */
+.rs-current-banner {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    margin: 16px 24px;
+    padding: 28px 32px;
+    min-height: 120px;
+    /* Mantener ratio 5:1 como la imagen (1200x240) */
+    aspect-ratio: 5 / 1;
+    border-radius: 14px;
+    border: 1px solid rgba(180, 30, 30, 0.4);
+    background: linear-gradient(135deg, rgba(120, 0, 0, 0.4) 0%, rgba(0, 0, 0, 0.7) 100%);
+    backdrop-filter: blur(4px);
+    flex-shrink: 0;
+    box-shadow: 0 0 40px rgba(180, 0, 0, 0.2), 0 4px 24px rgba(0, 0, 0, 0.5);
+    overflow: hidden;
+}
+
+.rs-current-avatar {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    border: 2px solid rgba(0, 255, 231, 0.5);
+    background: rgba(255, 255, 255, 0.05) center/cover no-repeat;
+    box-shadow: 0 0 20px rgba(0, 255, 231, 0.2);
+    flex-shrink: 0;
+}
+
+/* Imagen de fondo opcional para el banner de rango */
+.rs-current-banner-bg {
+    position: absolute;
+    inset: 0;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    opacity: 0.9;
+    pointer-events: none;
+    border-radius: inherit;
+    /* Oscurecer solo la mitad izquierda para que el texto sea legible */
+    -webkit-mask-image: linear-gradient(90deg, rgba(0, 0, 0, 0.35) 0%, rgba(0, 0, 0, 0.65) 40%, rgba(0, 0, 0, 1) 100%);
+    mask-image: linear-gradient(90deg, rgba(0, 0, 0, 0.35) 0%, rgba(0, 0, 0, 0.65) 40%, rgba(0, 0, 0, 1) 100%);
+}
+
+.menu-profile-chip-icon {
+    width: 16px;
+    height: 16px;
+    object-fit: contain;
+    flex-shrink: 0;
+}
+
+.menu-profile-chip-bag {
+    filter: drop-shadow(0 0 4px rgba(255, 200, 50, 0.5));
+}
+
+.rs-current-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.rs-current-label {
+    font-family: monospace;
+    font-size: 9px;
+    letter-spacing: 4px;
+    color: rgba(255, 255, 255, 0.4);
+    text-transform: uppercase;
+    margin-bottom: 4px;
+}
+
+.rs-current-name {
+    font-family: monospace;
+    font-size: 20px;
+    font-weight: 900;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: #fff;
+    margin-bottom: 8px;
+}
+
+.rs-current-bar {
+    width: 100%;
+    height: 6px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 999px;
+    overflow: hidden;
+    margin-bottom: 5px;
+}
+
+.rs-current-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #00ffe7, #00bfff);
+    border-radius: 999px;
+    transition: width 0.6s ease;
+    box-shadow: 0 0 8px rgba(0, 255, 231, 0.6);
+}
+
+.rs-current-xp-info {
+    font-family: monospace;
+    font-size: 11px;
+    color: rgba(255, 255, 255, 0.45);
+    letter-spacing: 1px;
+}
+
+.rs-current-emoji {
+    font-size: 36px;
+    flex-shrink: 0;
+    filter: drop-shadow(0 0 12px rgba(0, 255, 231, 0.5));
+}
+
+/* Mapa scrolleable */
+.rs-map-scroll {
+    flex: 1;
+    overflow-y: auto;
+    overflow-x: hidden;
+    position: relative;
+    z-index: 2;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(0, 255, 231, 0.2) transparent;
+}
+
+.rs-map-inner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 32px 20px 60px;
+    gap: 0;
+    min-height: 100%;
+    position: relative;
+}
+
+/* Línea central del camino */
+.rs-map-inner::before {
+    content: '';
+    position: absolute;
+    left: 50%;
+    top: 20px;
+    bottom: 60px;
+    width: 3px;
+    background: linear-gradient(180deg,
+            rgba(0, 255, 231, 0.15) 0%,
+            rgba(0, 255, 231, 0.08) 50%,
+            rgba(0, 255, 231, 0.03) 100%);
+    transform: translateX(-50%);
+    z-index: 0;
+}
+
+/* Nodo individual */
+.rs-node {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    max-width: 600px;
+    margin-bottom: 0;
+    position: relative;
+    z-index: 1;
+    padding: 8px 0;
+}
+
+/* Alternar izquierda/derecha */
+.rs-node:nth-child(odd) {
+    flex-direction: row;
+    justify-content: flex-end;
+    padding-right: calc(50% + 32px);
+}
+
+.rs-node:nth-child(even) {
+    flex-direction: row-reverse;
+    justify-content: flex-end;
+    padding-left: calc(50% + 32px);
+}
+
+/* La tarjeta del nodo */
+.rs-node-card {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px;
+    border-radius: 14px;
+    border: 1px solid rgba(255, 255, 255, 0.07);
+    background: rgba(12, 13, 20, 0.85);
+    min-width: 180px;
+    max-width: 220px;
+    position: relative;
+    transition: transform 0.2s, box-shadow 0.2s;
+    cursor: default;
+}
+
+.rs-node.unlocked .rs-node-card {
+    border-color: rgba(255, 255, 255, 0.18);
+}
+
+.rs-node.current .rs-node-card {
+    border-width: 2px;
+    background: rgba(0, 255, 231, 0.06);
+    box-shadow: 0 0 28px rgba(0, 255, 231, 0.15), 0 0 0 3px rgba(0, 255, 231, 0.12);
+    animation: rs-pulse 2.5s ease-in-out infinite;
+}
+
+.rs-node.locked .rs-node-card {
+    opacity: 0.38;
+    filter: grayscale(0.6);
+}
+
+@keyframes rs-pulse {
+
+    0%,
+    100% {
+        box-shadow: 0 0 28px rgba(0, 255, 231, 0.15), 0 0 0 3px rgba(0, 255, 231, 0.12);
+    }
+
+    50% {
+        box-shadow: 0 0 42px rgba(0, 255, 231, 0.28), 0 0 0 5px rgba(0, 255, 231, 0.2);
+    }
+}
+
+/* Círculo del rango */
+.rs-node-circle {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    flex-shrink: 0;
+    border: 2px solid currentColor;
+    background: rgba(0, 0, 0, 0.5);
+    position: relative;
+}
+
+.rs-node.unlocked .rs-node-circle,
+.rs-node.current .rs-node-circle {
+    box-shadow: 0 0 14px currentColor;
+}
+
+/* Check para rangos completados */
+.rs-node.unlocked:not(.current) .rs-node-circle::after {
+    content: '✓';
+    position: absolute;
+    bottom: -4px;
+    right: -4px;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: #00ffe7;
+    color: #000;
+    font-size: 9px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 900;
+    line-height: 16px;
+    text-align: center;
+}
+
+.rs-node-text {
+    flex: 1;
+    min-width: 0;
+}
+
+.rs-node-name {
+    font-family: monospace;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: #fff;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.rs-node-xp {
+    font-family: monospace;
+    font-size: 10px;
+    color: rgba(255, 255, 255, 0.4);
+    letter-spacing: 1px;
+    margin-top: 2px;
+}
+
+/* Badge ACTUAL */
+.rs-node-badge {
+    font-family: monospace;
+    font-size: 8px;
+    letter-spacing: 2px;
+    padding: 3px 7px;
+    border-radius: 6px;
+    background: rgba(0, 255, 231, 0.15);
+    color: #00ffe7;
+    border: 1px solid rgba(0, 255, 231, 0.35);
+    flex-shrink: 0;
+}
+
+/* Conector del nodo al eje central */
+.rs-node-connector {
+    position: absolute;
+    top: 50%;
+    height: 2px;
+    background: rgba(255, 255, 255, 0.1);
+    transform: translateY(-50%);
+    z-index: 0;
+}
+
+.rs-node:nth-child(odd) .rs-node-connector {
+    right: calc(50% - 220px);
+    left: 100%;
+    right: auto;
+    width: 32px;
+    right: -32px;
+}
+
+.rs-node:nth-child(even) .rs-node-connector {
+    left: -32px;
+    width: 32px;
+}
+
+.rs-node.unlocked .rs-node-connector,
+.rs-node.current .rs-node-connector {
+    background: rgba(0, 255, 231, 0.3);
+}
+
+/* Responsive móvil */
+@media (max-width: 600px) {
+    .rs-node:nth-child(odd) {
+        padding-right: calc(50% + 20px);
+    }
+
+    .rs-node:nth-child(even) {
+        padding-left: calc(50% + 20px);
+    }
+
+    .rs-node-card {
+        min-width: 140px;
+        max-width: 160px;
+        padding: 10px 12px;
+        gap: 8px;
+    }
+
+    .rs-node-name {
+        font-size: 10px;
+    }
+
+    .rs-current-banner {
+        margin: 10px 12px;
+        padding: 20px 18px;
+        min-height: 80px;
+        aspect-ratio: auto;
+    }
+}
+
+/* =====================================================
+   SHOP SIDEBAR — clases base (valores controlados por config.js → responsive.css)
+   ===================================================== */
+
+/* ── Contenedor principal del sidebar ── */
+.shop-sidebar {
+    position: relative;
+    z-index: 2;
+    width: var(--shop-sidebar-width, 200px);
+    min-height: 100vh;
+    background: rgba(255,255,255,0.02);
+    border-right: 1px solid rgba(255,255,255,0.06);
+    display: flex;
+    flex-direction: column;
+    padding: 0;
+}
+
+/* ── Header: zona de TIENDA + VOLVER ── */
+.shop-sidebar-header {
+    padding: var(--shop-header-padding, 20px 18px 14px);
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+
+/* ── Título TIENDA ── */
+.shop-sidebar-title {
+    color: var(--shop-title-color, #ff4d6d);
+    font-family: monospace;
+    font-size: var(--shop-title-font, 18px);
+    font-weight: 900;
+    letter-spacing: 4px;
+    margin-bottom: 12px;
+}
+
+/* ── Botón VOLVER ── */
+.shop-sidebar-back {
+    width: 100%;
+    padding: var(--shop-back-padding, 9px);
+    background: none;
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 8px;
+    color: rgba(255,255,255,0.4);
+    font-family: monospace;
+    font-size: var(--shop-back-font, 10px);
+    letter-spacing: 2px;
+    cursor: pointer;
+    transition: border-color 0.18s, color 0.18s;
+}
+.shop-sidebar-back:hover {
+    border-color: rgba(255,255,255,0.25);
+    color: rgba(255,255,255,0.7);
+}
+
+/* ── Sección del perfil (ESTANDARTE + banner + monedas) ── */
+.shop-sidebar-profile-section {
+    padding: var(--shop-profile-padding, 14px 14px 16px);
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+
+/* ── Labels pequeños: ESTANDARTE / EQUIPADO ── */
+.shop-sidebar-label {
+    color: rgba(255,255,255,0.25);
+    font-family: monospace;
+    font-size: var(--shop-label-font, 9px);
+    letter-spacing: 4px;
+    margin-bottom: 10px;
+    text-transform: uppercase;
+}
+
+/* ── Banner de perfil (el cuadro con avatar + nombre del banner) ── */
+.shop-profile-banner {
+    height: var(--shop-banner-height, 82px);
+    border-radius: var(--shop-banner-radius, 10px);
+    border: 1px solid rgba(255,255,255,0.1);
+    background: linear-gradient(135deg, rgba(0,255,231,0.18), rgba(255,77,109,0.16));
+    background-size: cover;
+    background-position: center;
+    padding: var(--shop-banner-padding, 10px);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    overflow: hidden;
+    position: relative;
+    margin-bottom: 10px;
+}
+
+/* ── Overlay oscuro interno del banner ── */
+.shop-profile-banner-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, rgba(0,0,0,0.1), rgba(0,0,0,0.55));
+    pointer-events: none;
+}
+
+/* ── Fila superior: avatar + nombre ── */
+.shop-profile-banner-top {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+/* ── Avatar circular ── */
+.shop-profile-avatar {
+    width: var(--shop-avatar-size, 32px);
+    height: var(--shop-avatar-size, 32px);
+    border-radius: 50%;
+    background: rgba(255,77,109,0.15) center / cover no-repeat;
+    border: 1px solid rgba(255,255,255,0.35);
+    flex: none;
+}
+
+/* ── Info del jugador ── */
+.shop-profile-info {
+    min-width: 0;
+}
+
+.shop-profile-name {
+    color: white;
+    font-family: monospace;
+    font-size: var(--shop-profile-name-font, 11px);
+    font-weight: bold;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.shop-profile-level {
+    color: rgba(255,255,255,0.45);
+    font-family: monospace;
+    font-size: var(--shop-profile-level-font, 9px);
+}
+
+/* ── Nombre del banner equipado (abajo del cuadro) ── */
+.shop-profile-banner-name {
+    position: relative;
+    color: rgba(255,255,255,0.78);
+    font-family: monospace;
+    font-size: var(--shop-banner-name-font, 8px);
+    letter-spacing: 2px;
+}
+
+/* ── Chips de monedas ── */
+.shop-sidebar-currency {
+    display: flex;
+    flex-direction: column;
+    gap: var(--shop-currency-gap, 8px);
+}
+
+.shop-currency-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.07);
+    border-radius: 8px;
+    padding: var(--shop-currency-padding, 8px 12px);
+}
+
+.shop-currency-label {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: rgba(255,255,255,0.5);
+    font-family: monospace;
+    font-size: var(--shop-currency-label-font, 10px);
+}
+
+.shop-currency-icon {
+    width: var(--shop-currency-icon-size, 16px);
+    height: var(--shop-currency-icon-size, 16px);
+    object-fit: contain;
+}
+
+.shop-currency-value {
+    color: white;
+    font-family: monospace;
+    font-size: var(--shop-currency-value-font, 14px);
+    font-weight: bold;
+}
+
+/* ── Sección EQUIPADO ── */
+.shop-sidebar-equipped {
+    padding: var(--shop-equipped-padding, 20px 24px);
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+
+.shop-sidebar-equipped .shop-sidebar-label {
+    margin-bottom: 14px;
+}
+
+.shop-equipped-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.07);
+    border-radius: 10px;
+    padding: 12px;
+}
+
+.shop-equipped-preview {
+    width: var(--shop-equipped-size, 36px);
+    height: var(--shop-equipped-size, 36px);
+    border-radius: 50%;
+    background: #00ffe722;
+    border: 2px solid #00ffe766;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.shop-equipped-dot {
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: #00ffe7;
+}
+
+.shop-equipped-name {
+    color: white;
+    font-family: monospace;
+    font-size: var(--shop-equipped-name-font, 12px);
+}
+
+.shop-equipped-rarity {
+    color: rgba(255,255,255,0.3);
+    font-family: monospace;
+    font-size: var(--shop-equipped-rarity-font, 10px);
 }

@@ -17,15 +17,19 @@
     <!-- Fuente Geom del juego -->
     <link href="https://fonts.googleapis.com/css2?family=Geom:ital,wght@0,300..900;1,300..900&display=swap"
         rel="stylesheet">
+    <link rel="stylesheet" href="responsive.css">
     <!-- Hoja de estilos principal -->
     <link rel="stylesheet" href="style.css">
     <!-- Manifest para PWA -->
     <link rel="manifest" href="manifest.json">
     <!-- Registro de Service Worker para PWA -->
     <script>
-        if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('/service-worker.js');
-        }
+        // ⚠️ DESACTIVADO TEMPORALMENTE PARA DESARROLLO — el SW cachea archivos y
+        // hace que los cambios no se vean aunque hagas hard refresh.
+        // Descomenta esta línea cuando vayas a publicar el juego:
+        // if ('serviceWorker' in navigator) {
+        //     navigator.serviceWorker.register('/service-worker.js');
+        // }
     </script>
 </head>
 
@@ -88,211 +92,163 @@
         <img id="mute-icon" src="assets/Imagenes/Icono/Music_On.png" style="width:100%;height:100%;">
     </div>
 
+    <!-- Botón flotante de opciones -->
+    <div id="options-float-btn" onclick="openOptionsPanel()" style="
+    position:fixed;
+    bottom:20px;
+    right:85px;
+    z-index:10000;
+    cursor:pointer;
+    width:52px;
+    height:52px;
+    background:rgba(0,0,0,0.35);
+    border:1px solid rgba(255,255,255,0.12);
+    border-radius:14px;
+    backdrop-filter:blur(6px);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+">
+        <img src="assets/Imagenes/Icono/Opciones.png" style="width:100%;height:100%;">
+    </div>
+
+    <!-- Botón flotante de monedas infinitas (DEV) -->
+    <div id="infinite-coins-float-btn" onclick="toggleInfiniteCoins()" style="
+    position:fixed;
+    bottom:20px;
+    right:150px;
+    z-index:10000;
+    cursor:pointer;
+    width:52px;
+    height:52px;
+    background:rgba(0,0,0,0.35);
+    border:1px solid rgba(255,255,255,0.12);
+    border-radius:14px;
+    backdrop-filter:blur(6px);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:20px;
+    color:rgba(255,255,255,0.7);
+">
+        <span id="infinite-coins-icon">∞</span>
+    </div>
+
     <!-- Overlay del menú principal -->
     <div id="overlay">
 
-        <!-- Fondo oscuro del overlay -->
-        <div style="position:absolute; inset:0; background:#080810;"></div>
+        <!-- Fondo oscuro base -->
+        <div style="position:absolute; inset:0; background:#09091A;"></div>
 
-        <!-- Portada del juego con gradientes -->
-        <div id="overlay-cover">
+        <!-- Canvas de líneas topográficas onduladas -->
+        <canvas id="topoCanvas"
+            style="position:absolute; inset:0; width:100%; height:100%; pointer-events:none; z-index:1;"></canvas>
+
+        <!-- Portada izquierda -->
+        <div id="overlay-cover" style="position:relative; z-index:2;">
             <img src="assets/Imagenes/Portada Juego/Portada_Juego_2.png"
                 style="width:100%; height:100%; object-fit:cover; object-position:center top;">
-            <div style="position:absolute; inset:0; background:linear-gradient(108deg, transparent 25%, #080810 72%);">
+            <div style="position:absolute; inset:0; background:linear-gradient(108deg, transparent 25%, #09091A 72%);">
             </div>
             <div
-                style="position:absolute; inset:0; background:linear-gradient(to top, rgba(8,8,16,0.8) 0%, transparent 35%);">
+                style="position:absolute; inset:0; background:linear-gradient(to top, rgba(9,9,26,0.8) 0%, transparent 35%);">
             </div>
         </div>
 
-        <!-- Panel principal del menú -->
-        <div id="overlay-panel">
-
-            <!-- Avatar y rango del usuario -->
-            <div style="position:absolute; top:28px; right:28px; display:flex; align-items:center; gap:10px;">
-                <div style="display:flex; flex-direction:column; align-items:flex-end;">
-                    <div id="menu-avatar"
-                        style="width:40px; height:40px; border-radius:50%; background:rgba(255,77,109,0.15); border:1px solid rgba(255,77,109,0.4); display:flex; align-items:center; justify-content:center; color:#ff4d6d; font-family:monospace; font-size:11px; font-weight:bold; cursor:pointer;"
-                        onclick="openProfileMenu()">USUARIO</div>
-                    <div id="menu-rank"
-                        style="color:#aaaaaa; font-family:monospace; font-size:9px; letter-spacing:2px; margin-top:3px;">
-                        HIERRO</div>
+        <!-- Banner de perfil: estilo tienda (shop-profile-banner) -->
+        <div id="menu-profile-wrap"
+            style="position:absolute; top:0; right:0; width:50%; z-index:3; padding:18px 28px 0; max-width:420px;">
+            <div id="menu-profile" class="shop-profile-banner" onclick="openProfileMenu()" role="button" tabindex="0"
+                aria-label="Abrir perfil" style="cursor:pointer; margin-bottom:0;">
+                <div class="shop-profile-banner-overlay"></div>
+                <div class="shop-profile-banner-top">
+                    <div id="menu-profile-avatar" class="shop-profile-avatar" aria-hidden="true"></div>
+                    <div class="shop-profile-info">
+                        <div id="menu-profile-name" class="shop-profile-name">Jugador</div>
+                        <div id="menu-profile-rank" class="shop-profile-level">CHISPA</div>
+                    </div>
+                    <div style="flex:1;"></div>
+                    <div style="display:flex; flex-direction:column; gap:4px; align-items:flex-end;">
+                        <span
+                            style="display:inline-flex; align-items:center; gap:5px; font-family:monospace; font-size:10px; color:rgba(255,255,255,0.8);">
+                            <img src="assets/Imagenes/Monetizacion/Rubies.png"
+                                style="width:14px; height:14px; object-fit:contain;">
+                            <span id="menu-profile-gems">0</span>
+                        </span>
+                        <span
+                            style="display:inline-flex; align-items:center; gap:5px; font-family:monospace; font-size:10px; color:rgba(255,255,255,0.8);">
+                            <img src="assets/Imagenes/Monetizacion/DEAD_COIN.png"
+                                style="width:14px; height:14px; object-fit:contain;">
+                            <span id="menu-profile-coins">0</span>
+                        </span>
+                    </div>
                 </div>
+                <div id="menu-profile-banner-name" class="shop-profile-banner-name">Nucleo Estatico</div>
             </div>
+        </div>
 
-            <!-- Línea decorativa superior -->
-            <div style="display:flex; align-items:center; gap:0; margin-bottom:40px;">
-                <div style="width:3px; height:40px; background:linear-gradient(to bottom, transparent, #ff4d6d);"></div>
-                <div style="flex:1; height:3px; background:linear-gradient(to right, #ff4d6d, transparent);"></div>
-            </div>
+        <!-- Panel derecho (3D) — solo los botones -->
+        <div id="overlay-panel" style="gap:14px; padding:80px 28px 60px; padding-top:clamp(80px,12vh,120px);">
 
-            <!-- Botones del menú principal -->
-            <div style="display:flex; flex-direction:column; gap:8px;">
-
-                <!-- JUGAR: botón principal -->
-                <button id="play-btn" style="
-                position:relative; background:rgba(255,77,109,0.1);
-                border:none; border-left:3px solid #ff4d6d;
-                padding:18px 24px; color:white;
-                font-family:monospace; font-size:20px; font-weight:900;
-                letter-spacing:6px; cursor:pointer; text-align:left;
-                display:flex; align-items:center; width:100%;
-                transition:all 0.2s;
-                clip-path:polygon(0 0, calc(100% - 16px) 0, 100% 100%, 0 100%);
-            " onmouseover="this.style.background='rgba(255,77,109,0.22)';this.style.paddingLeft='36px'"
-                    onmouseout="this.style.background='rgba(255,77,109,0.1)';this.style.paddingLeft='24px'">
-                    JUGAR
-                    <span style="margin-left:auto; color:#ff4d6d; font-size:16px;">→</span>
+            <!-- JUGAR — ancho completo -->
+            <div id="wrap-play" class="menu-btn-wrap">
+                <button id="play-btn" class="menu-png-btn">
+                    <img src="assets/Imagenes/Botones menu/JUGAR.png"
+                        style="width:100%; height:auto; display:block; pointer-events:none;">
                 </button>
-
-                <!-- Fila 1: TIENDA + INVENTARIO -->
-                <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
-                    <button id="shop-btn" style="
-                    position:relative; background:rgba(255,255,255,0.03);
-                    border:none; border-left:3px solid rgba(255,255,255,0.18);
-                    padding:14px 16px; color:rgba(255,255,255,0.65);
-                    font-family:monospace; font-size:14px; font-weight:900;
-                    letter-spacing:4px; cursor:pointer; text-align:left;
-                    display:flex; align-items:center;
-                    transition:all 0.2s;
-                    clip-path:polygon(0 0, calc(100% - 12px) 0, 100% 100%, 0 100%);
-                " onmouseover="this.style.background='rgba(255,255,255,0.08)';this.style.color='white'"
-                        onmouseout="this.style.background='rgba(255,255,255,0.03)';this.style.color='rgba(255,255,255,0.65)'">
-                        TIENDA
-                        <span style="margin-left:auto; color:rgba(255,255,255,0.25); font-size:13px;">→</span>
-                    </button>
-                    <button id="inventory-btn" style="
-                    position:relative; background:rgba(255,255,255,0.03);
-                    border:none; border-left:3px solid rgba(255,255,255,0.18);
-                    padding:14px 16px; color:rgba(255,255,255,0.65);
-                    font-family:monospace; font-size:14px; font-weight:900;
-                    letter-spacing:4px; cursor:pointer; text-align:left;
-                    display:flex; align-items:center;
-                    transition:all 0.2s;
-                    clip-path:polygon(0 0, calc(100% - 12px) 0, 100% 100%, 0 100%);
-                " onmouseover="this.style.background='rgba(255,255,255,0.08)';this.style.color='white'"
-                        onmouseout="this.style.background='rgba(255,255,255,0.03)';this.style.color='rgba(255,255,255,0.65)'">
-                        INVENTARIO
-                        <span style="margin-left:auto; color:rgba(255,255,255,0.25); font-size:13px;">→</span>
-                    </button>
-                </div>
-
-                <!-- Fila 2: LOGROS + AYUDA -->
-                <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
-                    <button id="achievements-btn" style="
-                    position:relative; background:rgba(255,215,0,0.08);
-                    border:none; border-left:3px solid #FFD700;
-                    padding:14px 16px; color:rgba(255,215,0,0.9);
-                    font-family:monospace; font-size:14px; font-weight:900;
-                    letter-spacing:4px; cursor:pointer; text-align:left;
-                    display:flex; align-items:center;
-                    transition:all 0.2s;
-                    clip-path:polygon(0 0, calc(100% - 12px) 0, 100% 100%, 0 100%);
-                " onmouseover="this.style.background='rgba(255,215,0,0.18)';this.style.color='white'"
-                        onmouseout="this.style.background='rgba(255,215,0,0.08)';this.style.color='rgba(255,215,0,0.9)'"
-                        onclick="showAchievementsPanel()">
-                        LOGROS
-                        <span style="margin-left:auto; color:#FFD700; font-size:13px;">→</span>
-                    </button>
-                    <button id="help-btn" style="
-                    position:relative; background:rgba(75,192,235,0.08);
-                    border:none; border-left:3px solid #4bc0eb;
-                    padding:14px 16px; color:rgba(75,192,235,0.9);
-                    font-family:monospace; font-size:12px; font-weight:900;
-                    letter-spacing:3px; cursor:pointer; text-align:left;
-                    display:flex; align-items:center;
-                    transition:all 0.2s;
-                    clip-path:polygon(0 0, calc(100% - 12px) 0, 100% 100%, 0 100%);
-                " onmouseover="this.style.background='rgba(75,192,235,0.18)';this.style.color='white'"
-                        onmouseout="this.style.background='rgba(75,192,235,0.08)';this.style.color='rgba(75,192,235,0.9)'"
-                        onclick="showPowerupHelpPanel()">
-                        AYUDA
-                        <span style="margin-left:auto; color:#4bc0eb; font-size:12px;">→</span>
-                    </button>
-                </div>
-
             </div>
 
-            <!-- Líneas decorativas inferiores -->
-            <div style="margin-top:40px; display:flex; flex-direction:column; gap:10px;">
-                <div style="display:flex; align-items:center; gap:8px;">
-                    <div
-                        style="flex:1; height:1px; background:linear-gradient(to right, rgba(255,77,109,0.4), transparent);">
-                    </div>
+            <!-- TIENDA + INVENTARIO -->
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:14px;">
+                <div id="wrap-shop" class="menu-btn-wrap">
+                    <button id="shop-btn" class="menu-png-btn">
+                        <img src="assets/Imagenes/Botones menu/TIENDA.png"
+                            style="width:100%; height:auto; display:block; pointer-events:none;">
+                    </button>
                 </div>
-                <div style="display:flex; gap:16px;">
-                    <div
-                        style="flex:1; height:4px; background:rgba(255,255,255,0.03); border-radius:2px; overflow:hidden;">
-                        <div
-                            style="width:60%; height:100%; background:linear-gradient(to right, #ff4d6d44, transparent);">
-                        </div>
-                    </div>
-                    <div
-                        style="flex:1; height:4px; background:rgba(255,255,255,0.03); border-radius:2px; overflow:hidden;">
-                        <div
-                            style="width:30%; height:100%; background:linear-gradient(to right, rgba(255,255,255,0.1), transparent);">
-                        </div>
-                    </div>
+                <div id="wrap-inventory" class="menu-btn-wrap">
+                    <button id="inventory-btn" class="menu-png-btn">
+                        <img src="assets/Imagenes/Botones menu/INVENTARIO.png"
+                            style="width:100%; height:auto; display:block; pointer-events:none;">
+                    </button>
                 </div>
             </div>
 
-            <!-- Footer con versión y créditos -->
-            <div id="overlay-footer"
-                style="position:absolute; bottom:28px; left:72px; right:28px; display:flex; justify-content:space-between; align-items:center;">
-                <div style="color:rgba(255,255,255,0.15); font-family:monospace; font-size:10px; letter-spacing:3px;">
-                    VERSION 0.5 · MADE BY FELIX</div>
-                <div style="display:flex; gap:4px;">
-                    <div style="width:5px; height:5px; border-radius:50%; background:#ff4d6d; opacity:0.5;"></div>
-                    <div style="width:5px; height:5px; border-radius:50%; background:#ff4d6d; opacity:0.25;"></div>
+            <!-- LOGROS + AYUDA -->
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:14px;">
+                <div id="wrap-achievements" class="menu-btn-wrap">
+                    <button id="achievements-btn" class="menu-png-btn" onclick="showAchievementsPanel()">
+                        <img src="assets/Imagenes/Botones menu/LOGROS.png"
+                            style="width:100%; height:auto; display:block; pointer-events:none;">
+                    </button>
+                </div>
+                <div id="wrap-help" class="menu-btn-wrap">
+                    <button id="help-btn" class="menu-png-btn" onclick="showPowerupHelpPanel()">
+                        <img src="assets/Imagenes/Botones menu/AYUDA.png"
+                            style="width:100%; height:auto; display:block; pointer-events:none;">
+                    </button>
                 </div>
             </div>
 
         </div>
 
-    </div>
+        <!-- VERSION — esquina inferior izquierda -->
+        <div style="position:absolute; bottom:20px; left:20px; width:clamp(180px, 22%, 260px);">
+            <div style="position:relative;">
+                <img src="assets/Imagenes/Botones menu/VERSION.png" style="width:100%; height:auto; display:block;">
+                <!-- Texto centrado dentro del banner: top/left ajustan la posición -->
+                <div style="position:absolute; top:50%; left:50%; transform:translate(-50%, -50%);
+                            pointer-events:none; line-height:1.4; text-align:center; width:80%;">
+                    <div style="color:rgba(255,255,255,0.9); font-family:monospace;
+                                font-size:clamp(8px,1.1vw,11px); letter-spacing:2px; font-weight:bold;">
+                        VERSION 0.5</div>
+                    <div style="color:rgba(255,77,109,1); font-family:monospace;
+                                font-size:clamp(7px,0.9vw,10px); letter-spacing:2px;">
+                        MADE BY FELIX</div>
+                </div>
+            </div>
+        </div>
 
-    <!-- Botones flotantes del juego -->
-    <button id="pause-btn" type="button" onclick="pauseGame()">PAUSA</button>
-    <button id="settings-float-btn" class="settings-float-btn" type="button" onclick="openOptionsPanel()"
-        title="Opciones">⚙</button>
-    <button id="emote-float-btn" class="emote-float-btn" type="button" onclick="toggleEmoteMenu()"
-        title="Emotes">+</button>
-    <!-- Menú de emotes -->
-    <div id="emote-menu" class="emote-menu"></div>
-    <div id="emote-more-panel" class="emote-more-panel"></div>
-    <!-- Banner de perfil en juego -->
-    <div id="ingame-profile-banner" class="ingame-profile-banner"></div>
-    <!-- Burbuja de emote activo -->
-    <div id="active-emote-bubble" class="active-emote-bubble"></div>
-
-    <!-- Panel de pausa -->
-    <div id="pausePanel">
-        <div class="pause-dim" onclick="resumeGame()"></div>
-        <aside class="pause-drawer">
-            <div class="pause-kicker">ESFERA MORTAL</div>
-            <h2>PAUSA</h2>
-            <button id="pause-continue">CONTINUAR</button>
-            <button id="pause-options">OPCIONES</button>
-            <button id="pause-levels">NIVELES</button>
-            <button id="pause-menu">MENÚ</button>
-        </aside>
-    </div>
-
-    <!-- Panel de perfil -->
-    <div id="profilePanel" style="display:none;">
-        <div class="profile-dim" onclick="closeProfileMenu()"></div>
-        <section class="profile-card">
-            <button class="profile-close" type="button" onclick="closeProfileMenu()">x</button>
-            <div class="profile-kicker">PERFIL</div>
-            <h2>AVATAR</h2>
-            <div class="profile-preview" id="profilePreview"></div>
-            <label class="profile-label" for="profileNameInput">NOMBRE</label>
-            <input id="profileNameInput" maxlength="14" placeholder="Jugador">
-            <div class="profile-label">IMAGEN</div>
-            <div class="avatar-grid" id="avatarGrid"></div>
-            <div class="profile-cost" id="profileCost">GRATIS POR AHORA</div>
-            <button class="profile-save" id="profileSaveBtn" type="button">GUARDAR</button>
-        </section>
     </div>
 
     <!-- Pantalla de Game Over -->
@@ -336,72 +292,48 @@
         <div style="position:absolute; inset:0; box-shadow:inset 0 0 120px rgba(0,0,0,0.8);"></div>
 
         <!-- Sidebar de la tienda -->
-        <div
-            style="position:relative; z-index:2; width:200px; min-height:100vh; background:rgba(255,255,255,0.02); border-right:1px solid rgba(255,255,255,0.06); display:flex; flex-direction:column; padding:0;">
+        <div class="shop-sidebar">
 
             <!-- Header de la tienda -->
-            <div style="padding:20px 18px 14px; border-bottom:1px solid rgba(255,255,255,0.06);">
-                <div
-                    style="color:#ff4d6d; font-family:monospace; font-size:18px; font-weight:900; letter-spacing:4px; margin-bottom:12px;">
+            <div class="shop-sidebar-header">
+                <div class="shop-sidebar-title">
                     TIENDA</div>
-                <button onclick="closeShop()"
-                    style="width:100%; padding:9px; background:none; border:1px solid rgba(255,255,255,0.1); border-radius:8px; color:rgba(255,255,255,0.4); font-family:monospace; font-size:10px; letter-spacing:2px; cursor:pointer;">←
-                    VOLVER</button>
+                <button onclick="closeShop()" class="shop-sidebar-back">← VOLVER</button>
             </div>
 
             <!-- Banner de perfil en tienda -->
-            <div style="padding:14px 14px 16px; border-bottom:1px solid rgba(255,255,255,0.06);">
-                <div
-                    style="color:rgba(255,255,255,0.25); font-family:monospace; font-size:9px; letter-spacing:4px; margin-bottom:10px;">
-                    ESTANDARTE</div>
-                <div id="shop-profile-banner"
-                    style="height:82px; border-radius:10px; border:1px solid rgba(255,255,255,0.1); background:linear-gradient(135deg, rgba(0,255,231,0.18), rgba(255,77,109,0.16)); background-size:cover; background-position:center; padding:10px; display:flex; flex-direction:column; justify-content:space-between; overflow:hidden; position:relative; margin-bottom:10px;">
-                    <div
-                        style="position:absolute; inset:0; background:linear-gradient(180deg, rgba(0,0,0,0.1), rgba(0,0,0,0.55)); pointer-events:none;">
-                    </div>
-                    <div style="position:relative; display:flex; align-items:center; gap:8px;">
-                        <div id="shop-profile-avatar"
-                            style="width:32px; height:32px; border-radius:50%; background:rgba(255,77,109,0.15) center / cover no-repeat; border:1px solid rgba(255,255,255,0.35); flex:none;">
-                        </div>
-                        <div style="min-width:0;">
-                            <div id="shop-profile-name"
-                                style="color:white; font-family:monospace; font-size:11px; font-weight:bold; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">
-                                Jugador</div>
-                            <div style="color:rgba(255,255,255,0.45); font-family:monospace; font-size:9px;">Nivel 1
-                            </div>
+            <div class="shop-sidebar-profile-section">
+                <div class="shop-sidebar-label">ESTANDARTE</div>
+                <div id="shop-profile-banner" class="shop-profile-banner">
+                    <div class="shop-profile-banner-overlay"></div>
+                    <div class="shop-profile-banner-top">
+                        <div id="shop-profile-avatar" class="shop-profile-avatar"></div>
+                        <div class="shop-profile-info">
+                            <div id="shop-profile-name" class="shop-profile-name">Jugador</div>
+                            <div class="shop-profile-level">Nivel 1</div>
                         </div>
                     </div>
-                    <div id="shop-profile-banner-name"
-                        style="position:relative; color:rgba(255,255,255,0.78); font-family:monospace; font-size:8px; letter-spacing:2px;">
-                        Nucleo Estatico</div>
+                    <div id="shop-profile-banner-name" class="shop-profile-banner-name">Nucleo Estatico</div>
                 </div>
                 <div id="banner-picker"
                     style="display:none; margin:-4px 0 10px; padding:8px; border:1px solid rgba(255,255,255,0.09); border-radius:10px; background:rgba(0,0,0,0.28);">
                 </div>
 
                 <!-- Display de monedas y gemas -->
-                <div style="display:flex; flex-direction:column; gap:8px;">
-                    <div
-                        style="display:flex; align-items:center; justify-content:space-between; background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.07); border-radius:8px; padding:8px 12px;">
-                        <div style="display:flex; align-items:center; gap:6px;">
-                            <img src="assets/Imagenes/Monetizacion/Rubies.png"
-                                style="width:16px; height:16px; object-fit:contain;">
-                            <span
-                                style="color:rgba(255,255,255,0.5); font-family:monospace; font-size:10px;">RUBIES</span>
+                <div class="shop-sidebar-currency">
+                    <div class="shop-currency-row">
+                        <div class="shop-currency-label">
+                            <img src="assets/Imagenes/Monetizacion/Rubies.png" class="shop-currency-icon">
+                            <span>RUBIES</span>
                         </div>
-                        <span id="shop-gems"
-                            style="color:white; font-family:monospace; font-size:14px; font-weight:bold;">0</span>
+                        <span id="shop-gems" class="shop-currency-value">0</span>
                     </div>
-                    <div
-                        style="display:flex; align-items:center; justify-content:space-between; background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.07); border-radius:8px; padding:8px 12px;">
-                        <div style="display:flex; align-items:center; gap:6px;">
-                            <img src="assets/Imagenes/Monetizacion/DEAD_COIN.png"
-                                style="width:16px; height:16px; object-fit:contain;">
-                            <span
-                                style="color:rgba(255,255,255,0.5); font-family:monospace; font-size:10px;">COINS</span>
+                    <div class="shop-currency-row">
+                        <div class="shop-currency-label">
+                            <img src="assets/Imagenes/Monetizacion/DEAD_COIN.png" class="shop-currency-icon">
+                            <span>COINS</span>
                         </div>
-                        <span id="shop-coins"
-                            style="color:white; font-family:monospace; font-size:14px; font-weight:bold;">0</span>
+                        <span id="shop-coins" class="shop-currency-value">0</span>
                     </div>
                 </div>
             </div>
@@ -416,21 +348,15 @@
             </button>
 
             <!-- Skin equipado -->
-            <div style="padding:20px 24px; border-bottom:1px solid rgba(255,255,255,0.06);">
-                <div
-                    style="color:rgba(255,255,255,0.25); font-family:monospace; font-size:9px; letter-spacing:4px; margin-bottom:14px;">
-                    EQUIPADO</div>
-                <div
-                    style="display:flex; align-items:center; gap:12px; background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.07); border-radius:10px; padding:12px;">
-                    <div id="sidebar-skin-preview"
-                        style="width:36px; height:36px; border-radius:50%; background:#00ffe722; border:2px solid #00ffe766; display:flex; align-items:center; justify-content:center;">
-                        <div style="width:16px; height:16px; border-radius:50%; background:#00ffe7;"></div>
+            <div class="shop-sidebar-equipped">
+                <div class="shop-sidebar-label">EQUIPADO</div>
+                <div class="shop-equipped-row">
+                    <div id="sidebar-skin-preview" class="shop-equipped-preview">
+                        <div class="shop-equipped-dot"></div>
                     </div>
                     <div>
-                        <div id="sidebar-skin-name" style="color:white; font-family:monospace; font-size:12px;">Cian
-                        </div>
-                        <div id="sidebar-skin-rarity"
-                            style="color:rgba(255,255,255,0.3); font-family:monospace; font-size:10px;">BASICA</div>
+                        <div id="sidebar-skin-name" class="shop-equipped-name">Cian</div>
+                        <div id="sidebar-skin-rarity" class="shop-equipped-rarity">BASICA</div>
                     </div>
                 </div>
             </div>
@@ -615,6 +541,12 @@
                     value="75"></label>
             <button class="option-action" onclick="toggleReducedMotion()">MODO RENDIMIENTO</button>
             <p id="motion-mode-text">Animaciones normales</p>
+            <!-- Modo pruebas -->
+            <div class="option-mobile">
+                <div class="option-mobile-title">MODO PRUEBAS (DEV)</div>
+                <button class="option-action" id="infinite-coins-btn" onclick="toggleInfiniteCoins()">MONEDAS INFINITAS:
+                    OFF</button>
+            </div>
             <!-- Controles móviles -->
             <div class="option-mobile">
                 <div class="option-mobile-title">CONTROLES CELULAR</div>
@@ -636,9 +568,139 @@
 
     </div>
 
-    <!-- Pantalla de selección de nivel -->
-    <div id="levelSelect">
+    <!-- Perfil de jugador y estadísticas -->
+    <div id="profilePanel">
+        <div class="profile-dim" onclick="closeProfileMenu()"></div>
+        <div class="profile-card">
+            <button class="profile-close" type="button" onclick="closeProfileMenu()">×</button>
+            <!-- HERO: nombre/rango a la izquierda, avatar grande a la derecha -->
+            <div class="profile-hero">
+                <div class="profile-hero-info">
+                    <div id="profileHeroName" class="profile-hero-name">Jugador</div>
+                    <div id="profileHeroRank" class="profile-hero-rank">✦ Chispa</div>
+                    <div class="rank-progress-bar">
+                        <div id="rank-progress-bar-fill" class="rank-progress-bar-fill" style="width:0%"></div>
+                    </div>
+                    <div class="rank-xp-labels">
+                        <span id="profileStat-total-xp">0</span> XP
+                        · <span id="profileStat-xp-to-next">— XP para siguiente</span>
+                    </div>
+                </div>
+                <div id="profilePreview" class="profile-preview" aria-label="Avatar de jugador"></div>
+            </div>
+            <div class="profile-section-title">ESTADÍSTICAS DEL JUGADOR</div>
+            <div class="profile-stat-row">
+                <div class="profile-stat-row-item"><span>Top Combo</span><span class="value"
+                        id="profileStat-longest-combo">0</span></div>
+                <div class="profile-stat-row-item"><span>Victorias</span><span class="value"
+                        id="profileStat-game-wins">0</span></div>
+                <div class="profile-stat-row-item"><span>Derrotas</span><span class="value"
+                        id="profileStat-game-losses">0</span></div>
+            </div>
+            <div class="profile-stats-grid">
+                <div class="profile-stat-card">
+                    <div class="stat-title">Juegos jugados</div>
+                    <div class="stat-value" id="profileStat-games-played">0</div>
+                </div>
+                <div class="profile-stat-card">
+                    <div class="stat-title">Total horas</div>
+                    <div class="stat-value" id="profileStat-total-time">0:00</div>
+                </div>
+                <div class="profile-stat-card">
+                    <div class="stat-title">Monedas actuales</div>
+                    <div class="stat-value" id="profileStat-current-coins">0</div>
+                </div>
+                <div class="profile-stat-card">
+                    <div class="stat-title">Rubies actuales</div>
+                    <div class="stat-value" id="profileStat-current-gems">0</div>
+                </div>
+                <div class="profile-stat-card">
+                    <div class="stat-title">Niveles desbloqueados</div>
+                    <div class="stat-value" id="profileStat-unlocked-levels">0 / 0</div>
+                </div>
+                <div class="profile-stat-card">
+                    <div class="stat-title">Supervivencia mejor</div>
+                    <div class="stat-value" id="profileStat-best-survival">N/A</div>
+                </div>
+            </div>
 
+            <!-- Acceso a pantalla de rangos completa — banner imagen -->
+            <button onclick="closeProfileMenu(); setTimeout(()=>openRanksScreen(),80);"
+                style="padding:0; border:none; background:none; overflow:hidden; border-radius:12px; cursor:pointer; display:block; width:calc(100% - 56px); margin:18px 28px 28px; box-shadow:0 0 28px rgba(255,40,40,0.18); transition:box-shadow 0.18s, opacity 0.18s;"
+                onmouseover="this.style.opacity='0.82'; this.style.boxShadow='0 0 40px rgba(255,40,40,0.35)'"
+                onmouseout="this.style.opacity='1'; this.style.boxShadow='0 0 28px rgba(255,40,40,0.18)'">
+                <img src="assets/Imagenes/Sistema de Rangos/Baner_Rangos.png"
+                    style="width:100%; height:auto; display:block; border-radius:12px;">
+            </button>
+
+        </div>
+    </div>
+
+
+    <!-- =====================================================
+         PANTALLA DE RANGOS — Mapa de progresión
+         ===================================================== -->
+    <div id="ranksScreen"
+        style="display:none; position:fixed; inset:0; z-index:36000; background:#07080f; flex-direction:column; overflow:hidden;">
+
+        <!-- Fondo animado de partículas -->
+        <canvas id="ranksParticleCanvas"
+            style="position:absolute; inset:0; width:100%; height:100%; pointer-events:none; z-index:0;"></canvas>
+
+        <!-- Header -->
+        <div class="rs-header">
+            <button class="rs-back-btn" onclick="closeRanksScreen()">← VOLVER</button>
+            <div class="rs-title-block">
+                <div class="rs-kicker">THE GEM</div>
+                <div class="rs-title">CAMINO DE RANGOS</div>
+            </div>
+            <!-- XP del jugador en vivo -->
+            <div class="rs-xp-block">
+                <div class="rs-xp-label">TU XP</div>
+                <div class="rs-xp-value" id="rs-player-xp">0</div>
+            </div>
+        </div>
+
+        <!-- Rango actual del jugador — usa el mini banner del menú -->
+        <div class="rs-current-banner" id="rs-current-banner">
+            <div id="rs-mini-profile" class="menu-profile-banner"
+                style="pointer-events:none; width:100%; max-width:460px; margin:0 auto;">
+                <div id="rs-profile-avatar" class="menu-profile-avatar" aria-hidden="true"></div>
+                <div class="menu-profile-text">
+                    <span id="rs-profile-name" class="menu-profile-name">Jugador</span>
+                    <span id="rs-current-name" class="menu-profile-rank">✦ Chispa</span>
+                </div>
+                <div class="menu-profile-currency">
+                    <span class="menu-profile-chip">
+                        <img src="assets/Imagenes/Monetizacion/Rubies.png" class="menu-profile-chip-icon">
+                        <span id="rs-display-gems">0</span>
+                    </span>
+                    <span class="menu-profile-chip">
+                        <img src="assets/Imagenes/Monetizacion/DEAD_COIN.png" class="menu-profile-chip-icon">
+                        <span id="rs-display-coins">0</span>
+                    </span>
+                </div>
+            </div>
+            <!-- Barra de XP debajo del banner delgado -->
+            <div style="width:100%; max-width:460px; margin:6px auto 0; padding:0 4px; box-sizing:border-box;">
+                <div class="rs-current-bar">
+                    <div class="rs-current-bar-fill" id="rs-current-bar-fill" style="width:0%"></div>
+                </div>
+                <div class="rs-current-xp-info" id="rs-current-xp-info">0 XP · Próximo: 100 XP</div>
+            </div>
+        </div>
+
+        <!-- Mapa scrolleable de rangos -->
+        <div class="rs-map-scroll" id="rs-map-scroll">
+            <div class="rs-map-inner" id="rs-map-inner">
+                <!-- Los nodos se generan por JS -->
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Contenedor principal de selección de nivel -->
+    <div id="levelSelect" style="display:none; position:fixed; inset:0; z-index:20; flex-direction:column;">
         <div class="ls-bg"></div>
         <div class="ls-overlay"></div>
 
@@ -716,16 +778,20 @@
             </button>
         </div>
     </div>
+    </div>
 
     <!-- Scripts del juego -->
+    <script src="config.js"></script>
     <script src="levels.config.js"></script>
     <script src="survival-level.js"></script>
     <script src="combo-system.js"></script>
     <script src="powerups.js"></script>
     <script src="fragment-system.js"></script>
-    <script src="src/main.js"></script>
+    <script src="rank-system.js"></script>
     <script src="levelselect.js"></script>
     <script src="shop.js"></script>
+    <script src="skins-side.js"></script>
+    <script src="src/main.js"></script>
     <script src="obstacles.js"></script>
     <script src="particles.js"></script>
     <script src="ui.js"></script>
@@ -748,11 +814,392 @@
             setTimeout(() => {
                 document.getElementById('loading-screen').style.opacity = '0';
                 document.getElementById('loading-screen').style.transition = 'opacity 0.5s';
-                setTimeout(() => document.getElementById('loading-screen').remove(), 500);
+                setTimeout(() => {
+                    document.getElementById('loading-screen').remove();
+                    // Activar animaciones del menú después de que la pantalla de carga se oculte
+                    document.getElementById('overlay').classList.add('menu-loaded');
+                }, 500);
             }, 300);
         });
     </script>
 
+
+    <!-- Fondo topográfico ondulado -->
+    <script>
+        (function () {
+            function initTopo() {
+                const canvas = document.getElementById('topoCanvas');
+                if (!canvas) return;
+                const ctx = canvas.getContext('2d');
+
+                function resize() {
+                    // Usar el overlay padre como referencia de tamaño real
+                    const parent = canvas.parentElement;
+                    canvas.width = parent ? parent.offsetWidth : window.innerWidth;
+                    canvas.height = parent ? parent.offsetHeight : window.innerHeight;
+                    draw();
+                }
+
+                function draw() {
+                    const W = canvas.width;
+                    const H = canvas.height;
+                    ctx.clearRect(0, 0, W, H);
+
+                    // Líneas visibles: azul oscuro sobre fondo #09091A
+                    const lineColor = 'rgba(30, 30, 80, 0.55)';   // líneas principales
+                    const lineColor2 = 'rgba(20, 20, 60, 0.35)';   // líneas secundarias
+
+                    // Gradientes para desvanecer las líneas en la parte izquierda
+                    const grad1 = ctx.createLinearGradient(W * 0.35, 0, W * 0.85, 0);
+                    grad1.addColorStop(0, 'rgba(30, 30, 80, 0)');
+                    grad1.addColorStop(1, lineColor);
+
+                    const grad2 = ctx.createLinearGradient(W * 0.35, 0, W * 0.85, 0);
+                    grad2.addColorStop(0, 'rgba(20, 20, 60, 0)');
+                    grad2.addColorStop(1, lineColor2);
+
+                    ctx.lineWidth = 1.2;
+                    ctx.lineCap = 'round';
+
+                    const LINES = 28;       // cantidad de líneas
+                    const WAVES = 4;        // ondas por línea
+                    const AMP = H * 0.06; // amplitud de onda
+
+                    // Líneas onduladas primarias (de izquierda a derecha)
+                    for (let i = 0; i <= LINES; i++) {
+                        const t = i / LINES;
+                        const baseY = t * H * 1.15 - H * 0.08;
+                        const phase = i * 0.7;
+                        const ampMod = 0.6 + 0.8 * Math.sin(i * 0.4);
+
+                        ctx.beginPath();
+                        ctx.strokeStyle = i % 3 === 0 ? grad1 : grad2;
+                        ctx.lineWidth = i % 5 === 0 ? 1.6 : 0.9;
+
+                        for (let x = 0; x <= W; x += 3) {
+                            const xNorm = x / W;
+                            // Suma de varias senoides para crear forma orgánica
+                            const y = baseY
+                                + Math.sin(xNorm * Math.PI * 2 * WAVES + phase) * AMP * ampMod
+                                + Math.sin(xNorm * Math.PI * 2 * (WAVES * 0.6) + phase * 1.3) * AMP * 0.4
+                                + Math.sin(xNorm * Math.PI * 2 * (WAVES * 1.7) + phase * 0.5) * AMP * 0.2;
+                            if (x === 0) ctx.moveTo(x, y);
+                            else ctx.lineTo(x, y);
+                        }
+                        ctx.stroke();
+                    }
+
+                    // Líneas diagonales secundarias más suaves
+                    const DIAG = 14;
+                    for (let i = 0; i <= DIAG; i++) {
+                        const t = i / DIAG;
+                        const startX = t * W * 1.4 - W * 0.2;
+                        const phase = i * 1.1 + 2;
+
+                        ctx.beginPath();
+                        const diagGrad = ctx.createLinearGradient(W * 0.35, 0, W * 0.85, 0);
+                        diagGrad.addColorStop(0, 'rgba(6, 6, 22, 0)');
+                        diagGrad.addColorStop(1, 'rgba(6, 6, 22, 0.5)');
+                        ctx.strokeStyle = diagGrad;
+                        ctx.lineWidth = 0.7;
+
+                        for (let y = 0; y <= H; y += 3) {
+                            const yNorm = y / H;
+                            const x = startX
+                                + Math.sin(yNorm * Math.PI * 2 * 3 + phase) * W * 0.04
+                                + Math.sin(yNorm * Math.PI * 2 * 1.5 + phase * 0.8) * W * 0.02;
+                            if (y === 0) ctx.moveTo(x, y);
+                            else ctx.lineTo(x, y);
+                        }
+                        ctx.stroke();
+                    }
+                }
+
+                window.addEventListener('resize', resize);
+                resize();
+            }
+
+            // Inicializar cuando el DOM esté listo
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', initTopo);
+            } else {
+                initTopo();
+            }
+        })();
+    </script>
+
+    <!-- Animaciones del menú -->
+    <style>
+        /* Animaciones de entrada del menú */
+        #overlay:not(.menu-loaded) #overlay-cover,
+        #overlay:not(.menu-loaded) #overlay-panel,
+        #overlay:not(.menu-loaded) .menu-btn-wrap {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        #overlay.menu-loaded #overlay-cover {
+            animation: menuFadeIn 0.6s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+        }
+
+        #overlay.menu-loaded #overlay-panel {
+            animation: menuFadeIn 0.6s cubic-bezier(0.22, 1, 0.36, 1) 0.1s forwards;
+        }
+
+        #overlay.menu-loaded .menu-btn-wrap {
+            animation: menuFadeIn 0.5s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+        }
+
+        #overlay.menu-loaded .menu-btn-wrap:nth-child(1) {
+            animation-delay: 0.15s;
+        }
+
+        #overlay.menu-loaded .menu-btn-wrap:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        #overlay.menu-loaded .menu-btn-wrap:nth-child(3) {
+            animation-delay: 0.25s;
+        }
+
+        #overlay.menu-loaded .menu-btn-wrap:nth-child(4) {
+            animation-delay: 0.3s;
+        }
+
+        @keyframes menuFadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Animaciones pop-from-center para paneles flotantes */
+        #shopPanel.entering,
+        #inventoryPanel.entering,
+        #optionsPanel.entering,
+        #profilePanel.entering,
+        #achievementsPanel.entering {
+            animation: popFromCenter 0.35s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+        }
+
+        @keyframes popFromCenter {
+            0% {
+                opacity: 0;
+                transform: scale(0.3) translate(-50%, -50%);
+                transform-origin: center center;
+            }
+
+            50% {
+                opacity: 1;
+                transform: scale(1.05) translate(-50%, -50%);
+            }
+
+            100% {
+                opacity: 1;
+                transform: scale(1) translate(0, 0);
+            }
+        }
+
+        /* Efectos de pantalla al ganar/perder */
+        .screen-flash-white {
+            position: fixed;
+            inset: 0;
+            background: white;
+            z-index: 99999;
+            pointer-events: none;
+            animation: flashWhite 0.4s ease-out forwards;
+        }
+
+        .screen-flash-red {
+            position: fixed;
+            inset: 0;
+            background: rgba(255, 0, 0, 0.5);
+            z-index: 99999;
+            pointer-events: none;
+            animation: flashRed 0.3s ease-out forwards;
+        }
+
+        .screen-shake {
+            animation: shake 0.3s cubic-bezier(.36, .07, .19, .97) both;
+        }
+
+        @keyframes flashWhite {
+            0% {
+                opacity: 0.8;
+            }
+
+            100% {
+                opacity: 0;
+            }
+        }
+
+        @keyframes flashRed {
+            0% {
+                opacity: 0.6;
+            }
+
+            100% {
+                opacity: 0;
+            }
+        }
+
+        @keyframes shake {
+
+            10%,
+            90% {
+                transform: translate3d(-2px, 0, 0);
+            }
+
+            20%,
+            80% {
+                transform: translate3d(4px, 0, 0);
+            }
+
+            30%,
+            50%,
+            70% {
+                transform: translate3d(-6px, 0, 0);
+            }
+
+            40%,
+            60% {
+                transform: translate3d(6px, 0, 0);
+            }
+        }
+
+        /* Animaciones de botones */
+        .menu-btn-wrap,
+        button,
+        .shop-item,
+        .inventory-item,
+        .achievement-item {
+            transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1),
+                box-shadow 0.2s ease,
+                filter 0.2s ease;
+        }
+
+        .menu-btn-wrap:hover,
+        button:hover {
+            transform: scale(1.05);
+            filter: brightness(1.15);
+        }
+
+        .menu-btn-wrap:active,
+        button:active {
+            transform: scale(0.95);
+            filter: brightness(0.9);
+        }
+
+        /* Glow en botones importantes */
+        .menu-btn-wrap:hover,
+        #play-btn:hover,
+        #shop-btn:hover,
+        #inventory-btn:hover {
+            box-shadow: 0 0 20px rgba(0, 255, 231, 0.4);
+        }
+
+        /* Animaciones específicas para botones del menú principal */
+        .menu-btn-wrap {
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .menu-btn-wrap:hover {
+            transform: scale(1.08) translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 255, 231, 0.3);
+        }
+
+        .menu-btn-wrap:active {
+            transform: scale(0.96) translateY(0);
+        }
+
+        /* Efectos de brillo (glow) en elementos importantes */
+        .menu-btn-wrap {
+            position: relative;
+        }
+
+        .menu-btn-wrap::after {
+            content: '';
+            position: absolute;
+            inset: -2px;
+            border-radius: inherit;
+            background: linear-gradient(45deg, #00ff88, #00ffcc, #00ffff, #00ff88);
+            z-index: -1;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            filter: blur(8px);
+        }
+
+        .menu-btn-wrap:hover::after {
+            opacity: 0.6;
+            animation: glowPulse 1.5s ease-in-out infinite;
+        }
+
+        @keyframes glowPulse {
+
+            0%,
+            100% {
+                opacity: 0.4;
+            }
+
+            50% {
+                opacity: 0.7;
+            }
+        }
+
+        /* Glow en elementos seleccionados/activos */
+        .selected,
+        .active,
+        .equipped {
+            box-shadow: 0 0 15px rgba(0, 255, 231, 0.5),
+                0 0 30px rgba(0, 255, 231, 0.3);
+            animation: selectedGlow 2s ease-in-out infinite;
+        }
+
+        @keyframes selectedGlow {
+
+            0%,
+            100% {
+                box-shadow: 0 0 15px rgba(0, 255, 231, 0.5), 0 0 30px rgba(0, 255, 231, 0.3);
+            }
+
+            50% {
+                box-shadow: 0 0 20px rgba(0, 255, 231, 0.7), 0 0 40px rgba(0, 255, 231, 0.4);
+            }
+        }
+
+        /* Glow en powerups disponibles */
+        .powerup-available {
+            animation: powerupGlow 1s ease-in-out infinite;
+        }
+
+        @keyframes powerupGlow {
+
+            0%,
+            100% {
+                filter: brightness(1) drop-shadow(0 0 5px rgba(0, 255, 231, 0.5));
+            }
+
+            50% {
+                filter: brightness(1.2) drop-shadow(0 0 15px rgba(0, 255, 231, 0.8));
+            }
+        }
+
+        /* Glow en elementos del HUD importantes */
+        #pause-btn.is-playing {
+            box-shadow: 0 0 10px rgba(0, 255, 231, 0.4);
+        }
+
+        /* Glow en botones flotantes */
+        #options-float-btn:hover,
+        #infinite-coins-float-btn:hover {
+            box-shadow: 0 0 15px rgba(0, 255, 231, 0.5);
+        }
+    </style>
 </body>
 
 </html>

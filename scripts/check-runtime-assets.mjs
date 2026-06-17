@@ -3,6 +3,7 @@ import vm from "node:vm";
 
 const runtimeFiles = [
   "shop.js",
+  "skins-side.js",
   "powerups.js",
   "src/main.js",
   "particles.js",
@@ -56,13 +57,40 @@ const context = {
 
 vm.createContext(context);
 vm.runInContext(readFileSync("shop.js", "utf8"), context);
+vm.runInContext(readFileSync("skins-side.js", "utf8"), context);
 
 const skins = context.window.getAllShopSkins?.() || [];
 const missingSkinAssets = [];
+
+// 1. Validar los recursos asignados en el catálogo general de skins
 for (const skin of skins) {
   for (const key of ["image", "imageSide", "imageRight", "imageLeft"]) {
     if (skin[key] && !existsSync(skin[key])) {
       missingSkinAssets.push(`${skin.id}.${key}: ${skin[key]}`);
+    }
+  }
+}
+
+// 2. Validar explícitamente los archivos declarados en el registro lateral
+const sideRegistry = context.window.SKIN_FOLDER_REGISTRY || [];
+for (const entry of sideRegistry) {
+  const { id, folder, symmetric, rolling } = entry;
+  if (rolling) continue;
+  
+  const shortId = id.replace('skin_', '');
+  if (symmetric) {
+    const pathSym = `${folder}/skin_${shortId}_lado.png`;
+    if (!existsSync(pathSym)) {
+      missingSkinAssets.push(`${id}.symmetricSide: ${pathSym}`);
+    }
+  } else {
+    const pathR = `${folder}/skin_${shortId}_lado_derecho.png`;
+    const pathL = `${folder}/skin_${shortId}_lado_izquierdo.png`;
+    if (!existsSync(pathR)) {
+      missingSkinAssets.push(`${id}.asymmetricRightSide: ${pathR}`);
+    }
+    if (!existsSync(pathL)) {
+      missingSkinAssets.push(`${id}.asymmetricLeftSide: ${pathL}`);
     }
   }
 }
@@ -80,4 +108,4 @@ if (missingAssets.length || missingSkinAssets.length) {
   process.exit(1);
 }
 
-console.log(`Runtime asset check passed: ${assetRefs.size} asset refs, ${skins.length} skins.`);
+console.log(`Runtime asset check passed: ${assetRefs.size} asset refs, ${skins.length} skins, ${sideRegistry.length} side configurations checked.`);

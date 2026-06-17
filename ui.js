@@ -57,17 +57,19 @@ document.getElementById("play-btn").onclick = () => {
 
 };
 
-document.getElementById("shop-btn").onclick = () => { window.playSfx?.('menuSelect'); openShop(); };
+const shopBtn = document.getElementById("shop-btn");
+if (shopBtn) shopBtn.onclick = () => { window.playSfx?.('menuSelect'); openShop(); };
 
-document.getElementById("options-btn")
-    .onclick = () => {
-        window.playSfx?.('menuSelect');
-        openOptionsPanel();
-    };
+const optionsBtn = document.getElementById("options-btn");
+if (optionsBtn) optionsBtn.onclick = () => {
+    window.playSfx?.('menuSelect');
+    openOptionsPanel();
+};
 
-document.getElementById('inventory-btn').onclick = () => { window.playSfx?.('menuSelect'); openInventory(); };
+const inventoryBtn = document.getElementById('inventory-btn');
+if (inventoryBtn) inventoryBtn.onclick = () => { window.playSfx?.('menuSelect'); openInventory(); };
 
-['play-btn', 'shop-btn', 'options-btn', 'inventory-btn', 'menu-avatar'].forEach(id => {
+['play-btn', 'shop-btn', 'options-btn', 'inventory-btn', 'menu-avatar', 'menu-profile'].forEach(id => {
     const el = document.getElementById(id);
     if (el) el.addEventListener('mouseenter', () => window.playSfx?.('menuHover', 0.45));
 });
@@ -81,7 +83,6 @@ window.openOptionsPanel = function () {
 // PROFILE / AVATAR
 // =====================================================
 
-const PROFILE_NAME_COST_GEMS = 0; // Futuro costo: subir este valor cuando quieras cobrar gemas.
 const PROFILE_AVATARS = [
     "assets/Imagenes/Avatares/Avatar_Default.png",
     "assets/Imagenes/Avatares/DXZ_Avatar.png",
@@ -96,32 +97,133 @@ let selectedProfileAvatar =
 function refreshProfilePreview() {
     const preview = document.getElementById("profilePreview");
     if (preview) preview.style.backgroundImage = `url("${selectedProfileAvatar}")`;
-
-    document.querySelectorAll(".avatar-option").forEach(option => {
-        option.classList.toggle(
-            "selected",
-            option.dataset.avatar === selectedProfileAvatar
-        );
-    });
 }
 
-function renderAvatarGrid() {
-    const grid = document.getElementById("avatarGrid");
-    if (!grid) return;
+function formatTime(seconds) {
+    if (!Number.isFinite(seconds) || seconds <= 0) return '0:00';
+    const minutes = Math.floor(seconds / 60);
+    const secs = Math.floor(seconds % 60);
+    return `${minutes}:${secs.toString().padStart(2, '0')}`;
+}
 
-    grid.innerHTML = PROFILE_AVATARS.map(src => `
-        <button class="avatar-option" type="button" data-avatar="${src}"
-            style="background-image:url('${src}')"
-            aria-label="Seleccionar avatar"></button>
-    `).join("");
+function getBestSurvivalValue() {
+    const fallbackKeys = [
+        'bestSurvivalTime',
+        'bestSurvivalSeconds',
+        'survivalBestTime',
+        'survivalRecord',
+        'bestSurvivalScore'
+    ];
 
-    grid.querySelectorAll(".avatar-option").forEach(button => {
-        button.onclick = () => {
-            window.playSfx?.('avatarBanner', 0.55);
-            selectedProfileAvatar = button.dataset.avatar;
-            refreshProfilePreview();
-        };
+    for (const key of fallbackKeys) {
+        const raw = localStorage.getItem(key);
+        if (!raw) continue;
+        const value = parseFloat(raw);
+        if (!Number.isNaN(value) && value > 0) {
+            return formatTime(value);
+        }
+        if (typeof raw === 'string' && !raw.match(/^\s*\d+\.?\d*\s*$/)) {
+            return raw;
+        }
+    }
+
+    return 'N/A';
+}
+
+function getUnlockedLevelsCount() {
+    const levels = window.levels || [];
+    if (levels.length > 0) {
+        const unlocked = levels.filter((level, index) => {
+            if (level.unlocked) return true;
+            return localStorage.getItem(`level${index}Unlocked`) === 'true';
+        }).length;
+        return `${unlocked} / ${levels.length}`;
+    }
+
+    return '0 / 0';
+}
+
+function updateProfilePanelStats() {
+    const stats = typeof window.getStats === 'function' ? window.getStats() : {};
+    const wins = parseInt(localStorage.getItem('gamesWon') || '0', 10) || 0;
+    const gamesPlayed = stats.totalGamesPlayed || 0;
+    const losses = Math.max(gamesPlayed - wins, 0);
+    // Leer rango del nuevo sistema si existe, fallback a localStorage legacy
+    const rankObj = window.rankSystem ? window.rankSystem.getCurrentRank() : null;
+    const rankName = rankObj ? rankObj.name : (localStorage.getItem('rankName') || 'Chispa');
+    const rankColor = rankObj ? rankObj.color : (localStorage.getItem('rankColor') || '#aaaaaa');
+    const totalXP = window.rankSystem ? window.rankSystem.getXP() : 0;
+    const xpToNext = window.rankSystem ? window.rankSystem.getXPToNextRank() : 0;
+    const nextRank = window.rankSystem ? window.rankSystem.getNextRank() : null;
+    const rankProgress = window.rankSystem ? window.rankSystem.getRankProgress() : 0;
+    const playerName = localStorage.getItem('playerName') || 'Jugador';
+    const avatarUrl = localStorage.getItem('playerAvatar') || PROFILE_AVATARS[0];
+
+    const coinsValue = window.infiniteCoinsMode ? '∞' : (parseInt(localStorage.getItem('deadCoins') || '0', 10) || 0);
+    const gemsValue = window.infiniteCoinsMode ? '∞' : (parseInt(localStorage.getItem('gems') || '0', 10) || 0);
+
+    const profileFields = {
+        'menu-profile-rank': rankName,
+        'profileStat-total-xp': totalXP.toLocaleString(),
+        'profileStat-xp-to-next': nextRank
+            ? xpToNext.toLocaleString() + ' XP'
+            : '¡Máximo!',
+        'menu-profile-name': playerName,
+        'menu-profile-gems': gemsValue,
+        'menu-profile-coins': coinsValue,
+        'profileStat-longest-combo': stats.longestCombo || stats.maxCombo || 0,
+        'profileStat-game-wins': wins,
+        'profileStat-game-losses': losses,
+        'profileStat-games-played': gamesPlayed,
+        'profileStat-total-time': formatTime(stats.totalTimePlayed),
+        'profileStat-current-coins': coinsValue,
+        'profileStat-current-gems': gemsValue,
+        'profileStat-unlocked-levels': getUnlockedLevelsCount(),
+        'profileStat-best-survival': getBestSurvivalValue()
+    };
+
+    Object.entries(profileFields).forEach(([id, value]) => {
+        const el = document.getElementById(id);
+        if (el) el.textContent = String(value);
     });
+
+    // Colorear elementos de rango
+    if (rankObj) {
+        const heroRankEl = document.getElementById('profileHeroRank');
+        const menuRankEl = document.getElementById('menu-profile-rank');
+        if (heroRankEl) {
+            heroRankEl.textContent = `${rankObj.emoji} ${rankObj.name}`;
+            heroRankEl.style.color = rankObj.color;
+        }
+        if (menuRankEl) {
+            menuRankEl.style.color = rankObj.color;
+        }
+        // Barra de progreso
+        const progressBar = document.getElementById('rank-progress-bar-fill');
+        if (progressBar) progressBar.style.width = (rankProgress * 100).toFixed(1) + '%';
+    }
+
+    const profileNameEl = document.getElementById('menu-profile-name');
+    const profileAvatarEl = document.getElementById('menu-profile-avatar');
+    const heroNameEl = document.getElementById('profileHeroName');
+    const heroRankEl = document.getElementById('profileHeroRank');
+    const profilePreviewEl = document.getElementById('profilePreview');
+
+    if (profileNameEl) profileNameEl.textContent = playerName;
+    if (profileAvatarEl) {
+        profileAvatarEl.style.backgroundImage = `url("${avatarUrl}")`;
+        profileAvatarEl.style.backgroundSize = 'cover';
+        profileAvatarEl.style.backgroundPosition = 'center';
+    }
+    if (heroNameEl) heroNameEl.textContent = playerName;
+    // heroRankEl lo maneja el bloque rankObj de arriba (con emoji y color)
+    // Solo aplicar fallback si rankObj no existe
+    if (!rankObj && heroRankEl) heroRankEl.textContent = rankName;
+    if (profilePreviewEl) {
+        profilePreviewEl.style.backgroundImage = `url("${avatarUrl}")`;
+        profilePreviewEl.style.backgroundSize = 'cover';
+        profilePreviewEl.style.backgroundPosition = 'center';
+    }
 }
 
 window.openProfileMenu = function () {
@@ -130,19 +232,11 @@ window.openProfileMenu = function () {
         localStorage.getItem("playerAvatar") || PROFILE_AVATARS[0];
 
     const panel = document.getElementById("profilePanel");
-    const input = document.getElementById("profileNameInput");
-    const cost = document.getElementById("profileCost");
-
-    if (input) input.value = localStorage.getItem("playerName") || "Jugador";
-    if (cost) {
-        cost.textContent = PROFILE_NAME_COST_GEMS > 0
-            ? `COSTO FUTURO: ${PROFILE_NAME_COST_GEMS} GEMAS`
-            : "GRATIS POR AHORA";
-    }
-
-    renderAvatarGrid();
     refreshProfilePreview();
-    panel.classList.add("showing");
+    updateProfilePanelStats();
+    if (panel) panel.classList.add("showing");
+    // Render rank path visible by default when opening profile
+    setTimeout(() => window.renderRankPathOnOpen?.(), 50);
 };
 
 window.closeProfileMenu = function () {
@@ -150,30 +244,7 @@ window.closeProfileMenu = function () {
     if (panel) panel.classList.remove("showing");
 };
 
-document.getElementById("profileSaveBtn").onclick = () => {
-    const input = document.getElementById("profileNameInput");
-    const nextName = (input.value || "Jugador").trim().slice(0, 14) || "Jugador";
-
-    if (PROFILE_NAME_COST_GEMS > 0) {
-        const gems = parseInt(localStorage.getItem("gems") || "0");
-        if (gems < PROFILE_NAME_COST_GEMS) {
-            alert("No tienes suficientes gemas.");
-            return;
-        }
-        localStorage.setItem("gems", gems - PROFILE_NAME_COST_GEMS);
-    }
-
-    localStorage.setItem("playerName", nextName);
-    localStorage.setItem("playerAvatar", selectedProfileAvatar);
-    window.player = {
-        ...(window.player || {}),
-        name: nextName,
-        avatar: selectedProfileAvatar
-    };
-
-    if (typeof updateMenuHUD === "function") updateMenuHUD();
-    window.closeProfileMenu();
-};
+// Profile editing is not currently displayed in the profile panel.
 
 // =====================================================
 // CONTROLS TOGGLE
@@ -243,26 +314,26 @@ function startKeybind(btn) {
         cancelKeybind();
         return;
     }
-    
+
     currentKeybindAction = btn.dataset.action;
     btn.classList.add('listening');
     btn.textContent = '...';
-    
+
     keybindListener = (e) => {
         e.preventDefault();
         const key = e.key.toLowerCase();
-        
+
         if (key === 'escape') {
             cancelKeybind();
             return;
         }
-        
+
         customKeybinds[currentKeybindAction] = key;
         saveKeybinds();
         updateKeybindButtons();
         cancelKeybind();
     };
-    
+
     document.addEventListener('keydown', keybindListener);
 }
 
@@ -411,7 +482,7 @@ function closePanels() {
 
 document.body.addEventListener('click', () => {
     if (!window.running)
-        if (window.menuMusic.paused)
+        if (window.menuMusic && window.menuMusic.paused)
             if (
                 window.menuMusic &&
                 window.menuMusic.paused &&
@@ -432,7 +503,8 @@ document.getElementById('go-menu').onclick = () => {
     document.getElementById('gameOver').style.display = 'none';
     document.getElementById("gameCanvas").style.visibility = "hidden";
     document.body.classList.remove('is-playing-touch');
-    document.getElementById('pause-btn').classList.remove('is-playing');
+    const pauseBtn = document.getElementById('pause-btn');
+    if (pauseBtn) pauseBtn.classList.remove('is-playing');
     document.getElementById('overlay').style.display = 'flex';
     window.menuMusic.currentTime = 0;
 
@@ -452,7 +524,8 @@ document.getElementById('go-levels').onclick = () => {
     document.getElementById('gameOver').style.display = 'none';
     document.getElementById("gameCanvas").style.visibility = "hidden";
     document.body.classList.remove('is-playing-touch');
-    document.getElementById('pause-btn').classList.remove('is-playing');
+    const pauseBtn = document.getElementById('pause-btn');
+    if (pauseBtn) pauseBtn.classList.remove('is-playing');
     if (typeof window.showLevelSelect === "function") window.showLevelSelect();
 };
 
@@ -477,7 +550,8 @@ document.getElementById('gw-levels').onclick = () => {
     document.getElementById('gameWin').style.display = 'none';
     document.getElementById("gameCanvas").style.visibility = "hidden";
     document.body.classList.remove('is-playing-touch');
-    document.getElementById('pause-btn').classList.remove('is-playing');
+    const pauseBtn = document.getElementById('pause-btn');
+    if (pauseBtn) pauseBtn.classList.remove('is-playing');
     if (typeof window.showLevelSelect === "function") window.showLevelSelect();
 };
 
@@ -500,32 +574,41 @@ window.resumeGame = function () {
     if (window.bgMusic && !window.isMuted) window.bgMusic.play();
 };
 
-document.getElementById('pause-continue').onclick = () => window.resumeGame();
-document.getElementById('pause-options').onclick = () => openOptionsPanel();
-document.getElementById('pause-levels').onclick = () => {
+const pauseContinueBtn = document.getElementById('pause-continue');
+if (pauseContinueBtn) pauseContinueBtn.onclick = () => window.resumeGame();
+
+const pauseOptionsBtn = document.getElementById('pause-options');
+if (pauseOptionsBtn) pauseOptionsBtn.onclick = () => openOptionsPanel();
+
+const pauseLevelsBtn = document.getElementById('pause-levels');
+if (pauseLevelsBtn) pauseLevelsBtn.onclick = () => {
     window.paused = false;
     window.running = false;
-    document.getElementById('pausePanel').classList.remove('showing');
-    document.getElementById('pause-btn').classList.remove('is-playing');
-    document.getElementById("gameCanvas").style.visibility = "hidden";
+    document.getElementById('pausePanel')?.classList.remove('showing');
+    document.getElementById('pause-btn')?.classList.remove('is-playing');
+    const _gc = document.getElementById("gameCanvas"); if (_gc) _gc.style.visibility = "hidden";
     document.body.classList.remove('is-playing-touch');
     if (window.bgMusic) window.bgMusic.pause();
     if (typeof window.showLevelSelect === "function") window.showLevelSelect();
 };
-document.getElementById('pause-menu').onclick = () => {
+
+const pauseMenuBtn = document.getElementById('pause-menu');
+if (pauseMenuBtn) pauseMenuBtn.onclick = () => {
     window.paused = false;
     window.running = false;
-    document.getElementById('pausePanel').classList.remove('showing');
-    document.getElementById("gameCanvas").style.visibility = "hidden";
+    document.getElementById('pausePanel')?.classList.remove('showing');
+    const _gc = document.getElementById("gameCanvas"); if (_gc) _gc.style.visibility = "hidden";
     document.body.classList.remove('is-playing-touch');
-    document.getElementById('pause-btn').classList.remove('is-playing');
-    document.getElementById('overlay').style.display = 'flex';
+    document.getElementById('pause-btn')?.classList.remove('is-playing');
+    const _ov = document.getElementById('overlay'); if (_ov) _ov.style.display = 'flex';
     if (window.bgMusic) {
         window.bgMusic.pause();
         window.bgMusic.currentTime = 0;
     }
-    window.menuMusic.currentTime = 0;
-    if (window.menuMusic.paused && !window.isMuted) window.menuMusic.play();
+    if (window.menuMusic) {
+        window.menuMusic.currentTime = 0;
+        if (window.menuMusic.paused && !window.isMuted) window.menuMusic.play();
+    }
 };
 
 window.isMuted =
@@ -572,6 +655,68 @@ applyMuteState();
 window.startKeybind = startKeybind;
 window.resetKeybinds = resetKeybinds;
 window.getKeybind = getKeybind;
+
+// =====================================================
+// MODO PRUEBAS - MONEDAS INFINITAS
+// =====================================================
+
+window.infiniteCoinsMode = localStorage.getItem('infiniteCoinsMode') === 'true';
+
+function toggleInfiniteCoins() {
+    window.infiniteCoinsMode = !window.infiniteCoinsMode;
+    localStorage.setItem('infiniteCoinsMode', window.infiniteCoinsMode ? 'true' : 'false');
+    
+    const btn = document.getElementById('infinite-coins-btn');
+    if (btn) {
+        btn.textContent = `MONEDAS INFINITAS: ${window.infiniteCoinsMode ? 'ON' : 'OFF'}`;
+        btn.style.background = window.infiniteCoinsMode ? 'rgba(0,255,100,0.2)' : '';
+        btn.style.borderColor = window.infiniteCoinsMode ? 'rgba(0,255,100,0.5)' : '';
+    }
+    
+    // Actualizar botón flotante
+    const floatBtn = document.getElementById('infinite-coins-float-btn');
+    if (floatBtn) {
+        floatBtn.style.background = window.infiniteCoinsMode ? 'rgba(0,255,100,0.4)' : 'rgba(0,0,0,0.35)';
+        floatBtn.style.borderColor = window.infiniteCoinsMode ? 'rgba(0,255,100,0.6)' : 'rgba(255,255,255,0.12)';
+    }
+    
+    // Actualizar botón del menú principal
+    const menuBtn = document.getElementById('infinite-coins-menu-text');
+    if (menuBtn) {
+        menuBtn.textContent = `MONEDAS INFINITAS: ${window.infiniteCoinsMode ? 'ON' : 'OFF'}`;
+        menuBtn.style.color = window.infiniteCoinsMode ? '#00ff64' : '#ff4444';
+    }
+    
+    // Actualizar display de monedas inmediatamente
+    updateProfilePanelStats();
+    
+    window.playSfx?.('menuSelect');
+}
+
+window.toggleInfiniteCoins = toggleInfiniteCoins;
+
+// Inicializar estado del botón
+if (document.getElementById('infinite-coins-btn')) {
+    document.getElementById('infinite-coins-btn').textContent = `MONEDAS INFINITAS: ${window.infiniteCoinsMode ? 'ON' : 'OFF'}`;
+    if (window.infiniteCoinsMode) {
+        document.getElementById('infinite-coins-btn').style.background = 'rgba(0,255,100,0.2)';
+        document.getElementById('infinite-coins-btn').style.borderColor = 'rgba(0,255,100,0.5)';
+    }
+}
+
+// Inicializar botón flotante
+if (document.getElementById('infinite-coins-float-btn')) {
+    if (window.infiniteCoinsMode) {
+        document.getElementById('infinite-coins-float-btn').style.background = 'rgba(0,255,100,0.4)';
+        document.getElementById('infinite-coins-float-btn').style.borderColor = 'rgba(0,255,100,0.6)';
+    }
+}
+
+// Inicializar botón del menú principal
+if (document.getElementById('infinite-coins-menu-text')) {
+    document.getElementById('infinite-coins-menu-text').textContent = `MONEDAS INFINITAS: ${window.infiniteCoinsMode ? 'ON' : 'OFF'}`;
+    document.getElementById('infinite-coins-menu-text').style.color = window.infiniteCoinsMode ? '#00ff64' : '#ff4444';
+}
 
 // =====================================================
 // ACHIEVEMENTS SYSTEM
@@ -639,10 +784,10 @@ function showAchievementsPanel() {
     const panel = document.getElementById('achievementsPanel');
     const body = document.getElementById('achievementsBody');
     if (!panel || !body) return;
-    
+
     const unlockedCount = ACHIEVEMENTS_DATA.filter(a => a.unlocked).length;
     const totalCount = ACHIEVEMENTS_DATA.length;
-    
+
     body.innerHTML = `
         <div class="achievements-stats">
             <span>Desbloqueados: ${unlockedCount}/${totalCount}</span>
@@ -660,7 +805,7 @@ function showAchievementsPanel() {
             `).join('')}
         </div>
     `;
-    
+
     panel.style.display = 'grid';
     panel.classList.add('showing');
 }
@@ -690,38 +835,35 @@ function autoSave() {
     if (window.playerData) {
         localStorage.setItem('deadCoins', window.playerData.deadCoins);
         localStorage.setItem('gems', window.playerData.gems);
+        // XP del sistema de rangos
+        if (typeof window.playerData.totalXP === 'number') {
+            localStorage.setItem('totalXP', String(window.playerData.totalXP));
+        }
     }
-    
-    // Guardar potenciadores
-    window.savePowerups?.();
-    
-    // Guardar keybinds
-    localStorage.setItem('customKeybinds', JSON.stringify(window.customKeybinds || {}));
-    
-    // Guardar logros
-    localStorage.setItem('achievements', JSON.stringify(window.ACHIEVEMENTS_DATA || []));
-    
-    // Guardar combo stats
-    window.saveComboStats?.();
-    
-    console.log('Auto-save completado');
+
+    function startAutoSave() {
+        autoSave();
+        setInterval(autoSave, AUTO_SAVE_INTERVAL);
+    }
+
+    // Iniciar auto-save cuando el DOM esté cargado
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', startAutoSave);
+    } else {
+        startAutoSave();
+    }
+
+    window.autoSave = autoSave;
+
+    window.addEventListener(
+        "DOMContentLoaded",
+        applyMuteState
+    );
 }
 
-function startAutoSave() {
-    autoSave();
-    setInterval(autoSave, AUTO_SAVE_INTERVAL);
-}
-
-// Iniciar auto-save cuando el DOM esté cargado
+// Poblar el banner del menú principal con los datos del jugador al cargar
 if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', startAutoSave);
+    document.addEventListener('DOMContentLoaded', updateProfilePanelStats);
 } else {
-    startAutoSave();
+    setTimeout(updateProfilePanelStats, 0);
 }
-
-window.autoSave = autoSave;
-
-window.addEventListener(
-    "DOMContentLoaded",
-    applyMuteState
-);

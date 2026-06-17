@@ -227,6 +227,17 @@ const VIP_CAROUSEL_DATA = [
         glowA: '#ff1f3d',
         glowB: '#030000',
         items: [
+            {
+                type: 'bundle',
+                name: 'Los Bufones',
+                price: 620,
+                image: 'assets/UI/Store/VIP/Bundles/DarkCarnival/panel_los_bufones.png',
+                popupBackground: 'assets/UI/Store/VIP/Bundles/DarkCarnival/popup_los_bufones_bg.png',
+                items: [
+                    { type: 'skin', id: 'skin_bufon_diurno', name: 'Bufón Diurno', image: 'assets/UI/Store/VIP/Bundles/DarkCarnival/skin_bufon_diurno.png' },
+                    { type: 'skin', id: 'skin_bufon_nocturno', name: 'Bufón Nocturno', image: 'assets/UI/Store/VIP/Bundles/DarkCarnival/skin_bufon_nocturno.png' }
+                ]
+            },
             { ...vipTrail('DarkCarnival', 'trail_sonrisa_malvada', 'Trail Sonrisa Malvada'), previewColor: 'red' },
             { ...vipTrail('DarkCarnival', 'trail_circo', 'Trail Circo'), previewColor: 'orange' },
             vipSkin('DarkCarnival', 'skin_bufon_maldito', 'Bufon Maldito', 340),
@@ -299,19 +310,40 @@ function preloadShopImages() {
 
 // Datos de skins disponibles en la tienda
 const SKINS_DATA = [
-    { id: 'cyan', name: 'Cian', color: '#00ffe7', rarity: 'BASICA', price: 0, priceType: 'coins', owned: true },
-    { id: 'red', name: 'Rojo', color: '#ff4444', rarity: 'BASICA', price: 50, priceType: 'coins', owned: false },
-    { id: 'blue', name: 'Azul', color: '#5045eb', rarity: 'BASICA', price: 50, priceType: 'coins', owned: false },
-    { id: 'yellow', name: 'Amarillo', color: '#ffee00', rarity: 'BASICA', price: 50, priceType: 'coins', owned: false },
-    { id: 'orange', name: 'Naranja', color: '#ff8800', rarity: 'BASICA', price: 50, priceType: 'coins', owned: false },
-    { id: 'green', name: 'Verde', color: '#3fe969', rarity: 'BASICA', price: 50, priceType: 'coins', owned: false },
-    { id: 'purple', name: 'Morado', color: '#cc44ff', rarity: 'BASICA', price: 50, priceType: 'coins', owned: false },
-    { id: 'cool', name: 'Cool', color: '#ffffff', rarity: 'ESPECIAL', price: 300, priceType: 'coins', altPrice: 10, altType: 'gems', owned: false },
+    { id: 'cyan', name: 'Pelota Cian', color: '#00ffe7', rarity: 'BASICA', price: 0, priceType: 'coins', owned: true, image: 'assets/UI/Store/Skins/Normal/skin pelota/pelota cian.png' },
+    { id: 'red', name: 'Pelota Rojo', color: '#ff4444', rarity: 'BASICA', price: 50, priceType: 'coins', owned: false, image: 'assets/UI/Store/Skins/Normal/skin pelota/pelota rojo.png' },
+    { id: 'blue', name: 'Pelota Azul', color: '#5045eb', rarity: 'BASICA', price: 50, priceType: 'coins', owned: false, image: 'assets/UI/Store/Skins/Normal/skin pelota/pelota azul.png' },
+    { id: 'yellow', name: 'Pelota Amarillo', color: '#ffee00', rarity: 'BASICA', price: 50, priceType: 'coins', owned: false, image: 'assets/UI/Store/Skins/Normal/skin pelota/pelota amarillo.png' },
+    { id: 'orange', name: 'Pelota Naranja', color: '#ff8800', rarity: 'BASICA', price: 50, priceType: 'coins', owned: false, image: 'assets/UI/Store/Skins/Normal/skin pelota/pelota naranja.png' },
+    { id: 'green', name: 'Pelota Verde', color: '#3fe969', rarity: 'BASICA', price: 50, priceType: 'coins', owned: false, image: 'assets/UI/Store/Skins/Normal/skin pelota/pelota verde.png' },
+    { id: 'purple', name: 'Pelota Morado', color: '#cc44ff', rarity: 'BASICA', price: 50, priceType: 'coins', owned: false, image: 'assets/UI/Store/Skins/Normal/skin pelota/pelota morado.png' },
+    { id: 'white', name: 'Pelota Blanco', color: '#ffffff', rarity: 'BASICA', price: 50, priceType: 'coins', owned: false, image: 'assets/UI/Store/Skins/Normal/skin pelota/pelota blanco.png' },
+    { id: 'black', name: 'Pelota Negro', color: '#222222', rarity: 'BASICA', price: 50, priceType: 'coins', owned: false, image: 'assets/UI/Store/Skins/Normal/skin pelota/pelota negro.png' },
+
+    // Serie Pelota Dona
+    { id: 'dona_cyan', name: 'Dona Cian', color: '#00ffe7', rarity: 'ESPECIAL', price: 150, priceType: 'coins', owned: false, image: 'assets/UI/Store/Skins/Normal/pelota dona/pelota cian.png' },
+    { id: 'dona_red', name: 'Dona Rojo', color: '#ff4444', rarity: 'ESPECIAL', price: 150, priceType: 'coins', owned: false, image: 'assets/UI/Store/Skins/Normal/pelota dona/pelota rojo.png' },
+    { id: 'dona_blue', name: 'Dona Azul', color: '#5045eb', rarity: 'ESPECIAL', price: 150, priceType: 'coins', owned: false, image: 'assets/UI/Store/Skins/Normal/pelota dona/pelota azul.png' },
+    { id: 'dona_yellow', name: 'Dona Amarillo', color: '#ffee00', rarity: 'ESPECIAL', price: 150, priceType: 'coins', owned: false, image: 'assets/UI/Store/Skins/Normal/pelota dona/pelota amarillo.png' },
+    { id: 'dona_orange', name: 'Dona Naranja', color: '#ff8800', rarity: 'ESPECIAL', price: 150, priceType: 'coins', owned: false, image: 'assets/UI/Store/Skins/Normal/pelota dona/pelota naranja.png' },
+    { id: 'dona_green', name: 'Dona Verde', color: '#3fe969', rarity: 'ESPECIAL', price: 150, priceType: 'coins', owned: false, image: 'assets/UI/Store/Skins/Normal/pelota dona/pelota verde.png' },
+    { id: 'dona_purple', name: 'Dona Morado', color: '#cc44ff', rarity: 'ESPECIAL', price: 150, priceType: 'coins', owned: false, image: 'assets/UI/Store/Skins/Normal/pelota dona/pelota morado.png' },
+    { id: 'dona_white', name: 'Dona Blanco', color: '#ffffff', rarity: 'ESPECIAL', price: 150, priceType: 'coins', owned: false, image: 'assets/UI/Store/Skins/Normal/pelota dona/pelota blanco.png' },
+    { id: 'dona_black', name: 'Dona Negro', color: '#222222', rarity: 'ESPECIAL', price: 150, priceType: 'coins', owned: false, image: 'assets/UI/Store/Skins/Normal/pelota dona/pelota negro.png' },
+
+    // Serie Contornos y Especiales
+    { id: 'cool', name: 'Contorno Verde', color: '#3fe969', rarity: 'ESPECIAL', price: 300, priceType: 'coins', altPrice: 10, altType: 'gems', owned: false },
+    { id: 'contorno_red', name: 'Contorno Rojo', color: '#ff4444', rarity: 'ESPECIAL', price: 300, priceType: 'coins', owned: false },
+    { id: 'contorno_purple', name: 'Contorno Morado', color: '#cc44ff', rarity: 'ESPECIAL', price: 300, priceType: 'coins', owned: false },
+    { id: 'contorno_cyan', name: 'Contorno Cian', color: '#00ffe7', rarity: 'ESPECIAL', price: 300, priceType: 'coins', owned: false },
+    { id: 'contorno_orange', name: 'Contorno Naranja', color: '#ff8800', rarity: 'ESPECIAL', price: 300, priceType: 'coins', owned: false },
+    { id: 'contorno_white', name: 'Contorno Blanco', color: '#ffffff', rarity: 'ESPECIAL', price: 300, priceType: 'coins', owned: false },
+    { id: 'contorno_black', name: 'Contorno Negro', color: '#222222', rarity: 'ESPECIAL', price: 300, priceType: 'coins', owned: false },
     { id: 'controlador', name: 'Controlador', color: '#00ffe7', rarity: 'ESPECIAL', price: 650, priceType: 'coins', imageRight: 'assets/UI/Store/Skins/skin_neon_ace.png' },
     { id: 'metalman', name: 'Metalman', color: '#ffee00', rarity: 'ESPECIAL', price: 650, priceType: 'coins', imageRight: 'assets/UI/Store/Skins/skin_volt_star.png' },
-    { id: 'el_chivo_relajado', name: 'El Chivo Relajado', color: '#ffffff', rarity: 'ESPECIAL', price: 800, priceType: 'coins', imageRight: 'assets/UI/Store/Skins/skin_chivo.png' },
-    { id: 'frank', name: 'Frankenstein', color: '#78ff8f', rarity: 'EPICA', price: 1200, priceType: 'coins', altPrice: 40, altType: 'gems', fragments: 3, owned: false },
-    { id: 'shield', name: 'Centinela', color: '#7fd8ff', rarity: 'EPICA', price: 1200, priceType: 'coins', altPrice: 40, altType: 'gems', fragments: 3, owned: false },
+    { id: 'pichos', name: 'Pichos', color: '#ffffff', rarity: 'ESPECIAL', price: 800, priceType: 'coins', imageRight: 'assets/UI/Store/Skins/skin_pichos.png' },
+    { id: 'frank', name: 'Contorno Amarillo', color: '#ffee00', rarity: 'EPICA', price: 1200, priceType: 'coins', altPrice: 40, altType: 'gems', fragments: 3, owned: false },
+    { id: 'shield', name: 'Contorno Azul', color: '#4488ff', rarity: 'EPICA', price: 1200, priceType: 'coins', altPrice: 40, altType: 'gems', fragments: 3, owned: false },
     { id: 'kenji', name: 'KENJI', color: '#845cff', rarity: 'EPICA', price: 1500, priceType: 'coins', altPrice: 50, altType: 'gems', fragments: 3, owned: false, image: 'assets/UI/Store/Skins/Normal/KENJI Skin EPICO/Kenji_Skin.png', imageSide: 'assets/UI/Store/Skins/Normal/KENJI Skin EPICO/Kenji_Skin_lado.png' },
     { id: 'brifon', name: 'BRIFON', color: '#b86cff', rarity: 'EPICA', price: 1600, priceType: 'coins', owned: false, image: 'assets/UI/Store/Skins/Normal/Brifon.png', imageSide: 'assets/UI/Store/Skins/Normal/BRIFON Skin EPICO/BRIFON_Skin_lado.png' },
     { id: 'demon_ember', name: 'Demon Ember', color: '#cf0000', rarity: 'DEMON', price: 4500, priceType: 'coins', altPrice: 150, altType: 'gems', fragments: 3, owned: false },
@@ -994,7 +1026,16 @@ var ROLLING_SKIN_IDS = new Set([
     'skin_cupcake',
     'skin_jugo',
     'skin_galleta',
-    'skin_torta'
+    'skin_torta',
+    'dona_cyan',
+    'dona_red',
+    'dona_blue',
+    'dona_yellow',
+    'dona_orange',
+    'dona_green',
+    'dona_purple',
+    'dona_white',
+    'dona_black'
 ]);
 
 // Obtener la ruta de la imagen lateral de un skin
@@ -1015,15 +1056,48 @@ function getSkinSidePath(image, id) {
 function withGameplaySkinAssets(item) {
     if (!item || !(item.type === 'vipSkin' || item.type === 'skin')) return item;
     const rolling = item.rolling === true || ROLLING_SKIN_IDS.has(item.id);
-    const sideImage = rolling
-        ? item.image
-        : (item.imageSide || getSkinSidePath(item.image, item.id) || item.imageRight || item.imageLeft || item.image);
+
+    let imageSide = item.imageSide || null;
+    let imageRight = item.imageRight || null;
+    let imageLeft = item.imageLeft || null;
+
+    if (rolling) {
+        const img = item.image || item.imageRight || item.imageLeft;
+        imageSide = img;
+        imageRight = img;
+        imageLeft = img;
+    } else {
+        // Query skins-side registry if loaded
+        const sideEntry = typeof window.hasSkinSideSystem === 'function' && window.hasSkinSideSystem(item.id)
+            ? (window.SKIN_FOLDER_REGISTRY || []).find(e => e.id === item.id)
+            : null;
+
+        if (sideEntry) {
+            const shortId = item.id.replace('skin_', '');
+            if (sideEntry.symmetric) {
+                imageSide = `${sideEntry.folder}/skin_${shortId}_lado.png`;
+                imageRight = imageSide;
+                imageLeft = imageSide;
+            } else {
+                imageSide = `${sideEntry.folder}/skin_${shortId}_lado_derecho.png`;
+                imageRight = `${sideEntry.folder}/skin_${shortId}_lado_derecho.png`;
+                imageLeft = `${sideEntry.folder}/skin_${shortId}_lado_izquierdo.png`;
+            }
+        } else {
+            // Fallback for skins that don't have side assets
+            const img = item.image || item.imageRight || item.imageLeft;
+            imageSide = item.imageSide || item.imageRight || item.imageLeft || img;
+            imageRight = item.imageRight || item.imageSide || img;
+            imageLeft = item.imageLeft || item.imageSide || img;
+        }
+    }
+
     return {
         ...item,
         rolling,
-        imageSide: sideImage,
-        imageRight: sideImage,
-        imageLeft: sideImage
+        imageSide,
+        imageRight,
+        imageLeft
     };
 }
 
@@ -1190,21 +1264,24 @@ const VIP_PACKAGES_DATA = [
         popupBackground: 'assets/UI/Store/VIP/Bundles/Food/popup_food_bg.png',
         accent: '#ff8a3d',
         items: [
-            { type: 'vipSkin', id: 'skin_hamburguesa', name: 'Hamburguesa', price: 260, image: 'assets/UI/Store/VIP/Bundles/Food/skin_hamburguesa.png' },
-            { type: 'vipSkin', id: 'skin_pizza', name: 'Pizza', price: 260, image: 'assets/UI/Store/VIP/Bundles/Food/skin_pizza.png' },
-            { type: 'vipSkin', id: 'skin_helado', name: 'Helado', price: 260, image: 'assets/UI/Store/VIP/Bundles/Food/skin_helado.png' },
-            { type: 'vipSkin', id: 'skin_limon_toxico', name: 'Limon Toxico', price: 320, image: 'assets/UI/Store/VIP/Bundles/Food/skin_limon_toxico.png' },
-            { type: 'vipSkin', id: 'skin_sandia', name: 'Sandia', price: 260, image: 'assets/UI/Store/VIP/Bundles/Food/skin_sandia.png' },
-            { type: 'vipSkin', id: 'skin_cafe', name: 'Cafe', price: 260, image: 'assets/UI/Store/VIP/Bundles/Food/skin_cafe.png' },
-            { type: 'vipSkin', id: 'skin_dona', name: 'Dona', price: 260, image: 'assets/UI/Store/VIP/Bundles/Food/skin_dona.png', rolling: true },
-            { type: 'vipSkin', id: 'skin_papas_fritas', name: 'Papas Fritas', price: 260, image: 'assets/UI/Store/VIP/Bundles/Food/skin_papas_fritas.png', rolling: true },
-            { type: 'vipSkin', id: 'skin_sandwich', name: 'Sandwich', price: 260, image: 'assets/UI/Store/VIP/Bundles/Food/skin_sandwich.png', rolling: true },
-            { type: 'vipSkin', id: 'skin_manzana', name: 'Manzana', price: 260, image: 'assets/UI/Store/VIP/Bundles/Food/skin_manzana.png', rolling: true },
-            { type: 'vipSkin', id: 'skin_palomitas', name: 'Palomitas', price: 260, image: 'assets/UI/Store/VIP/Bundles/Food/skin_palomitas.png', rolling: true },
-            { type: 'vipSkin', id: 'skin_cupcake', name: 'Cupcake', price: 260, image: 'assets/UI/Store/VIP/Bundles/Food/skin_cupcake.png', rolling: true },
-            { type: 'vipSkin', id: 'skin_jugo', name: 'Jugo', price: 260, image: 'assets/UI/Store/VIP/Bundles/Food/skin_jugo.png', rolling: true },
-            { type: 'vipSkin', id: 'skin_galleta', name: 'Galleta', price: 260, image: 'assets/UI/Store/VIP/Bundles/Food/skin_galleta.png', rolling: true },
-            { type: 'vipSkin', id: 'skin_torta', name: 'Torta', price: 260, image: 'assets/UI/Store/VIP/Bundles/Food/skin_torta.png', rolling: true }
+            { type: 'vipSkin', id: 'skin_hamburguesa', name: 'Hamburguesa', price: 300, image: 'assets/UI/Store/VIP/Bundles/Food/skin_hamburguesa.png', rolling: true },
+            { type: 'vipSkin', id: 'skin_pizza', name: 'Pizza', price: 250, image: 'assets/UI/Store/VIP/Bundles/Food/skin_pizza.png', rolling: true },
+            { type: 'vipSkin', id: 'skin_helado', name: 'Helado', price: 200, image: 'assets/UI/Store/VIP/Bundles/Food/skin_helado.png', rolling: true },
+            { type: 'vipSkin', id: 'skin_limon_toxico', name: 'Limon Toxico', price: 200, image: 'assets/UI/Store/VIP/Bundles/Food/skin_limon_toxico.png', rolling: true },
+            { type: 'vipSkin', id: 'skin_sandia', name: 'Sandia', price: 200, image: 'assets/UI/Store/VIP/Bundles/Food/skin_sandia.png', rolling: true },
+            { type: 'vipSkin', id: 'skin_cafe', name: 'Cafe', price: 180, image: 'assets/UI/Store/VIP/Bundles/Food/skin_cafe.png', rolling: true },
+            { type: 'vipSkin', id: 'skin_dona', name: 'Dona', price: 200, image: 'assets/UI/Store/VIP/Bundles/Food/skin_dona.png', rolling: true },
+            { type: 'vipSkin', id: 'skin_papas_fritas', name: 'Papas Fritas', price: 250, image: 'assets/UI/Store/VIP/Bundles/Food/skin_papas_fritas.png', rolling: true },
+            { type: 'vipSkin', id: 'skin_sandwich', name: 'Sandwich', price: 230, image: 'assets/UI/Store/VIP/Bundles/Food/skin_sandwich.png', rolling: true },
+            { type: 'vipSkin', id: 'skin_manzana', name: 'Manzana', price: 180, image: 'assets/UI/Store/VIP/Bundles/Food/skin_manzana.png', rolling: true },
+            { type: 'vipSkin', id: 'skin_palomitas', name: 'Palomitas', price: 200, image: 'assets/UI/Store/VIP/Bundles/Food/skin_palomitas.png', rolling: true },
+            { type: 'vipSkin', id: 'skin_cupcake', name: 'Cupcake', price: 230, image: 'assets/UI/Store/VIP/Bundles/Food/skin_cupcake.png', rolling: true },
+            { type: 'vipSkin', id: 'skin_jugo', name: 'Jugo', price: 100, image: 'assets/UI/Store/VIP/Bundles/Food/skin_jugo.png', rolling: true },
+            { type: 'vipSkin', id: 'skin_galleta', name: 'Galleta', price: 200, image: 'assets/UI/Store/VIP/Bundles/Food/skin_galleta.png', rolling: true },
+            { type: 'vipSkin', id: 'skin_torta', name: 'Torta', price: 250, image: 'assets/UI/Store/VIP/Bundles/Food/skin_torta.png', rolling: true },
+            { type: 'vipSkin', id: 'skin_chocolate', name: 'Chocolate', price: 250, image: 'assets/UI/Store/VIP/Bundles/Food/skin_chocolate.png', rolling: true },
+            { type: 'vipSkin', id: 'skin_pina', name: 'Pina', price: 230, image: 'assets/UI/Store/VIP/Bundles/Food/skin_pina.png', rolling: true },
+            { type: 'vipSkin', id: 'skin_pancakes', name: 'Pancakes', price: 350, image: 'assets/UI/Store/VIP/Bundles/Food/skin_pancakes.png', rolling: true },
         ]
     },
     {
@@ -1531,7 +1608,7 @@ function renderHome(container) {
     const panels = [
         { section: 'skins', image: 'assets/UI/Store/Panels/portada_panel_skins_tienda_normal.png' },
         { section: 'trails', image: 'assets/UI/Store/Panels/portada_panel_trails_tienda_normal.png' },
-        { section: 'powerups', image: 'assets/UI/Store/Panels/portada_panel_potenciadores_tienda_normal.png', label: 'POTENCIADORES' },
+        { section: 'powerups', image: 'assets/UI/Store/Panels/portada_panel_potenciadores_tienda_normal.png', },
         { section: 'cofres', image: 'assets/UI/Store/Panels/portada_panel_cofres_tienda_normal.png' },
         { section: 'banners', image: 'assets/UI/Store/Panels/portada_panel_banners_tienda_normal.png' },
         { section: 'emotes', image: 'assets/UI/Store/Panels/portada_panel_emotes_tienda_normal.png' },
@@ -1539,7 +1616,7 @@ function renderHome(container) {
         { section: 'conversion', image: 'assets/UI/Store/Panels/portada_panel_conversion_tienda_normal.png' },
     ];
     container.innerHTML = `
-        <div style="display:flex; gap:12px; margin-bottom:24px; align-items:stretch; height:130px;">
+        <div class="shop-home-banner-row" style="height:130px;">
             <div class="shop-vip-access-banner" style="flex:1; background-image:url('assets/UI/Store/VIP/Banners/banner_tienda_vip_home.png');">
                 <div style="position:absolute; right:0; top:0; bottom:0; width:300px; background:linear-gradient(90deg, transparent, rgba(255,180,0,0.06)); pointer-events:none;"></div>
                 <div style="position:absolute; left:0; top:0; bottom:0; width:4px; background:linear-gradient(to bottom, #ffcc00, #ff8800);"></div>
@@ -2295,11 +2372,21 @@ function openGambit() {
 }
 
 function canAfford(amount, currency) {
+    // Si el modo infinito está activo, siempre permitir compras
+    if (window.infiniteCoinsMode) return true;
+
     const key = currency === 'gems' ? 'gems' : 'deadCoins';
     return parseInt(localStorage.getItem(key) || '0') >= amount;
 }
 
 function spendCurrency(amount, currency) {
+    // Si el modo infinito está activo, no restar monedas
+    if (window.infiniteCoinsMode) {
+        window.trackMissionProgress?.('shop_purchase', 1);
+        refreshShopBalances();
+        return;
+    }
+
     const key = currency === 'gems' ? 'gems' : 'deadCoins';
     localStorage.setItem(key, parseInt(localStorage.getItem(key) || '0') - amount);
     window.trackMissionProgress?.('shop_purchase', 1);
@@ -2316,9 +2403,10 @@ function addCurrency(amount, currency) {
 }
 
 function refreshShopBalances() {
-    const coins = parseInt(localStorage.getItem('deadCoins') || '0');
-    const gems = parseInt(localStorage.getItem('gems') || '0');
-    playerData.deadCoins = coins;
+    const coins = window.infiniteCoinsMode ? '∞' : parseInt(localStorage.getItem('deadCoins') || '0');
+    const gems = window.infiniteCoinsMode ? '∞' : parseInt(localStorage.getItem('gems') || '0');
+    const actualCoins = parseInt(localStorage.getItem('deadCoins') || '0');
+    playerData.deadCoins = actualCoins;
     const coinsEl = document.getElementById('shop-coins');
     const gemsEl = document.getElementById('shop-gems');
     const vipCoinsEl = document.getElementById('vip-coins');
@@ -2392,6 +2480,26 @@ function updateShopProfileBanner() {
     if (avatarEl) avatarEl.style.backgroundImage = `url("${avatar}")`;
     if (nameEl) nameEl.textContent = name;
     if (bannerEl) bannerEl.textContent = '';
+
+    // ── También actualiza el banner del menú principal ──
+    const menuCard = document.getElementById('menu-profile');
+    const menuAvatarEl = document.getElementById('menu-profile-avatar');
+    const menuBannerNameEl = document.getElementById('menu-profile-banner-name');
+    if (menuCard) {
+        menuCard.style.backgroundImage = banner.cover
+            ? `linear-gradient(90deg, rgba(5,6,12,0.82), rgba(5,6,12,0.34)), url("${banner.cover}")`
+            : 'linear-gradient(135deg, rgba(0,255,231,0.18), rgba(255,77,109,0.16))';
+        menuCard.style.backgroundSize = 'cover';
+        menuCard.style.backgroundPosition = 'center';
+        menuCard.style.border = banner.rarity === 'VIP' ? '2px solid rgba(255,204,0,0.8)' : '1px solid rgba(255,255,255,0.1)';
+        menuCard.style.boxShadow = banner.rarity === 'VIP' ? '0 0 18px rgba(255,204,0,0.3)' : 'none';
+    }
+    if (menuAvatarEl) {
+        menuAvatarEl.style.backgroundImage = `url("${avatar}")`;
+        menuAvatarEl.style.backgroundSize = 'cover';
+        menuAvatarEl.style.backgroundPosition = 'center';
+    }
+    if (menuBannerNameEl) menuBannerNameEl.textContent = banner.name || '';
 }
 
 function toggleBannerPicker() {
@@ -2486,6 +2594,28 @@ function updateMenuHUD() {
     }
     if (spn) spn.textContent = name;
     if (spa) spa.style.backgroundImage = `url("${avatar}")`;
+
+    const mpn = document.getElementById('menu-profile-name');
+    const mpr = document.getElementById('menu-profile-rank');
+    const mpg = document.getElementById('menu-profile-gems');
+    const mpc = document.getElementById('menu-profile-coins');
+    const mpa = document.getElementById('menu-profile-avatar');
+
+    if (mpn) mpn.textContent = name;
+    const rankName = localStorage.getItem('rankName') || 'HIERRO';
+    const rankColor = localStorage.getItem('rankColor') || '#ffffff';
+    if (mpr) {
+        mpr.textContent = rankName;
+        mpr.style.color = rankColor;
+    }
+    if (mpg) mpg.textContent = gems;
+    if (mpc) mpc.textContent = coins;
+    if (mpa) {
+        mpa.style.backgroundImage = `url("${avatar}")`;
+        mpa.style.backgroundSize = 'cover';
+        mpa.style.backgroundPosition = 'center';
+    }
+
     updateShopProfileBanner();
     updateEquippedSkinPreview();
 }

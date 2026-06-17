@@ -154,9 +154,6 @@ function getCoinMultiplier() {
 function getComboMultiplier() {
     return comboSystem.comboMultiplier;
 }
-function getComboMultiplier() {
-    return comboSystem.comboMultiplier;
-}
 // Mostrar feedback visual de combo
 function showComboFeedback(isPerfect) {
     if (!window.showFloatingText) return;

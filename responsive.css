@@ -1,0 +1,127 @@
+/* ============================================================
+   THE GEM — responsive.css
+   Este archivo usa las variables de config.js para aplicar
+   los tamaños y posiciones en cada elemento.
+   NO modifiques este archivo — edita config.js en su lugar.
+   ============================================================ */
+
+
+/* ── TIENDA: Fila de banners (VIP + Ruby Pass) ── */
+.shop-home-banner-row {
+    display: flex;
+    flex-direction: var(--cfg-banner-row-direction, row);
+    gap: var(--cfg-banner-row-gap, 12px);
+    margin-bottom: 24px;
+    align-items: stretch;
+}
+
+/* ── TIENDA: Banner VIP ── */
+.shop-vip-access-banner {
+    min-height: var(--cfg-vip-height, 130px);
+    flex: 1;
+}
+
+/* ── TIENDA: Ruby Pass ── */
+.shop-home-banner-row .ruby-pass-access {
+    width: var(--cfg-ruby-width, 130px) !important;
+    height: var(--cfg-ruby-height, 130px) !important;
+    flex: none;
+}
+
+/* ── TIENDA: Grid de 8 paneles de categorías ── */
+.store-panel-grid {
+    display: grid;
+    grid-template-columns: repeat(var(--cfg-grid-cols, 4), 1fr);
+    gap: var(--cfg-grid-gap, 14px);
+}
+
+/* ── BOTÓN MUTE ── */
+#mute-btn {
+    width: var(--cfg-mute-size, 52px) !important;
+    height: var(--cfg-mute-size, 52px) !important;
+    bottom: var(--cfg-mute-bottom, 20px) !important;
+    right: var(--cfg-mute-right, 20px) !important;
+}
+
+
+/* ============================================================
+   LEVEL SELECT — controlado desde config.js → levelSelect
+   ============================================================ */
+
+/* ── Header ── */
+.ls-header {
+    top:   var(--ls-header-top,   28px) !important;
+    width: var(--ls-header-width, 92%)  !important;
+}
+
+/* ── Caja del título "SELECCIONAR NIVEL" ── */
+.ls-title-zone {
+    display:            var(--ls-title-box-display, inline-flex);
+    flex-direction:     column;
+    gap:                6px;
+    padding:            var(--ls-title-box-padding,  10px 20px);
+    border-radius:      var(--ls-title-box-radius,   14px);
+    background:         var(--ls-title-box-bg,       rgba(0,0,0,0.38));
+    border:             1px solid var(--ls-title-box-border, rgba(0,255,231,0.15));
+    backdrop-filter:    blur(var(--ls-title-box-blur, 8px));
+    -webkit-backdrop-filter: blur(var(--ls-title-box-blur, 8px));
+}
+
+/* ── Texto pequeño "THE GEM" ── */
+.ls-small {
+    font-size: var(--ls-font-small, 11px) !important;
+}
+
+/* ── Texto grande "SELECCIONAR NIVEL" ── */
+.ls-title {
+    font-size: var(--ls-font-large, 42px) !important;
+}
+
+/* ── Botón VOLVER ── */
+.ls-back-btn {
+    top:       var(--ls-back-top,     28px) !important;
+    height:    var(--ls-back-height,  42px) !important;
+    font-size: var(--ls-back-font,    14px) !important;
+    padding:   var(--ls-back-padding, 0 18px) !important;
+}
+
+/* ── Player bar ── */
+.ls-player-bar {
+    top: var(--ls-playerbar-top, 86px) !important;
+}
+
+/* ── Flechas de navegación ← → ── */
+.ls-nav-btn {
+    width:         var(--ls-nav-size,   64px) !important;
+    height:        var(--ls-nav-size,   64px) !important;
+    font-size:     var(--ls-nav-font,   34px) !important;
+    border-radius: var(--ls-nav-radius, 18px) !important;
+    top:           var(--ls-nav-top,    52%)  !important;
+}
+
+.ls-nav-prev {
+    left:  var(--ls-nav-offset, clamp(24px, 7vw, 110px)) !important;
+}
+
+.ls-nav-next {
+    right: var(--ls-nav-offset, clamp(24px, 7vw, 110px)) !important;
+}
+
+/* ── Footer ── */
+.ls-footer {
+    bottom: var(--ls-footer-bottom, 30px) !important;
+}
+
+/* ── Barra del sistema (mensajes) ── */
+.ls-system-bar {
+    width:  var(--ls-system-width,  360px) !important;
+    height: var(--ls-system-height, 40px)  !important;
+}
+
+/* ── Botón JUGAR ── */
+.ls-play-btn {
+    width:     var(--ls-play-width,  220px) !important;
+    height:    var(--ls-play-height, 64px)  !important;
+    font-size: var(--ls-play-font,   22px)  !important;
+}
+

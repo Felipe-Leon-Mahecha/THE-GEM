@@ -469,8 +469,10 @@ let currentState = GAME_STATES.MENU;
 
 const playerData = {
     deadCoins: parseInt(localStorage.getItem("deadCoins") || "10"),
-    gems: parseInt(localStorage.getItem("gems") || "5")
+    gems: parseInt(localStorage.getItem("gems") || "5"),
+    totalXP: parseInt(localStorage.getItem("totalXP") || "0")
 };
+window.playerData = playerData; // Exponer globalmente para rank-system.js
 
 window.player = {
     name: localStorage.getItem("playerName") || "Jugador",
@@ -561,7 +563,8 @@ window.adaptiveControls = localStorage.getItem("adaptiveControls") === "true";
 window.lives = 3;
 window.gravityFlipCooldown = 0;
 window.gravityPulse = 0;
-window.styleCombo = 0; // Inicialización de variable de combo de estilo solicitada.
+window.styleCombo = 0;
+window.sessionMaxCombo = 0; // Combo máximo alcanzado en esta partida (para XP)
 
 // =====================================================
 // INVULNERABILITY
@@ -787,14 +790,27 @@ function update() {
         let radialDist = Math.abs(r - c.radius);
 
         if (Math.abs(rel) < 0.08 && radialDist < 18) {
+            const cx = canvas.width / 2;
+            const cy = canvas.height / 2;
+            const px = cx + Math.cos(c.angle + worldRotation) * c.radius;
+            const py = cy + Math.sin(c.angle + worldRotation) * c.radius;
+            
             if (performance.now() < (window.powerupEffects?.rubyMirrorUntil || 0)) {
                 playerData.gems += Math.max(1, Math.round(window.powerupEffects?.gemMultiplier || 1));
                 localStorage.setItem("gems", playerData.gems);
                 window.trackMissionProgress?.('ruby_collect', 1);
+                // Partículas al recoger gema
+                if (typeof window.createParticles === 'function') {
+                    window.createParticles(px, py, '255,68,255', 12, { vx: (Math.random() - 0.5) * 4, vy: (Math.random() - 0.5) * 4, life: 25, size: 5 });
+                }
             } else {
                 playerData.deadCoins += Math.max(1, Math.round(window.powerupEffects?.coinMultiplier || 1));
                 localStorage.setItem("deadCoins", playerData.deadCoins);
                 window.trackMissionProgress?.('coin_collect', 1);
+                // Partículas al recoger moneda
+                if (typeof window.createParticles === 'function') {
+                    window.createParticles(px, py, '255,200,50', 10, { vx: (Math.random() - 0.5) * 3, vy: (Math.random() - 0.5) * 3, life: 20, size: 4 });
+                }
             }
             window.deadCoins.splice(i, 1);
         }
@@ -849,6 +865,11 @@ function update() {
     }
 
     checkCollisions();
+
+    // Rastrear combo máximo de sesión para XP
+    if (window.styleCombo > (window.sessionMaxCombo || 0)) {
+        window.sessionMaxCombo = window.styleCombo;
+    }
 }
 
 // =====================================================
@@ -1181,6 +1202,55 @@ function draw() {
     const hudW = compactHud ? 162 : 240;
     const hudH = compactHud ? 86 : 125;
     const hudPad = compactHud ? 9 : 14;
+
+    // Barra de progreso tipo Geometry Dash (parte superior)
+    const progressY = safeTop - 8;
+    const progressW = (canvas.width / (window.canvasDPR || 1)) * 0.4; // 40% del ancho (más corta)
+    const progressH = compactHud ? 10 : 12; // Más gruesa
+    const progressX = (canvas.width / (window.canvasDPR || 1) - progressW) / 2; // Centrada
+    const winTime = levelConfig.winTime || LEVEL_WIN_TIME;
+    const progress = Math.min(1, (window.gameTimer || 0) / winTime);
+    const progressPercent = Math.floor(progress * 100);
+
+    // Fondo de la barra
+    ctx.fillStyle = "rgba(0,0,0,0.6)";
+    ctx.beginPath();
+    ctx.roundRect(progressX, progressY, progressW, progressH, 6);
+    ctx.fill();
+
+    // Borde de la barra
+    ctx.strokeStyle = "rgba(0,255,231,0.3)";
+    ctx.lineWidth = 2;
+    ctx.stroke();
+
+    // Puntito blanco brillante recorriendo la barra
+    const dotX = progressX + (progressW * progress);
+    const dotY = progressY + progressH / 2;
+    const dotRadius = progressH * 0.4;
+
+    // Glow del puntito
+    const glowGradient = ctx.createRadialGradient(dotX, dotY, 0, dotX, dotY, dotRadius * 3);
+    glowGradient.addColorStop(0, 'rgba(255,255,255,0.8)');
+    glowGradient.addColorStop(0.5, 'rgba(255,255,255,0.3)');
+    glowGradient.addColorStop(1, 'rgba(255,255,255,0)');
+    ctx.fillStyle = glowGradient;
+    ctx.beginPath();
+    ctx.arc(dotX, dotY, dotRadius * 3, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Puntito blanco brillante
+    ctx.fillStyle = "#ffffff";
+    ctx.beginPath();
+    ctx.arc(dotX, dotY, dotRadius, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Porcentaje dentro de la barra
+    ctx.fillStyle = "rgba(0,0,0,0.8)";
+    ctx.font = `bold ${compactHud ? 10 : 12}px Geom, monospace`;
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    ctx.fillText(`${progressPercent}%`, progressX + progressW / 2, progressY + progressH / 2);
+
     ctx.save();
     ctx.fillStyle = "rgba(0,0,0,0.45)";
     ctx.beginPath();
@@ -1198,10 +1268,12 @@ function draw() {
     const row2Y = hudY + hudPad + (compactHud ? 38 : 50);
     ctx.drawImage(skullCoinImg, hudX + hudPad, row2Y, iconSize + (compactHud ? 5 : 8), iconSize + (compactHud ? 5 : 8));
     ctx.font = `bold ${compactHud ? 15 : 20}px Geom, monospace`;
-    ctx.fillText(playerData.deadCoins, hudX + hudPad + iconSize + (compactHud ? 13 : 18), row2Y + textOffset);
+    const coinsDisplay = window.infiniteCoinsMode ? '∞' : playerData.deadCoins;
+    ctx.fillText(coinsDisplay, hudX + hudPad + iconSize + (compactHud ? 13 : 18), row2Y + textOffset);
     const rubyX = hudX + hudPad + (compactHud ? 92 : 128);
     ctx.drawImage(rubyImg, rubyX, row2Y + (compactHud ? 1 : 2), iconSize, iconSize);
-    ctx.fillText(playerData.gems, rubyX + iconSize + (compactHud ? 7 : 10), row2Y + textOffset);
+    const gemsDisplay = window.infiniteCoinsMode ? '∞' : playerData.gems;
+    ctx.fillText(gemsDisplay, rubyX + iconSize + (compactHud ? 7 : 10), row2Y + textOffset);
     ctx.fillStyle = "rgba(255,255,255,0.5)";
     ctx.font = `${compactHud ? 10 : 13}px Geom, monospace`;
     ctx.fillText("NIVEL " + window.level, hudX + hudPad, hudY + hudH - 10);
@@ -1222,12 +1294,32 @@ function drawPlayer(cx, cy) {
     const SKIN_COLORS = {
         cyan: { color: '#00ffe7', glow: '#00ffe7' },
         red: { color: '#ff4444', glow: '#ff4444' },
-        blue: { color: '#4488ff', glow: '#4488ff' },
+        blue: { color: '#5045eb', glow: '#5045eb' },
         yellow: { color: '#ffee00', glow: '#ffee00' },
         orange: { color: '#ff8800', glow: '#ff8800' },
-        green: { color: '#44ff88', glow: '#44ff88' },
+        green: { color: '#3fe969', glow: '#3fe969' },
         purple: { color: '#cc44ff', glow: '#cc44ff' },
-        cool: { color: '#ffffff', glow: '#ffff00' },
+        white: { color: '#ffffff', glow: '#ffffff' },
+        black: { color: '#111111', glow: '#666666' },
+        cool: { color: '#3fe969', glow: '#3fe969' }, // contorno verde
+        frank: { color: '#ffee00', glow: '#ffee00' }, // contorno amarillo
+        shield: { color: '#4488ff', glow: '#4488ff' }, // contorno azul
+        pichos: { color: '#ff007f', glow: '#ff007f' },
+        contorno_red: { color: '#ff4444', glow: '#ff4444' },
+        contorno_purple: { color: '#cc44ff', glow: '#cc44ff' },
+        contorno_cyan: { color: '#00ffe7', glow: '#00ffe7' },
+        contorno_orange: { color: '#ff8800', glow: '#ff8800' },
+        contorno_white: { color: '#ffffff', glow: '#ffffff' },
+        contorno_black: { color: '#111111', glow: '#666666' },
+        dona_cyan: { color: '#00ffe7', glow: '#00ffe7' },
+        dona_red: { color: '#ff4444', glow: '#ff4444' },
+        dona_blue: { color: '#5045eb', glow: '#5045eb' },
+        dona_yellow: { color: '#ffee00', glow: '#ffee00' },
+        dona_orange: { color: '#ff8800', glow: '#ff8800' },
+        dona_green: { color: '#3fe969', glow: '#3fe969' },
+        dona_purple: { color: '#cc44ff', glow: '#cc44ff' },
+        dona_white: { color: '#ffffff', glow: '#ffffff' },
+        dona_black: { color: '#111111', glow: '#666666' }
     };
     const skin = SKIN_COLORS[equippedId] || SKIN_COLORS.cyan;
     if (window.powerupEffects?.chaosUntil && performance.now() < window.powerupEffects.chaosUntil) {
@@ -1238,18 +1330,38 @@ function drawPlayer(cx, cy) {
     const directionalSkin = directionalSkinImages[equippedId];
     const catalogSkinData = getShopSkinData(equippedId);
     const catalogSkin = getCatalogSkinImage(equippedId, window.playerFacing || "right");
-    if (directionalSkin && directionalSkin.complete && directionalSkin.naturalWidth > 0) {
-        // Tamaño dinámico solo en móvil, fijo en web
+    const skinSize = window.compactHud ? Math.round(Math.max(32, Math.min(52, window.DOME_RADIUS * 0.22))) : 48;
+
+    // 1. NUEVO sistema de carpetas (skins-side.js)
+    const newSide = window.getSkinSideImage?.(equippedId, window.playerFacing || 'right');
+    if (newSide) {
         const skinSize = window.compactHud ? Math.round(Math.max(32, Math.min(52, window.DOME_RADIUS * 0.22))) : 48;
+        const drawSize = skinSize * (newSide.drawScale ?? 1.4);
+        if (!lowPower) { ctx.shadowBlur = 18; ctx.shadowColor = skin.glow || '#ffee00'; }
+
+        if (newSide.rolling) {
+            // Gira como rueda — usa la imagen del catálogo normal
+            const rollImg = getCatalogSkinImage(equippedId);
+            if (rollImg && rollImg.complete && rollImg.naturalWidth > 0) {
+                ctx.rotate(window.playerRollAngle || 0);
+                ctx.drawImage(rollImg, -drawSize / 2, -drawSize / 2, drawSize, drawSize);
+            }
+        } else if (newSide.img) {
+            if (newSide.flip) ctx.scale(-1, 1);
+            ctx.drawImage(newSide.img, -drawSize / 2, -drawSize / 2, drawSize, drawSize);
+        }
+
+        // 2. Sistema viejo: DIRECTIONAL_SKINS (daxor, brifon, kenji)
+    } else if (directionalSkin && directionalSkin.complete && directionalSkin.naturalWidth > 0) {
         if (!lowPower) {
             ctx.shadowBlur = 18;
             ctx.shadowColor = DIRECTIONAL_SKINS[equippedId].glow;
         }
         if (facingLeft) ctx.scale(-1, 1);
         ctx.drawImage(directionalSkin, -skinSize / 2, -skinSize / 2, skinSize, skinSize);
+
+        // 3. Sistema catálogo (skins VIP con imageSide)
     } else if (catalogSkin && catalogSkin.complete && catalogSkin.naturalWidth > 0) {
-        // Tamaño dinámico solo en móvil, fijo en web
-        const skinSize = window.compactHud ? Math.round(Math.max(32, Math.min(52, window.DOME_RADIUS * 0.22))) : 48;
         if (!lowPower) {
             ctx.shadowBlur = 18;
             ctx.shadowColor = skin.glow || '#ffee00';
@@ -1260,6 +1372,8 @@ function drawPlayer(cx, cy) {
             ctx.scale(-1, 1);
         }
         ctx.drawImage(catalogSkin, -skinSize / 2, -skinSize / 2, skinSize, skinSize);
+
+        // 4. Fallback: bola de color (skins básicas cyan, red, etc)
     } else {
         if (!lowPower) {
             ctx.shadowBlur = 20;
@@ -1491,9 +1605,14 @@ window.startGame = function (levelIndex = 0, skipStartSound = false) {
         }
     });
 
-    document.getElementById("gameCanvas").style.visibility = "visible";
-    document.getElementById("gameCanvas").style.display = "block";
-    document.getElementById('pause-btn').classList.add('is-playing');
+    const gameCanvas = document.getElementById("gameCanvas");
+    gameCanvas.style.visibility = "visible";
+    gameCanvas.style.display = "block";
+    gameCanvas.style.position = "fixed";
+    gameCanvas.style.inset = "0";
+    gameCanvas.style.zIndex = "1";
+    const pauseBtn = document.getElementById('pause-btn');
+    if (pauseBtn) pauseBtn.classList.add('is-playing');
     document.body.classList.toggle('is-playing-touch', isTouchLayout());
 
     if (!skipStartSound) window.playSfx?.('startGame', 0.9);
@@ -1541,7 +1660,8 @@ window.startGame = function (levelIndex = 0, skipStartSound = false) {
     window.deadCoinSpawnTimer = 0;
     window.rubySpawnTimer = 0;
     window.paused = false;
-    document.getElementById('pausePanel').classList.remove('showing');
+    const pausePanel = document.getElementById('pausePanel');
+    if (pausePanel) pausePanel.classList.remove('showing');
 
     // ── Intro desactivada para que no congele ──────────
     showAbilityIntro();
@@ -1604,9 +1724,30 @@ window.showGameOverWithRevive = function () {
     document.body.classList.remove('is-playing-touch');
     clearInterval(gameTimerInterval);
     clearInterval(window.reviveTimer);
+
+    // Efecto de flash rojo al perder
+    const flash = document.createElement('div');
+    flash.className = 'screen-flash-red';
+    document.body.appendChild(flash);
+    setTimeout(() => flash.remove(), 300);
+
+    // ── XP por supervivencia (solo en modo survival, si no se revivió) ──
+    try {
+        const levelConfig = window.getCurrentLevelConfig ? window.getCurrentLevelConfig() : {};
+        if (levelConfig.isSurvival && !window.reviveCount) {
+            const xpGained = window.rankSystem?.calcSurvivalXP(window.gameTimer || 0) || 0;
+            if (xpGained > 0) window.rankSystem?.addXP(xpGained);
+        }
+        window.sessionMaxCombo = 0;
+    } catch (e) {
+        console.warn('[GameOver] Error XP survival:', e);
+    }
+    // ── FIN XP ──────────────────────────────────────────────────────────
     document.getElementById("gameCanvas").style.visibility = "hidden";
-    document.getElementById('pause-btn').classList.remove('is-playing');
-    document.getElementById('pausePanel').classList.remove('showing');
+    const pauseBtn = document.getElementById('pause-btn');
+    if (pauseBtn) pauseBtn.classList.remove('is-playing');
+    const pausePanel = document.getElementById('pausePanel');
+    if (pausePanel) pausePanel.classList.remove('showing');
     window.bgMusic.pause();
     window.bgMusic.currentTime = 0;
     window.playSfx?.('gameOver', 0.9);
@@ -1662,6 +1803,21 @@ window.revivePlayer = function (currency) {
     const key = currency === 'gems' ? 'gems' : 'deadCoins';
     const cost = currency === 'gems' ? gemCost : coinCost;
     const current = parseInt(localStorage.getItem(key) || '0');
+    
+    // Si el modo infinito está activo, no verificar ni restar monedas
+    if (window.infiniteCoinsMode) {
+        window.reviveCount++;
+        window.playSfx?.('spend');
+        clearInterval(window.reviveTimer);
+        document.getElementById('gameOver').style.display = 'none';
+        document.getElementById("gameCanvas").style.visibility = "visible";
+        const pauseBtn = document.getElementById('pause-btn');
+        if (pauseBtn) pauseBtn.classList.add('is-playing');
+        document.body.classList.toggle('is-playing-touch', isTouchLayout());
+        window.lives = 1;
+        return;
+    }
+    
     if (current < cost) return alert('No tienes suficientes recursos.');
     localStorage.setItem(key, String(current - cost));
     if (currency === 'coins') playerData.deadCoins = current - cost;
@@ -1671,7 +1827,8 @@ window.revivePlayer = function (currency) {
     clearInterval(window.reviveTimer);
     document.getElementById('gameOver').style.display = 'none';
     document.getElementById("gameCanvas").style.visibility = "visible";
-    document.getElementById('pause-btn').classList.add('is-playing');
+    const pauseBtn = document.getElementById('pause-btn');
+    if (pauseBtn) pauseBtn.classList.add('is-playing');
     document.body.classList.toggle('is-playing-touch', isTouchLayout());
     window.lives = 1;
     window.invulnerable = true;
@@ -1713,8 +1870,15 @@ function winGame() {
     window.bgMusic.pause();
     window.bgMusic.currentTime = 0;
 
+    // Efecto de flash blanco al ganar
+    const flash = document.createElement('div');
+    flash.className = 'screen-flash-white';
+    document.body.appendChild(flash);
+    setTimeout(() => flash.remove(), 400);
+
     const winPanel = document.getElementById('gameWin');
-    document.getElementById('pause-btn').classList.remove('is-playing');
+    const pauseBtn = document.getElementById('pause-btn');
+    if (pauseBtn) pauseBtn.classList.remove('is-playing');
     winPanel.style.display = 'flex';
     winPanel.classList.remove('showing');
     void winPanel.offsetWidth;
@@ -1722,59 +1886,41 @@ function winGame() {
 
     document.getElementById('gw-sub').textContent = 'NIVEL ' + window.level + ' COMPLETADO';
 
+    // ── SISTEMA DE XP ────────────────────────────────────────
+    try {
+        const levelConfig = window.getCurrentLevelConfig ? window.getCurrentLevelConfig() : {};
+        const isSurvival = !!(levelConfig.isSurvival);
+
+        let xpGained = 0;
+        if (isSurvival) {
+            // Survival: +30 XP por minuto sobrevivido + combo
+            xpGained = window.rankSystem?.calcSurvivalXP(window.gameTimer || 0) || 0;
+        } else {
+            // Victoria normal: +50 XP + combo máximo de sesión
+            xpGained = window.rankSystem?.calcNormalVictoryXP() || 50;
+        }
+
+        if (xpGained > 0 && window.rankSystem) {
+            window.rankSystem.addXP(xpGained);
+            // Mostrar XP ganada en el panel de victoria
+            const gwUnlockEl = document.getElementById('gw-unlock');
+            const xpMsg = `+${xpGained} XP · Rango: ${window.rankSystem.getCurrentRank().name}`;
+            if (gwUnlockEl) {
+                gwUnlockEl._xpMsg = xpMsg; // guardar para combinar con otros mensajes
+            }
+        }
+        // Resetear combo de sesión para la próxima partida
+        window.sessionMaxCombo = 0;
+    } catch (e) {
+        console.warn('[winGame] Error calculando XP:', e);
+    }
+    // ── FIN XP ───────────────────────────────────────────────
+
     let wins = parseInt(localStorage.getItem('gamesWon') || '0');
     wins++;
     localStorage.setItem('gamesWon', wins);
-    updateRank(wins);
-
-    let rubyPassResult = null;
-    if (typeof window.addRubyPassXp === 'function') {
-        rubyPassResult = window.addRubyPassXp();
-    }
-
-    const nextLevelIndex = window.level;
-    if (typeof levels !== 'undefined' && levels[nextLevelIndex]) {
-        levels[nextLevelIndex].unlocked = true;
-        localStorage.setItem(`level${nextLevelIndex}Unlocked`, 'true');
-    }
-
-    const gwUnlock = document.getElementById('gw-unlock');
-    if (typeof levels !== 'undefined' && levels[nextLevelIndex] && gwUnlock) {
-        gwUnlock.style.display = 'block';
-        gwUnlock.textContent = '🔓 ¡HAS DESBLOQUEADO EL NIVEL ' + (nextLevelIndex + 1) + '!';
-        if (rubyPassResult) {
-            gwUnlock.textContent += ' · RUBY PASS +' + rubyPassResult.gained + ' XP';
-        }
-    } else if (gwUnlock) {
-        if (rubyPassResult) {
-            gwUnlock.style.display = 'block';
-            gwUnlock.textContent = 'RUBY PASS +' + rubyPassResult.gained + ' XP · NIVEL ' + rubyPassResult.level;
-        } else {
-            gwUnlock.style.display = 'none';
-        }
-    }
-
-    maybeAwardLevelChest();
-
-    window.menuMusic.currentTime = 0;
-    if (window.menuMusic.paused)
-        window.menuMusic.play();
 }
-
-function updateRank(wins) {
-    let rank;
-    if (wins < 5) rank = { name: 'HIERRO', color: '#aaaaaa' };
-    else if (wins < 6) rank = { name: 'BRONCE', color: '#cd7f32' };
-    else if (wins <= 10) rank = { name: 'PLATA', color: '#c0c0c0' };
-    else if (wins <= 20) rank = { name: 'ORO', color: '#ffd700' };
-    else if (wins <= 40) rank = { name: 'DIAMANTE', color: '#00ffe7' };
-    else if (wins <= 70) rank = { name: 'MAESTRO', color: '#cc44ff' };
-    else if (wins <= 90) rank = { name: 'GRAN MAESTRO', color: '#ff4444' };
-    else if (wins <= 150) rank = { name: 'ÉLITE', color: '#ff8800' };
-    else rank = { name: 'CAMPEÓN LEGENDARIO', color: '#ffee00' };
-    localStorage.setItem('rankName', rank.name);
-    localStorage.setItem('rankColor', rank.color);
-};
+// NOTA: updateRank(wins) se elimina — lo maneja rank-system.js automáticamente
 
 function maybeAwardLevelChest() {
     const roll = Math.random();
@@ -1895,7 +2041,7 @@ document.getElementById('pause-levels')?.addEventListener('click', () => {
     document.getElementById('gameCanvas').style.visibility = 'hidden';
     document.body.classList.remove('is-playing-touch');
     window.bgMusic?.pause();
-    window.bgMusic?.currentTime = 0; // <--- AQUÍ: Con el ?. evitas que se rompa si no hay música
+    if (window.bgMusic) window.bgMusic.currentTime = 0;
     showLevelSelect?.();
 });
 
@@ -1907,7 +2053,7 @@ document.getElementById('pause-menu')?.addEventListener('click', () => {
     document.getElementById('gameCanvas').style.visibility = 'hidden';
     document.body.classList.remove('is-playing-touch');
     window.bgMusic?.pause();
-    window.bgMusic?.currentTime = 0; // <--- AQUÍ TAMBIÉN: Añadido el ?.
+    if (window.bgMusic) window.bgMusic.currentTime = 0;
     document.getElementById('overlay').style.display = 'flex';
     window.ensureMenuMusic?.();
 });

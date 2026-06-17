@@ -180,17 +180,28 @@ function checkCollisions() {
 function playerHit() {
     // Si hay un powerup que absorbe el golpe, no hacer nada
     if (window.absorbPowerupHit?.()) return;
-    
+
+    // Marcar todos los obstáculos como proximityChecked para evitar near-miss incorrectos
+    if (window.obstacles) {
+        window.obstacles.forEach(o => o.proximityChecked = true);
+    }
+    if (window.sierras) {
+        window.sierras.forEach(s => s.proximityChecked = true);
+    }
+    if (window.lasers) {
+        window.lasers.forEach(l => l.proximityChecked = true);
+    }
+
     // Reducir vidas
     window.lives--;
-    
+
     // Efecto visual de golpe
     window.hitFlash = 1;
-    
+
     // Activar invulnerabilidad temporal
     window.invulnerable = true;
     window.invulnerableTimer = 60;
-    
+
     // Resetear combo cuando es golpeado
     window.resetComboOnHit?.();
 

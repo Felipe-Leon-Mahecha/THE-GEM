@@ -1,0 +1,149 @@
+╔══════════════════════════════════════════════════════════════╗
+║           THE GEM — GUÍA COMPLETA DE AJUSTE DEL MENÚ        ║
+╚══════════════════════════════════════════════════════════════╝
+
+Archivos que tocar: style.css  /  index.html
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ 1. POSICIÓN DEL PANEL DE BOTONES  →  style.css
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Buscar:  @media (hover: hover) and (pointer: fine) and (min-width: 768px)
+
+  width: 58%;
+  └─ Sube % → panel más a la izquierda (botones más grandes)
+  └─ Baja % → panel más a la derecha (botones más chicos)
+
+  padding-bottom: 80px;
+  └─ Sube px  → panel más abajo
+  └─ Baja px  → panel más arriba
+
+  justify-content: flex-end    → pegado abajo
+  justify-content: center      → centrado vertical
+  justify-content: flex-start  → pegado arriba
+
+  ⚠ Este bloque SOLO afecta PC (mouse). En móvil no cambia nada.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ 2. PADDING INTERNO Y ESPACIO ENTRE BOTONES  →  index.html
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Buscar:  <div id="overlay-panel"  style="gap:14px; padding:0 28px; ...
+
+  padding: 0 28px
+  └─ Los 28px son el margen lateral (izq/der) dentro del panel
+
+  gap: 14px
+  └─ Espacio vertical entre las filas de botones
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ 3. INCLINACIÓN 3D  →  style.css
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Buscar:  transform: perspective(800px) rotateY(-9deg);
+
+  rotateY(-9deg)
+  └─ Más negativo (-12, -15) → más inclinado
+  └─ Más cerca de 0          → más plano
+
+  perspective(800px)
+  └─ Número menor (600)  → perspectiva más dramática
+  └─ Número mayor (1200) → más suave
+
+  transform-origin: right center;
+  └─ Cambia el punto de pivote de la inclinación
+  └─ "center center" → gira desde el medio
+  └─ "right center"  → gira desde el borde derecho (actual)
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ 4. CLIP-PATH (forma de las esquinas)  →  style.css
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Buscar:  #play-btn  /  #shop-btn etc.
+
+  clip-path: polygon(0 0, calc(100% - 20px) 0, 100% 20px, ...
+  └─ El 20px en JUGAR controla el tamaño del corte de esquina
+  └─ El 14px en TIENDA/INVENTARIO/LOGROS/AYUDA hace lo mismo
+  └─ Número mayor → corte más grande
+  └─ 0 → sin corte (rectángulo normal)
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ 5. GLOW AL HOVER  →  style.css
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Buscar:  #wrap-play:hover  /  #wrap-shop:hover  etc.
+
+  El glow es ASIMÉTRICO por el efecto 3D:
+  drop-shadow( 7px  0px  5px rgba(255, 50, 80, 0.85))   ← derecha intensa
+  drop-shadow(15px  0px 24px rgba(255, 50, 80, 0.30))   ← derecha difusa
+  drop-shadow(-2px  0px  6px rgba(255, 50, 80, 0.20))   ← izquierda suave
+
+  Para más intensidad → sube las opacidades (último valor rgba)
+  Para menos          → baja las opacidades
+  Para más spread     → sube el tercer valor (px del blur)
+  Para cambiar color  → modifica los rgb()
+
+  Colores actuales:
+    JUGAR      → rgba(255, 50, 80)   rojo
+    TIENDA     → rgba(255, 200, 0)   dorado
+    LOGROS     → rgba(255, 200, 0)   dorado
+    INVENTARIO → rgba(0, 220, 210)   cyan
+    AYUDA      → rgba(200, 200, 200) blanco
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ 6. FONDO DE LÍNEAS TOPOGRÁFICAS  →  index.html
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Buscar:  <!-- Fondo topográfico ondulado -->  (al final del HTML)
+
+  const LINES = 28;
+  └─ Cantidad de líneas horizontales
+
+  const WAVES = 4;
+  └─ Número de ondas por línea (más = más rizado)
+
+  const AMP = H * 0.06;
+  └─ Amplitud de la onda (0.06 = 6% del alto de pantalla)
+  └─ Sube → ondas más pronunciadas
+
+  const lineColor  = 'rgba(30, 30, 80, 0.55)';
+  const lineColor2 = 'rgba(20, 20, 60, 0.35)';
+  └─ Sube el último valor → líneas más visibles
+  └─ Baja → más sutil
+
+  const DIAG = 14;
+  └─ Cantidad de líneas diagonales de fondo
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ 7. COLOR DE FONDO BASE  →  style.css + index.html
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  Actual: #09091A
+
+  En style.css buscar:   background: #09091A;   (en #overlay)
+  En index.html buscar:  background:#09091A     (en el div de fondo)
+
+  Ambos deben ser el mismo color.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ 8. BANNER VERSION (esquina inferior izquierda)  →  index.html
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Buscar:  <!-- VERSION — esquina inferior izquierda -->
+
+  width: clamp(180px, 22%, 260px)
+  └─ Tamaño del banner
+
+  bottom: 20px; left: 20px
+  └─ Posición desde la esquina
+
+  El texto usa transform:translate(-50%,-50%) para centrarse
+  automáticamente dentro del banner sin importar el tamaño.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ VALORES ACTUALES QUE FUNCIONAN BIEN
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  Panel width PC:     58%
+  Panel padding-bot:  80px
+  Panel justify:      flex-end
+  Padding interno:    0 28px
+  Gap entre botones:  14px
+  rotateY:            -9deg
+  perspective:        800px
+  transform-origin:   right center
+  Clip JUGAR:         20px
+  Clip resto:         14px
+  Fondo:              #09091A
+  Líneas topo:        28 horizontales + 14 diagonales

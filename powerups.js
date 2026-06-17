@@ -160,27 +160,27 @@ function loadPowerupImage(powerupId, type = 'icon') {
     if (powerupImageCache.has(cacheKey)) {
         return powerupImageCache.get(cacheKey);
     }
-    
+
     // Crear nueva imagen con lazy loading
     const img = new Image();
     img.loading = 'lazy';
     img.decoding = 'async';
-    
+
     // Cargar icono o efecto según el tipo
     if (type === 'icon') {
         img.src = `assets/powerups/icons/${powerupId}.png`;
     } else {
         img.src = `assets/powerups/effects/${powerupId}_effect.png`;
     }
-    
+
     // Guardar en caché y retornar
     powerupImageCache.set(cacheKey, img);
-    
+
     if (!powerupImages[powerupId]) {
         powerupImages[powerupId] = {};
     }
     powerupImages[powerupId][type] = img;
-    
+
     return img;
 }
 
@@ -288,10 +288,10 @@ function spendPowerupUse(id) {
     inventory[id].desbloqueado = true;
     if (inventory[id].nivel <= 0) inventory[id].nivel = 1;
     savePowerups(inventory);
-    
+
     // Incrementar contador de uso en estadísticas
     incrementPowerupUsage(id);
-    
+
     return true;
 }
 
@@ -333,14 +333,14 @@ function getMostUsedPowerup() {
     const stats = getPowerupStats();
     let maxUses = 0;
     let mostUsed = null;
-    
+
     for (const [id, uses] of Object.entries(stats)) {
         if (uses > maxUses) {
             maxUses = uses;
             mostUsed = id;
         }
     }
-    
+
     return mostUsed;
 }
 
@@ -570,13 +570,13 @@ function activatePowerupSlot(slotIndex) {
     runPowerupEffect(slot.id, level, duration, slotIndex);
     window.playSfx?.('powerUp', 0.75);
     window.trackMissionProgress?.('powerup_use', 1);
-    
+
     // Establecer cooldown después de la duración
     if (duration > 0) {
         slot.cooldownDuration = 2000; // 2 segundos de cooldown
         slot.cooldownUntil = performance.now() + slot.duration + slot.cooldownDuration;
     }
-    
+
     return true;
 }
 
@@ -1366,13 +1366,13 @@ function drawPowerupHud(ctx) {
     if (!window.activePowerupSlots) return;
     const compact = !!window.compactHud;
     const isTouch = document.body.classList.contains('is-touch-device');
-    
+
     // Obtener posición, tamaño y opacidad personalizados para móvil
     const powerupOffsetX = isTouch ? (parseInt(localStorage.getItem('powerupOffsetX') || '0')) : 0;
     const powerupOffsetY = isTouch ? (parseInt(localStorage.getItem('powerupOffsetY') || '0')) : 0;
     const powerupSize = isTouch ? (parseInt(localStorage.getItem('powerupSize') || '100') / 100) : 1;
     const powerupOpacity = isTouch ? (parseInt(localStorage.getItem('powerupOpacity') || '100') / 100) : 1;
-    
+
     const hudX = compact ? 10 : 20;
     const hudW = compact ? 178 : 240;
     const baseX = hudX + hudW + 12 + powerupOffsetX;
@@ -1380,10 +1380,10 @@ function drawPowerupHud(ctx) {
     const radius = (compact ? 22 : 29) * powerupSize;
     const gap = (compact ? 10 : 14) * powerupSize;
     const inventory = readPowerups();
-    
+
     ctx.save();
     ctx.globalAlpha = powerupOpacity;
-    
+
     // Dibujar cada slot
     window.activePowerupSlots.forEach((slot, index) => {
         const x = baseX + index * (radius * 2 + gap);
@@ -1391,10 +1391,10 @@ function drawPowerupHud(ctx) {
         const state = slot.id ? inventory[slot.id] : null;
         drawPowerupHudCircle(ctx, x, y + radius, radius, slot, powerup, state);
     });
-    
+
     // Dibujar indicador de combo
     drawComboIndicator(ctx, baseX + 2 * (radius * 2 + gap), y + radius, radius);
-    
+
     ctx.restore();
 }
 
@@ -1441,7 +1441,7 @@ function drawPowerupHudCircle(ctx, x, y, radius, slot, powerup, state) {
         ctx.arc(x, y, radius + 5, -Math.PI / 2, -Math.PI / 2 + Math.PI * 2 * p, false);
         ctx.stroke();
     }
-    
+
     // Indicador de cooldown
     if (slot.cooldownUntil && performance.now() < slot.cooldownUntil) {
         const cooldownProgress = 1 - (slot.cooldownUntil - performance.now()) / (slot.cooldownDuration || 2000);
@@ -1454,7 +1454,7 @@ function drawPowerupHudCircle(ctx, x, y, radius, slot, powerup, state) {
         ctx.stroke();
         ctx.setLineDash([]);
     }
-    
+
     // Dibujar contador de usos
     ctx.fillStyle = disabled ? '#9a9a9a' : '#ffffff';
     ctx.beginPath();
@@ -1464,7 +1464,7 @@ function drawPowerupHudCircle(ctx, x, y, radius, slot, powerup, state) {
     ctx.font = `900 ${Math.max(10, radius * 0.42)}px monospace`;
     ctx.fillText(String(uses), x + radius * 0.62, y + radius * 0.64);
     ctx.restore();
-    
+
     // Guardar área del HUD para detección de clics
     slot.hudArea = { x, y, radius };
 }
@@ -1711,18 +1711,18 @@ function openPowerupDetail(id, mode = 'normal', selectedLevel = 1) {
             <p>${selected === 1 ? powerup.base : `Nivel ${selected}: ${powerup.levels[selected - 1] || powerup.base}`}</p>
             <div class="powerup-level-row">
                 ${Array.from({ length: POWERUP_MAX_LEVEL }, (_, idx) => {
-                    const level = idx + 1;
-                    const disabled = level > maxLevel;
-                    return `<button class="${level === selected ? 'active' : ''}" onclick="openPowerupDetail('${id}','${mode}',${level})" ${disabled ? 'disabled' : ''} type="button">${level}</button>`;
-                }).join('')}
+        const level = idx + 1;
+        const disabled = level > maxLevel;
+        return `<button class="${level === selected ? 'active' : ''}" onclick="openPowerupDetail('${id}','${mode}',${level})" ${disabled ? 'disabled' : ''} type="button">${level}</button>`;
+    }).join('')}
             </div>
             <div class="powerup-detail-actions">
                 ${mode === 'normal' && powerup.normalCurrency === 'vip'
-                    ? `<button class="vip-jump" onclick="openVIP(); renderVIPPowerups();" type="button">Ir a tienda VIP</button>`
-                    : `<button onclick="buyPowerup('${id}','${mode}')" type="button">${buyText}</button>`}
+            ? `<button class="vip-jump" onclick="openVIP(); renderVIPPowerups();" type="button">Ir a tienda VIP</button>`
+            : `<button onclick="buyPowerup('${id}','${mode}')" type="button">${buyText}</button>`}
                 ${mode === 'vip'
-                    ? `<button onclick="upgradePowerup('${id}')" ${!state.desbloqueado || state.nivel >= maxLevel ? 'disabled' : ''} type="button">MEJORAR ${upgradeCost ? `${upgradeCost} RUBIES` : ''}</button>`
-                    : `<button class="vip-jump" onclick="openVIP(); renderVIPPowerups();" type="button">Ir a tienda VIP</button>`}
+            ? `<button onclick="upgradePowerup('${id}')" ${!state.desbloqueado || state.nivel >= maxLevel ? 'disabled' : ''} type="button">MEJORAR ${upgradeCost ? `${upgradeCost} RUBIES` : ''}</button>`
+            : `<button class="vip-jump" onclick="openVIP(); renderVIPPowerups();" type="button">Ir a tienda VIP</button>`}
             </div>
         </section>
     `;
@@ -1785,11 +1785,11 @@ function openPowerupDetail(id, mode = 'normal', selectedLevel = 1) {
             </div>
             <div class="powerup-level-row">
                 ${Array.from({ length: POWERUP_MAX_LEVEL }, (_, idx) => {
-                    const level = idx + 1;
-                    const disabled = level > maxLevel;
-                    const owned = level <= Math.max(1, state.nivel || 1);
-                    return `<button class="${level === selected ? 'active' : ''} ${owned ? 'lit' : ''}" onclick="openPowerupDetail('${id}','${mode}',${level})" ${disabled ? 'disabled' : ''} type="button">${level}</button>`;
-                }).join('')}
+        const level = idx + 1;
+        const disabled = level > maxLevel;
+        const owned = level <= Math.max(1, state.nivel || 1);
+        return `<button class="${level === selected ? 'active' : ''} ${owned ? 'lit' : ''}" onclick="openPowerupDetail('${id}','${mode}',${level})" ${disabled ? 'disabled' : ''} type="button">${level}</button>`;
+    }).join('')}
             </div>
         </section>
     `;
@@ -1897,7 +1897,7 @@ function closePowerupIntroModal() {
 
 function showPowerupTooltip(slotIndex, powerup, state) {
     if (!powerup) return;
-    
+
     let tooltip = document.getElementById('powerupTooltip');
     if (!tooltip) {
         tooltip = document.createElement('div');
@@ -1905,11 +1905,11 @@ function showPowerupTooltip(slotIndex, powerup, state) {
         tooltip.className = 'powerup-tooltip';
         document.body.appendChild(tooltip);
     }
-    
+
     const level = Math.max(1, state?.nivel || 1);
     const uses = state?.usos || 0;
     const description = powerup.levels && powerup.levels[level - 1] ? powerup.levels[level - 1] : powerup.base;
-    
+
     tooltip.innerHTML = `
         <div class="powerup-tooltip-header" style="--powerup-color:${powerup.color}">
             <img src="assets/powerups/icons/${powerup.id}.png" alt="">
@@ -1922,14 +1922,14 @@ function showPowerupTooltip(slotIndex, powerup, state) {
             <p>${description}</p>
         </div>
     `;
-    
+
     const slot = window.activePowerupSlots?.[slotIndex];
     if (slot?.hudArea) {
         const { x, y, radius } = slot.hudArea;
         tooltip.style.left = `${x + radius + 15}px`;
         tooltip.style.top = `${y - radius}px`;
     }
-    
+
     tooltip.style.display = 'block';
     tooltip.classList.add('showing');
 }
@@ -1944,14 +1944,14 @@ function hidePowerupTooltip() {
 
 function handlePowerupTooltipMouse(e) {
     if (!window.activePowerupSlots) return;
-    
+
     const canvas = window.canvas;
     const rect = canvas.getBoundingClientRect();
     const mouseX = e.clientX - rect.left;
     const mouseY = e.clientY - rect.top;
-    
+
     let hoveredSlot = null;
-    
+
     window.activePowerupSlots.forEach((slot, index) => {
         if (!slot.hudArea) return;
         const { x, y, radius } = slot.hudArea;
@@ -1960,7 +1960,7 @@ function handlePowerupTooltipMouse(e) {
             hoveredSlot = index;
         }
     });
-    
+
     if (hoveredSlot !== null) {
         const slot = window.activePowerupSlots[hoveredSlot];
         const powerup = getPowerupById(slot.id);
@@ -1976,14 +1976,14 @@ function showPowerupHelpPanel() {
     const panel = document.getElementById('powerupHelpPanel');
     const body = document.getElementById('powerupHelpBody');
     if (!panel || !body) return;
-    
+
     const stats = getPowerupStats();
     const mostUsed = getMostUsedPowerup();
-    
+
     body.innerHTML = POWERUPS_DATA.map(powerup => {
         const usageCount = stats[powerup.id] || 0;
         const isMostUsed = powerup.id === mostUsed;
-        
+
         return `
         <div class="powerup-help-item ${isMostUsed ? 'most-used' : ''}" style="--powerup-color:${powerup.color}">
             <img src="assets/powerups/icons/${powerup.id}.png" alt="">
@@ -2000,7 +2000,7 @@ function showPowerupHelpPanel() {
         </div>
     `;
     }).join('');
-    
+
     panel.style.display = 'grid';
     panel.classList.add('showing');
 }
@@ -2063,6 +2063,9 @@ window.closePowerupHelpPanel = closePowerupHelpPanel;
 window.incrementCombo = incrementCombo;
 window.resetCombo = resetCombo;
 window.getComboMultiplier = getComboMultiplier;
+function getComboXPBonus() {
+    return 0;
+}
 window.getComboXPBonus = getComboXPBonus;
 window.saveComboStats = saveComboStats;
 window.incrementPowerupUsage = incrementPowerupUsage;
@@ -2082,9 +2085,9 @@ const STARTER_PACK_POWERUPS = ['escudo', 'velocidad', 'magnetismo'];
 function giveStarterPack() {
     const hasReceived = localStorage.getItem(STARTER_PACK_KEY) === 'true';
     if (hasReceived) return;
-    
+
     const inventory = readPowerups();
-    
+
     STARTER_PACK_POWERUPS.forEach(powerupId => {
         if (!inventory[powerupId]) {
             inventory[powerupId] = {
@@ -2097,10 +2100,10 @@ function giveStarterPack() {
             inventory[powerupId].desbloqueado = true;
         }
     });
-    
+
     savePowerups();
     localStorage.setItem(STARTER_PACK_KEY, 'true');
-    
+
     // Mostrar notificación
     showStarterPackNotification();
 }
@@ -2128,7 +2131,7 @@ function checkStarterPack() {
     if (!hasReceived) {
         const inventory = readPowerups();
         const hasAnyPowerup = Object.values(inventory).some(p => p?.desbloqueado);
-        
+
         // Dar pack si el jugador no tiene ningún potenciador
         if (!hasAnyPowerup) {
             giveStarterPack();
