@@ -17,7 +17,8 @@ const LEVEL_SELECT_SKIN_IMAGES = {
         side: "assets/UI/Store/Skins/Normal/DAXOR Skin DEMON/DAXOR_Skin_lado.png"
     },
     brifon: {
-        side: "assets/UI/Store/Skins/Normal/BRIFON Skin EPICO/BRIFON_Skin_lado.png"
+        side: "assets/UI/Store/Skins/Normal/BRIFON Skin EPICO/BRIFON_Skin_lado_derecho.png",
+        sideLeft: "assets/UI/Store/Skins/Normal/BRIFON Skin EPICO/BRIFON_Skin_lado_izquierdo.png"
     },
     kenji: {
         side: "assets/UI/Store/Skins/Normal/KENJI Skin EPICO/Kenji_Skin_lado.png"
@@ -30,27 +31,47 @@ Object.entries(LEVEL_SELECT_SKIN_IMAGES).forEach(([id, paths]) => {
     levelSelectSkinImages[id].src = paths.side;
 });
 
+// En levelselect.js
 function getLevelSelectSkinImage(id) {
-    const data = typeof window.findShopSkin === 'function' ? window.findShopSkin(id) : null;
-    const src = data?.rolling ? (data.image || data.imageSide || data.imageRight || data.imageLeft) : (data?.imageSide || data?.imageRight || data?.image || data?.imageLeft);
-    if (src) {
-        const key = `${id}_shop`;
-        if (!levelSelectSkinImages[key] || levelSelectSkinImages[key].src !== src) {
-            levelSelectSkinImages[key] = new Image();
-            levelSelectSkinImages[key].src = src;
-        }
-        return { image: levelSelectSkinImages[key], rolling: !!data?.rolling };
+    const skinPaths = LEVEL_SELECT_SKIN_IMAGES[id];
+    if (!skinPaths) return { image: null, rolling: false };
+
+    // Si Brifon tiene sideLeft, usamos la dirección actual del jugador
+    let src = skinPaths.side;
+    if (id === 'brifon' && window.playerFacing === 'left' && skinPaths.sideLeft) {
+        src = skinPaths.sideLeft;
     }
-    return { image: levelSelectSkinImages[id] || null, rolling: false };
+
+    const key = `${id}_${window.playerFacing}`;
+    if (!levelSelectSkinImages[key]) {
+        levelSelectSkinImages[key] = new Image();
+        levelSelectSkinImages[key].src = src;
+    }
+    return { image: levelSelectSkinImages[key], rolling: true };
 }
+
+// Nombres de archivo del fondo grande (carpeta "Fondo portada niveles"), uno por nivel en orden.
+// Si agregas un nivel nuevo, agrega su nombre de archivo aquí en la misma posición.
+const LEVEL_BACKGROUND_LARGE_FILES = [
+    "Nivel_THE_GEGGIN",
+    "Nivel_VOLCANO",
+    "Nivel_FROZEN_WORLD",
+    "Nivel_THE_BEGGIN_2",
+    "Nivel_SUPERVIVENCIA",
+];
 
 const levels = (window.LEVEL_CONFIGS || []).map((lv, i) => ({
     name: lv.name,
     unlocked: i === 0 ? true : !!lv.unlocked,
     difficulty: lv.difficulty,
+    // Icono pequeño de la barra lateral (el de siempre, sin cambios)
     image: lv.assets && lv.assets.cover
         ? lv.assets.cover
         : window.LEVEL_ASSET_PLACEHOLDERS?.cover || "assets/Imagenes/Placeholders/Placeholder_Level_Cover.png",
+    // Fondo grande de la vista previa derecha (distinto al icono de la barra lateral)
+    backgroundLarge: LEVEL_BACKGROUND_LARGE_FILES[i]
+        ? `assets/Imagenes/Fondo portada niveles/${LEVEL_BACKGROUND_LARGE_FILES[i]}.png`
+        : (lv.assets && lv.assets.cover ? lv.assets.cover : window.LEVEL_ASSET_PLACEHOLDERS?.cover),
     completed: !!lv.completed,
     percent: lv.percent || 0
 }));
@@ -91,10 +112,89 @@ let carouselLastFrame = 0;
 
 function updateLevelSelectNav() {
     window.selectedLevel = selectedLevel;
-    const prev = document.getElementById("ls-prev-btn");
-    const next = document.getElementById("ls-next-btn");
-    if (prev) prev.classList.toggle("is-hidden", selectedLevel <= 0);
-    if (next) next.classList.toggle("is-hidden", selectedLevel >= levels.length - 1);
+    renderCinematicPreview(selectedLevel);
+    renderCinematicList();
+}
+
+function renderCinematicList() {
+    const list = document.getElementById('lsc-list');
+    if (!list) return;
+    list.innerHTML = '';
+    levels.forEach((lv, i) => {
+        const item = document.createElement('div');
+        item.className = 'lsc-item' + (i === selectedLevel ? ' active' : '') + (!lv.unlocked ? ' locked' : '');
+        const thumb = document.createElement('div');
+        thumb.className = 'lsc-item-thumb';
+        if (lv.image) thumb.style.backgroundImage = `url("${lv.image}")`;
+        const info = document.createElement('div');
+        info.style.minWidth = '0';
+        const name = document.createElement('div');
+        name.className = 'lsc-item-name';
+        name.textContent = lv.name;
+        const sub = document.createElement('div');
+        sub.className = 'lsc-item-sub';
+        sub.textContent = lv.unlocked ? `${lv.completed ? '100' : lv.percent}%` : '🔒 BLOQUEADO';
+        info.appendChild(name);
+        info.appendChild(sub);
+        item.appendChild(thumb);
+        item.appendChild(info);
+        item.addEventListener('click', () => {
+            if (!lv.unlocked) return;
+            selectedLevel = i;
+            window.selectedLevel = i;
+            carouselTarget = 0;
+            window.playSfx?.("levelHover", 0.45);
+            updateLevelSelectNav();
+        });
+        list.appendChild(item);
+    });
+}
+
+function renderCinematicPreview(idx) {
+    const lv = levels[idx];
+    if (!lv) return;
+
+    const bgEl = document.getElementById('lsc-preview-bg');
+    if (bgEl) bgEl.style.backgroundImage = lv.backgroundLarge ? `url("${lv.backgroundLarge}")` : (lv.image ? `url("${lv.image}")` : '');
+
+    const kicker = document.getElementById('lsc-kicker');
+    if (kicker) kicker.textContent = `NIVEL ${String(idx + 1).padStart(2, '0')} · THE GEM`;
+
+    const titleBig = document.getElementById('lsc-title-big');
+    if (titleBig) titleBig.textContent = lv.name.toUpperCase();
+
+    const diffRow = document.getElementById('lsc-diff-row');
+    if (diffRow) {
+        const d = lv.difficulty || 2;
+        diffRow.innerHTML = `<span class="lsc-diff-label">DIFICULTAD</span>` +
+            Array.from({ length: 5 }, (_, i) => `<div class="lsc-diff-dot${i < d ? '' : ' off'}"></div>`).join('');
+    }
+
+    const starsEl = document.getElementById('lsc-stars');
+    if (starsEl) {
+        const pct = lv.completed ? 100 : (lv.percent || 0);
+        const full = pct >= 100 ? 3 : pct >= 50 ? 2 : pct > 0 ? 1 : 0;
+        starsEl.textContent = Array.from({ length: 3 }, (_, i) => i < full ? '⭐' : '☆').join('');
+    }
+
+    const pctEl = document.getElementById('lsc-percent');
+    if (pctEl) pctEl.textContent = lv.completed ? '100%' : `${lv.percent || 0}%`;
+
+    const recordEl = document.getElementById('lsc-record');
+    if (recordEl) recordEl.textContent = localStorage.getItem(`level${idx}_record`) || '—';
+
+    const attemptsEl = document.getElementById('lsc-attempts');
+    if (attemptsEl) attemptsEl.textContent = localStorage.getItem(`level${idx}_attempts`) || '0';
+
+    const comboEl = document.getElementById('lsc-combo');
+    if (comboEl) comboEl.textContent = localStorage.getItem(`level${idx}_deaths`) || '0';
+
+    const badgeWrap = document.getElementById('lsc-badge-wrap');
+    if (badgeWrap) {
+        badgeWrap.innerHTML = lv.unlocked
+            ? `<span class="lsc-badge ok">✓ DESBLOQUEADO</span>`
+            : `<span class="lsc-badge locked">🔒 BLOQUEADO</span>`;
+    }
 }
 
 function moveLevelSelection(direction) {
@@ -384,14 +484,14 @@ function drawCarousel(timestamp = 0) {
     const compact = document.body.classList.contains('is-touch-device') && window.innerWidth > window.innerHeight;
 
     // ── Leer dimensiones del carrusel desde GEM_CONFIG ──
-    const lsCfg  = window.GEM_CONFIG?.levelSelect || {};
+    const lsCfg = window.GEM_CONFIG?.levelSelect || {};
     const cardCfg = compact ? (lsCfg.card?.landscape || {}) : (lsCfg.card?.desktop || {});
-    const cardW   = cardCfg.width   ?? (compact ? 250 : 320);
-    const cardH   = cardCfg.height  ?? (compact ? 315 : 420);
+    const cardW = cardCfg.width ?? (compact ? 250 : 320);
+    const cardH = cardCfg.height ?? (compact ? 315 : 420);
     const spacing = cardCfg.spacing ?? (compact ? 315 : 420);
 
     const centerX = W / 2;
-    const cyCfg   = compact ? (lsCfg.centerY?.landscape || {}) : (lsCfg.centerY?.desktop || {});
+    const cyCfg = compact ? (lsCfg.centerY?.landscape || {}) : (lsCfg.centerY?.desktop || {});
     const centerY = cyCfg.mode === 'factor'
         ? H * (cyCfg.value ?? 0.58)
         : H / 2 + (cyCfg.value ?? 70);
@@ -460,7 +560,7 @@ function drawCarousel(timestamp = 0) {
         const lsColors = window.GEM_CONFIG?.levelSelect?.colors || {};
         ctx2.strokeStyle = i === selectedLevel
             ? (lsColors.selectedBorder || "rgba(0,255,231,0.45)")
-            : (lsColors.idleBorder     || "rgba(255,255,255,0.06)");
+            : (lsColors.idleBorder || "rgba(255,255,255,0.06)");
 
         ctx2.lineWidth = i === selectedLevel ? 2 : 1.2;
 

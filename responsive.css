@@ -35,6 +35,120 @@
     gap: var(--cfg-grid-gap, 14px);
 }
 
+/* ============================================================
+   PASE RUBÍ — controlado desde config.js → paseRubi
+   ============================================================ */
+
+/* ── Topbar ── */
+.ruby-pass-topbar {
+    height: var(--rp-topbar-height, 76px) !important;
+    padding: var(--rp-topbar-padding, 12px 22px) !important;
+    gap: var(--rp-topbar-gap, 16px) !important;
+}
+
+/* ── Botón VOLVER ── */
+.ruby-pass-back {
+    font-size: var(--rp-back-font, 13px) !important;
+    padding: var(--rp-back-padding, 8px 16px) !important;
+    border-radius: var(--rp-back-radius, 10px) !important;
+}
+
+/* ── Perfil (banner del jugador en el topbar) ── */
+.ruby-pass-profile {
+    height: var(--rp-profile-height, 54px) !important;
+    min-width: var(--rp-profile-minwidth, min(360px, 48vw)) !important;
+    padding: var(--rp-profile-padding, 8px 12px) !important;
+    border-radius: var(--rp-profile-radius, 8px) !important;
+    gap: var(--rp-profile-gap, 12px) !important;
+}
+
+/* ── Avatar ── */
+.ruby-pass-profile-avatar {
+    width: var(--rp-avatar-size, 38px) !important;
+    height: var(--rp-avatar-size, 38px) !important;
+}
+
+/* ── Nombre del jugador ── */
+.ruby-pass-profile-name {
+    font-size: var(--rp-name-font, 12px) !important;
+}
+
+/* ── Subtexto del perfil ── */
+.ruby-pass-profile-sub {
+    font-size: var(--rp-sub-font, 9px) !important;
+}
+
+/* ── Etiqueta temporada (derecha del topbar) ── */
+.ruby-pass-season {
+    display: var(--rp-season-display, block) !important;
+    font-size: var(--rp-season-font, 12px) !important;
+}
+
+/* ── Gear Shell: el anillo giratorio gigante ──
+   top = 100% de .ruby-pass-stage + el offset del config.
+   Aumentar topOffset → arco más hundido → menos círculo visible.
+   Reducir topOffset  → arco más alto   → más círculo visible.   */
+.ruby-pass-gear-shell {
+    top: calc(100% + var(--rp-gear-top-offset, min(520px, 54vw))) !important;
+    width: var(--rp-gear-size, min(2300px, 190vw, 245vh)) !important;
+    height: var(--rp-gear-size, min(2300px, 190vw, 245vh)) !important;
+}
+
+/* ── Nodo premium (carril exterior) ── */
+.ruby-pass-node-premium {
+    transform: rotate(var(--node-angle)) translateX(var(--rp-node-premium-x, min(810px, 68vw, 88vh))) !important;
+}
+
+/* ── Nodo gratuito (carril interior) ── */
+.ruby-pass-node-free {
+    transform: rotate(var(--node-angle)) translateX(var(--rp-node-free-x, min(620px, 52vw, 67vh))) !important;
+}
+
+/* ── Carril gratuito: tamaño relativo al gear-shell ── */
+.ruby-pass-track-free {
+    width: var(--rp-free-track-size, 58%) !important;
+    height: var(--rp-free-track-size, 58%) !important;
+}
+
+/* ── Ventana del arco (recorta lo que se ve del anillo) ──
+   Valores en mobile: recortan los bordes para que no se salga.
+   Puedes ampliar la ventana poniendo valores negativos en arcWindow. */
+.ruby-pass-arc-window {
+    top: var(--rp-arc-top, 0) !important;
+    right: var(--rp-arc-right, 0) !important;
+    bottom: var(--rp-arc-bottom, 0) !important;
+    left: var(--rp-arc-left, 0) !important;
+    inset: unset !important;
+    /* anula el inset:0 del CSS base para que funcionen las vars */
+}
+
+/* ── Panel de foco: info del nodo seleccionado ── */
+.ruby-pass-focus {
+    top: var(--rp-focus-top, 10%) !important;
+    left: var(--rp-focus-left, 50%) !important;
+    width: var(--rp-focus-width, min(360px, calc(100vw - 40px))) !important;
+    padding: var(--rp-focus-padding, 0) !important;
+    background: var(--rp-focus-bg, transparent) !important;
+    border: var(--rp-focus-border, 0) !important;
+    border-radius: var(--rp-focus-radius, 0) !important;
+    backdrop-filter: var(--rp-focus-blur, none) !important;
+    box-shadow: var(--rp-focus-shadow, none) !important;
+    gap: var(--rp-focus-gap, 10px) !important;
+    /* En desktop top:10% no necesita transform; en mobile (top:50%) sí */
+    transform: translate(-50%, var(--rp-focus-translate-y, 0)) !important;
+}
+
+/* ── Título dentro del foco ── */
+.ruby-pass-focus h3 {
+    font-size: var(--rp-focus-title-font, 22px) !important;
+    letter-spacing: var(--rp-focus-title-spacing, 5px) !important;
+}
+
+/* ── Subtexto dentro del foco ── */
+.ruby-pass-focus p {
+    font-size: var(--rp-focus-sub-font, 11px) !important;
+}
+
 /* ── BOTÓN MUTE ── */
 #mute-btn {
     width: var(--cfg-mute-size, 52px) !important;
@@ -50,21 +164,21 @@
 
 /* ── Header ── */
 .ls-header {
-    top:   var(--ls-header-top,   28px) !important;
-    width: var(--ls-header-width, 92%)  !important;
+    top: var(--ls-header-top, 28px) !important;
+    width: var(--ls-header-width, 92%) !important;
 }
 
 /* ── Caja del título "SELECCIONAR NIVEL" ── */
 .ls-title-zone {
-    display:            var(--ls-title-box-display, inline-flex);
-    flex-direction:     column;
-    gap:                6px;
-    padding:            var(--ls-title-box-padding,  10px 20px);
-    border-radius:      var(--ls-title-box-radius,   14px);
-    background:         var(--ls-title-box-bg,       rgba(0,0,0,0.38));
-    border:             1px solid var(--ls-title-box-border, rgba(0,255,231,0.15));
-    backdrop-filter:    blur(var(--ls-title-box-blur, 8px));
-    -webkit-backdrop-filter: blur(var(--ls-title-box-blur, 8px));
+    display: var(--ls-title-box-display, inline-flex);
+    flex-direction: column;
+    gap: 6px;
+    padding: var(--ls-title-box-padding, 10px 20px);
+    border-radius: var(--ls-title-box-radius, 14px);
+    background: var(--ls-title-box-bg, rgba(0, 0, 0, 0.38));
+    border: var(--ls-title-box-border, 1px solid rgba(0, 255, 231, 0.15));
+    backdrop-filter: var(--ls-title-box-blur, blur(8px));
+    -webkit-backdrop-filter: var(--ls-title-box-blur, blur(8px));
 }
 
 /* ── Texto pequeño "THE GEM" ── */
@@ -79,10 +193,10 @@
 
 /* ── Botón VOLVER ── */
 .ls-back-btn {
-    top:       var(--ls-back-top,     28px) !important;
-    height:    var(--ls-back-height,  42px) !important;
-    font-size: var(--ls-back-font,    14px) !important;
-    padding:   var(--ls-back-padding, 0 18px) !important;
+    top: var(--ls-back-top, 28px) !important;
+    height: var(--ls-back-height, 42px) !important;
+    font-size: var(--ls-back-font, 14px) !important;
+    padding: var(--ls-back-padding, 0 18px) !important;
 }
 
 /* ── Player bar ── */
@@ -92,15 +206,15 @@
 
 /* ── Flechas de navegación ← → ── */
 .ls-nav-btn {
-    width:         var(--ls-nav-size,   64px) !important;
-    height:        var(--ls-nav-size,   64px) !important;
-    font-size:     var(--ls-nav-font,   34px) !important;
+    width: var(--ls-nav-size, 64px) !important;
+    height: var(--ls-nav-size, 64px) !important;
+    font-size: var(--ls-nav-font, 34px) !important;
     border-radius: var(--ls-nav-radius, 18px) !important;
-    top:           var(--ls-nav-top,    52%)  !important;
+    top: var(--ls-nav-top, 52%) !important;
 }
 
 .ls-nav-prev {
-    left:  var(--ls-nav-offset, clamp(24px, 7vw, 110px)) !important;
+    left: var(--ls-nav-offset, clamp(24px, 7vw, 110px)) !important;
 }
 
 .ls-nav-next {
@@ -114,14 +228,75 @@
 
 /* ── Barra del sistema (mensajes) ── */
 .ls-system-bar {
-    width:  var(--ls-system-width,  360px) !important;
-    height: var(--ls-system-height, 40px)  !important;
+    width: var(--ls-system-width, 360px) !important;
+    height: var(--ls-system-height, 40px) !important;
 }
 
 /* ── Botón JUGAR ── */
 .ls-play-btn {
-    width:     var(--ls-play-width,  220px) !important;
-    height:    var(--ls-play-height, 64px)  !important;
-    font-size: var(--ls-play-font,   22px)  !important;
+    width: var(--ls-play-width, 220px) !important;
+    height: var(--ls-play-height, 64px) !important;
+    font-size: var(--ls-play-font, 22px) !important;
 }
 
+/* ── LEVEL SELECT: Banner de la bolita (canvas) ── */
+.ls-banner-wrap {
+    width: var(--ls-banner-width, 72%) !important;
+    height: var(--ls-banner-height, 66px) !important;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.ls-banner-wrap canvas {
+    width: 100% !important;
+    height: 100% !important;
+    display: block;
+    margin: 0 auto;
+}
+
+.ls-carousel-wrap {
+    width: 100% !important;
+    flex: 1 !important;
+    min-height: 0 !important;
+    overflow: hidden;
+}
+
+.ls-carousel-wrap canvas {
+    width: 100% !important;
+    height: 100% !important;
+    display: block;
+}
+
+.ls-carousel-wrap canvas {
+    width: 100% !important;
+    height: 100% !important;
+}
+
+/* ── MENÚ PRINCIPAL: Fila o contenedor de monedas/gemas ── */
+.menu-profile-currency-container {
+    display: flex;
+    flex-direction: column;
+    gap: var(--menu-currency-gap, 6px) !important;
+    align-items: flex-end;
+}
+
+/* ── Fila individual (Rubíes o Monedas) ── */
+.menu-profile-currency-container .shop-currency-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px !important;
+    padding: var(--menu-currency-padding, 2px 6px) !important;
+    font-family: monospace;
+    font-size: var(--menu-currency-font, 10px) !important;
+    color: rgba(255, 255, 255, 0.8);
+}
+
+/* ── PNG de moneda/gema en el menú ── */
+.menu-currency-icon {
+    width: var(--menu-currency-icon-size, 14px) !important;
+    height: var(--menu-currency-icon-size, 14px) !important;
+    object-fit: contain !important;
+}

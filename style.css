@@ -1,5 +1,29 @@
 @import url('https://fonts.googleapis.com/css2?family=Audiowide&display=swap');
 
+/* ============================================================
+   VARIABLES GLOBALES — Colores y fuentes del juego
+   Para cambiar un color o fuente en TODO el juego, modifica
+   estos valores en config.js (sección "tema"), no aquí.
+   ============================================================ */
+:root {
+    /* Colores principales */
+    --color-cian: #00ffe7;
+    --color-rojo: #ff2d55;
+    --color-rosa: #ff4d6d;
+    --color-rosa-claro: #ff9ab0;
+    --color-verde-neon: #00ffae;
+    --color-rojo-error: #ff4466;
+    --color-azul: #0088ff;
+
+    /* Fuentes */
+    --font-principal: 'Geom', monospace;
+    --font-secundaria: monospace;
+    --font-especial: "Audiowide", "Geom", sans-serif;
+
+    /* Tamaños de fuente base (se ajustan distinto en cada media query) */
+    --font-size-base: 14px;
+}
+
 /* Estilos base del documento HTML */
 html {
     margin: 0;
@@ -30,7 +54,7 @@ html {
 body {
     overflow: hidden;
     background: #050505;
-    font-family: "Geom", sans-serif;
+    font-family: var(--font-principal), sans-serif;
     width: 100%;
     min-height: 100dvh;
     touch-action: none;
@@ -96,7 +120,7 @@ canvas {
     background-repeat: no-repeat;
     background-position: center;
     color: transparent;
-    font-family: monospace;
+    font-family: var(--font-secundaria);
     font-weight: 900;
     font-size: 20px;
     pointer-events: auto;
@@ -175,6 +199,36 @@ body.is-touch-device.is-playing-touch #touch-controls {
     transform-origin: right center;
 }
 
+/* Espaciado interno del panel de botones (gap entre filas + padding) */
+.menu-overlay-panel-spacing {
+    gap: var(--menu-btn-gap, 14px);
+    padding: var(--menu-panel-padding, 80px 28px 60px);
+    padding-top: var(--menu-panel-padding-top, clamp(80px, 12vh, 120px));
+}
+
+/* Ancho del botón JUGAR (ancho completo por defecto, pero ajustable) */
+.menu-btn-play-size {
+    width: var(--menu-play-width, 100%);
+}
+
+/* Grid de los pares de botones (TIENDA+INVENTARIO, LOGROS+AYUDA) */
+.menu-btn-pair-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--menu-btn-pair-gap, 14px);
+}
+
+/* ── Posición/ancho del contenedor del banner de perfil en el menú ── */
+.menu-profile-wrap-positioned {
+    position: absolute;
+    top: var(--menu-profile-top, 0);
+    right: var(--menu-profile-right, 0);
+    width: var(--menu-profile-width, 50%);
+    max-width: var(--menu-profile-maxwidth, 420px);
+    z-index: 3;
+    padding: var(--menu-profile-padding, 18px 28px 0);
+}
+
 .menu-profile-banner {
     width: 100%;
     display: grid;
@@ -232,7 +286,7 @@ body.is-touch-device.is-playing-touch #touch-controls {
 }
 
 .menu-profile-rank.highlight {
-    color: #00ffe7;
+    color: var(--color-cian);
 }
 
 .menu-profile-currency {
@@ -268,7 +322,7 @@ body.is-touch-device.is-playing-touch #touch-controls {
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 16px;
     margin-top: 18px;
-    font-family: monospace;
+    font-family: var(--font-secundaria);
     font-size: 12px;
     color: rgba(255, 255, 255, 0.8);
 }
@@ -322,9 +376,9 @@ body.is-touch-device.is-playing-touch #touch-controls {
 /* ── Solo PC: panel más a la izquierda, más abajo y botones más grandes ── */
 @media (hover: hover) and (pointer: fine) and (min-width: 768px) {
     #overlay-panel {
-        width: 58%;
+        width: var(--menu-panel-width, 58%);
         justify-content: flex-end;
-        padding-bottom: 80px;
+        padding-bottom: var(--menu-panel-padding-bottom, 80px);
     }
 }
 
@@ -407,7 +461,7 @@ body.is-touch-device.is-playing-touch #touch-controls {
 
 /* Título del menú */
 #title {
-    color: #ff4d6d;
+    color: var(--color-rosa);
 
     font-size: 68px;
 
@@ -644,7 +698,7 @@ body.is-touch-device.is-playing-touch #touch-controls {
     border: 1px solid rgba(255, 77, 109, 0.55);
     border-radius: 50%;
     background: rgba(255, 77, 109, 0.12);
-    color: #ff4d6d;
+    color: var(--color-rosa);
     display: grid;
     place-items: center;
     font-size: 30px;
@@ -655,7 +709,7 @@ body.is-touch-device.is-playing-touch #touch-controls {
 /* Texto kicker de Game Over */
 .go-kicker {
     color: rgba(255, 255, 255, 0.45);
-    font-family: monospace;
+    font-family: var(--font-secundaria);
     font-size: 11px;
     letter-spacing: 4px;
     text-align: center;
@@ -691,7 +745,7 @@ body.is-touch-device.is-playing-touch #touch-controls {
 #go-sub {
     margin: 0 0 8px;
     color: rgba(255, 255, 255, 0.5);
-    font-family: monospace;
+    font-family: var(--font-secundaria);
     letter-spacing: 3px;
     text-align: center;
 }
@@ -713,7 +767,7 @@ body.is-touch-device.is-playing-touch #touch-controls {
     grid-template-columns: 1fr 1fr;
     gap: 8px;
     color: #ffee00;
-    font-family: monospace;
+    font-family: var(--font-secundaria);
     font-size: 11px;
     letter-spacing: 2px;
 }
@@ -729,7 +783,7 @@ body.is-touch-device.is-playing-touch #touch-controls {
     border: 1px solid rgba(255, 238, 0, 0.4);
     background: rgba(0, 0, 0, 0.22);
     color: #ffee00;
-    font-family: monospace;
+    font-family: var(--font-secundaria);
     cursor: pointer;
 }
 
@@ -744,7 +798,7 @@ body.is-touch-device.is-playing-touch #touch-controls {
     gap: 10px;
     align-items: center;
     color: white;
-    font-family: monospace;
+    font-family: var(--font-secundaria);
     letter-spacing: 2px;
 }
 
@@ -760,7 +814,7 @@ body.is-touch-device.is-playing-touch #touch-controls {
     border: 1px solid rgba(255, 238, 0, 0.38);
     background: rgba(255, 238, 0, 0.08);
     color: #ffee00;
-    font-family: monospace;
+    font-family: var(--font-secundaria);
     cursor: pointer;
     padding: 0 12px;
 }
@@ -805,7 +859,7 @@ body.is-touch-device.is-playing-touch #touch-controls {
     width: 100%;
     margin-top: 6px;
     border-radius: 8px;
-    font-family: monospace;
+    font-family: var(--font-secundaria);
     font-size: 13px;
     letter-spacing: 3px;
 }
@@ -829,8 +883,8 @@ body.is-touch-device.is-playing-touch #touch-controls {
     border: 1px solid rgba(0, 255, 231, 0.35);
     border-radius: 8px;
     background: rgba(8, 12, 16, 0.62);
-    color: #00ffe7;
-    font-family: monospace;
+    color: var(--color-cian);
+    font-family: var(--font-secundaria);
     font-size: 12px;
     font-weight: 800;
     letter-spacing: 2px;
@@ -946,20 +1000,20 @@ body.is-touch-device #shopPanel {
 }
 
 body.is-touch-device #menu-profile-wrap {
-    width: 42% !important;
-    right: calc(24px + env(safe-area-inset-right)) !important;
-    top: calc(12px + env(safe-area-inset-top)) !important;
+    width: var(--menu-profile-width-mobile, 42%) !important;
+    right: calc(var(--menu-profile-right-mobile, 24px) + env(safe-area-inset-right)) !important;
+    top: calc(var(--menu-profile-top-mobile, 12px) + env(safe-area-inset-top)) !important;
     padding: 0 !important;
 }
 
 body.is-touch-device #overlay-panel {
     transform: none !important;
-    width: 42% !important;
-    right: calc(24px + env(safe-area-inset-right)) !important;
-    padding-top: calc(92px + env(safe-area-inset-top)) !important;
-    padding-bottom: calc(14px + env(safe-area-inset-bottom)) !important;
+    width: var(--menu-panel-width-mobile, 42%) !important;
+    right: calc(var(--menu-panel-right-mobile, 24px) + env(safe-area-inset-right)) !important;
+    padding-top: calc(var(--menu-panel-padding-top-mobile, 92px) + env(safe-area-inset-top)) !important;
+    padding-bottom: calc(var(--menu-panel-padding-bottom-mobile, 14px) + env(safe-area-inset-bottom)) !important;
     justify-content: flex-start !important;
-    gap: 10px !important;
+    gap: var(--menu-btn-gap-mobile, 10px) !important;
 }
 
 body.is-touch-device #mute-btn {
@@ -1114,7 +1168,7 @@ body.is-touch-device .active-emote-bubble {
     border-radius: 8px;
     border: 1px solid rgba(0, 255, 231, 0.28);
     background: rgba(0, 255, 231, 0.08);
-    color: #00ffe7;
+    color: var(--color-cian);
     font: 800 10px/1 monospace;
     letter-spacing: 2px;
     cursor: pointer;
@@ -1327,7 +1381,7 @@ body.is-touch-device .active-emote-bubble {
     backdrop-filter: blur(14px) saturate(1.1);
     -webkit-backdrop-filter: blur(14px) saturate(1.1);
     color: white;
-    font-family: monospace;
+    font-family: var(--font-secundaria);
     overflow-y: auto;
     overflow-x: hidden;
     scrollbar-width: thin;
@@ -1382,7 +1436,7 @@ body.is-touch-device .active-emote-bubble {
     font-weight: 700;
     letter-spacing: 4px;
     text-transform: uppercase;
-    color: #00ffe7;
+    color: var(--color-cian);
     text-shadow: 0 0 12px rgba(0, 255, 231, 0.5);
 }
 
@@ -1411,7 +1465,7 @@ body.is-touch-device .active-emote-bubble {
     grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: 0;
     margin: 14px 28px 0;
-    font-family: monospace;
+    font-family: var(--font-secundaria);
     font-size: 12px;
     color: rgba(255, 255, 255, 0.55);
     background: rgba(255, 255, 255, 0.03);
@@ -1517,7 +1571,7 @@ body.is-touch-device .active-emote-bubble {
     align-items: center;
     gap: 12px;
     color: rgba(255, 255, 255, 0.72);
-    font-family: monospace;
+    font-family: var(--font-secundaria);
     font-size: 12px;
     letter-spacing: 2px;
 }
@@ -1532,8 +1586,8 @@ body.is-touch-device .active-emote-bubble {
     border-radius: 8px;
     border: 1px solid rgba(0, 255, 231, 0.25);
     background: rgba(0, 255, 231, 0.08);
-    color: #00ffe7;
-    font-family: monospace;
+    color: var(--color-cian);
+    font-family: var(--font-secundaria);
     letter-spacing: 2px;
     cursor: pointer;
 }
@@ -1547,7 +1601,7 @@ body.is-touch-device .active-emote-bubble {
 
 .option-mobile-title {
     color: rgba(255, 77, 109, 0.78);
-    font-family: monospace;
+    font-family: var(--font-secundaria);
     font-size: 11px;
     letter-spacing: 3px;
 }
@@ -1595,7 +1649,7 @@ body.is-touch-device .active-emote-bubble {
 
 .pause-kicker {
     color: rgba(0, 255, 231, 0.55);
-    font-family: monospace;
+    font-family: var(--font-secundaria);
     font-size: 11px;
     letter-spacing: 4px;
 }
@@ -1615,7 +1669,7 @@ body.is-touch-device .active-emote-bubble {
     border-radius: 8px;
     background: rgba(255, 255, 255, 0.05);
     color: white;
-    font-family: monospace;
+    font-family: var(--font-secundaria);
     font-size: 13px;
     font-weight: 800;
     letter-spacing: 3px;
@@ -1624,7 +1678,7 @@ body.is-touch-device .active-emote-bubble {
 
 .pause-drawer button:hover {
     border-color: rgba(0, 255, 231, 0.45);
-    color: #00ffe7;
+    color: var(--color-cian);
 }
 
 @keyframes pauseIn {
@@ -1723,7 +1777,7 @@ body.is-touch-device .active-emote-bubble {
     z-index: 32;
     background: #060206;
     color: white;
-    font-family: monospace;
+    font-family: var(--font-secundaria);
 }
 
 #shop-modal {
@@ -1734,7 +1788,7 @@ body.is-touch-device .active-emote-bubble {
     align-items: center;
     justify-content: center;
     padding: 22px;
-    font-family: monospace;
+    font-family: var(--font-secundaria);
 }
 
 #shop-modal.showing {
@@ -1931,7 +1985,7 @@ body.is-touch-device .active-emote-bubble {
     flex: 1;
     height: 40px;
     border-radius: 8px;
-    font-family: monospace;
+    font-family: var(--font-secundaria);
     font-weight: 900;
     letter-spacing: 2px;
     cursor: pointer;
@@ -1976,7 +2030,7 @@ body.is-touch-device .active-emote-bubble {
     display: flex;
     flex-direction: column;
     color: white;
-    font-family: monospace;
+    font-family: var(--font-secundaria);
 }
 
 .vip-topbar {
@@ -2029,7 +2083,7 @@ body.is-touch-device .active-emote-bubble {
     border: 1px solid rgba(255, 255, 255, 0.14);
     background: rgba(255, 255, 255, 0.04);
     color: rgba(255, 255, 255, 0.72);
-    font-family: monospace;
+    font-family: var(--font-secundaria);
     letter-spacing: 2px;
     cursor: pointer;
     padding: 0 16px;
@@ -2224,20 +2278,20 @@ body.is-touch-device .active-emote-bubble {
     display: grid;
     place-items: center;
     color: rgba(255, 255, 255, 0.28);
-    font-family: monospace;
+    font-family: var(--font-secundaria);
     letter-spacing: 3px;
 }
 
 .vip-premium-tile h3 {
     color: white;
-    font-family: monospace;
+    font-family: var(--font-secundaria);
     font-size: 12px;
     letter-spacing: 2px;
 }
 
 .vip-premium-tile p {
     color: rgba(255, 255, 255, 0.42);
-    font-family: monospace;
+    font-family: var(--font-secundaria);
     font-size: 10px;
     line-height: 1.35;
 }
@@ -2375,7 +2429,7 @@ body.is-touch-device .vip-emoji-orb img {
 #profilePanel,
 #settingsPanel,
 .shop-modal-card {
-    font-family: "Geom", sans-serif;
+    font-family: var(--font-principal), sans-serif;
 }
 
 .vip-title,
@@ -2390,7 +2444,7 @@ body.is-touch-device .vip-emoji-orb img {
 .vip-legend-core h2,
 .vip-station-card h3,
 .shop-section-title {
-    font-family: "Audiowide", "Geom", sans-serif !important;
+    font-family: var(--font-especial) !important;
 }
 
 .vip-pack-card:hover,
@@ -2601,14 +2655,14 @@ body.is-touch-device .vip-emoji-orb img {
 
 .vip-powerup-promo-copy span {
     color: rgba(255, 255, 255, 0.58);
-    font-family: monospace;
+    font-family: var(--font-secundaria);
     font-size: 10px;
     letter-spacing: 3px;
 }
 
 .vip-powerup-promo-copy strong {
     color: #ffee00;
-    font-family: Geom, monospace;
+    font-family: var(--font-principal);
     font-size: 26px;
     letter-spacing: 3px;
     text-shadow: 0 0 18px rgba(255, 238, 0, 0.58);
@@ -2772,7 +2826,7 @@ body.is-touch-device .vip-emoji-orb img {
     border: 1px solid rgba(255, 238, 0, 0.38);
     background: rgba(255, 238, 0, 0.08);
     color: #ffee00;
-    font-family: monospace;
+    font-family: var(--font-secundaria);
     font-size: 10px;
     cursor: pointer;
 }
@@ -3107,7 +3161,7 @@ body.is-touch-device .vip-emoji-orb img {
         linear-gradient(115deg, rgba(255, 238, 0, 0.14), rgba(0, 255, 231, 0.07)),
         rgba(0, 0, 0, 0.36);
     color: #ffee00;
-    font-family: monospace;
+    font-family: var(--font-secundaria);
     font-size: 10px;
     letter-spacing: 2px;
     font-weight: 900;
@@ -3298,7 +3352,7 @@ body.is-touch-device .vip-emoji-orb img {
     border: 1px solid rgba(255, 238, 0, 0.34);
     background: rgba(0, 0, 0, 0.52);
     color: #ffee00;
-    font-family: monospace;
+    font-family: var(--font-secundaria);
     font-size: 10px;
     font-weight: 900;
     letter-spacing: 2px;
@@ -3409,7 +3463,7 @@ body.is-touch-device .vip-emoji-orb img {
     border: 1px solid rgba(255, 218, 58, 0.34);
     background: rgba(0, 0, 0, 0.46);
     color: white;
-    font-family: monospace;
+    font-family: var(--font-secundaria);
     font-weight: 900;
     letter-spacing: 1px;
     text-align: center;
@@ -3440,7 +3494,7 @@ body.is-touch-device .vip-emoji-orb img {
     align-items: center;
     justify-content: space-between;
     gap: 18px;
-    font-family: monospace;
+    font-family: var(--font-secundaria);
     background-size: cover;
     background-position: center;
 }
@@ -3469,7 +3523,7 @@ body.is-touch-device .vip-emoji-orb img {
     border: 1px solid rgba(0, 255, 136, 0.42);
     background: rgba(0, 255, 136, 0.12);
     color: #00ff88;
-    font-family: monospace;
+    font-family: var(--font-secundaria);
     font-weight: 900;
     letter-spacing: 2px;
     cursor: pointer;
@@ -3507,7 +3561,7 @@ body.is-touch-device .vip-emoji-orb img {
     flex-direction: column;
     gap: 8px;
     justify-content: space-between;
-    font-family: monospace;
+    font-family: var(--font-secundaria);
 }
 
 .daily-day.today {
@@ -3684,7 +3738,7 @@ body.is-touch-device .vip-emoji-orb img {
 .ruby-pass-logo-slot span {
     width: 24px;
     height: 30px;
-    border: 3px solid #ff2d55;
+    border: 3px solid var(--color-rojo);
     border-radius: 6px;
     position: relative;
 }
@@ -3697,7 +3751,7 @@ body.is-touch-device .vip-emoji-orb img {
     top: -20px;
     width: 28px;
     height: 24px;
-    border: 3px solid #ff2d55;
+    border: 3px solid var(--color-rojo);
     border-bottom: 0;
     border-radius: 18px 18px 0 0;
     transform: translateX(-50%);
@@ -3734,7 +3788,7 @@ body.is-touch-device .vip-emoji-orb img {
 .ruby-pass-access-arrow {
     position: relative;
     margin-left: auto;
-    color: #ff2d55;
+    color: var(--color-rojo);
     font-size: 22px;
     font-weight: 900;
 }
@@ -3868,7 +3922,7 @@ body.is-touch-device .vip-emoji-orb img {
     height: 16px;
     margin: -8px 0 0 -8px;
     border-radius: 50%;
-    background: #ff9ab0;
+    background: var(--color-rosa-claro);
     box-shadow:
         0 0 18px rgba(255, 45, 85, 0.95),
         0 0 38px rgba(255, 45, 85, 0.55);
@@ -4046,7 +4100,7 @@ body.is-touch-device .vip-emoji-orb img {
 }
 
 .ruby-pass-level-marker.is-unlocked {
-    background: #ff2d55;
+    background: var(--color-rojo);
     box-shadow: 0 0 18px rgba(255, 45, 85, 0.9);
 }
 
@@ -4129,7 +4183,7 @@ body.is-touch-device .vip-emoji-orb img {
     display: block;
     height: 100%;
     border-radius: inherit;
-    background: linear-gradient(90deg, #7a0019, #ff2d55, #ff9ab0);
+    background: linear-gradient(90deg, #7a0019, var(--color-rojo), var(--color-rosa-claro));
     box-shadow: 0 0 18px rgba(255, 45, 85, 0.7);
     transition: width 1.05s cubic-bezier(0.18, 0.92, 0.24, 1);
 }
@@ -4141,7 +4195,7 @@ body.is-touch-device .vip-emoji-orb img {
     border: 1px solid rgba(255, 45, 85, 0.44);
     background: rgba(255, 45, 85, 0.1);
     color: #ff7a96;
-    font-family: monospace;
+    font-family: var(--font-secundaria);
     font-size: 11px;
     letter-spacing: 2px;
     cursor: pointer;
@@ -4160,8 +4214,8 @@ body.is-touch-device .vip-emoji-orb img {
     border-radius: 8px;
     border: 1px solid rgba(0, 255, 231, 0.32);
     background: rgba(0, 255, 231, 0.08);
-    color: #00ffe7;
-    font-family: monospace;
+    color: var(--color-cian);
+    font-family: var(--font-secundaria);
     font-size: 10px;
     letter-spacing: 2px;
     cursor: pointer;
@@ -4190,7 +4244,7 @@ body.is-touch-device .vip-emoji-orb img {
     border: 1px solid rgba(255, 255, 255, 0.14);
     background: rgba(255, 255, 255, 0.04);
     color: rgba(255, 255, 255, 0.7);
-    font-family: monospace;
+    font-family: var(--font-secundaria);
     font-size: 11px;
     letter-spacing: 2px;
     cursor: pointer;
@@ -4319,7 +4373,7 @@ body.is-touch-device .vip-emoji-orb img {
     height: 13px;
     margin: -6.5px 0 0 -6.5px;
     border-radius: 50%;
-    background: #ff9ab0;
+    background: var(--color-rosa-claro);
     box-shadow:
         0 0 16px rgba(255, 45, 85, 0.95),
         0 0 34px rgba(255, 45, 85, 0.55);
@@ -4472,7 +4526,7 @@ body.is-touch-device .vip-emoji-orb img {
 }
 
 .ruby-pass-level-marker.is-unlocked {
-    background: #ff2d55;
+    background: var(--color-rojo);
     box-shadow: 0 0 18px rgba(255, 45, 85, 0.9);
 }
 
@@ -4515,7 +4569,7 @@ body.is-touch-device .vip-emoji-orb img {
     display: block;
     height: 100%;
     border-radius: inherit;
-    background: linear-gradient(90deg, #7a0019, #ff2d55, #ff9ab0);
+    background: linear-gradient(90deg, #7a0019, var(--color-rojo), var(--color-rosa-claro));
     box-shadow: 0 0 18px rgba(255, 45, 85, 0.7);
     transition: width 1.05s cubic-bezier(0.18, 0.92, 0.24, 1);
 }
@@ -4531,8 +4585,8 @@ body.is-touch-device .vip-emoji-orb img {
     border-radius: 8px;
     border: 1px solid rgba(0, 255, 231, 0.32);
     background: rgba(0, 255, 231, 0.08);
-    color: #00ffe7;
-    font-family: monospace;
+    color: var(--color-cian);
+    font-family: var(--font-secundaria);
     font-size: 10px;
     letter-spacing: 2px;
     cursor: pointer;
@@ -4548,7 +4602,7 @@ body.is-touch-device .vip-emoji-orb img {
     border: 1px solid rgba(255, 45, 85, 0.42);
     background: rgba(12, 0, 5, 0.86);
     color: white;
-    font-family: monospace;
+    font-family: var(--font-secundaria);
     font-size: 12px;
     letter-spacing: 3px;
     opacity: 0;
@@ -4730,13 +4784,13 @@ body.is-touch-device .vip-emoji-orb img {
 
     color: #000000;
 
-    font-family: monospace;
+    font-family: var(--font-secundaria);
     font-size: 16px;
     font-weight: bold;
     letter-spacing: 6px;
 
     text-shadow:
-        0 0 12px #00ffe7;
+        0 0 12px var(--color-cian);
 }
 
 .ls-play-glow {
@@ -4774,8 +4828,8 @@ body.is-touch-device .vip-emoji-orb img {
     display: none;
     overflow: hidden;
     z-index: 9999;
-    background: #050507;
-    font-family: Geom, sans-serif;
+    background: transparent;
+    font-family: var(--font-principal), sans-serif;
 }
 
 /* =========================
@@ -4821,21 +4875,21 @@ HEADER
 }
 
 .ls-title-zone {
-    display: flex;
     flex-direction: column;
     gap: 6px;
 }
 
 .ls-small {
     color: rgba(255, 255, 255, .35);
-    font-size: 11px;
     letter-spacing: 4px;
-    font-family: monospace;
+    font-family: var(--font-secundaria);
 }
 
 .ls-title {
     color: white;
-    font-size: 42px;
+    font-family: var(--font-principal);
+    font-size: var(--ls-font-large, 42px);
+    font-weight: 900;
     letter-spacing: 3px;
     text-shadow: 0 0 20px rgba(0, 255, 231, .3);
 }
@@ -4860,7 +4914,7 @@ VOLVER
 
     color: white;
 
-    font-family: Geom, sans-serif;
+    font-family: var(--font-principal), sans-serif;
     font-size: 14px;
 
     cursor: pointer;
@@ -4927,7 +4981,7 @@ CAROUSEL
         rgba(2, 8, 12, 0.72);
     color: #ffffff;
     cursor: pointer;
-    font-family: Geom, monospace;
+    font-family: var(--font-principal);
     font-size: 34px;
     line-height: 1;
     display: flex;
@@ -4977,7 +5031,7 @@ FOOTER
 
 .ls-controls {
     color: rgba(255, 255, 255, .45);
-    font-family: monospace;
+    font-family: var(--font-secundaria);
     font-size: 12px;
     letter-spacing: 2px;
     display: flex;
@@ -5000,10 +5054,10 @@ PLAY BUTTON
     border: none;
     overflow: hidden;
     border-radius: 18px;
-    background: linear-gradient(135deg, #00ffe7, #0088ff);
+    background: linear-gradient(135deg, var(--color-cian), var(--color-azul));
     color: white;
     cursor: pointer;
-    font-family: Geom, sans-serif;
+    font-family: var(--font-principal), sans-serif;
     font-size: 22px;
     letter-spacing: 2px;
     transition: .25s;
@@ -5087,12 +5141,12 @@ PLAY BUTTON
 .ls-system-icon {
     position: relative;
 
-    color: #00ffe7;
+    color: var(--color-cian);
 
     font-size: 14px;
 
     text-shadow:
-        0 0 10px #00ffe7;
+        0 0 10px var(--color-cian);
 }
 
 .ls-system-text {
@@ -5102,7 +5156,7 @@ PLAY BUTTON
 
     color: rgba(255, 255, 255, 0.82);
 
-    font-family: monospace;
+    font-family: var(--font-secundaria);
     font-size: 11px;
 
     letter-spacing: 1px;
@@ -5185,7 +5239,7 @@ PLAY BUTTON
 
     color: white;
 
-    font-family: Geom, sans-serif;
+    font-family: var(--font-principal), sans-serif;
     font-size: 13px;
 
     z-index: 20;
@@ -5197,7 +5251,7 @@ PLAY BUTTON
 
     border-radius: 50%;
 
-    background: #00ffe7;
+    background: var(--color-cian);
 
     border: 1px solid rgba(255, 255, 255, 0.2);
 }
@@ -5684,7 +5738,7 @@ body.is-touch-device .ls-small {
 .normal-custom-trail-preview p {
     margin: 10px 0 0;
     color: rgba(255, 255, 255, 0.48);
-    font-family: monospace;
+    font-family: var(--font-secundaria);
     font-size: 11px;
 }
 
@@ -5694,7 +5748,7 @@ body.is-touch-device .ls-small {
     border: 1px solid rgba(255, 238, 0, 0.44);
     background: rgba(255, 238, 0, 0.1);
     color: #ffee00;
-    font-family: monospace;
+    font-family: var(--font-secundaria);
     letter-spacing: 2px;
     cursor: pointer;
     padding: 0 20px;
@@ -5731,7 +5785,7 @@ body.is-touch-device .ls-small {
     border: 1px solid rgba(255, 238, 0, 0.38);
     background: rgba(255, 238, 0, 0.08);
     color: #ffee00;
-    font-family: monospace;
+    font-family: var(--font-secundaria);
     font-size: 10px;
     cursor: pointer;
 }
@@ -5948,7 +6002,7 @@ body.is-touch-device .ruby-pass-dev {
     border: 1px solid rgba(255, 255, 255, 0.14);
     border-radius: 8px;
     color: #fff;
-    font-family: monospace;
+    font-family: var(--font-secundaria);
     font-size: 11px;
     font-weight: 900;
     letter-spacing: 2px;
@@ -5995,7 +6049,7 @@ body.is-touch-device .ruby-pass-dev {
 .powerup-selection-head span,
 .powerup-shop-title span {
     color: rgba(255, 255, 255, 0.45);
-    font-family: monospace;
+    font-family: var(--font-secundaria);
     font-size: 11px;
     letter-spacing: 4px;
 }
@@ -6003,7 +6057,7 @@ body.is-touch-device .ruby-pass-dev {
 .powerup-selection-head h2 {
     margin: 4px 0 0;
     color: #fff;
-    font-family: Geom, monospace;
+    font-family: var(--font-principal);
     font-size: 28px;
 }
 
@@ -6016,7 +6070,7 @@ body.is-touch-device .ruby-pass-dev {
     border: 1px solid rgba(255, 255, 255, 0.14);
     border-radius: 8px;
     color: #fff;
-    font-family: monospace;
+    font-family: var(--font-secundaria);
     font-size: 11px;
     font-weight: 900;
     letter-spacing: 2px;
@@ -6087,7 +6141,7 @@ body.is-touch-device .ruby-pass-dev {
     background: rgba(255, 255, 255, 0.045);
     border: 1px solid color-mix(in srgb, var(--powerup-color) 58%, transparent);
     color: #fff;
-    font-family: Geom, monospace;
+    font-family: var(--font-principal);
     cursor: pointer;
     box-shadow: 0 0 18px color-mix(in srgb, var(--powerup-color) 28%, transparent);
 }
@@ -6221,7 +6275,7 @@ body.is-touch-device .ruby-pass-dev {
 .powerup-shop-card span,
 .powerup-vip-feature span {
     color: rgba(255, 255, 255, 0.58);
-    font-family: monospace;
+    font-family: var(--font-secundaria);
     font-size: 10px;
 }
 
@@ -6271,7 +6325,7 @@ body.is-touch-device .ruby-pass-dev {
     border: 1px solid rgba(255, 255, 255, 0.1);
     color: rgba(255, 255, 255, 0.7);
     padding: 8px 16px;
-    font-family: monospace;
+    font-family: var(--font-secundaria);
     font-size: 11px;
     font-weight: bold;
     letter-spacing: 1px;
@@ -6303,7 +6357,7 @@ body.is-touch-device .ruby-pass-dev {
     border: 1px solid color-mix(in srgb, var(--powerup-color) 55%, transparent);
     border-radius: 8px;
     color: #fff;
-    font-family: Geom, monospace;
+    font-family: var(--font-principal);
     cursor: pointer;
 }
 
@@ -6407,7 +6461,7 @@ body.is-touch-device .ruby-pass-dev {
 
 .powerup-detail-top strong {
     display: block;
-    font-family: Geom, monospace;
+    font-family: var(--font-principal);
     font-size: 24px;
 }
 
@@ -6419,7 +6473,7 @@ body.is-touch-device .ruby-pass-dev {
 .powerup-detail-top span,
 .powerup-detail-hex p {
     color: rgba(255, 255, 255, 0.68);
-    font-family: monospace;
+    font-family: var(--font-secundaria);
     line-height: 1.45;
 }
 
@@ -6438,7 +6492,7 @@ body.is-touch-device .ruby-pass-dev {
     border: 1px solid rgba(255, 255, 255, 0.14);
     background: rgba(255, 255, 255, 0.06);
     color: #fff;
-    font-family: monospace;
+    font-family: var(--font-secundaria);
     font-weight: 900;
     cursor: pointer;
 }
@@ -6486,7 +6540,7 @@ body.is-touch-device .ruby-pass-dev {
     border-radius: 8px;
     background: rgba(255, 255, 255, 0.045);
     color: white;
-    font-family: Geom, monospace;
+    font-family: var(--font-principal);
     cursor: pointer;
 }
 
@@ -6596,7 +6650,7 @@ body.is-touch-device .ruby-pass-dev {
 
 .powerup-intro-header h2 {
     color: #4bc0eb;
-    font-family: Geom, monospace;
+    font-family: var(--font-principal);
     font-size: 28px;
     margin: 0;
     text-transform: uppercase;
@@ -6623,7 +6677,7 @@ body.is-touch-device .ruby-pass-dev {
 
 .powerup-intro-body {
     color: rgba(255, 255, 255, 0.85);
-    font-family: monospace;
+    font-family: var(--font-secundaria);
     font-size: 14px;
     line-height: 1.6;
 }
@@ -6655,7 +6709,7 @@ body.is-touch-device .ruby-pass-dev {
 
 .powerup-intro-feature h3 {
     color: #fff;
-    font-family: Geom, monospace;
+    font-family: var(--font-principal);
     font-size: 13px;
     margin: 0 0 8px 0;
     text-transform: uppercase;
@@ -6687,7 +6741,7 @@ body.is-touch-device .ruby-pass-dev {
     border: none;
     border-radius: 8px;
     color: #fff;
-    font-family: Geom, monospace;
+    font-family: var(--font-principal);
     font-size: 14px;
     font-weight: 900;
     padding: 12px 32px;
@@ -6757,20 +6811,20 @@ body.is-touch-device .ruby-pass-dev {
 .powerup-tooltip-header strong {
     display: block;
     color: #fff;
-    font-family: Geom, monospace;
+    font-family: var(--font-principal);
     font-size: 14px;
     margin-bottom: 4px;
 }
 
 .powerup-tooltip-header span {
     color: rgba(255, 255, 255, 0.6);
-    font-family: monospace;
+    font-family: var(--font-secundaria);
     font-size: 11px;
 }
 
 .powerup-tooltip-body {
     color: rgba(255, 255, 255, 0.8);
-    font-family: monospace;
+    font-family: var(--font-secundaria);
     font-size: 12px;
     line-height: 1.5;
 }
@@ -6819,7 +6873,7 @@ body.is-touch-device .ruby-pass-dev {
 
 .powerup-help-header h2 {
     color: #4bc0eb;
-    font-family: Geom, monospace;
+    font-family: var(--font-principal);
     font-size: 24px;
     margin: 0;
     text-transform: uppercase;
@@ -6876,7 +6930,7 @@ body.is-touch-device .ruby-pass-dev {
     padding-top: 8px;
     border-top: 1px solid rgba(255, 255, 255, 0.1);
     color: rgba(255, 255, 255, 0.6);
-    font-family: monospace;
+    font-family: var(--font-secundaria);
     font-size: 11px;
 }
 
@@ -6894,14 +6948,14 @@ body.is-touch-device .ruby-pass-dev {
 .powerup-help-info strong {
     display: block;
     color: #fff;
-    font-family: Geom, monospace;
+    font-family: var(--font-principal);
     font-size: 14px;
     margin-bottom: 6px;
 }
 
 .powerup-help-info p {
     color: rgba(255, 255, 255, 0.7);
-    font-family: monospace;
+    font-family: var(--font-secundaria);
     font-size: 12px;
     margin: 0 0 8px 0;
     line-height: 1.4;
@@ -6915,7 +6969,7 @@ body.is-touch-device .ruby-pass-dev {
 
 .powerup-help-levels span {
     color: rgba(255, 255, 255, 0.5);
-    font-family: monospace;
+    font-family: var(--font-secundaria);
     font-size: 10px;
     padding-left: 8px;
     border-left: 2px solid var(--powerup-color);
@@ -6953,7 +7007,7 @@ body.is-touch-device .ruby-pass-dev {
 
 .keybind-title {
     color: #4bc0eb;
-    font-family: Geom, monospace;
+    font-family: var(--font-principal);
     font-size: 12px;
     font-weight: 900;
     letter-spacing: 2px;
@@ -6975,7 +7029,7 @@ body.is-touch-device .ruby-pass-dev {
 
 .keybind-row span {
     color: rgba(255, 255, 255, 0.7);
-    font-family: monospace;
+    font-family: var(--font-secundaria);
     font-size: 12px;
 }
 
@@ -6984,7 +7038,7 @@ body.is-touch-device .ruby-pass-dev {
     border: 1px solid rgba(255, 255, 255, 0.15);
     border-radius: 6px;
     color: #fff;
-    font-family: monospace;
+    font-family: var(--font-secundaria);
     font-size: 12px;
     font-weight: 700;
     padding: 6px 16px;
@@ -7000,7 +7054,7 @@ body.is-touch-device .ruby-pass-dev {
 
 .keybind-btn.listening {
     background: rgba(255, 77, 109, 0.2);
-    border-color: #ff4d6d;
+    border-color: var(--color-rosa);
     animation: pulse 1s infinite;
 }
 
@@ -7039,7 +7093,7 @@ body.is-touch-device .ruby-pass-dev {
 
 .achievements-header h2 {
     color: #FFD700;
-    font-family: Geom, monospace;
+    font-family: var(--font-principal);
     font-size: 24px;
     margin: 0;
     text-transform: uppercase;
@@ -7067,7 +7121,7 @@ body.is-touch-device .ruby-pass-dev {
 .achievements-stats {
     text-align: center;
     color: rgba(255, 215, 0, 0.8);
-    font-family: Geom, monospace;
+    font-family: var(--font-principal);
     font-size: 14px;
     margin-bottom: 20px;
     padding: 12px;
@@ -7123,14 +7177,14 @@ body.is-touch-device .ruby-pass-dev {
 .achievement-item .achievement-info strong {
     display: block;
     color: #fff;
-    font-family: Geom, monospace;
+    font-family: var(--font-principal);
     font-size: 14px;
     margin-bottom: 6px;
 }
 
 .achievement-item .achievement-info p {
     color: rgba(255, 255, 255, 0.7);
-    font-family: monospace;
+    font-family: var(--font-secundaria);
     font-size: 12px;
     margin: 0;
     line-height: 1.4;
@@ -7181,14 +7235,14 @@ body.is-touch-device .ruby-pass-dev {
 
 .achievement-notification .achievement-info strong {
     color: #FFD700;
-    font-family: Geom, monospace;
+    font-family: var(--font-principal);
     font-size: 12px;
     letter-spacing: 2px;
 }
 
 .achievement-notification .achievement-info span {
     color: #fff;
-    font-family: monospace;
+    font-family: var(--font-secundaria);
     font-size: 14px;
 }
 
@@ -7228,14 +7282,14 @@ body.is-touch-device .ruby-pass-dev {
 
 .starter-pack-notification .starter-pack-info strong {
     color: #FFD700;
-    font-family: Geom, monospace;
+    font-family: var(--font-principal);
     font-size: 12px;
     letter-spacing: 2px;
 }
 
 .starter-pack-notification .starter-pack-info span {
     color: #fff;
-    font-family: monospace;
+    font-family: var(--font-secundaria);
     font-size: 14px;
 }
 
@@ -7690,7 +7744,7 @@ h1 {
 
 .rank-progress-bar-fill {
     height: 100%;
-    background: linear-gradient(90deg, #00ffe7, #cc44ff);
+    background: linear-gradient(90deg, var(--color-cian), #cc44ff);
     border-radius: 3px;
     transition: width 0.6s ease;
 }
@@ -7710,8 +7764,8 @@ h1 {
     background: rgba(0, 255, 231, 0.08);
     border: 1px solid rgba(0, 255, 231, 0.25);
     border-radius: 8px;
-    color: #00ffe7;
-    font-family: 'Geom', monospace;
+    color: var(--color-cian);
+    font-family: var(--font-principal);
     font-size: 12px;
     letter-spacing: 1px;
     cursor: pointer;
@@ -7760,7 +7814,7 @@ h1 {
     bottom: 0;
     left: 0;
     width: 100%;
-    background: linear-gradient(to top, #00ffe7, #cc44ff);
+    background: linear-gradient(to top, var(--color-cian), #cc44ff);
     transition: height 0.5s ease;
 }
 
@@ -7779,11 +7833,11 @@ h1 {
 }
 
 .rank-path-node.unlocked .rank-node-circle {
-    box-shadow: 0 0 10px var(--rank-color, #00ffe7);
+    box-shadow: 0 0 10px var(--rank-color, var(--color-cian));
 }
 
 .rank-path-node.current .rank-node-circle {
-    box-shadow: 0 0 18px var(--rank-color, #00ffe7), 0 0 4px #ffffff;
+    box-shadow: 0 0 18px var(--rank-color, var(--color-cian)), 0 0 4px #ffffff;
     transform: scale(1.12);
 }
 
@@ -7801,7 +7855,7 @@ h1 {
 .rank-node-name {
     font-size: 12px;
     font-weight: 700;
-    font-family: 'Geom', monospace;
+    font-family: var(--font-principal);
     letter-spacing: 0.5px;
 }
 
@@ -7813,7 +7867,7 @@ h1 {
 .rank-node-badge {
     margin-left: auto;
     font-size: 9px;
-    color: #00ffe7;
+    color: var(--color-cian);
     letter-spacing: 1px;
     padding: 2px 6px;
     border: 1px solid rgba(0, 255, 231, 0.4);
@@ -7842,7 +7896,7 @@ h1 {
     background: rgba(255, 255, 255, 0.07);
     border: 1px solid rgba(255, 255, 255, 0.14);
     color: rgba(255, 255, 255, 0.7);
-    font-family: monospace;
+    font-family: var(--font-secundaria);
     font-size: 13px;
     letter-spacing: 2px;
     padding: 10px 18px;
@@ -7854,7 +7908,7 @@ h1 {
 
 .rs-back-btn:hover {
     background: rgba(0, 255, 231, 0.12);
-    color: #00ffe7;
+    color: var(--color-cian);
     border-color: rgba(0, 255, 231, 0.3);
 }
 
@@ -7863,7 +7917,7 @@ h1 {
 }
 
 .rs-kicker {
-    font-family: monospace;
+    font-family: var(--font-secundaria);
     font-size: 10px;
     letter-spacing: 5px;
     color: rgba(255, 255, 255, 0.3);
@@ -7871,7 +7925,7 @@ h1 {
 }
 
 .rs-title {
-    font-family: monospace;
+    font-family: var(--font-secundaria);
     font-size: 20px;
     font-weight: 900;
     letter-spacing: 4px;
@@ -7885,7 +7939,7 @@ h1 {
 }
 
 .rs-xp-label {
-    font-family: monospace;
+    font-family: var(--font-secundaria);
     font-size: 9px;
     letter-spacing: 4px;
     color: rgba(255, 255, 255, 0.35);
@@ -7893,10 +7947,10 @@ h1 {
 }
 
 .rs-xp-value {
-    font-family: monospace;
+    font-family: var(--font-secundaria);
     font-size: 22px;
     font-weight: 900;
-    color: #00ffe7;
+    color: var(--color-cian);
     letter-spacing: 2px;
 }
 
@@ -7963,7 +8017,7 @@ h1 {
 }
 
 .rs-current-label {
-    font-family: monospace;
+    font-family: var(--font-secundaria);
     font-size: 9px;
     letter-spacing: 4px;
     color: rgba(255, 255, 255, 0.4);
@@ -7972,7 +8026,7 @@ h1 {
 }
 
 .rs-current-name {
-    font-family: monospace;
+    font-family: var(--font-secundaria);
     font-size: 20px;
     font-weight: 900;
     letter-spacing: 3px;
@@ -7992,14 +8046,14 @@ h1 {
 
 .rs-current-bar-fill {
     height: 100%;
-    background: linear-gradient(90deg, #00ffe7, #00bfff);
+    background: linear-gradient(90deg, var(--color-cian), #00bfff);
     border-radius: 999px;
     transition: width 0.6s ease;
     box-shadow: 0 0 8px rgba(0, 255, 231, 0.6);
 }
 
 .rs-current-xp-info {
-    font-family: monospace;
+    font-family: var(--font-secundaria);
     font-size: 11px;
     color: rgba(255, 255, 255, 0.45);
     letter-spacing: 1px;
@@ -8146,7 +8200,7 @@ h1 {
     width: 16px;
     height: 16px;
     border-radius: 50%;
-    background: #00ffe7;
+    background: var(--color-cian);
     color: #000;
     font-size: 9px;
     display: flex;
@@ -8163,7 +8217,7 @@ h1 {
 }
 
 .rs-node-name {
-    font-family: monospace;
+    font-family: var(--font-secundaria);
     font-size: 12px;
     font-weight: 700;
     letter-spacing: 2px;
@@ -8175,7 +8229,7 @@ h1 {
 }
 
 .rs-node-xp {
-    font-family: monospace;
+    font-family: var(--font-secundaria);
     font-size: 10px;
     color: rgba(255, 255, 255, 0.4);
     letter-spacing: 1px;
@@ -8184,13 +8238,13 @@ h1 {
 
 /* Badge ACTUAL */
 .rs-node-badge {
-    font-family: monospace;
+    font-family: var(--font-secundaria);
     font-size: 8px;
     letter-spacing: 2px;
     padding: 3px 7px;
     border-radius: 6px;
     background: rgba(0, 255, 231, 0.15);
-    color: #00ffe7;
+    color: var(--color-cian);
     border: 1px solid rgba(0, 255, 231, 0.35);
     flex-shrink: 0;
 }
@@ -8262,8 +8316,8 @@ h1 {
     z-index: 2;
     width: var(--shop-sidebar-width, 200px);
     min-height: 100vh;
-    background: rgba(255,255,255,0.02);
-    border-right: 1px solid rgba(255,255,255,0.06);
+    background: rgba(255, 255, 255, 0.02);
+    border-right: 1px solid rgba(255, 255, 255, 0.06);
     display: flex;
     flex-direction: column;
     padding: 0;
@@ -8272,13 +8326,13 @@ h1 {
 /* ── Header: zona de TIENDA + VOLVER ── */
 .shop-sidebar-header {
     padding: var(--shop-header-padding, 20px 18px 14px);
-    border-bottom: 1px solid rgba(255,255,255,0.06);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
 }
 
 /* ── Título TIENDA ── */
 .shop-sidebar-title {
-    color: var(--shop-title-color, #ff4d6d);
-    font-family: monospace;
+    color: var(--shop-title-color, var(--color-rosa));
+    font-family: var(--font-secundaria);
     font-size: var(--shop-title-font, 18px);
     font-weight: 900;
     letter-spacing: 4px;
@@ -8290,30 +8344,31 @@ h1 {
     width: 100%;
     padding: var(--shop-back-padding, 9px);
     background: none;
-    border: 1px solid rgba(255,255,255,0.1);
+    border: 1px solid rgba(255, 255, 255, 0.1);
     border-radius: 8px;
-    color: rgba(255,255,255,0.4);
-    font-family: monospace;
+    color: rgba(255, 255, 255, 0.4);
+    font-family: var(--font-secundaria);
     font-size: var(--shop-back-font, 10px);
     letter-spacing: 2px;
     cursor: pointer;
     transition: border-color 0.18s, color 0.18s;
 }
+
 .shop-sidebar-back:hover {
-    border-color: rgba(255,255,255,0.25);
-    color: rgba(255,255,255,0.7);
+    border-color: rgba(255, 255, 255, 0.25);
+    color: rgba(255, 255, 255, 0.7);
 }
 
 /* ── Sección del perfil (ESTANDARTE + banner + monedas) ── */
 .shop-sidebar-profile-section {
     padding: var(--shop-profile-padding, 14px 14px 16px);
-    border-bottom: 1px solid rgba(255,255,255,0.06);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
 }
 
 /* ── Labels pequeños: ESTANDARTE / EQUIPADO ── */
 .shop-sidebar-label {
-    color: rgba(255,255,255,0.25);
-    font-family: monospace;
+    color: rgba(255, 255, 255, 0.25);
+    font-family: var(--font-secundaria);
     font-size: var(--shop-label-font, 9px);
     letter-spacing: 4px;
     margin-bottom: 10px;
@@ -8324,8 +8379,8 @@ h1 {
 .shop-profile-banner {
     height: var(--shop-banner-height, 82px);
     border-radius: var(--shop-banner-radius, 10px);
-    border: 1px solid rgba(255,255,255,0.1);
-    background: linear-gradient(135deg, rgba(0,255,231,0.18), rgba(255,77,109,0.16));
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: linear-gradient(135deg, rgba(0, 255, 231, 0.18), rgba(255, 77, 109, 0.16));
     background-size: cover;
     background-position: center;
     padding: var(--shop-banner-padding, 10px);
@@ -8337,11 +8392,35 @@ h1 {
     margin-bottom: 10px;
 }
 
+/* ── Banner de perfil del MENÚ PRINCIPAL (mismo diseño, variables propias) ── */
+#menu-profile {
+    height: var(--menu-banner-height, 82px);
+    border-radius: var(--menu-banner-radius, 10px);
+    padding: var(--menu-banner-padding, 10px);
+}
+
+#menu-profile .shop-profile-avatar {
+    width: var(--menu-avatar-size, 32px);
+    height: var(--menu-avatar-size, 32px);
+}
+
+#menu-profile .shop-profile-name {
+    font-size: var(--menu-profile-name-font, 11px);
+}
+
+#menu-profile .shop-profile-level {
+    font-size: var(--menu-profile-level-font, 9px);
+}
+
+#menu-profile-banner-name {
+    font-size: var(--menu-banner-name-font, 8px);
+}
+
 /* ── Overlay oscuro interno del banner ── */
 .shop-profile-banner-overlay {
     position: absolute;
     inset: 0;
-    background: linear-gradient(180deg, rgba(0,0,0,0.1), rgba(0,0,0,0.55));
+    background: linear-gradient(180deg, rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.55));
     pointer-events: none;
 }
 
@@ -8358,8 +8437,8 @@ h1 {
     width: var(--shop-avatar-size, 32px);
     height: var(--shop-avatar-size, 32px);
     border-radius: 50%;
-    background: rgba(255,77,109,0.15) center / cover no-repeat;
-    border: 1px solid rgba(255,255,255,0.35);
+    background: rgba(255, 77, 109, 0.15) center / cover no-repeat;
+    border: 1px solid rgba(255, 255, 255, 0.35);
     flex: none;
 }
 
@@ -8370,7 +8449,7 @@ h1 {
 
 .shop-profile-name {
     color: white;
-    font-family: monospace;
+    font-family: var(--font-secundaria);
     font-size: var(--shop-profile-name-font, 11px);
     font-weight: bold;
     white-space: nowrap;
@@ -8379,16 +8458,16 @@ h1 {
 }
 
 .shop-profile-level {
-    color: rgba(255,255,255,0.45);
-    font-family: monospace;
+    color: rgba(255, 255, 255, 0.45);
+    font-family: var(--font-secundaria);
     font-size: var(--shop-profile-level-font, 9px);
 }
 
 /* ── Nombre del banner equipado (abajo del cuadro) ── */
 .shop-profile-banner-name {
     position: relative;
-    color: rgba(255,255,255,0.78);
-    font-family: monospace;
+    color: rgba(255, 255, 255, 0.78);
+    font-family: var(--font-secundaria);
     font-size: var(--shop-banner-name-font, 8px);
     letter-spacing: 2px;
 }
@@ -8404,8 +8483,8 @@ h1 {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    background: rgba(255,255,255,0.04);
-    border: 1px solid rgba(255,255,255,0.07);
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.07);
     border-radius: 8px;
     padding: var(--shop-currency-padding, 8px 12px);
 }
@@ -8414,8 +8493,8 @@ h1 {
     display: flex;
     align-items: center;
     gap: 6px;
-    color: rgba(255,255,255,0.5);
-    font-family: monospace;
+    color: rgba(255, 255, 255, 0.5);
+    font-family: var(--font-secundaria);
     font-size: var(--shop-currency-label-font, 10px);
 }
 
@@ -8427,7 +8506,7 @@ h1 {
 
 .shop-currency-value {
     color: white;
-    font-family: monospace;
+    font-family: var(--font-secundaria);
     font-size: var(--shop-currency-value-font, 14px);
     font-weight: bold;
 }
@@ -8435,7 +8514,7 @@ h1 {
 /* ── Sección EQUIPADO ── */
 .shop-sidebar-equipped {
     padding: var(--shop-equipped-padding, 20px 24px);
-    border-bottom: 1px solid rgba(255,255,255,0.06);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
 }
 
 .shop-sidebar-equipped .shop-sidebar-label {
@@ -8446,8 +8525,8 @@ h1 {
     display: flex;
     align-items: center;
     gap: 12px;
-    background: rgba(255,255,255,0.03);
-    border: 1px solid rgba(255,255,255,0.07);
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.07);
     border-radius: 10px;
     padding: 12px;
 }
@@ -8456,8 +8535,8 @@ h1 {
     width: var(--shop-equipped-size, 36px);
     height: var(--shop-equipped-size, 36px);
     border-radius: 50%;
-    background: #00ffe722;
-    border: 2px solid #00ffe766;
+    background: var(--color-cian)22;
+    border: 2px solid var(--color-cian)66;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -8468,17 +8547,514 @@ h1 {
     width: 16px;
     height: 16px;
     border-radius: 50%;
-    background: #00ffe7;
+    background: var(--color-cian);
 }
 
 .shop-equipped-name {
     color: white;
-    font-family: monospace;
+    font-family: var(--font-secundaria);
     font-size: var(--shop-equipped-name-font, 12px);
 }
 
 .shop-equipped-rarity {
-    color: rgba(255,255,255,0.3);
-    font-family: monospace;
+    color: rgba(255, 255, 255, 0.3);
+    font-family: var(--font-secundaria);
     font-size: var(--shop-equipped-rarity-font, 10px);
+}
+
+
+/* Panel especial para trofeos */
+.shop-card.trophy-skin {
+    border: 2px solid #8a2be2;
+    /* Borde morado */
+    background: linear-gradient(135deg, #2e003e, #1a0026);
+    /* Fondo morado oscuro */
+    box-shadow: 0 0 15px rgba(138, 43, 226, 0.4);
+}
+
+/* Cambiar la etiqueta VIP por TROFEO */
+.shop-card.trophy-skin .rarity-label::after {
+    content: "TROFEO";
+    color: #cc99ff;
+    font-weight: bold;
+}
+
+/* Forzar color morado en la tienda VIP para los trofeos */
+article.vip-mini-item.trophy-skin {
+    background: linear-gradient(135deg, #2e003e, #1a0026) !important;
+    border: 1px solid #8a2be2 !important;
+}
+
+/* Asegurar que el texto se vea bien */
+article.vip-mini-item.trophy-skin .skin-name {
+    color: #ffffff !important;
+}
+
+/* Ajuste de espacio para las tarjetas de trofeo */
+.vip-mini-item.trophy-skin h3 {
+    margin-top: 5px !important;
+    /* Ajusta este valor: menor número, menos espacio */
+    margin-bottom: 5px !important;
+}
+
+/* O si el espacio es del contenedor de arriba */
+.vip-mini-item.trophy-skin .vip-mini-type {
+    margin-bottom: -20px !important;
+}
+
+
+/* =====================================================
+   LEVEL SELECT — CINEMATOGRÁFICO
+   ===================================================== */
+
+.lsc-list {
+    width: clamp(160px, 22vw, 240px);
+    height: 100%;
+    overflow-y: auto;
+    padding: 10px 0;
+    border-right: 1px solid rgba(255, 255, 255, 0.06);
+    background: rgba(0, 0, 0, 0.35);
+    backdrop-filter: blur(12px);
+    scrollbar-width: thin;
+    scrollbar-color: rgba(0, 255, 231, 0.2) transparent;
+    flex-shrink: 0;
+}
+
+/* Lista izquierda */
+.lsc-list {
+    width: clamp(160px, 22vw, 240px);
+    height: 100%;
+    overflow-y: auto;
+    padding: 10px 0;
+    border-right: 1px solid rgba(255, 255, 255, 0.06);
+    background: transparent;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(0, 255, 231, 0.2) transparent;
+    flex-shrink: 0;
+}
+
+/* Canvas de fondo (estrellas animadas), contenido solo dentro de la barra lateral */
+#carouselCanvas {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+    pointer-events: none;
+}
+
+.lsc-item {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    gap: clamp(6px, 1.2vw, 12px);
+    padding: clamp(7px, 1.2vh, 12px) clamp(10px, 1.5vw, 16px);
+    border-left: 3px solid transparent;
+    cursor: pointer;
+    transition: background 0.18s, border-color 0.18s;
+}
+
+.lsc-item:hover {
+    background: rgba(255, 255, 255, 0.04);
+}
+
+.lsc-item.active {
+    background: rgba(0, 255, 231, 0.07);
+    border-left-color: #00ffe7;
+}
+
+.lsc-item.locked {
+    opacity: 0.35;
+}
+
+.lsc-item-thumb {
+    width: clamp(30px, 4vw, 42px);
+    height: clamp(30px, 4vw, 42px);
+    border-radius: 8px;
+    background: rgba(0, 255, 231, 0.08) center/cover no-repeat;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    flex-shrink: 0;
+}
+
+.lsc-item-name {
+    color: #fff;
+    font-family: var(--font-principal);
+    font-size: clamp(9px, 1.2vw, 12px);
+    font-weight: 700;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.lsc-item-sub {
+    color: rgba(255, 255, 255, 0.35);
+    font-family: var(--font-secundaria);
+    font-size: clamp(8px, 1vw, 10px);
+    margin-top: 2px;
+}
+
+/* Preview derecha */
+.lsc-preview {
+    flex: 1;
+    position: relative;
+    overflow: hidden;
+}
+
+.lsc-preview-bg {
+    position: absolute;
+    inset: 0;
+    background: #07080f center/cover no-repeat;
+    transition: background-image 0.3s ease;
+}
+
+.lsc-preview-fog {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg, rgba(7, 8, 15, 0.92) 0%, rgba(7, 8, 15, 0.55) 45%, rgba(7, 8, 15, 0.15) 100%);
+}
+
+.lsc-nebula {
+    position: absolute;
+    width: 50%;
+    aspect-ratio: 1;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(120, 0, 255, 0.2) 0%, transparent 70%);
+    right: -8%;
+    top: -10%;
+    pointer-events: none;
+}
+
+.lsc-content {
+    position: relative;
+    z-index: 2;
+    padding: clamp(14px, 3vh, 32px) clamp(16px, 3vw, 40px);
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    max-width: 480px;
+}
+
+.lsc-kicker {
+    display: var(--lsc-kicker-display, block);
+    color: rgba(0, 255, 231, 0.7);
+    font-family: var(--font-secundaria);
+    font-size: clamp(8px, 1vw, 10px);
+    letter-spacing: 4px;
+    margin-bottom: clamp(4px, 0.8vh, 8px);
+}
+
+.lsc-title-big {
+    color: #fff;
+    font-family: var(--font-principal);
+    font-size: var(--lsc-title-big-size, clamp(20px, 4vw, 38px));
+    font-weight: 900;
+    letter-spacing: 2px;
+    line-height: 1.1;
+    margin-bottom: clamp(4px, 0.8vh, 8px);
+    text-shadow: 0 0 30px rgba(0, 255, 231, 0.15);
+}
+
+.lsc-diff-row {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    margin-bottom: clamp(6px, 1.2vh, 12px);
+}
+
+.lsc-diff-label {
+    color: rgba(255, 255, 255, 0.35);
+    font-family: var(--font-secundaria);
+    font-size: clamp(7px, 0.9vw, 9px);
+    letter-spacing: 2px;
+    margin-right: 4px;
+}
+
+.lsc-diff-dot {
+    width: clamp(6px, 0.9vw, 9px);
+    height: clamp(6px, 0.9vw, 9px);
+    border-radius: var(--lsc-diff-radius, 1px);
+    background: var(--color-cian);
+    transform: rotate(var(--lsc-diff-rotate, 45deg));
+}
+
+.lsc-diff-dot.off {
+    background: rgba(255, 255, 255, 0.12);
+}
+
+.lsc-divider {
+    width: clamp(24px, 3vw, 40px);
+    height: 2px;
+    background: rgba(0, 255, 231, 0.4);
+    border-radius: 2px;
+    margin-bottom: clamp(6px, 1.2vh, 14px);
+}
+
+.lsc-stars {
+    font-size: clamp(10px, 1.5vw, 15px);
+    margin-bottom: clamp(6px, 1.2vh, 12px);
+    letter-spacing: 3px;
+}
+
+.lsc-stats-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: clamp(5px, 0.8vw, 10px);
+    margin-bottom: clamp(8px, 1.5vh, 16px);
+    max-width: 280px;
+}
+
+.lsc-stat {
+    background: rgba(0, 0, 0, 0.45);
+    border: 1px solid rgba(255, 255, 255, 0.07);
+    border-radius: 8px;
+    padding: clamp(6px, 1vh, 10px) clamp(8px, 1.2vw, 12px);
+}
+
+.lsc-stat-label {
+    color: rgba(255, 255, 255, 0.3);
+    font-family: var(--font-secundaria);
+    font-size: clamp(6px, 0.8vw, 8px);
+    letter-spacing: 1px;
+}
+
+.lsc-stat-value {
+    color: #fff;
+    font-family: var(--font-principal);
+    font-size: clamp(11px, 1.6vw, 16px);
+    font-weight: 900;
+    margin-top: 2px;
+}
+
+.lsc-badge-wrap {
+    margin-bottom: clamp(8px, 1.5vh, 16px);
+}
+
+.lsc-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-family: var(--font-secundaria);
+    font-size: clamp(7px, 0.9vw, 9px);
+    letter-spacing: 2px;
+    padding: clamp(4px, 0.6vh, 6px) clamp(8px, 1.2vw, 12px);
+    border-radius: 7px;
+}
+
+.lsc-badge.ok {
+    background: rgba(0, 255, 174, 0.12);
+    color: #00ffae;
+    border: 1px solid rgba(0, 255, 174, 0.25);
+}
+
+.lsc-badge.locked {
+    background: rgba(255, 68, 68, 0.12);
+    color: #ff4466;
+    border: 1px solid rgba(255, 68, 68, 0.25);
+}
+
+/* System bar reposicionada */
+#levelSelect .ls-system-bar {
+    position: absolute;
+    left: clamp(10px, 2vw, 24px);
+    bottom: clamp(10px, 2vh, 20px);
+    width: clamp(200px, 30vw, 400px);
+    z-index: 10;
+}
+
+/* ── lsc-body: contenedor principal cinematográfico ── */
+#levelSelect .lsc-body {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    z-index: 4;
+    padding-top: 68px;
+}
+
+/* ── Canvas de fondo full-screen ── */
+#levelSelect #carouselCanvas {
+    position: absolute !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    z-index: 0 !important;
+    background: #050510;
+}
+
+/* ── #levelSelect sin fondo sólido ── */
+#levelSelect {
+    background: transparent !important;
+}
+
+/* ============================================================
+   RUBY PASS — Variables desde rubypass.config.js
+   NO edites aquí — edita rubypass.config.js
+   ============================================================ */
+
+/* ── Anillo giratorio ── */
+.ruby-pass-gear-shell {
+    top: calc(100% + var(--rp-gear-top-offset, min(20px, 54vw))) !important;
+    width: var(--rp-gear-size, min(2300px, 190vw, 245vh)) !important;
+    height: var(--rp-gear-size, min(2300px, 190vw, 245vh)) !important;
+}
+
+/* ── Ventana del arco ── */
+.ruby-pass-arc-window {
+    top: var(--rp-arc-top, 0) !important;
+    right: var(--rp-arc-right, 0) !important;
+    bottom: var(--rp-arc-bottom, 0) !important;
+    left: var(--rp-arc-left, 0) !important;
+    inset: unset !important;
+}
+
+/* ── Nodos ── */
+.ruby-pass-node-premium {
+    transform: rotate(var(--node-angle)) translateX(var(--rp-node-premium-x, min(810px, 68vw, 88vh))) !important;
+}
+
+.ruby-pass-node-free {
+    transform: rotate(var(--node-angle)) translateX(var(--rp-node-free-x, min(620px, 52vw, 67vh))) !important;
+}
+
+/* ── Carril gratuito ── */
+.ruby-pass-track-free {
+    width: var(--rp-free-track-size, 58%) !important;
+    height: var(--rp-free-track-size, 58%) !important;
+}
+
+/* ── Panel central (VIP ACTIVO / RUBY PASS / 0% PROGRESO) ── */
+.ruby-pass-focus {
+    top: var(--rp-focus-top, 10%) !important;
+    left: var(--rp-focus-left, 50%) !important;
+    width: var(--rp-focus-width, min(360px, calc(100vw - 40px))) !important;
+}
+
+/* ── Título "RUBY PASS" ── */
+.ruby-pass-focus h3 {
+    font-size: var(--rp-focus-title-font, 22px) !important;
+    letter-spacing: var(--rp-focus-title-spacing, 5px) !important;
+}
+
+/* ── Kicker "VIP ACTIVO" ── */
+.ruby-pass-kicker {
+    font-size: var(--rp-focus-kicker-font, 11px) !important;
+}
+
+/* ── Subtexto "0% PROGRESO" ── */
+.ruby-pass-focus p {
+    font-size: var(--rp-focus-sub-font, 11px) !important;
+}
+
+/* ── Barra de XP ── */
+.ruby-pass-xpbar {
+    height: var(--rp-xpbar-height, 10px) !important;
+    margin-top: var(--rp-xpbar-margin-top, 18px) !important;
+}
+
+/* ── Botón COMPRAR / PREMIUM ACTIVO ── */
+.ruby-pass-buy {
+    height: var(--rp-buy-height, 40px) !important;
+    font-size: var(--rp-buy-font, 11px) !important;
+}
+
+/* ── Botones DEV ── */
+.ruby-pass-dev {
+    height: var(--rp-dev-height, 34px) !important;
+    font-size: var(--rp-dev-font, 10px) !important;
+}
+
+/* ── Topbar ── */
+.ruby-pass-topbar {
+    height: var(--rp-topbar-height, 76px) !important;
+    padding: var(--rp-topbar-padding, 12px 22px) !important;
+    gap: var(--rp-topbar-gap, 16px) !important;
+}
+
+/* ── Perfil en topbar ── */
+.ruby-pass-profile {
+    height: var(--rp-profile-height, 54px) !important;
+    min-width: var(--rp-profile-minwidth, min(360px, 48vw)) !important;
+    padding: var(--rp-profile-padding, 8px 12px) !important;
+    border-radius: var(--rp-profile-radius, 8px) !important;
+    gap: var(--rp-profile-gap, 12px) !important;
+}
+
+/* ── Avatar ── */
+.ruby-pass-profile-avatar {
+    width: var(--rp-avatar-size, 38px) !important;
+    height: var(--rp-avatar-size, 38px) !important;
+}
+
+/* ── Nombre ── */
+.ruby-pass-profile-name {
+    font-size: var(--rp-name-font, 12px) !important;
+}
+
+/* ── Subtexto ── */
+.ruby-pass-profile-sub {
+    font-size: var(--rp-sub-font, 9px) !important;
+}
+
+/* ── Etiqueta NIVEL X / XP ── */
+.ruby-pass-season {
+    display: var(--rp-season-display, flex) !important;
+    font-size: var(--rp-season-font, 12px) !important;
+}
+
+/* ── Banner de temporada (esquina derecha del topbar) ── */
+.ruby-pass-season-banner {
+    margin-left: auto;
+    display: var(--rp-season-display, flex);
+    align-items: center;
+}
+
+/* Modo PNG */
+.ruby-pass-season-img {
+    width: var(--rp-season-banner-width, 220px);
+    height: var(--rp-season-banner-height, 54px);
+    object-fit: contain;
+    display: block;
+}
+
+/* Modo texto: cuadro decorativo */
+.ruby-pass-season-caja {
+    display: var(--rp-season-caja-display, inline-flex);
+    align-items: center;
+    justify-content: center;
+    background: var(--rp-season-caja-bg, rgba(0, 255, 231, 0.12));
+    border: var(--rp-season-caja-border, 1px solid rgba(0, 255, 231, 0.4));
+    border-radius: var(--rp-season-caja-radius, 10px);
+    padding: var(--rp-season-caja-padding, 6px 16px);
+}
+
+/* Modo texto: el texto en sí */
+.ruby-pass-season-texto {
+    color: var(--rp-season-color, #00ffe7);
+    font-size: var(--rp-season-font-size, 14px);
+    font-style: var(--rp-season-font-style, italic);
+    letter-spacing: var(--rp-season-spacing, 3px);
+    transform: rotate(var(--rp-season-rotate, -2deg));
+    font-family: var(--font-principal);
+    white-space: nowrap;
+}
+
+
+/* Forzamos a que el contenedor del pase y su fondo se adapten bien */
+.ruby-pass-container,
+[class*="ruby-pass"] {
+    background-size: cover !important;
+    background-position: center center !important;
+    background-repeat: no-repeat !important;
+}
+
+/* Si el fondo se inyecta como una etiqueta <img> dentro del pase */
+.ruby-pass-container img,
+[class*="ruby-pass"] img {
+    object-fit: cover !important;
+    object-position: center !important;
 }

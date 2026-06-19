@@ -1,0 +1,1 @@
+Barra lateral: el canvas de estrellas reemplazado por tu PNG (Barra_lat_LevelSelect.png). Las medidas recomendadas para hacerlo en Canva son 240×1080px (vertical), así se ve bien en cualquier pantalla sin pixelarse.

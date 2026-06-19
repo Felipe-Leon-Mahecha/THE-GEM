@@ -1,0 +1,91 @@
+=== PROYECTO: "THE GEM" — CONTEXTO GLOBAL PARA IA ===
+
+[INSTRUCCIÓN DE USO: Copia y pega este documento completo al inicio de tu conversación con la IA cada vez que vayas a pedir un cambio, optimización o corrección en el código].
+
+-------------------------------------------------------------------------------
+1. DESCRIPCIÓN GENERAL DEL JUEGO
+-------------------------------------------------------------------------------
+"THE GEM" es un juego arcade/survival en 2D desarrollado con HTML5 Canvas y JavaScript (ES6) nativo, empaquetado para plataformas móviles utilizando Capacitor. 
+
+Mecánica Principal (Movimiento Orbital):
+- El jugador se mueve de forma circular/orbital en un espacio geométrico definido por dos radios: un núcleo interno (BASE_RADIUS) y un domo externo (DOME_RADIUS).
+- El jugador alterna la gravedad entre ambos radios para esquivar obstáculos (pinchos/spikes, sierras/saws, láseres) y recolectar monedas (DEAD_COIN) y gemas (Rubies).
+- Tiempo de Victoria por Nivel: 133 segundos (2:13.3) definido globalmente por LEVEL_WIN_TIME.
+
+-------------------------------------------------------------------------------
+2. VARIABLES GLOBALES DE CONTROL Y ESTADO (window.)
+-------------------------------------------------------------------------------
+El bucle principal del juego, las físicas y la interfaz dependen críticamente de las siguientes variables globales alojadas en el objeto `window`:
+
+- window.running / window.paused: Booleanos que controlan la ejecución o pausa del bucle de actualización (`update`/`draw`).
+- window.level / window.currentLevel: Índice numérico (basado en 0) del nivel activo.
+- window.lives: Cantidad de vidas restantes del jugador durante una partida (inicia en 3, revive con 1).
+- window.angle / window.angVel: Posición angular actual del jugador en radianes y su velocidad de giro.
+- window.playerRollAngle: Ángulo de rotación estética de la skin al moverse/rodar.
+- window.playerFacing: Dirección a la que mira el jugador ('left' o 'right').
+- window.offset / window.vel: Distancia radial actual respecto al centro del mapa (va desde 0 en el núcleo hasta MAX_OFFSET en el domo) y su velocidad radial.
+- window.gravity / window.gravityForce: Dirección de la gravedad (1 hacia el núcleo, -1 hacia el domo) y la fuerza matemática interpolada que se aplica.
+- window.invulnerable / window.invulnerableTimer: Controla si el jugador es inmune al daño temporalmente (después de un golpe o al revivir).
+- window.canvasDPR: Multiplicador de escala basado en `devicePixelRatio` (máximo 2x) aplicado de manera exclusiva en dispositivos móviles o táctiles para optimizar la nitidez de la UI y el rendimiento del renderizado.
+
+-------------------------------------------------------------------------------
+3. CONFIGURACIÓN ESTÉTICA Y TEMAS (GEM_CONFIG)
+-------------------------------------------------------------------------------
+Definido en `config.js`, centraliza los estilos CSS y de Canvas de todas las pantallas (tienda, menú, selección de nivel, etc.):
+- Colores Clave:
+  * cian (#00ffe7): Color principal de acento, brillos y textos destacados.
+  * rojo (#ff2d55): Alertas y rareza DEMON.
+  * rosa (#ff4d6d): Título de la TIENDA y acentos secundarios.
+  * verdeNeon (#00ffae): Confirmaciones y badges de "desbloqueado".
+- Fuentes del Sistema:
+  * Principal: 'Geom', monospace (para títulos y UI del juego).
+  * Secundaria: 'monospace' (textos generales).
+
+-------------------------------------------------------------------------------
+4. SISTEMA DE COMBOS Y ROZAMIENTO ("NEAR-MISS")
+-------------------------------------------------------------------------------
+Monitorea la cercanía del jugador frente a los obstáculos para otorgar puntos, combos y efectos visuales sin llegar a colisionar. Centralizado en `combo-system.js`.
+
+- Función onNearMiss(isPerfect): Callback global invocado por los obstáculos cuando el jugador pasa muy cerca.
+  * Si es un esquive perfecto (`isPerfect = true`), ejecuta `showPerfectDodgeEffect()` (partículas doradas y destello).
+  * Si es normal, ejecuta `showNearMissEffect()` (partículas de color cian).
+- Multiplicadores de Combo: 1x (base), 2x (10 combos), 3x (20 combos), 4x (30 combos) y 5x (50 combos). El combo se reinicia si pasan más de 3 segundos (COMBO_TIMEOUT = 3000) sin esquivar.
+- Umbrales de Cercanía Radial (Píxeles adicionales):
+  * NEAR_MISS_ANGULAR_THRESHOLD = 0.25 (Margen angular).
+  * SPIKE_NEAR_MISS_RADIAL_MARGIN = 40
+  * SAW_NEAR_MISS_RADIAL_MARGIN = 45
+  * LASER_NEAR_MISS_RADIAL_MARGIN = 50
+
+-------------------------------------------------------------------------------
+5. SISTEMA DE FRAGMENTOS Y SKINS
+-------------------------------------------------------------------------------
+Administrado por `fragment-system.js` y documentado en `GUIA_SKINS.md`. Las skins se dividen en:
+- Rueda (rolling: true): Giran continuamente como una llanta según la dirección. No requieren assets de lados específicos (ej. dona, planetas).
+- Lados (Skins con perfil): 
+  * Simétricas: Usan un solo archivo `skin_[nombre]_lado.png` que el código voltea automáticamente hacia la izquierda de forma dinámica.
+  * Asimétricas: Requieren obligatoriamente archivos separados para `_lado_derecho.png` y `_lado_izquierdo.png`.
+- Regla Crítica: Las hitboxes son siempre circulares y uniformes; los accesorios visuales de las skins no afectan las colisiones del juego.
+
+-------------------------------------------------------------------------------
+6. MOTOR DE AUDIO Y OPTIMIZACIÓN
+-------------------------------------------------------------------------------
+- Audio Pooling (window.playSfx): Mantiene un pool dinámico (SFX_POOL_SIZE = 4) por cada efecto de sonido. Permite reproducir ráfagas continuas de efectos (como láseres o clics en la UI) en móviles sin experimentar cortes ni latencia de carga.
+- Volúmenes Nativos: SFX inicializado en 0.75; Música en 0.45.
+- Canvas Estáticos (Offscreen): Para evitar caídas de FPS, el fondo geométrico del túnel de cada nivel se pre-renderiza asíncronamente en un canvas oculto y luego se dibuja ya rotado (según `worldRotation`) en el canvas principal.
+
+-------------------------------------------------------------------------------
+7. PERSISTENCIA DE DATOS Y TRUCOS (playerData)
+-------------------------------------------------------------------------------
+Guardado local en `localStorage`:
+- deadCoins: Monedas acumuladas (afectado por el modo de desarrollo `window.infiniteCoinsMode`).
+- gems: Rubíes acumulados.
+- totalXP: Experiencia acumulada gestionada por el sistema de rangos.
+- Huevo de Pascua / Easter Egg: Si el nombre del jugador ingresado es exactamente "LEX", el juego establece los recursos de forma automática al máximo (999999).
+
+-------------------------------------------------------------------------------
+⚠️ REGLAS ESTRICTAS PARA LA IA AL MODIFICAR ESTE PROYECTO:
+1. No rompas la compatibilidad con window.canvasDPR al redimensionar elementos o calcular posiciones táctiles en el Canvas.
+2. Si añades o modificas obstáculos, debes invocar obligatoriamente el método window.onNearMiss() usando los umbrales de margen establecidos en combo-system.js.
+3. Respeta siempre el flujo del ciclo de vida controlado por window.running y window.paused.
+4. Las nuevas skins con propiedad `rolling: true` no deben registrarse en skins-side.js de acuerdo con la guía arquitectónica oficial del proyecto.
+-------------------------------------------------------------------------------

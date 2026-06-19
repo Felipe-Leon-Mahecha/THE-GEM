@@ -76,16 +76,16 @@ const SKIN_FOLDER_REGISTRY = [
     // { id: 'skin_cupcake',       folder: 'assets/UI/Store/VIP/Bundles/Food/skin_cupcake',       rolling: true,    drawScale: 1.4 },
     // { id: 'skin_dona',          folder: 'assets/UI/Store/VIP/Bundles/Food/skin_dona',          rolling: true,    drawScale: 1.4 },
     // { id: 'skin_galleta',       folder: 'assets/UI/Store/VIP/Bundles/Food/skin_galleta',       rolling: true,    drawScale: 1.4 },
-    { id: 'skin_hamburguesa', folder: 'assets/UI/Store/VIP/Bundles/Food/skin_hamburguesa', symmetric: true, drawScale: 1.5 },
-    { id: 'skin_helado', folder: 'assets/UI/Store/VIP/Bundles/Food/skin_helado', symmetric: true, drawScale: 1.6 },
+    { id: 'skin_hamburguesa', folder: 'assets/UI/Store/VIP/Bundles/Food/skin_hamburguesa', rolling: true, drawScale: 1.5 },
+    { id: 'skin_helado', folder: 'assets/UI/Store/VIP/Bundles/Food/skin_helado', rolling: true, drawScale: 1.6 },
     { id: 'skin_jugo', folder: 'assets/UI/Store/VIP/Bundles/Food/skin_jugo', rolling: true, drawScale: 1.4 },
-    { id: 'skin_limon_toxico', folder: 'assets/UI/Store/VIP/Bundles/Food/skin_limon_toxico', symmetric: true, drawScale: 1.4 },
+    { id: 'skin_limon_toxico', folder: 'assets/UI/Store/VIP/Bundles/Food/skin_limon_toxico', rolling: true, drawScale: 1.4 },
     // { id: 'skin_manzana',       folder: 'assets/UI/Store/VIP/Bundles/Food/skin_manzana',       rolling: true,    drawScale: 1.4 },
     // { id: 'skin_palomitas',     folder: 'assets/UI/Store/VIP/Bundles/Food/skin_palomitas',     rolling: true,    drawScale: 1.4 },
     // { id: 'skin_papas_fritas',  folder: 'assets/UI/Store/VIP/Bundles/Food/skin_papas_fritas',  rolling: true,    drawScale: 1.4 },
-    { id: 'skin_pizza', folder: 'assets/UI/Store/VIP/Bundles/Food/skin_pizza', symmetric: true, drawScale: 1.4 },
+    { id: 'skin_pizza', folder: 'assets/UI/Store/VIP/Bundles/Food/skin_pizza', rolling: true, drawScale: 1.4 },
     // { id: 'skin_sandwich',      folder: 'assets/UI/Store/VIP/Bundles/Food/skin_sandwich',      rolling: true,    drawScale: 1.4 },
-    { id: 'skin_sandia', folder: 'assets/UI/Store/VIP/Bundles/Food/skin_sandia', symmetric: true, drawScale: 1.4 },
+    { id: 'skin_sandia', folder: 'assets/UI/Store/VIP/Bundles/Food/skin_sandia', rolling: true, drawScale: 1.4 },
     // { id: 'skin_torta',         folder: 'assets/UI/Store/VIP/Bundles/Food/skin_torta',         rolling: true,    drawScale: 1.4 },
 
     // ══════════════════════════════════════════════════════
@@ -191,9 +191,20 @@ const SKIN_FOLDER_REGISTRY = [
 
 const SIDE_IMAGE_CACHE = {};
 
+
+// Esta función ahora es inteligente: si es 'rolling', no hace nada.
 function _loadSideImage(id, tipo, src) {
+    // 1. Buscamos los datos de la skin
+    const skinData = findShopSkin(id);
+
+    // 2. Si es rolling, no intentamos cargar nada (evita errores 404)
+    if (skinData && skinData.rolling) return null;
+
+    // 3. Verificamos el caché para no cargar la misma imagen dos veces
     const key = `${id}_${tipo}`;
     if (SIDE_IMAGE_CACHE[key]) return;
+
+    // 4. Cargamos la imagen solo si pasó los filtros anteriores
     const img = new Image();
     img.src = src;
     SIDE_IMAGE_CACHE[key] = img;

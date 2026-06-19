@@ -1,0 +1,6 @@
+Para las medidas recomendadas del PNG que hagas en Canva:
+
+Ancho: 440px
+Alto: 108px (el doble de los 54px que muestra, para que se vea nítido en pantallas de alta resolución)
+Fondo: transparente (exporta como PNG)
+Ratio 440×108 = aproximadamente 4:1, alargado horizontal — perfecto para texto + decoración a los lados

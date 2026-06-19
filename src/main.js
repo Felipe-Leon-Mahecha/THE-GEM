@@ -501,7 +501,9 @@ const DIRECTIONAL_SKINS = {
         glow: "#ff2448"
     },
     brifon: {
-        side: "assets/UI/Store/Skins/Normal/BRIFON Skin EPICO/BRIFON_Skin_lado.png",
+        // Aquí le damos las dos rutas específicas
+        side: "assets/UI/Store/Skins/Normal/BRIFON Skin EPICO/BRIFON_Skin_lado_derecho.png",
+        sideLeft: "assets/UI/Store/Skins/Normal/BRIFON Skin EPICO/BRIFON_Skin_lado_izquierdo.png",
         glow: "#b86cff"
     },
     kenji: {
@@ -794,7 +796,7 @@ function update() {
             const cy = canvas.height / 2;
             const px = cx + Math.cos(c.angle + worldRotation) * c.radius;
             const py = cy + Math.sin(c.angle + worldRotation) * c.radius;
-            
+
             if (performance.now() < (window.powerupEffects?.rubyMirrorUntil || 0)) {
                 playerData.gems += Math.max(1, Math.round(window.powerupEffects?.gemMultiplier || 1));
                 localStorage.setItem("gems", playerData.gems);
@@ -1596,6 +1598,15 @@ window.startGame = function (levelIndex = 0, skipStartSound = false) {
     }
     if (winChestBox) winChestBox.innerHTML = '';
 
+    // Contador de intentos por nivel (para la pantalla de selección de nivel)
+    try {
+        const attemptsKey = `level${levelIndex}_attempts`;
+        const attempts = parseInt(localStorage.getItem(attemptsKey) || '0', 10) + 1;
+        localStorage.setItem(attemptsKey, attempts);
+    } catch (e) {
+        console.warn('[startGame] No se pudo guardar el contador de intentos:', e);
+    }
+
     // Ocultar todos los paneles y elementos de UI para limpiar pantalla
     ['levelSelect', 'overlay', 'shopPanel', 'inventoryPanel', 'pausePanel', 'profilePanel', 'vipPanel', 'rubyPassPanel', 'settingsPanel', 'emote-menu', 'emote-more-panel'].forEach(id => {
         const el = document.getElementById(id);
@@ -1622,12 +1633,31 @@ window.startGame = function (levelIndex = 0, skipStartSound = false) {
     if (!window.currentLevelMusicSrc || !window.currentLevelMusicSrc.endsWith(musicSrc)) {
         window.bgMusic.pause();
         window.bgMusic = new Audio(musicSrc);
-        window.bgMusic.loop = true;
         window.bgMusic.volume = window.isMuted ? 0 : window.musicVolume;
         window.currentLevelMusicSrc = window.bgMusic.src;
     }
+    // Solo survival en bucle; niveles normales terminan cuando acaba la canción
+    window.bgMusic.loop = !!levelConfig.isSurvival;
     window.bgMusic.currentTime = 0;
     window.bgMusic.play();
+
+    // ── winTime dinámico: sincronizar con la duración real de la canción ──
+    // El modo Survival tiene winTime = 999999 (infinito), nunca lo pisamos.
+    if (!levelConfig.isSurvival && levelConfig.winTime !== 999999) {
+        const applyMusicDuration = () => {
+            const dur = window.bgMusic.duration;
+            if (dur && isFinite(dur) && dur > 0) {
+                levelConfig.winTime = dur;
+            }
+        };
+        if (window.bgMusic.readyState >= 1 && isFinite(window.bgMusic.duration)) {
+            // Metadata ya disponible (misma canción que antes)
+            applyMusicDuration();
+        } else {
+            // Esperar a que cargue la metadata
+            window.bgMusic.addEventListener('loadedmetadata', applyMusicDuration, { once: true });
+        }
+    }
 
     const spawn = levelConfig.playerSpawn || {};
     window.angle = typeof spawn.angle === "number" ? spawn.angle : Math.PI / 2;
@@ -1743,6 +1773,17 @@ window.showGameOverWithRevive = function () {
         console.warn('[GameOver] Error XP survival:', e);
     }
     // ── FIN XP ──────────────────────────────────────────────────────────
+
+    // Contador de muertes por nivel (para la pantalla de selección de nivel)
+    try {
+        const levelIdx = (window.level || 1) - 1;
+        const deathsKey = `level${levelIdx}_deaths`;
+        const deaths = parseInt(localStorage.getItem(deathsKey) || '0', 10) + 1;
+        localStorage.setItem(deathsKey, deaths);
+    } catch (e) {
+        console.warn('[showGameOverWithRevive] No se pudo guardar el contador de muertes:', e);
+    }
+
     document.getElementById("gameCanvas").style.visibility = "hidden";
     const pauseBtn = document.getElementById('pause-btn');
     if (pauseBtn) pauseBtn.classList.remove('is-playing');
@@ -1803,7 +1844,7 @@ window.revivePlayer = function (currency) {
     const key = currency === 'gems' ? 'gems' : 'deadCoins';
     const cost = currency === 'gems' ? gemCost : coinCost;
     const current = parseInt(localStorage.getItem(key) || '0');
-    
+
     // Si el modo infinito está activo, no verificar ni restar monedas
     if (window.infiniteCoinsMode) {
         window.reviveCount++;
@@ -1817,7 +1858,7 @@ window.revivePlayer = function (currency) {
         window.lives = 1;
         return;
     }
-    
+
     if (current < cost) return alert('No tienes suficientes recursos.');
     localStorage.setItem(key, String(current - cost));
     if (currency === 'coins') playerData.deadCoins = current - cost;
@@ -1909,6 +1950,20 @@ function winGame() {
                 gwUnlockEl._xpMsg = xpMsg; // guardar para combinar con otros mensajes
             }
         }
+
+        // Récord de combo máximo por nivel (para la pantalla de selección de nivel)
+        try {
+            const levelIdx = (window.level || 1) - 1;
+            const recordKey = `level${levelIdx}_record`;
+            const bestCombo = parseInt(localStorage.getItem(recordKey) || '0', 10);
+            const thisCombo = window.sessionMaxCombo || 0;
+            if (thisCombo > bestCombo) {
+                localStorage.setItem(recordKey, thisCombo);
+            }
+        } catch (e) {
+            console.warn('[winGame] No se pudo guardar el récord de combo:', e);
+        }
+
         // Resetear combo de sesión para la próxima partida
         window.sessionMaxCombo = 0;
     } catch (e) {

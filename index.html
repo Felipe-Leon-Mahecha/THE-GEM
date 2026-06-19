@@ -156,8 +156,7 @@
         </div>
 
         <!-- Banner de perfil: estilo tienda (shop-profile-banner) -->
-        <div id="menu-profile-wrap"
-            style="position:absolute; top:0; right:0; width:50%; z-index:3; padding:18px 28px 0; max-width:420px;">
+        <div id="menu-profile-wrap" class="menu-profile-wrap-positioned">
             <div id="menu-profile" class="shop-profile-banner" onclick="openProfileMenu()" role="button" tabindex="0"
                 aria-label="Abrir perfil" style="cursor:pointer; margin-bottom:0;">
                 <div class="shop-profile-banner-overlay"></div>
@@ -168,30 +167,25 @@
                         <div id="menu-profile-rank" class="shop-profile-level">CHISPA</div>
                     </div>
                     <div style="flex:1;"></div>
-                    <div style="display:flex; flex-direction:column; gap:4px; align-items:flex-end;">
-                        <span
-                            style="display:inline-flex; align-items:center; gap:5px; font-family:monospace; font-size:10px; color:rgba(255,255,255,0.8);">
-                            <img src="assets/Imagenes/Monetizacion/Rubies.png"
-                                style="width:14px; height:14px; object-fit:contain;">
+                    <div class="menu-profile-currency-container">
+                        <span class="shop-currency-item">
+                            <img src="assets/Imagenes/Monetizacion/Rubies.png" class="menu-currency-icon">
                             <span id="menu-profile-gems">0</span>
                         </span>
-                        <span
-                            style="display:inline-flex; align-items:center; gap:5px; font-family:monospace; font-size:10px; color:rgba(255,255,255,0.8);">
-                            <img src="assets/Imagenes/Monetizacion/DEAD_COIN.png"
-                                style="width:14px; height:14px; object-fit:contain;">
+                        <span class="shop-currency-item">
+                            <img src="assets/Imagenes/Monetizacion/DEAD_COIN.png" class="menu-currency-icon">
                             <span id="menu-profile-coins">0</span>
                         </span>
                     </div>
                 </div>
-                <div id="menu-profile-banner-name" class="shop-profile-banner-name">Nucleo Estatico</div>
             </div>
         </div>
 
         <!-- Panel derecho (3D) — solo los botones -->
-        <div id="overlay-panel" style="gap:14px; padding:80px 28px 60px; padding-top:clamp(80px,12vh,120px);">
+        <div id="overlay-panel" class="menu-overlay-panel-spacing">
 
             <!-- JUGAR — ancho completo -->
-            <div id="wrap-play" class="menu-btn-wrap">
+            <div id="wrap-play" class="menu-btn-wrap menu-btn-play-size">
                 <button id="play-btn" class="menu-png-btn">
                     <img src="assets/Imagenes/Botones menu/JUGAR.png"
                         style="width:100%; height:auto; display:block; pointer-events:none;">
@@ -199,7 +193,7 @@
             </div>
 
             <!-- TIENDA + INVENTARIO -->
-            <div style="display:grid; grid-template-columns:1fr 1fr; gap:14px;">
+            <div class="menu-btn-pair-grid">
                 <div id="wrap-shop" class="menu-btn-wrap">
                     <button id="shop-btn" class="menu-png-btn">
                         <img src="assets/Imagenes/Botones menu/TIENDA.png"
@@ -215,7 +209,7 @@
             </div>
 
             <!-- LOGROS + AYUDA -->
-            <div style="display:grid; grid-template-columns:1fr 1fr; gap:14px;">
+            <div class="menu-btn-pair-grid">
                 <div id="wrap-achievements" class="menu-btn-wrap">
                     <button id="achievements-btn" class="menu-png-btn" onclick="showAchievementsPanel()">
                         <img src="assets/Imagenes/Botones menu/LOGROS.png"
@@ -313,7 +307,6 @@
                             <div class="shop-profile-level">Nivel 1</div>
                         </div>
                     </div>
-                    <div id="shop-profile-banner-name" class="shop-profile-banner-name">Nucleo Estatico</div>
                 </div>
                 <div id="banner-picker"
                     style="display:none; margin:-4px 0 10px; padding:8px; border:1px solid rgba(255,255,255,0.09); border-radius:10px; background:rgba(0,0,0,0.28);">
@@ -699,85 +692,87 @@
 
     </div>
 
-    <!-- Contenedor principal de selección de nivel -->
-    <div id="levelSelect" style="display:none; position:fixed; inset:0; z-index:20; flex-direction:column;">
-        <div class="ls-bg"></div>
-        <div class="ls-overlay"></div>
+    <!-- Contenedor principal de selección de nivel — CINEMATOGRÁFICO -->
+    <div id="levelSelect" style="display:none; position:fixed; inset:0; z-index:20;">
 
-        <!-- Header de selección de nivel -->
-        <div class="ls-header">
+        <!-- Canvas banner bolita (oculto, sigue funcionando) -->
+        <canvas id="bannerCanvas" width="1200" height="66" style="display:none;"></canvas>
 
+        <!-- HEADER -->
+        <div class="ls-header" style="z-index:5;">
             <div class="ls-title-zone">
-                <div class="ls-small">THE GEM</div>
                 <div class="ls-title">SELECCIONAR NIVEL</div>
             </div>
-
             <button class="ls-back-btn"
-                onclick="hideLevelSelect(); document.getElementById('overlay').style.display='flex';">
-                ← VOLVER
-            </button>
-
+                onclick="hideLevelSelect(); document.getElementById('overlay').style.display='flex';">← VOLVER</button>
         </div>
 
-        <!-- Barra de información del jugador -->
+        <!-- BARRA JUGADOR -->
         <div class="ls-player-bar">
             <div class="avatar" id="playerAvatar"></div>
-
             <span id="playerName">Jugador</span>
+            <div class="stat"><img src="assets/Imagenes/Monetizacion/DEAD_COIN.png"><span id="playerCoins">0</span>
+            </div>
+            <div class="stat"><img src="assets/Imagenes/Monetizacion/Rubies.png"><span id="playerGems">0</span></div>
+        </div>
 
-            <div class="stat">
-                <img src="assets/Imagenes/Monetizacion/DEAD_COIN.png">
-                <span id="playerCoins">0</span>
+        <!-- BODY CINEMATOGRÁFICO -->
+        <div class="lsc-body">
+
+            <!-- Lista izquierda -->
+            <div class="lsc-list" id="lsc-list">
+                <!-- Fondo animado (canvas con estrellas), contenido solo en esta barra -->
+                <canvas id="carouselCanvas" width="1400" height="700"></canvas>
+                <!-- generado por JS -->
             </div>
 
-            <div class="stat">
-                <img src="assets/Imagenes/Monetizacion/Rubies.png">
-                <span id="playerGems">0</span>
-            </div>
-        </div>
+            <!-- Preview derecha -->
+            <div class="lsc-preview">
+                <!-- Imagen de fondo del nivel seleccionado -->
+                <div class="lsc-preview-bg" id="lsc-preview-bg"></div>
+                <div class="lsc-preview-fog"></div>
+                <div class="lsc-nebula"></div>
 
-        <!-- Banner de nivel -->
-        <div class="ls-banner-wrap">
-            <canvas id="bannerCanvas" width="1200" height="66"></canvas>
-        </div>
-
-        <!-- Carrusel de niveles -->
-        <div class="ls-carousel-wrap">
-            <canvas id="carouselCanvas" width="1400" height="700"></canvas>
-        </div>
-
-        <!-- Botones de navegación de niveles -->
-        <button id="ls-prev-btn" class="ls-nav-btn ls-nav-prev" type="button" aria-label="Nivel anterior"
-            onclick="window.moveLevelSelection?.(-1)">←</button>
-        <button id="ls-next-btn" class="ls-nav-btn ls-nav-next" type="button" aria-label="Nivel siguiente"
-            onclick="window.moveLevelSelection?.(1)">→</button>
-
-        <!-- Footer con botón de jugar -->
-        <div class="ls-footer">
-
-            <div class="ls-system-bar">
-
-                <div class="ls-system-glow"></div>
-
-                <div class="ls-system-icon">
-                    ◉
+                <!-- Contenido -->
+                <div class="lsc-content">
+                    <div class="lsc-kicker" id="lsc-kicker">NIVEL 01 · THE GEM</div>
+                    <div class="lsc-title-big" id="lsc-title-big">THE BEGGIN</div>
+                    <div class="lsc-diff-row" id="lsc-diff-row"></div>
+                    <div class="lsc-divider"></div>
+                    <div class="lsc-stars" id="lsc-stars"></div>
+                    <div class="lsc-stats-grid">
+                        <div class="lsc-stat">
+                            <div class="lsc-stat-label">COMPLETADO</div>
+                            <div class="lsc-stat-value" id="lsc-percent">0%</div>
+                        </div>
+                        <div class="lsc-stat">
+                            <div class="lsc-stat-label">RECORD</div>
+                            <div class="lsc-stat-value" id="lsc-record">—</div>
+                        </div>
+                        <div class="lsc-stat">
+                            <div class="lsc-stat-label">INTENTOS</div>
+                            <div class="lsc-stat-value" id="lsc-attempts">0</div>
+                        </div>
+                        <div class="lsc-stat">
+                            <div class="lsc-stat-label">MUERTES</div>
+                            <div class="lsc-stat-value" id="lsc-combo">—</div>
+                        </div>
+                    </div>
+                    <div class="lsc-badge-wrap" id="lsc-badge-wrap"></div>
+                    <button class="ls-play-btn" onclick="window.playSelectedLevel?.()">
+                        <div class="ls-play-glow"></div><span>JUGAR</span>
+                    </button>
                 </div>
-
-                <div class="ls-system-text" id="systemMessage">
-                    Inicializando sistema...
-                </div>
-
             </div>
-
-            <button class="ls-play-btn" onclick="window.playSelectedLevel?.()">
-
-                <div class="ls-play-glow"></div>
-
-                <span>JUGAR</span>
-
-            </button>
         </div>
-    </div>
+
+        <!-- System bar -->
+        <div class="ls-system-bar">
+            <div class="ls-system-glow"></div>
+            <div class="ls-system-icon">◉</div>
+            <div class="ls-system-text" id="systemMessage">Inicializando sistema...</div>
+        </div>
+
     </div>
 
     <!-- Scripts del juego -->
@@ -789,6 +784,8 @@
     <script src="fragment-system.js"></script>
     <script src="rank-system.js"></script>
     <script src="levelselect.js"></script>
+    <script src="prices.config.js"></script>
+    <script src="rubypass.config.js"></script>
     <script src="shop.js"></script>
     <script src="skins-side.js"></script>
     <script src="src/main.js"></script>
@@ -1105,71 +1102,18 @@
 
         /* Animaciones específicas para botones del menú principal */
         .menu-btn-wrap {
-            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            transition: transform 0.2s ease, filter 0.2s ease;
+            will-change: transform;
         }
 
         .menu-btn-wrap:hover {
-            transform: scale(1.08) translateY(-2px);
-            box-shadow: 0 8px 25px rgba(0, 255, 231, 0.3);
+            transform: scale(1.04) translateY(-2px);
+            filter: brightness(1.12) drop-shadow(0 0 12px rgba(255, 255, 255, 0.25));
         }
 
         .menu-btn-wrap:active {
-            transform: scale(0.96) translateY(0);
-        }
-
-        /* Efectos de brillo (glow) en elementos importantes */
-        .menu-btn-wrap {
-            position: relative;
-        }
-
-        .menu-btn-wrap::after {
-            content: '';
-            position: absolute;
-            inset: -2px;
-            border-radius: inherit;
-            background: linear-gradient(45deg, #00ff88, #00ffcc, #00ffff, #00ff88);
-            z-index: -1;
-            opacity: 0;
-            transition: opacity 0.3s ease;
-            filter: blur(8px);
-        }
-
-        .menu-btn-wrap:hover::after {
-            opacity: 0.6;
-            animation: glowPulse 1.5s ease-in-out infinite;
-        }
-
-        @keyframes glowPulse {
-
-            0%,
-            100% {
-                opacity: 0.4;
-            }
-
-            50% {
-                opacity: 0.7;
-            }
-        }
-
-        /* Glow en elementos seleccionados/activos */
-        .selected,
-        .active,
-        .equipped {
-            box-shadow: 0 0 15px rgba(0, 255, 231, 0.5),
-                0 0 30px rgba(0, 255, 231, 0.3);
-            animation: selectedGlow 2s ease-in-out infinite;
-        }
-
-        @keyframes selectedGlow {
-
-            0%,
-            100% {
-                box-shadow: 0 0 15px rgba(0, 255, 231, 0.5), 0 0 30px rgba(0, 255, 231, 0.3);
-            }
-
-            50% {
-                box-shadow: 0 0 20px rgba(0, 255, 231, 0.7), 0 0 40px rgba(0, 255, 231, 0.4);
-            }
+            transform: scale(0.97) translateY(0);
+            filter: brightness(0.95);
         }
 
         /* Glow en powerups disponibles */

@@ -8,6 +8,28 @@
 const GEM_CONFIG = {
 
     // --------------------------------------------------------
+    //  TEMA GLOBAL — Colores y fuentes de TODO el juego
+    //  Cambia un valor aquí y se actualiza en cada pantalla
+    //  (tienda, menú, selección de nivel, etc.)
+    // --------------------------------------------------------
+    tema: {
+        colores: {
+            cian: '#00ffe7',          // color principal/acento (brillos, texto destacado)
+            rojo: '#ff2d55',          // color de alerta / rareza DEMON
+            rosa: '#ff4d6d',          // título "TIENDA", acentos rosa
+            rosaClaro: '#ff9ab0',     // detalles secundarios rosados
+            verdeNeon: '#00ffae',     // confirmaciones, badges de "desbloqueado"
+            rojoError: '#ff4466',     // textos de error / bloqueado
+            azul: '#0088ff',          // gradientes secundarios
+        },
+        fuentes: {
+            principal: "'Geom', monospace",       // fuente de títulos y UI principal
+            secundaria: 'monospace',               // fuente de textos generales
+            especial: '"Audiowide", "Geom", sans-serif', // fuente de detalles especiales
+        },
+    },
+
+    // --------------------------------------------------------
     //  SIDEBAR DE LA TIENDA — Columna izquierda
     // --------------------------------------------------------
     tiendaSidebar: {
@@ -192,15 +214,79 @@ const GEM_CONFIG = {
     menu: {
 
         // Panel derecho con los botones (JUGAR, TIENDA, etc.)
+        // Controla el ancho del panel y su separación de los bordes
         panel: {
-            mobile: { width: '100%', paddingBottom: '40px' },
-            desktop: { width: '58%', paddingBottom: '80px' },
+            mobile: { width: '42%', right: '24px', paddingTop: '92px', paddingBottom: '14px' },
+            desktop: { width: '53%', paddingBottom: '80px' },
         },
 
-        // Botones del menú (tamaño general)
+        // Espacio entre los botones del menú (filas)
         botones: {
             mobile: { gap: '10px' },
             desktop: { gap: '14px' },
+        },
+
+        // Ancho del botón JUGAR (el de arriba, ancho completo por defecto)
+        // Solo aplica en desktop: en móvil siempre usa el ancho del panel
+        botonJugar: {
+            desktop: { width: '1%' },
+        },
+
+        // Espacio entre TIENDA/INVENTARIO y entre LOGROS/AYUDA (los pares de 2 botones)
+        botonesPares: {
+            desktop: { gap: '14px' },
+        },
+
+        // --------------------------------------------------------
+        //  BANNER DE PERFIL (arriba a la derecha, con avatar/nombre/monedas)
+        // --------------------------------------------------------
+        perfil: {
+            // Posición y ancho del cuadro completo
+            posicion: {
+                mobile: { width: '24%', right: '24px', top: '12px' },
+                desktop: { width: '50%', maxWidth: '320px' },
+            },
+            // Tamaño del cuadro (alto, bordes redondeados, espacio interno)
+            tamano: {
+                mobile: { height: '82px', borderRadius: '10px', padding: '10px' },
+                desktop: { height: '82px', borderRadius: '10px', padding: '10px' },
+            },
+            // Avatar circular dentro del banner
+            avatar: {
+                mobile: { size: '32px' },
+                desktop: { size: '52px' },
+            },
+            // Texto del nombre del jugador (ej: "Jugador")
+            nombreFont: {
+                mobile: { size: '11px' },
+                desktop: { size: '17px' },
+            },
+            // Texto del rango/nivel (ej: "CHISPA")
+            rangoFont: {
+                mobile: { size: '9px' },
+                desktop: { size: '14px' },
+            },
+
+            // Control de tamaño de Gemas (Rubíes), Monedas y sus PNGs en el menú
+            monetizacion: {
+                gap: {
+                    mobile: '4px',
+                    desktop: '6px'
+                },
+                padding: {
+                    mobile: '2px 6px',
+                    desktop: '4px 8px'
+                },
+                fontSize: {
+                    mobile: '10px',
+                    desktop: '16px' // Tamaño del número de monedas/gemas
+                },
+                iconSize: {
+                    mobile: '12px',
+                    desktop: '16px' // Tamaño de los PNG de las monedas y gemas
+                },
+            },
+
         },
 
     },
@@ -265,7 +351,7 @@ const GEM_CONFIG = {
         // --- HEADER: título "SELECCIONAR NIVEL" ---
         header: {
             // Posición vertical del header (top)
-            top: { mobile: '14px', desktop: '28px' },
+            top: { mobile: '14px', desktop: '-14px' },
             // Ancho del contenedor del header
             width: { mobile: '96%', desktop: '92%' },
         },
@@ -274,11 +360,11 @@ const GEM_CONFIG = {
         titleBox: {
             // Activar o desactivar el cuadro visual alrededor del título
             enabled: true,
-            padding: { mobile: '8px 14px', desktop: '10px 20px' },
-            borderRadius: { mobile: '10px', desktop: '14px' },
-            background: 'rgba(0,0,0,0.38)',
-            border: 'rgba(0,255,231,0.15)',
-            backdropBlur: '8px',
+            padding: { mobile: '10px 16px', desktop: '14px 26px' },
+            borderRadius: { mobile: '12px', desktop: '14px' },
+            background: 'rgba(0,0,0,0)',
+            border: '1px solid rgba(0, 255, 231, 0.18)',
+            backdropBlur: 'blur(10px)',
         },
 
         // Tamaño del texto del título
@@ -343,6 +429,25 @@ const GEM_CONFIG = {
             fontSize: { mobile: '18px', desktop: '22px' },
         },
 
+        // --- PREVIEW DERECHA: textos sobre el fondo grande del nivel ---
+        preview: {
+            // Texto pequeño arriba del título (ej: "NIVEL 01 · THE GEM")
+            // Ponlo en false para ocultarlo
+            kicker: {
+                enabled: false,
+            },
+            // Título grande con el nombre del nivel (ej: "THE BEGGIN")
+            tituloGrande: {
+                mobile: { size: '26px' },
+                desktop: { size: '46px' },
+            },
+        },
+
+        // --- DIFICULTAD: los rombos/puntos debajo del título ---
+        dificultad: {
+            forma: 'rombo', // 'rombo' o 'circulo'
+        },
+
         // --- COLORES (canvas y UI) ---
         colors: {
             selectedGlow: '#00ffe7',
@@ -368,113 +473,158 @@ const GEM_CONFIG = {
 
 // ============================================================
 //  APLICADOR AUTOMÁTICO
-//  No toques esto — lee el config de arriba y lo aplica en CSS
+//  No toques esto — lee el config de arriba y lo aplica en CSS.
+//
+//  FIX MÓVIL: Siempre escribe AMBOS sets de variables (mobile y
+//  desktop) para que el CSS pueda usarlas sin importar cuándo
+//  detecte el dispositivo (body.is-touch-device se añade tarde).
 // ============================================================
-(function applyConfig() {
-    const isMobile = window.matchMedia('(max-width: 600px)').matches;
-    const d = isMobile ? 'mobile' : 'desktop';
-    const t = GEM_CONFIG.tienda;
-    const m = GEM_CONFIG.menu;
-
-    // Inyectar variables CSS desde el config
+function applyConfig() {
     const root = document.documentElement;
-
-    // Tienda — Banner VIP
-    root.style.setProperty('--cfg-vip-height', t.bannerVIP[d].height);
-
-    // Tienda — Ruby Pass
-    root.style.setProperty('--cfg-ruby-width', t.rubyPass[d].width);
-    root.style.setProperty('--cfg-ruby-height', t.rubyPass[d].height);
-
-    // Tienda — Fila de banners
-    root.style.setProperty('--cfg-banner-row-direction', t.bannerRow[d].flexDirection);
-    root.style.setProperty('--cfg-banner-row-gap', t.bannerRow[d].gap);
-
-    // Tienda — Grid de paneles
-    root.style.setProperty('--cfg-grid-cols', t.panelGrid[d].columns);
-    root.style.setProperty('--cfg-grid-gap', t.panelGrid[d].gap);
-
-    // Mute BTN
-    const mute = GEM_CONFIG.muteBTN[d];
-    root.style.setProperty('--cfg-mute-size', mute.size);
-    root.style.setProperty('--cfg-mute-bottom', mute.bottom);
-    root.style.setProperty('--cfg-mute-right', mute.right);
-
-    // ── SIDEBAR TIENDA ──
+    const t  = GEM_CONFIG.tienda;
+    const m  = GEM_CONFIG.menu;
+    const mp = m.perfil;
+    const mm = mp.monetizacion;
     const sb = GEM_CONFIG.tiendaSidebar;
-
-    root.style.setProperty('--shop-sidebar-width', sb.width[d]);
-    root.style.setProperty('--shop-header-padding', sb.header.padding[d]);
-    root.style.setProperty('--shop-title-font', sb.titulo.fontSize[d]);
-    root.style.setProperty('--shop-title-color', sb.titulo.color);
-    root.style.setProperty('--shop-back-padding', sb.backBtn.padding[d]);
-    root.style.setProperty('--shop-back-font', sb.backBtn.fontSize[d]);
-    root.style.setProperty('--shop-profile-padding', sb.profileSection.padding[d]);
-    root.style.setProperty('--shop-label-font', sb.labelFont[d]);
-    root.style.setProperty('--shop-banner-height', sb.profileBanner.height[d]);
-    root.style.setProperty('--shop-banner-radius', sb.profileBanner.borderRadius[d]);
-    root.style.setProperty('--shop-banner-padding', sb.profileBanner.padding[d]);
-    root.style.setProperty('--shop-avatar-size', sb.avatar.size[d]);
-    root.style.setProperty('--shop-profile-name-font', sb.profileName.fontSize[d]);
-    root.style.setProperty('--shop-profile-level-font', sb.profileLevel.fontSize[d]);
-    root.style.setProperty('--shop-banner-name-font', sb.bannerName.fontSize[d]);
-    root.style.setProperty('--shop-currency-gap', sb.currency.gap[d]);
-    root.style.setProperty('--shop-currency-padding', sb.currency.padding[d]);
-    root.style.setProperty('--shop-currency-label-font', sb.currency.labelFont[d]);
-    root.style.setProperty('--shop-currency-value-font', sb.currency.valueFont[d]);
-    root.style.setProperty('--shop-currency-icon-size', sb.currency.iconSize[d]);
-    root.style.setProperty('--shop-equipped-padding', sb.equipped.padding[d]);
-    root.style.setProperty('--shop-equipped-size', sb.equipped.previewSize[d]);
-    root.style.setProperty('--shop-equipped-name-font', sb.equipped.nameFont[d]);
-    root.style.setProperty('--shop-equipped-rarity-font', sb.equipped.rarityFont[d]);
-
-    // ── LEVEL SELECT: variables CSS ──
     const ls = GEM_CONFIG.levelSelect;
+    const tema = GEM_CONFIG.tema;
 
-    // Header
-    root.style.setProperty('--ls-header-top', ls.header.top[d]);
-    root.style.setProperty('--ls-header-width', ls.header.width[d]);
+    // ── TEMA GLOBAL: colores y fuentes (no dependen de mobile/desktop) ──
+    root.style.setProperty('--color-cian',       tema.colores.cian);
+    root.style.setProperty('--color-rojo',       tema.colores.rojo);
+    root.style.setProperty('--color-rosa',       tema.colores.rosa);
+    root.style.setProperty('--color-rosa-claro', tema.colores.rosaClaro);
+    root.style.setProperty('--color-verde-neon', tema.colores.verdeNeon);
+    root.style.setProperty('--color-rojo-error', tema.colores.rojoError);
+    root.style.setProperty('--color-azul',       tema.colores.azul);
+    root.style.setProperty('--font-principal',   tema.fuentes.principal);
+    root.style.setProperty('--font-secundaria',  tema.fuentes.secundaria);
+    root.style.setProperty('--font-especial',    tema.fuentes.especial);
 
-    // Title box
+    // Dificultad: rombo o círculo (no depende de mobile/desktop)
+    const esRombo = ls.dificultad.forma === 'rombo';
+    root.style.setProperty('--lsc-diff-radius', esRombo ? '1px' : '50%');
+    root.style.setProperty('--lsc-diff-rotate', esRombo ? '45deg' : '0deg');
+    root.style.setProperty('--lsc-kicker-display', ls.preview.kicker.enabled ? 'block' : 'none');
     root.style.setProperty('--ls-title-box-display', ls.titleBox.enabled ? 'inline-flex' : 'contents');
-    root.style.setProperty('--ls-title-box-padding', ls.titleBox.padding[d]);
-    root.style.setProperty('--ls-title-box-radius', ls.titleBox.borderRadius[d]);
-    root.style.setProperty('--ls-title-box-bg', ls.titleBox.background);
+    root.style.setProperty('--ls-title-box-bg',     ls.titleBox.background);
     root.style.setProperty('--ls-title-box-border', ls.titleBox.border);
-    root.style.setProperty('--ls-title-box-blur', ls.titleBox.backdropBlur);
+    root.style.setProperty('--ls-title-box-blur',   ls.titleBox.backdropBlur);
+    root.style.setProperty('--shop-title-color', sb.titulo.color);
 
-    // Title fonts
-    root.style.setProperty('--ls-font-small', ls.titleFont.small[d]);
-    root.style.setProperty('--ls-font-large', ls.titleFont.large[d]);
+    // ── APLICAR AMBOS SETS: mobile y desktop ──
+    // El CSS usa body.is-touch-device para móvil, NO media queries de ancho.
+    // Si solo escribimos el set del dispositivo actual, las variables "-mobile"
+    // quedan vacías y el CSS cae al default hardcodeado. Solución: escribir todo.
+    ['mobile', 'desktop'].forEach(function(d) {
 
-    // Back button
-    root.style.setProperty('--ls-back-top', ls.backBtn.top[d]);
-    root.style.setProperty('--ls-back-height', ls.backBtn.height[d]);
-    root.style.setProperty('--ls-back-font', ls.backBtn.fontSize[d]);
-    root.style.setProperty('--ls-back-padding', ls.backBtn.padding[d]);
+        // Sufijo para las variables que el CSS distingue por nombre
+        const s = d === 'mobile' ? '-mobile' : '';
 
-    // Player bar
-    root.style.setProperty('--ls-playerbar-top', ls.playerBar.top[d]);
+        // ── Monedas del menú ──
+        root.style.setProperty('--menu-currency-gap'       + s, mm.gap[d]);
+        root.style.setProperty('--menu-currency-padding'   + s, mm.padding[d]);
+        root.style.setProperty('--menu-currency-font'      + s, mm.fontSize[d]);
+        root.style.setProperty('--menu-currency-icon-size' + s, mm.iconSize[d]);
 
-    // Nav arrows
-    root.style.setProperty('--ls-nav-size', ls.navArrows.size[d]);
-    root.style.setProperty('--ls-nav-font', ls.navArrows.fontSize[d]);
-    root.style.setProperty('--ls-nav-radius', ls.navArrows.borderRadius[d]);
-    root.style.setProperty('--ls-nav-offset', ls.navArrows.sideOffset[d]);
-    root.style.setProperty('--ls-nav-top', ls.navArrows.verticalPos[d]);
+        // ── Tienda ──
+        root.style.setProperty('--cfg-vip-height'          + s, t.bannerVIP[d].height);
+        root.style.setProperty('--cfg-ruby-width'          + s, t.rubyPass[d].width);
+        root.style.setProperty('--cfg-ruby-height'         + s, t.rubyPass[d].height);
+        root.style.setProperty('--cfg-banner-row-direction'+ s, t.bannerRow[d].flexDirection);
+        root.style.setProperty('--cfg-banner-row-gap'      + s, t.bannerRow[d].gap);
+        root.style.setProperty('--cfg-grid-cols'           + s, t.panelGrid[d].columns);
+        root.style.setProperty('--cfg-grid-gap'            + s, t.panelGrid[d].gap);
 
-    // Footer
-    root.style.setProperty('--ls-footer-bottom', ls.footer.bottom[d]);
+        // ── Mute BTN ──
+        const mute = GEM_CONFIG.muteBTN[d];
+        root.style.setProperty('--cfg-mute-size'   + s, mute.size);
+        root.style.setProperty('--cfg-mute-bottom' + s, mute.bottom);
+        root.style.setProperty('--cfg-mute-right'  + s, mute.right);
 
-    // System bar
-    root.style.setProperty('--ls-system-width', ls.systemBar.width[d]);
-    root.style.setProperty('--ls-system-height', ls.systemBar.height[d]);
+        // ── Menú principal — panel de botones ──
+        // Las variables "-mobile" son las que usa el CSS cuando body.is-touch-device
+        root.style.setProperty('--menu-panel-width'              + s, d === 'mobile' ? m.panel.mobile.width          : m.panel.desktop.width);
+        root.style.setProperty('--menu-panel-right'              + s, d === 'mobile' ? m.panel.mobile.right          : '0');
+        root.style.setProperty('--menu-panel-padding-top'        + s, d === 'mobile' ? m.panel.mobile.paddingTop     : '0');
+        root.style.setProperty('--menu-panel-padding-bottom'     + s, d === 'mobile' ? m.panel.mobile.paddingBottom  : m.panel.desktop.paddingBottom);
+        root.style.setProperty('--menu-btn-gap'                  + s, d === 'mobile' ? m.botones.mobile.gap          : m.botones.desktop.gap);
+        if (d === 'desktop') {
+            root.style.setProperty('--menu-play-width',    m.botonJugar.desktop.width);
+            root.style.setProperty('--menu-btn-pair-gap',  m.botonesPares.desktop.gap);
+        }
 
-    // Play button
-    root.style.setProperty('--ls-play-width', ls.playBtn.width[d]);
-    root.style.setProperty('--ls-play-height', ls.playBtn.height[d]);
-    root.style.setProperty('--ls-play-font', ls.playBtn.fontSize[d]);
+        // ── Menú principal — perfil ──
+        root.style.setProperty('--menu-profile-width'    + s, d === 'mobile' ? mp.posicion.mobile.width   : mp.posicion.desktop.width);
+        root.style.setProperty('--menu-profile-right'    + s, d === 'mobile' ? mp.posicion.mobile.right   : '0');
+        root.style.setProperty('--menu-profile-top'      + s, d === 'mobile' ? mp.posicion.mobile.top     : '0');
+        if (d === 'desktop') {
+            root.style.setProperty('--menu-profile-maxwidth', mp.posicion.desktop.maxWidth);
+        }
+        root.style.setProperty('--menu-banner-height'        + s, mp.tamano[d].height);
+        root.style.setProperty('--menu-banner-radius'        + s, mp.tamano[d].borderRadius);
+        root.style.setProperty('--menu-banner-padding'       + s, mp.tamano[d].padding);
+        root.style.setProperty('--menu-avatar-size'          + s, mp.avatar[d].size);
+        root.style.setProperty('--menu-profile-name-font'    + s, mp.nombreFont[d].size);
+        root.style.setProperty('--menu-profile-level-font'   + s, mp.rangoFont[d].size);
 
-    // Re-aplicar si cambia el tamaño de ventana (rotación de pantalla en cel)
-    window.matchMedia('(max-width: 600px)').addEventListener('change', applyConfig);
-})();
+        // ── Sidebar tienda ──
+        root.style.setProperty('--shop-sidebar-width'         + s, sb.width[d]);
+        root.style.setProperty('--shop-header-padding'        + s, sb.header.padding[d]);
+        root.style.setProperty('--shop-title-font'            + s, sb.titulo.fontSize[d]);
+        root.style.setProperty('--shop-back-padding'          + s, sb.backBtn.padding[d]);
+        root.style.setProperty('--shop-back-font'             + s, sb.backBtn.fontSize[d]);
+        root.style.setProperty('--shop-profile-padding'       + s, sb.profileSection.padding[d]);
+        root.style.setProperty('--shop-label-font'            + s, sb.labelFont[d]);
+        root.style.setProperty('--shop-banner-height'         + s, sb.profileBanner.height[d]);
+        root.style.setProperty('--shop-banner-radius'         + s, sb.profileBanner.borderRadius[d]);
+        root.style.setProperty('--shop-banner-padding'        + s, sb.profileBanner.padding[d]);
+        root.style.setProperty('--shop-avatar-size'           + s, sb.avatar.size[d]);
+        root.style.setProperty('--shop-profile-name-font'     + s, sb.profileName.fontSize[d]);
+        root.style.setProperty('--shop-profile-level-font'    + s, sb.profileLevel.fontSize[d]);
+        root.style.setProperty('--shop-banner-name-font'      + s, sb.bannerName.fontSize[d]);
+        root.style.setProperty('--shop-currency-gap'          + s, sb.currency.gap[d]);
+        root.style.setProperty('--shop-currency-padding'      + s, sb.currency.padding[d]);
+        root.style.setProperty('--shop-currency-label-font'   + s, sb.currency.labelFont[d]);
+        root.style.setProperty('--shop-currency-value-font'   + s, sb.currency.valueFont[d]);
+        root.style.setProperty('--shop-currency-icon-size'    + s, sb.currency.iconSize[d]);
+        root.style.setProperty('--shop-equipped-padding'      + s, sb.equipped.padding[d]);
+        root.style.setProperty('--shop-equipped-size'         + s, sb.equipped.previewSize[d]);
+        root.style.setProperty('--shop-equipped-name-font'    + s, sb.equipped.nameFont[d]);
+        root.style.setProperty('--shop-equipped-rarity-font'  + s, sb.equipped.rarityFont[d]);
+
+        // ── Level Select ──
+        root.style.setProperty('--ls-header-top'          + s, ls.header.top[d]);
+        root.style.setProperty('--ls-header-width'        + s, ls.header.width[d]);
+        root.style.setProperty('--ls-title-box-padding'   + s, ls.titleBox.padding[d]);
+        root.style.setProperty('--ls-title-box-radius'    + s, ls.titleBox.borderRadius[d]);
+        root.style.setProperty('--ls-font-small'          + s, ls.titleFont.small[d]);
+        root.style.setProperty('--ls-font-large'          + s, ls.titleFont.large[d]);
+        root.style.setProperty('--ls-back-top'            + s, ls.backBtn.top[d]);
+        root.style.setProperty('--ls-back-height'         + s, ls.backBtn.height[d]);
+        root.style.setProperty('--ls-back-font'           + s, ls.backBtn.fontSize[d]);
+        root.style.setProperty('--ls-back-padding'        + s, ls.backBtn.padding[d]);
+        root.style.setProperty('--ls-playerbar-top'       + s, ls.playerBar.top[d]);
+        root.style.setProperty('--ls-nav-size'            + s, ls.navArrows.size[d]);
+        root.style.setProperty('--ls-nav-font'            + s, ls.navArrows.fontSize[d]);
+        root.style.setProperty('--ls-nav-radius'          + s, ls.navArrows.borderRadius[d]);
+        root.style.setProperty('--ls-nav-offset'          + s, ls.navArrows.sideOffset[d]);
+        root.style.setProperty('--ls-nav-top'             + s, ls.navArrows.verticalPos[d]);
+        root.style.setProperty('--ls-footer-bottom'       + s, ls.footer.bottom[d]);
+        root.style.setProperty('--ls-system-width'        + s, ls.systemBar.width[d]);
+        root.style.setProperty('--ls-system-height'       + s, ls.systemBar.height[d]);
+        root.style.setProperty('--ls-play-width'          + s, ls.playBtn.width[d]);
+        root.style.setProperty('--ls-play-height'         + s, ls.playBtn.height[d]);
+        root.style.setProperty('--ls-play-font'           + s, ls.playBtn.fontSize[d]);
+        root.style.setProperty('--lsc-title-big-size'     + s, ls.preview.tituloGrande[d].size);
+    });
+}
+
+// Exponer globalmente para que otros scripts puedan re-aplicar si necesitan
+window.applyGemConfig = applyConfig;
+
+// Aplicar al cargar
+applyConfig();
+
+// Re-aplicar si rota la pantalla o cambia el tamaño de ventana
+window.matchMedia('(max-width: 600px)').addEventListener('change', applyConfig);

@@ -665,31 +665,31 @@ window.infiniteCoinsMode = localStorage.getItem('infiniteCoinsMode') === 'true';
 function toggleInfiniteCoins() {
     window.infiniteCoinsMode = !window.infiniteCoinsMode;
     localStorage.setItem('infiniteCoinsMode', window.infiniteCoinsMode ? 'true' : 'false');
-    
+
     const btn = document.getElementById('infinite-coins-btn');
     if (btn) {
         btn.textContent = `MONEDAS INFINITAS: ${window.infiniteCoinsMode ? 'ON' : 'OFF'}`;
         btn.style.background = window.infiniteCoinsMode ? 'rgba(0,255,100,0.2)' : '';
         btn.style.borderColor = window.infiniteCoinsMode ? 'rgba(0,255,100,0.5)' : '';
     }
-    
+
     // Actualizar botón flotante
     const floatBtn = document.getElementById('infinite-coins-float-btn');
     if (floatBtn) {
         floatBtn.style.background = window.infiniteCoinsMode ? 'rgba(0,255,100,0.4)' : 'rgba(0,0,0,0.35)';
         floatBtn.style.borderColor = window.infiniteCoinsMode ? 'rgba(0,255,100,0.6)' : 'rgba(255,255,255,0.12)';
     }
-    
+
     // Actualizar botón del menú principal
     const menuBtn = document.getElementById('infinite-coins-menu-text');
     if (menuBtn) {
         menuBtn.textContent = `MONEDAS INFINITAS: ${window.infiniteCoinsMode ? 'ON' : 'OFF'}`;
         menuBtn.style.color = window.infiniteCoinsMode ? '#00ff64' : '#ff4444';
     }
-    
+
     // Actualizar display de monedas inmediatamente
     updateProfilePanelStats();
-    
+
     window.playSfx?.('menuSelect');
 }
 
@@ -762,16 +762,23 @@ function unlockAchievement(id) {
     }
 }
 
+// Notificación visual para los trofeos de colección de comida (Coleccionista I/II/III)
+// goal: objeto { rewardId, name, icon, count } definido en FOOD_COLLECTION_GOALS (shop.js)
+function unlockTrophyAchievement(goal) {
+    if (!goal) return;
+    showAchievementNotification({ img: goal.icon, name: goal.name });
+}
+
 function showAchievementNotification(achievement) {
     const notification = document.createElement('div');
     notification.className = 'achievement-notification';
     notification.innerHTML = `
-        <span class="achievement-icon">${achievement.icon}</span>
-        <div class="achievement-info">
-            <strong>¡LOGRO DESBLOQUEADO!</strong>
-            <span>${achievement.name}</span>
-        </div>
-    `;
+            <img src="${achievement.img}" class="achievement-icon" style="width:50px; height:50px;">
+            <div class="achievement-info">
+                <strong>¡LOGRO DESBLOQUEADO!</strong>
+                <span>${achievement.name}</span>
+            </div>
+        `;
     document.body.appendChild(notification);
     notification.classList.add('showing');
     setTimeout(() => {
@@ -789,22 +796,22 @@ function showAchievementsPanel() {
     const totalCount = ACHIEVEMENTS_DATA.length;
 
     body.innerHTML = `
-        <div class="achievements-stats">
-            <span>Desbloqueados: ${unlockedCount}/${totalCount}</span>
-        </div>
-        <div class="achievements-grid">
-            ${ACHIEVEMENTS_DATA.map(achievement => `
-                <div class="achievement-item ${achievement.unlocked ? 'unlocked' : 'locked'}">
-                    <span class="achievement-icon">${achievement.icon}</span>
-                    <div class="achievement-info">
-                        <strong>${achievement.name}</strong>
-                        <p>${achievement.description}</p>
+            <div class="achievements-stats">
+                <span>Desbloqueados: ${unlockedCount}/${totalCount}</span>
+            </div>
+            <div class="achievements-grid">
+                ${ACHIEVEMENTS_DATA.map(achievement => `
+                    <div class="achievement-item ${achievement.unlocked ? 'unlocked' : 'locked'}">
+                        <span class="achievement-icon">${achievement.icon}</span>
+                        <div class="achievement-info">
+                            <strong>${achievement.name}</strong>
+                            <p>${achievement.description}</p>
+                        </div>
+                        ${achievement.unlocked ? '<span class="achievement-status">✓</span>' : ''}
                     </div>
-                    ${achievement.unlocked ? '<span class="achievement-status">✓</span>' : ''}
-                </div>
-            `).join('')}
-        </div>
-    `;
+                `).join('')}
+            </div>
+        `;
 
     panel.style.display = 'grid';
     panel.classList.add('showing');
@@ -823,6 +830,7 @@ loadAchievements();
 window.showAchievementsPanel = showAchievementsPanel;
 window.closeAchievementsPanel = closeAchievementsPanel;
 window.unlockAchievement = unlockAchievement;
+window.unlockTrophyAchievement = unlockTrophyAchievement;
 
 // =====================================================
 // AUTO SAVE SYSTEM

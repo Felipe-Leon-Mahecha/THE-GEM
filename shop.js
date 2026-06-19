@@ -12,13 +12,15 @@ var previewTrailAnim = null;
 const SHOP_PLACEHOLDER_IMAGE = 'assets/UI/Store/Placeholders/placeholder_store_item.png';
 // Imagen placeholder para recompensas del pase de rubies
 const RUBY_PASS_REWARD_PLACEHOLDER = 'assets/UI/Store/Placeholders/placeholder_ruby_pass_reward.png';
-// Precio estándar de emotes en monedas
-const EMOTE_STANDARD_PRICE_COINS = 150;
+// Precio estándar de emotes en monedas (ver prices.config.js -> general.emoteBasicoCoins)
+const EMOTE_STANDARD_PRICE_COINS = (window.SHOP_PRICES && window.SHOP_PRICES.general.emoteBasicoCoins) || 150;
 // Imágenes de efectos visuales para la tienda
 const SHOP_SNOWFLAKE_IMAGE = new Image();
 SHOP_SNOWFLAKE_IMAGE.src = 'assets/UI/Efectos de trails/Efecto copo de nieve.png';
 const SHOP_CANDY_PARTICLE_IMAGE = new Image();
 SHOP_CANDY_PARTICLE_IMAGE.src = 'assets/UI/Efectos de trails/Particulas/particula_dulce.png';
+
+const TROPHY_IDS = ['skin_chocolate_trofeo_cobre', 'skin_sandia_trofeo_plata', 'skin_hamburguesa_trofeo_oro'];
 
 // =====================================================
 // VARIABLES GLOBALES
@@ -31,8 +33,9 @@ let trailAnimId = null; // ID de la animación del trail en preview
 // =====================================================
 
 const VIP_ASSET_BASE = 'assets/UI/Store/VIP/Bundles'; // Ruta base de assets VIP
-const VIP_ITEM_PRICE = 300; // Precio estándar de item VIP
-const VIP_PANEL_PRICE = 620; // Precio de panel VIP
+// Precios VIP (ver prices.config.js -> general)
+const VIP_ITEM_PRICE = (window.SHOP_PRICES && window.SHOP_PRICES.general.vipItemPriceGems) || 300;
+const VIP_PANEL_PRICE = (window.SHOP_PRICES && window.SHOP_PRICES.general.vipPanelPriceGems) || 620;
 
 // =====================================================
 // FUNCIONES AUXILIARES VIP
@@ -962,10 +965,10 @@ const RUBY_PASS_REWARDS = [
     },
 ];
 
-// Costo del pase premium en gemas
-const RUBY_PASS_PREMIUM_COST_GEMS = 250;
-// XP ganado por victoria en el pase de rubies
-const RUBY_PASS_XP_PER_WIN = 120;
+// Costo del pase premium en gemas (ver rubypass.config.js -> settings)
+const RUBY_PASS_PREMIUM_COST_GEMS = (window.RUBY_PASS_CONFIG && window.RUBY_PASS_CONFIG.settings.premiumCostGems) || 250;
+// XP ganado por victoria en el pase de rubies (ver rubypass.config.js -> settings)
+const RUBY_PASS_XP_PER_WIN = (window.RUBY_PASS_CONFIG && window.RUBY_PASS_CONFIG.settings.xpPerWin) || 120;
 
 // Datos de emotes disponibles en la tienda
 // SHOP_EMOTE_ASSET_SLOT: agrega tus rutas PNG de emotes aquí
@@ -995,6 +998,11 @@ const EMOTES_DATA = [
     { id: 'emote_risa', name: 'Risa', image: 'assets/UI/Efectos de trails/Particulas/particula_risa.png', rarity: 'ESPECIAL', slot: 'SHOP_EMOTE_ASSET_SLOT_FRAGMENT_RISA' },
     { id: 'emote_risa_malvada', name: 'Risa Malvada', image: 'assets/UI/Efectos de trails/Particulas/particula_risa_malvada.png', rarity: 'EPICA', slot: 'SHOP_EMOTE_ASSET_SLOT_FRAGMENT_RISA_MALVADA' },
 ];
+
+// Aplicar precios desde prices.config.js a todos los items de la tienda
+if (typeof window.applyShopPrices === 'function') {
+    window.applyShopPrices(TRAILS_DATA, SKINS_DATA, BANNERS_DATA, EMOTES_DATA);
+}
 
 // Precargar imágenes de la tienda al inicio del juego (después de definir SKINS_DATA y EMOTES_DATA)
 window.preloadedShopImages = preloadShopImages();
@@ -1258,7 +1266,7 @@ const VIP_PACKAGES_DATA = [
     {
         id: 'food',
         title: 'Paquete Comida',
-        price: 1200,
+        price: 2000,
         cover: 'assets/UI/Store/VIP/Bundles/Food/panel_bundle_food.png',
         detailBackground: 'assets/UI/Store/VIP/Bundles/Food/bg_food_panel.png',
         popupBackground: 'assets/UI/Store/VIP/Bundles/Food/popup_food_bg.png',
@@ -1282,6 +1290,9 @@ const VIP_PACKAGES_DATA = [
             { type: 'vipSkin', id: 'skin_chocolate', name: 'Chocolate', price: 250, image: 'assets/UI/Store/VIP/Bundles/Food/skin_chocolate.png', rolling: true },
             { type: 'vipSkin', id: 'skin_pina', name: 'Pina', price: 230, image: 'assets/UI/Store/VIP/Bundles/Food/skin_pina.png', rolling: true },
             { type: 'vipSkin', id: 'skin_pancakes', name: 'Pancakes', price: 350, image: 'assets/UI/Store/VIP/Bundles/Food/skin_pancakes.png', rolling: true },
+            { type: 'vipSkin', id: 'skin_hamburguesa_trofeo_oro', name: 'Hamburguesa Dorada', price: 0, image: 'assets/UI/Store/VIP/Bundles/Food/skin_hamburguesa_trofeo_oro.png', rolling: true },
+            { type: 'vipSkin', id: 'skin_sandia_trofeo_plata', name: 'Sandia de Plata', price: 0, image: 'assets/UI/Store/VIP/Bundles/Food/skin_sandia_trofeo_plata.png', rolling: true },
+            { type: 'vipSkin', id: 'skin_chocolate_trofeo_cobre', name: 'Chocolate de Cobre', price: 0, image: 'assets/UI/Store/VIP/Bundles/Food/skin_chocolate_trofeo_cobre.png', rolling: true },
         ]
     },
     {
@@ -1388,6 +1399,60 @@ const VIP_PACKAGES_DATA = [
         ]
     }
 ];
+
+// Configuración de Logros de Colección de comida
+// (única fuente de verdad: usada por checkFoodCollectionProgress y por la notificación visual)
+const FOOD_COLLECTION_GOALS = [
+    {
+        count: 7,
+        rewardId: 'skin_chocolate_trofeo_cobre',
+        name: 'Coleccionista de comida I',
+        icon: 'assets/UI/Store/VIP/Bundles/Food/skin_chocolate_trofeo_cobre.png'
+    },
+    {
+        count: 15,
+        rewardId: 'skin_sandia_trofeo_plata',
+        name: 'Coleccionista de comida II',
+        icon: 'assets/UI/Store/VIP/Bundles/Food/skin_sandia_trofeo_plata.png'
+    },
+    {
+        count: 32,
+        rewardId: 'skin_hamburguesa_trofeo_oro',
+        name: 'Coleccionista de comida III',
+        icon: 'assets/UI/Store/VIP/Bundles/Food/skin_hamburguesa_trofeo_oro.png'
+    }
+];
+
+function checkFoodCollectionProgress() {
+    const foodBundle = VIP_PACKAGES_DATA.find(p => p.id === 'food');
+    if (!foodBundle) return;
+
+    let count = 0;
+    foodBundle.items.forEach(item => {
+        if (localStorage.getItem(getSkinStorageKey(item.id)) === 'true') {
+            count++;
+        }
+    });
+
+    FOOD_COLLECTION_GOALS.forEach(goal => {
+        // Si cumple la meta y no tiene la skin aún
+        if (count >= goal.count && localStorage.getItem(getSkinStorageKey(goal.rewardId)) !== 'true') {
+
+            // 1. Guardamos la skin como obtenida
+            localStorage.setItem(getSkinStorageKey(goal.rewardId), 'true');
+
+            // 2. Mostramos la notificación visual del trofeo
+            if (typeof window.unlockTrophyAchievement === 'function') {
+                window.unlockTrophyAchievement(goal);
+            }
+
+            // 3. Forzamos actualización de tienda
+            if (typeof renderSkinsPage === 'function') {
+                renderSkinsPage(document.getElementById('shopContent'));
+            }
+        }
+    });
+}
 
 // Obtener la clave de almacenamiento para un skin
 // id: ID del skin
@@ -1655,23 +1720,20 @@ function renderHome(container) {
 
 function renderSkinCard(s, equipped) {
     const isEquipped = equipped === s.id;
-    const rarityColor = RARITY_COLORS[s.rarity] || '#aaa';
+    // Lista de tus trofeos para identificar el estilo
+    const isTrophy = TROPHY_IDS.includes(s.id);
+
+    // Si es trofeo, forzamos un color "morado" para el brillo/borde
+    const rarityColor = isTrophy ? '#8a2be2' : (RARITY_COLORS[s.rarity] || '#aaa');
+
     const owned = isSkinOwned(s);
+    // ... (mantén tus variables originales de isFragmentItem, isUnlocked)
     const isFragmentItem = window.isFragmentItem?.(s.id);
     const isUnlocked = isFragmentItem ? window.fragmentSystem?.isItemUnlocked(s.id) : false;
 
-    if (s.soon) {
-        return `
-        <div style="background:rgba(255,255,255,0.02); border:1px dashed rgba(255,255,255,0.08); border-radius:14px; padding:20px 12px; display:flex; flex-direction:column; align-items:center; gap:10px;">
-            <div style="width:72px; height:72px; border-radius:10px; background:rgba(255,255,255,0.05); border:2px dashed rgba(255,255,255,0.1); display:grid; place-items:center; overflow:hidden;">
-                ${s.imageRight ? `<img src="${s.imageRight}" style="width:100%;height:100%;object-fit:contain;opacity:.28;">` : ''}
-            </div>
-            <div style="color:rgba(255,255,255,0.22); font-family:monospace; font-size:10px; letter-spacing:2px;">${s.name || '???'}</div>
-            <div style="color:${rarityColor}33; font-family:monospace; font-size:9px; letter-spacing:1px;">${s.rarity}</div>
-            <div style="color:rgba(255,255,255,0.12); font-family:monospace; font-size:9px;">PRÓXIMAMENTE</div>
-        </div>`;
-    }
+    // ... (mantén el bloque s.soon tal cual está)
 
+    // ... (mantén tus variables de precios canBuyMain, canBuyAlt, etc.)
     const coins = parseInt(localStorage.getItem('deadCoins') || '0');
     const gems = parseInt(localStorage.getItem('gems') || '0');
     const canBuyMain = s.priceType === 'gems' ? gems >= s.price : coins >= s.price;
@@ -1681,6 +1743,7 @@ function renderSkinCard(s, equipped) {
     const altIcon = s.altType ? CURRENCY_ICONS[s.altType] : null;
     const previewImage = s.image || s.imageRight || s.imageLeft;
 
+    // ... (mantén el bloque de 'action' tal cual está)
     let action;
     if (owned || isUnlocked) {
         action = `<button onclick="equipSkin('${s.id}')" style="width:100%; padding:6px 0; border-radius:8px; border:1px solid ${isEquipped ? rarityColor + '66' : 'rgba(255,255,255,0.12)'}; background:${isEquipped ? rarityColor + '15' : 'none'}; color:${isEquipped ? rarityColor : 'rgba(255,255,255,0.4)'}; font-family:Geom, monospace; font-size:9px; cursor:pointer; letter-spacing:1px;">${isEquipped ? '✔ EQUIPADA' : 'EQUIPAR'}</button>`;
@@ -1692,14 +1755,18 @@ function renderSkinCard(s, equipped) {
         action = `<button onclick="buySkin('${s.id}')" ${!canBuy ? 'disabled' : ''} style="width:100%; padding:6px 0; border-radius:8px; border:1px solid ${canBuy ? 'rgba(255,238,0,0.4)' : 'rgba(255,255,255,0.08)'}; background:none; color:${canBuy ? '#ffee00' : 'rgba(255,255,255,0.2)'}; font-family:Geom, monospace; font-size:9px; cursor:${canBuy ? 'pointer' : 'default'}; letter-spacing:1px; display:flex; align-items:center; justify-content:center; gap:5px; flex-wrap:wrap;"><img src="${mainIcon}" style="width:14px;height:14px;object-fit:contain;"> ${s.price}${s.altPrice ? ` <span style="opacity:.45;">/</span> <img src="${altIcon}" style="width:14px;height:14px;object-fit:contain;"> ${s.altPrice}` : ''}</button>`;
     }
 
+    // AQUI ESTA EL CAMBIO EN EL RETURN:
+    const cardBackground = isTrophy ? 'linear-gradient(135deg, #2e003e, #1a0026) !important' : 'rgba(255,255,255,0.03)';
+    const labelText = isTrophy ? 'TROFEO ESPECIAL' : 'SOLO EN TIENDA VIP';
+
     return `
-    <div style="background:rgba(255,255,255,0.03); border:1px solid ${isEquipped ? rarityColor + '66' : 'rgba(255,255,255,0.08)'}; border-radius:14px; padding:20px 12px; display:flex; flex-direction:column; align-items:center; gap:10px; transition:0.2s; ${isEquipped ? 'box-shadow:0 0 20px ' + rarityColor + '22' : ''}">
+    <div style="background:${cardBackground}; border:1px solid ${isEquipped ? rarityColor + '66' : (isTrophy ? '#8a2be2' : 'rgba(255,255,255,0.08)')}; border-radius:14px; padding:20px 12px; display:flex; flex-direction:column; align-items:center; gap:10px; transition:0.2s; ${isEquipped ? 'box-shadow:0 0 20px ' + rarityColor + '22' : ''}">
         <div class="shop-skin-orb" style="--skin-glow:${s.color || rarityColor};">
             ${previewImage ? `<img src="${previewImage}" alt="" draggable="false">` : (s.emoji ? s.emoji : `<div style="width:24px;height:24px;border-radius:50%;background:${s.color};box-shadow:0 0 10px ${s.color}88;"></div>`)}
         </div>
         <div style="color:white; font-family:monospace; font-size:11px; letter-spacing:1px;">${s.name}</div>
-        <div style="color:${rarityColor}; font-family:monospace; font-size:9px; letter-spacing:2px;">${s.rarity}</div>
-        ${s.vipOnly && !owned ? `<div style="color:#ffee00; font-family:monospace; font-size:9px; letter-spacing:1px;">SOLO EN TIENDA VIP</div>` : (isFragmentItem && !isUnlocked ? `<div style="color:#FFD700; font-family:monospace; font-size:9px; letter-spacing:1px;">🧩 FRAGMENTOS</div>` : (s.fragments ? `<div style="color:rgba(255,255,255,0.22); font-family:monospace; font-size:9px;">${s.fragments} FRAGMENTOS</div>` : ''))}
+        <div style="color:${rarityColor}; font-family:monospace; font-size:9px; letter-spacing:2px;">${isTrophy ? 'LEGENDARIO' : s.rarity}</div>
+        ${isTrophy ? `<div style="color:#cc99ff; font-family:monospace; font-size:9px; letter-spacing:1px;">TROFEO</div>` : (s.vipOnly && !owned ? `<div style="color:#ffee00; font-family:monospace; font-size:9px; letter-spacing:1px;">SOLO EN TIENDA VIP</div>` : (s.fragments ? `<div style="color:rgba(255,255,255,0.22); font-family:monospace; font-size:9px;">${s.fragments} FRAGMENTOS</div>` : ''))}
         ${action}
     </div>`;
 }
@@ -1741,7 +1808,11 @@ function buySkin(id) {
     });
 }
 
-function completeSkinPurchase(id) {
+// NOTA: esta función no se usa actualmente en ningún flujo de compra
+// (las skins de comida se compran vía buyVIPMiniItemById -> grantVIPItem,
+// que es donde realmente se llama a checkFoodCollectionProgress()).
+// Se deja por si la necesitas para otro flujo de compra a futuro.
+function unlockFoodAchievement(id) {
     const skin = findShopSkin(id);
     if (!skin || skin.vipOnly) return;
     let coins = parseInt(localStorage.getItem('deadCoins') || '0');
@@ -1764,6 +1835,8 @@ function completeSkinPurchase(id) {
     localStorage.setItem('gems', gems);
     window.playSfx?.('spend');
     localStorage.setItem(getSkinStorageKey(id), 'true');
+
+    checkFoodCollectionProgress();
 
     // Actualizar catálogo global
     window.SKINS_DATA = getAllShopSkins();
@@ -2993,51 +3066,23 @@ function renderVIPDetail(title, subtitle, price, cover, items, buyAll, detailBac
 function renderVIPMiniItem(item) {
     const itemKey = getVIPItemStorageKey(item);
     const owned = localStorage.getItem(itemKey) === 'true';
+    const isTrophy = TROPHY_IDS.includes(item.id || item.trailId || item.name);
+    const trophyClass = isTrophy ? 'trophy-skin' : '';
 
+    // Mantenemos tus retornos tempranos para los otros tipos (no los toques)
     if (item.type === 'vipPanel') return renderVIPPanelItem(item, owned);
     if (item.type === 'customTextTrail') return renderCustomTextTrailItem(item, owned);
-    if (item.type === 'elementTrail') return renderElementTrailItem(item, owned);
-    if (item.type === 'bundle') return renderVIPBundleItem(item, owned);
-    if (item.type === 'emojiPack') return renderEmojiPackItem(item, owned);
-    if (item.type === 'emoji') return renderEmojiItem(item, owned);
-    if (item.type === 'vipTrailPng') return renderVIPPngTrailItem(item, owned);
-
-    const isTrail = item.type === 'trail' && item.trailId;
-    const canvasId = `vip-trail-canvas-${item.trailId}`;
-
-    if (isTrail) {
-        return `
-        <article class="vip-mini-item ${owned ? 'owned' : ''}" style="display:flex;flex-direction:column;align-items:center;gap:10px;">
-            <canvas id="${canvasId}" width="220" height="90" style="border-radius:10px;background:rgba(0,0,0,0.4);display:block;"></canvas>
-            <div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:center;" id="vip-colors-${item.trailId}">
-                ${TRAIL_COLOR_LIST.map(c => {
-            const colorOwned = localStorage.getItem(`trail_${item.trailId}_${c.id}`) === 'true';
-            return `<div onclick="selectVIPTrailColor('${item.trailId}','${c.id}',${item.price})"
-                        style="width:22px;height:22px;border-radius:50%;background:${c.color};
-                        border:2px solid ${colorOwned ? '#00ff88' : 'rgba(255,255,255,0.2)'};
-                        cursor:pointer;position:relative;"
-                        title="${c.id}">
-                        ${colorOwned ? `<div style="position:absolute;top:-4px;right:-4px;width:10px;height:10px;border-radius:50%;background:#00ff88;font-size:6px;display:flex;align-items:center;justify-content:center;">✔</div>` : ''}
-                    </div>`;
-        }).join('')}
-            </div>
-            <div class="vip-mini-type">TRAIL</div>
-            <h3>${item.name}</h3>
-            <div id="vip-trail-action-${item.trailId}" style="width:100%;">
-                <button onclick="buyVIPTrailFull('${item.trailId}','${item.name}',${item.price})" type="button" style="width:100%;">
-                    ${owned ? 'OBTENIDO' : `COMPRAR COMPLETO ${renderPrice(item.price, 'gems')}`}
-                </button>
-            </div>
-        </article>`;
-    }
+    // ... (mantén todos tus if) ...
 
     const isSkinItem = item.type === 'vipSkin' || item.type === 'skin';
+
+    // AQUÍ ES EL ÚNICO RETURN QUE DEBE QUEDAR:
     return `
-        <article class="vip-mini-item ${owned ? 'owned' : ''}">
+        <article class="vip-mini-item ${owned ? 'owned' : ''} ${trophyClass}">
             <div class="${isSkinItem ? 'vip-skin-orb' : 'vip-mini-image'}">
                 <img src="${item.image}" alt="" draggable="false">
             </div>
-            <div class="vip-mini-type">${(item.type === 'vipSkin' ? 'SKIN' : item.type).toUpperCase()}</div>
+            <div class="vip-mini-type">${isTrophy ? 'TROFEO' : (item.type === 'vipSkin' ? 'SKIN' : item.type).toUpperCase()}</div>
             <h3>${item.name}</h3>
             ${item.price ? `<button onclick="buyVIPMiniItemById('${item.id || item.name}')" ${owned ? 'disabled' : ''} type="button">${owned ? 'OBTENIDO' : `COMPRAR ${renderPrice(item.price, 'gems')}`}</button>` : ''}
         </article>
@@ -3403,6 +3448,7 @@ function grantVIPItem(item) {
     if (item.type === 'vipSkin' || item.type === 'skin') {
         localStorage.setItem(item.id || `skin_${item.name.toLowerCase().replaceAll(' ', '_')}`, 'true');
         window.SKINS_DATA = getAllShopSkins();
+        if (typeof checkFoodCollectionProgress === 'function') checkFoodCollectionProgress();
     } else if (item.type === 'emoji') {
         const emoteId = item.id || `emoji_${item.name.toLowerCase().replaceAll(' ', '_')}`;
         localStorage.setItem(emoteId, 'true');
@@ -4566,11 +4612,11 @@ function claimRubyPassReward(lane, level, rewardType) {
     window.playSfx?.('passReward', 0.9);
     const currencyReward = { coins: 0, gems: 0 };
     if (rewardData?.type === 'coins') {
-        currencyReward.coins = rewardData.amount || 50;
+        currencyReward.coins = rewardData.amount || (window.getRubyPassAmount ? window.getRubyPassAmount(level, 'coins') : 50);
         addCurrency(currencyReward.coins, 'coins');
     }
     if (rewardData?.type === 'rubies') {
-        currencyReward.gems = rewardData.amount || 3;
+        currencyReward.gems = rewardData.amount || (window.getRubyPassAmount ? window.getRubyPassAmount(level, 'gems') : 3);
         addCurrency(currencyReward.gems, 'gems');
     }
     if (rewardData?.type === 'emote') {
@@ -4804,19 +4850,21 @@ function renderRubyPassNode(reward, index, currentLevel, lane, laneActive) {
             </div>
             <div class="ruby-pass-level-number">${reward.level}</div>
             <div class="ruby-pass-reward ruby-pass-reward-${lane} ${unlocked ? 'is-lit' : ''} ${claimable ? 'is-claimable' : ''} ${laneActive ? '' : 'is-locked'} ${claimed ? 'is-claimed' : ''}" data-ruby-claim="${lane}_${reward.level}" data-reward-type="${rewardData.type}" title="${lane === 'premium' ? 'Premium' : 'Free'} nivel ${reward.level}">
-                ${renderRewardIcon(rewardData, lane)}
+                ${renderRewardIcon(rewardData, lane, reward.level)}
             </div>
         </div>
     `;
 }
 
-function renderRewardIcon(reward, lane) {
+function renderRewardIcon(reward, lane, level) {
     if (reward.image) return `<img src="${reward.image}" alt="" draggable="false">`;
     if (reward.type === 'coins') {
-        return `<img class="ruby-pass-currency-img" src="${getCurrencyPileAsset('coins', reward.amount || 50)}" alt="" draggable="false">`;
+        const amount = reward.amount || (window.getRubyPassAmount ? window.getRubyPassAmount(level, 'coins') : 50);
+        return `<img class="ruby-pass-currency-img" src="${getCurrencyPileAsset('coins', amount)}" alt="" draggable="false">`;
     }
     if (reward.type === 'rubies') {
-        return `<img class="ruby-pass-currency-img" src="${getCurrencyPileAsset('gems', reward.amount || 3)}" alt="" draggable="false">`;
+        const amount = reward.amount || (window.getRubyPassAmount ? window.getRubyPassAmount(level, 'gems') : 3);
+        return `<img class="ruby-pass-currency-img" src="${getCurrencyPileAsset('gems', amount)}" alt="" draggable="false">`;
     }
     const slot = reward.slot ? `${lane}_${reward.slot}` : `${lane}_${reward.type}`;
     return `<div class="ruby-pass-placeholder ruby-pass-${reward.type}" data-asset-slot="RUBY_PASS_ASSET_SLOT_${slot.toUpperCase()}"></div>`;
