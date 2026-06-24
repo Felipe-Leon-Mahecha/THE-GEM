@@ -8,3 +8,4 @@ captures/
 android/.gradle/
 android/app/build/
 android/gradle/wrapper/gradle-*-all.zipnode_modules
+android/gradle/wrapper/gradle-*.zip
