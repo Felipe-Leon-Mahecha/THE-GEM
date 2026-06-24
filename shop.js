@@ -72,20 +72,22 @@ function vipTrail(folder, id, name, price = 320) {
 // =====================================================
 
 const TRAILS_DATA = [
-    { id: 'basic', name: 'Basica', rarity: 'BASICA', rarityColor: '#57b7dd', price: 30, priceType: 'coins' },
-    { id: 'ghost', name: 'Ghost', rarity: 'EPICA', rarityColor: '#cc44ff', price: 800, priceType: 'coins' },
-    { id: 'fractura', name: 'Fractura', rarity: 'EPICA', rarityColor: '#cc44ff', price: 1000, priceType: 'coins' },
-    { id: 'hielo', name: 'Hielo', rarity: 'ESPECIAL', rarityColor: '#7fd8ff', price: 260, priceType: 'coins' },
-    { id: 'toxico', name: 'Toxico', rarity: 'ESPECIAL', rarityColor: '#8dff5a', price: 320, priceType: 'coins' },
-    { id: 'trail_vampiro', name: 'Vampiro', rarity: 'VIP', rarityColor: '#ff4d6d', price: 0, priceType: 'gems' },
-    { id: 'trail_zombie', name: 'Zombie', rarity: 'VIP', rarityColor: '#78ff8f', price: 0, priceType: 'gems' },
-    { id: 'trail_fire', name: 'Elemento Fuego', rarity: 'VIP', rarityColor: '#ff8a00', price: 0, priceType: 'gems' },
-    { id: 'trail_water', name: 'Elemento Agua', rarity: 'VIP', rarityColor: '#4488ff', price: 0, priceType: 'gems' },
-    { id: 'trail_wind', name: 'Elemento Viento', rarity: 'VIP', rarityColor: '#00ffe7', price: 0, priceType: 'gems' },
-    { id: 'trail_ice', name: 'Elemento Hielo', rarity: 'VIP', rarityColor: '#7fd8ff', price: 0, priceType: 'gems' },
-    { id: 'trail_lava', name: 'Elemento Lava', rarity: 'VIP', rarityColor: '#ff4444', price: 0, priceType: 'gems' },
-    { id: 'trail_nature', name: 'Elemento Naturaleza', rarity: 'VIP', rarityColor: '#44ff88', price: 0, priceType: 'gems' },
-    { id: 'trail_custom_text', name: 'Texto Personalizado', rarity: 'VIP', rarityColor: '#ffda3a', price: 0, priceType: 'gems' },
+    { id: 'none', name: 'Ninguna', rarity: 'BASICA', rarityColor: '#888888', price: 0, priceType: 'coins', image: 'assets/UI/Store/Imagenes Trails/Trails portadas/Ninguna_trail.png' },
+    { id: 'basic', name: 'Basica', rarity: 'BASICA', rarityColor: '#57b7dd', price: 30, priceType: 'coins', image: 'assets/UI/Store/Imagenes Trails/Trails portadas/Basic_trail.png' },
+    { id: 'ghost', name: 'Ghost', rarity: 'EPICA', rarityColor: '#cc44ff', price: 800, priceType: 'coins', image: 'assets/UI/Store/Imagenes Trails/Trails portadas/Ghost_trail.png' },
+    { id: 'fractura', name: 'Fractura', rarity: 'EPICA', rarityColor: '#cc44ff', price: 1000, priceType: 'coins', image: 'assets/UI/Store/Imagenes Trails/Trails portadas/Fractura_trail.png' },
+    { id: 'hielo', name: 'Hielo', rarity: 'ESPECIAL', rarityColor: '#7fd8ff', price: 260, priceType: 'coins', image: 'assets/UI/Store/Imagenes Trails/Trails portadas/Hielo_trail.png' },
+    { id: 'toxico', name: 'Toxico', rarity: 'ESPECIAL', rarityColor: '#8dff5a', price: 320, priceType: 'coins', image: 'assets/UI/Store/Imagenes Trails/Trails portadas/Toxico_trail.png' },
+    { id: 'spark', name: 'Electricidad', rarity: 'EPICA', rarityColor: '#ffff00', price: 1200, priceType: 'coins', image: 'assets/UI/Store/Imagenes Trails/Trails portadas/Electricidad_trail.png' },
+    { id: 'trail_vampiro', name: 'Vampiro', rarity: 'VIP', rarityColor: '#ff4d6d', price: 0, priceType: 'gems', image: 'assets/UI/Store/Imagenes Trails/Trails portadas/Vampiro_trail.png' },
+    { id: 'trail_zombie', name: 'Zombie', rarity: 'VIP', rarityColor: '#78ff8f', price: 0, priceType: 'gems', image: 'assets/UI/Store/Imagenes Trails/Trails portadas/Zombie_trail.png' },
+    { id: 'trail_fire', name: 'Elemento Fuego', rarity: 'VIP', rarityColor: '#ff8a00', price: 0, priceType: 'gems', image: 'assets/UI/Store/Imagenes Trails/Trails portadas/Elemento_Fuego_trail.png' },
+    { id: 'trail_water', name: 'Elemento Agua', rarity: 'VIP', rarityColor: '#4488ff', price: 0, priceType: 'gems', image: 'assets/UI/Store/Imagenes Trails/Trails portadas/Elemento_Agua_trail.png' },
+    { id: 'trail_wind', name: 'Elemento Viento', rarity: 'VIP', rarityColor: '#00ffe7', price: 0, priceType: 'gems', image: 'assets/UI/Store/Imagenes Trails/Trails portadas/Elemento_Viento_trail.png' },
+    { id: 'trail_ice', name: 'Elemento Hielo', rarity: 'VIP', rarityColor: '#7fd8ff', price: 0, priceType: 'gems', image: 'assets/UI/Store/Imagenes Trails/Trails portadas/Elemento_Hielo_trail.png' },
+    { id: 'trail_lava', name: 'Elemento Lava', rarity: 'VIP', rarityColor: '#ff4444', price: 0, priceType: 'gems', image: 'assets/UI/Store/Imagenes Trails/Trails portadas/Elemento_Lava_trail.png' },
+    { id: 'trail_nature', name: 'Elemento Naturaleza', rarity: 'VIP', rarityColor: '#44ff88', price: 0, priceType: 'gems', image: 'assets/UI/Store/Imagenes Trails/Trails portadas/Elemento_Naturaleza_trail.png' },
+    { id: 'trail_custom_text', name: 'Texto Personalizado', rarity: 'VIP', rarityColor: '#ffda3a', price: 0, priceType: 'gems', image: 'assets/UI/Store/Imagenes Trails/Trails portadas/Texto_Personalizado_trail.png' },
 ];
 
 // =====================================================
@@ -1581,9 +1583,23 @@ function openShop() {
     window.SKINS_DATA = getAllShopSkins();
     const panel = document.getElementById('shopPanel');
     panel.style.display = 'flex';
-    panel.classList.remove('entering');
+    panel.classList.remove('entering', 'leaving');
     void panel.offsetWidth;
     panel.classList.add('entering');
+
+    const overlay = document.getElementById('overlay');
+    if (overlay) {
+        overlay.classList.remove('exit-shop', 'enter-shop', 'exit-inventory', 'enter-inventory', 'exit-play', 'enter-play');
+        void overlay.offsetWidth;
+        overlay.classList.add('exit-shop');
+    }
+
+    setTimeout(() => {
+        if (overlay && panel.style.display === 'flex') {
+            overlay.style.display = 'none';
+            overlay.classList.remove('exit-shop');
+        }
+    }, 450);
 
     // Actualizar monedas y gemas
     document.getElementById('shop-coins').textContent = parseInt(localStorage.getItem('deadCoins') || '0');
@@ -1601,12 +1617,25 @@ function closeShop() {
     if (trailAnimId) cancelAnimationFrame(trailAnimId);
     if (previewTrailAnim) cancelAnimationFrame(previewTrailAnim);
     const panel = document.getElementById('shopPanel');
+    panel.classList.remove('entering');
     panel.classList.add('leaving');
+
+    const overlay = document.getElementById('overlay');
+    if (overlay) {
+        overlay.style.display = 'flex';
+        overlay.classList.remove('exit-shop', 'enter-shop');
+        void overlay.offsetWidth;
+        overlay.classList.add('enter-shop');
+    }
+
     setTimeout(() => {
         panel.style.display = 'none';
         panel.classList.remove('leaving');
+        if (overlay) {
+            overlay.classList.remove('enter-shop');
+        }
         updateMenuHUD();
-    }, 300);
+    }, 400);
 }
 
 // Mostrar una sección específica de la tienda
@@ -3489,9 +3518,24 @@ function openInventory() {
     }
     const panel = document.getElementById('inventoryPanel');
     panel.style.display = 'flex';
-    panel.classList.remove('entering');
+    panel.classList.remove('entering', 'leaving');
     void panel.offsetWidth;
     panel.classList.add('entering');
+
+    const overlay = document.getElementById('overlay');
+    if (overlay) {
+        overlay.classList.remove('exit-shop', 'enter-shop', 'exit-inventory', 'enter-inventory', 'exit-play', 'enter-play');
+        void overlay.offsetWidth;
+        overlay.classList.add('exit-inventory');
+    }
+
+    setTimeout(() => {
+        if (overlay && panel.style.display === 'flex') {
+            overlay.style.display = 'none';
+            overlay.classList.remove('exit-inventory');
+        }
+    }, 450);
+
     showInventorySection('skins');
 }
 
@@ -3501,11 +3545,24 @@ function closeInventory() {
         invTrailAnims[key] = null;
     });
     const panel = document.getElementById('inventoryPanel');
+    panel.classList.remove('entering');
     panel.classList.add('leaving');
+
+    const overlay = document.getElementById('overlay');
+    if (overlay) {
+        overlay.style.display = 'flex';
+        overlay.classList.remove('exit-inventory', 'enter-inventory');
+        void overlay.offsetWidth;
+        overlay.classList.add('enter-inventory');
+    }
+
     setTimeout(() => {
         panel.style.display = 'none';
         panel.classList.remove('leaving');
-    }, 300);
+        if (overlay) {
+            overlay.classList.remove('enter-inventory');
+        }
+    }, 400);
 }
 
 function showInventorySection(section) {
@@ -3762,14 +3819,21 @@ window.closeInventory = closeInventory;
 
 // ── Sin el color RGB ──────────────────────────────────
 const TRAIL_COLOR_LIST = [
-    { id: 'cyan', color: '#00ffe7', rgb: '0,255,231' },
-    { id: 'red', color: '#ff4444', rgb: '255,68,68' },
-    { id: 'blue', color: '#4488ff', rgb: '68,136,255' },
-    { id: 'yellow', color: '#ffee00', rgb: '255,238,0' },
-    { id: 'orange', color: '#ff8800', rgb: '255,136,0' },
-    { id: 'green', color: '#44ff88', rgb: '68,255,136' },
-    { id: 'purple', color: '#cc44ff', rgb: '204,68,255' },
-    { id: 'rgb', color: 'linear-gradient(135deg,#ff4444,#ffee00,#44ff88,#4488ff,#cc44ff)', rgb: null, premium: true, price: 250, priceType: 'gems' },
+    { id: 'cyan',    color: '#00ffe7', rgb: '0,255,231' },
+    { id: 'teal',    color: '#00ffaa', rgb: '0,255,170' },
+    { id: 'green',   color: '#44ff88', rgb: '68,255,136' },
+    { id: 'lime',    color: '#aaff00', rgb: '170,255,0' },
+    { id: 'yellow',  color: '#ffee00', rgb: '255,238,0' },
+    { id: 'orange',  color: '#ff8800', rgb: '255,136,0' },
+    { id: 'red',     color: '#ff4444', rgb: '255,68,68' },
+    { id: 'pink',    color: '#ff2288', rgb: '255,34,136' },
+    { id: 'magenta', color: '#ff44cc', rgb: '255,68,204' },
+    { id: 'purple',  color: '#cc44ff', rgb: '204,68,255' },
+    { id: 'violet',  color: '#8844ff', rgb: '136,68,255' },
+    { id: 'blue',    color: '#4488ff', rgb: '68,136,255' },
+    { id: 'sky',     color: '#00ccff', rgb: '0,204,255' },
+    { id: 'white',   color: '#e0eeff', rgb: '224,238,255' },
+    { id: 'rgb',     color: 'linear-gradient(135deg,#ff4444,#ffee00,#44ff88,#4488ff,#cc44ff)', rgb: null, premium: true, price: 250, priceType: 'gems' },
 ];
 
 function getTrailColorStyle(color) {
@@ -3790,288 +3854,138 @@ function getTrailPurchaseInfo(trail, color) {
 
 let selectedTrailEffect = null;
 let selectedTrailColor = null;
+let activeTrailIndex = 0;
 
 function renderTrailsPage(container) {
-    container.innerHTML = `
-        <div style="display:flex; align-items:center; gap:16px; margin-bottom:24px;">
-            <button onclick="showShopSection('home')" style="padding:8px 16px; background:none; border:1px solid rgba(255,255,255,0.12); border-radius:8px; color:rgba(255,255,255,0.5); font-family:monospace; font-size:11px; letter-spacing:2px; cursor:pointer;">← VOLVER</button>
-            <div style="color:rgba(255,255,255,0.4); font-family:monospace; font-size:11px; letter-spacing:4px;">TRAILS</div>
-        </div>
-        <div style="display:grid; grid-template-columns:repeat(5,1fr); gap:14px;">
-            ${TRAILS_DATA.map(t => renderTrailCard(t)).join('')}
-        </div>
+    const equipped   = localStorage.getItem('equippedTrail') || 'solid_cyan';
+    const eqParts    = equipped.split('_');
+    const eqColor    = eqParts[eqParts.length - 1];
+    const eqEffect   = eqParts.slice(0, -1).join('_');
 
-        <div id="trail-color-panel" style="display:none; margin-top:24px; background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.1); border-radius:14px; padding:20px;">
-            <div style="color:rgba(255,255,255,0.4); font-family:monospace; font-size:11px; letter-spacing:3px; margin-bottom:16px;">ELIGE UN COLOR</div>
-            <div style="display:flex; gap:12px; flex-wrap:wrap;" id="trail-color-dots"></div>
-        </div>
+    if (!selectedTrailEffect) selectedTrailEffect = eqEffect;
+    if (!selectedTrailColor)  selectedTrailColor  = eqColor;
 
-        <div id="trail-preview-panel" style="display:none; margin-top:20px;">
-        </div>
+    activeTrailIndex = TRAILS_DATA.findIndex(t => t.id === selectedTrailEffect);
+    if (activeTrailIndex < 0) activeTrailIndex = 0;
+
+    const coins = window.playerData?.deadCoins ?? parseInt(localStorage.getItem('deadCoins') || '0');
+    const gems  = window.playerData?.gems       ?? parseInt(localStorage.getItem('gems')      || '0');
+
+    // Cancelar animaciones anteriores
+    if (trailAnimId)      { cancelAnimationFrame(trailAnimId);      trailAnimId      = null; }
+    if (previewTrailAnim) { cancelAnimationFrame(previewTrailAnim); previewTrailAnim = null; }
+    if (trailArcAnimId)   { cancelAnimationFrame(trailArcAnimId);   trailArcAnimId   = null; }
+    if (trailBallAnimId)  { cancelAnimationFrame(trailBallAnimId);  trailBallAnimId  = null; }
+
+    // Eliminar overlay previo si existe
+    const prev = document.getElementById('trails-fullscreen-overlay');
+    if (prev) prev.remove();
+
+    // Crear overlay pantalla completa por encima de todo
+    const overlay = document.createElement('div');
+    overlay.id = 'trails-fullscreen-overlay';
+    overlay.style.cssText = `
+        position: fixed; inset: 0; z-index: 99999;
+        display: flex; flex-direction: column;
+        background: url('assets/UI/Store/Imagenes Trails/Fondo_Trails.png') no-repeat center center;
+        background-size: cover;
+        font-family: monospace; overflow: visible;
     `;
-    if (trailAnimId) cancelAnimationFrame(trailAnimId);
-    setTimeout(() => animateTrailCards(), 50);
-}
 
-function renderTrailCard(t) {
-    const isOwned = isTrailOwned(t.id);
-    const priceIcon = t.priceType === 'gems'
-        ? `<img src="assets/Imagenes/Monetizacion/Rubies.png" style="width:14px;height:14px;object-fit:contain;">`
-        : `<img src="assets/Imagenes/Monetizacion/DEAD_COIN.png" style="width:14px;height:14px;object-fit:contain;">`;
+    overlay.innerHTML = `
+        <!-- HUD superior -->
+        <div style="display:flex; justify-content:space-between; align-items:center; padding:14px 24px 0; flex-shrink:0; position:relative; z-index:5;">
+            <button id="trails-back-btn" style="
+                padding:8px 18px; background:rgba(255,255,255,0.06);
+                border:1px solid rgba(255,255,255,0.18); border-radius:10px;
+                color:rgba(255,255,255,0.7); font-family:monospace; font-size:11px;
+                letter-spacing:2px; cursor:pointer; font-weight:bold;">← VOLVER</button>
 
-    return `
-    <div style="background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.08); border-radius:14px; padding:20px 12px; display:flex; flex-direction:column; align-items:center; gap:10px; cursor:pointer; transition:0.2s;"
-        onmouseover="this.style.borderColor='rgba(255,255,255,0.25)'"
-        onmouseout="this.style.borderColor='rgba(255,255,255,0.08)'"
-        onclick="selectTrailEffect('${t.id}')">
-        <canvas class="trail-card-canvas" id="trail-card-${t.id}" width="80" height="80" style="border-radius:50%; background:rgba(0,0,0,0.3);"></canvas>
-        <div style="color:white; font-family:monospace; font-size:12px; letter-spacing:1px;">${t.name}</div>
-        <div style="color:${t.rarityColor}; font-family:monospace; font-size:9px; letter-spacing:2px;">${t.rarity}</div>
-        ${t.id === 'trail_custom_text'
-            ? `<div style="color:#ffda3a; font-family:monospace; font-size:9px; letter-spacing:1px;">SOLO VIP</div>`
-            : isOwned
-                ? `<div style="color:#00ff88; font-family:monospace; font-size:9px;">✔ TIENES COLORES</div>`
-                : `<div style="display:flex;align-items:center;gap:4px;">${priceIcon}<span style="color:rgba(255,255,255,0.3);font-family:monospace;font-size:9px;">${t.price}</span></div>`
+            <div style="text-align:center; color:#00ffe7; font-size:20px; font-weight:900; letter-spacing:6px; text-shadow:0 0 18px #00ffe788;">
+                TRAILS
+            </div>
+
+            <div style="
+                width:220px; height:72px;
+                background: url('assets/UI/Store/Imagenes Trails/Fondo_Monedas.png') no-repeat center center;
+                background-size: contain; position:relative;">
+                <div style="position:absolute; top:18px; right:28px; text-align:right; line-height:1.5;">
+                    <div style="font-size:11px; color:#00ffe7; font-weight:bold; letter-spacing:1px;">
+                        COINS: <span id="trail-hud-coins" style="color:white;">${coins.toLocaleString()}</span>
+                    </div>
+                    <div style="font-size:11px; color:#00ffe7; font-weight:bold; letter-spacing:1px;">
+                        GEMS: <span id="trail-hud-gems" style="color:white;">${gems.toLocaleString()}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Zona central: arco + bolita -->
+        <div id="trail-center-zone" style="position:relative; flex:1; min-height:0;">
+            <canvas id="trailArcCanvas" style="position:absolute; top:0; left:0; width:100%; height:100%; cursor:grab;"></canvas>
+            <canvas id="trailBallCanvas" style="position:absolute; top:0; left:0; width:100%; height:100%; pointer-events:none;"></canvas>
+        </div>
+
+        <!-- Carrusel de cards -->
+        <div id="trail-cards-container" style="
+            position:relative; width:100%; height:240px;
+            perspective:800px; transform-style:preserve-3d;
+            overflow:visible; display:flex; justify-content:center;
+            align-items:center; flex-shrink:0; user-select:none;">
+            ${TRAILS_DATA.map((t, idx) => renderTrailCardNew(t, idx)).join('')}
+        </div>
+
+        <!-- Panel compra -->
+        <div id="trail-buy-panel" style="
+            position:absolute; bottom:15px; left:20px;
+            width:380px; height:88px;
+            background: url('assets/UI/Store/Imagenes Trails/Fondo_Descripcion.png') no-repeat center center;
+            background-size:contain; z-index:20; padding:12px 24px;
+            display:none; box-sizing:border-box;"></div>
+    `;
+
+    document.body.appendChild(overlay);
+
+    // Botón volver
+    document.getElementById('trails-back-btn').onclick = () => {
+        if (trailArcAnimId)  { cancelAnimationFrame(trailArcAnimId);  trailArcAnimId  = null; }
+        if (trailBallAnimId) { cancelAnimationFrame(trailBallAnimId); trailBallAnimId = null; }
+        document.removeEventListener('keydown', trailsKeyHandler);
+        overlay.remove();
+    };
+
+    // ── Navegación con teclado Q/E ──
+    function trailsKeyHandler(e) {
+        if (!document.getElementById('trails-fullscreen-overlay')) {
+            document.removeEventListener('keydown', trailsKeyHandler);
+            return;
         }
-    </div>`;
-}
-
-function animateTrailCards(timestamp = 0) {
-    if (document.getElementById('shopPanel')?.style.display === 'none') {
-        trailAnimId = null;
-        return;
+        const total = TRAILS_DATA.length;
+        if (e.key === 'q' || e.key === 'Q') {
+            activeTrailIndex = (activeTrailIndex - 1 + total) % total;
+            selectTrailEffectNew(TRAILS_DATA[activeTrailIndex].id, activeTrailIndex);
+        } else if (e.key === 'e' || e.key === 'E') {
+            activeTrailIndex = (activeTrailIndex + 1) % total;
+            selectTrailEffectNew(TRAILS_DATA[activeTrailIndex].id, activeTrailIndex);
+        }
     }
-    if (document.hidden) {
-        trailAnimId = requestAnimationFrame(animateTrailCards);
-        return;
-    }
-    const frameGap = isShopPerformanceMode() ? 140 : 50;
-    if (timestamp && animateTrailCards.lastFrame && timestamp - animateTrailCards.lastFrame < frameGap) {
-        trailAnimId = requestAnimationFrame(animateTrailCards);
-        return;
-    }
-    animateTrailCards.lastFrame = timestamp || performance.now();
-    TRAILS_DATA.forEach(t => {
-        const cvs = document.getElementById('trail-card-' + t.id);
-        if (!cvs) return;
-        if (!isCanvasPreviewVisible(cvs)) return;
-        const ctx = cvs.getContext('2d');
-        ctx.clearRect(0, 0, 80, 80);
+    document.addEventListener('keydown', trailsKeyHandler);
 
-        const cx = 40, cy = 40;
-        const time = animateTrailCards.lastFrame * 0.001;
-
-        if (t.id === 'basic') {
-            for (let i = 8; i >= 0; i--) {
-                const alpha = (i / 8) * 0.35;
-                const size = 10 - i * 0.8;
-                ctx.beginPath();
-                ctx.arc(cx - i * 5, cy, size, 0, Math.PI * 2);
-                ctx.fillStyle = `rgba(0,255,231,${alpha})`;
-                ctx.fill();
-            }
-            ctx.shadowBlur = 0;
-            ctx.shadowColor = '#00ffe7';
-            ctx.beginPath();
-            ctx.arc(cx, cy, 10, 0, Math.PI * 2);
-            ctx.fillStyle = '#00ffe7';
-            ctx.fill();
-            ctx.shadowBlur = 0;
+    // Dimensionar canvas al tamaño real y arrancar animaciones
+    setTimeout(() => {
+        const zone = document.getElementById('trail-center-zone');
+        const arc  = document.getElementById('trailArcCanvas');
+        const ball = document.getElementById('trailBallCanvas');
+        if (zone && arc && ball) {
+            arc.width  = zone.offsetWidth;  arc.height  = zone.offsetHeight;
+            ball.width = zone.offsetWidth;  ball.height = zone.offsetHeight;
         }
-
-        else if (t.id === 'fire') {
-            for (let i = 0; i < 8; i++) {
-                const fy = cy + 14 - i * 5;
-                const fw = 10 - i * 0.8;
-                const alpha = (1 - i / 8) * 0.7;
-                const green = Math.floor(40 + (i / 8) * 160);
-                ctx.beginPath();
-                ctx.ellipse(cx + Math.sin(time * 4 + i) * 3, fy, fw, fw * 1.4, 0, 0, Math.PI * 2);
-                ctx.fillStyle = `rgba(255,${green},0,${alpha})`;
-                ctx.fill();
-            }
-            ctx.shadowBlur = 0;
-            ctx.shadowColor = '#ff4400';
-            ctx.beginPath();
-            ctx.ellipse(cx, cy + 8, 7, 9, 0, 0, Math.PI * 2);
-            ctx.fillStyle = '#ffdd00';
-            ctx.fill();
-            ctx.shadowBlur = 0;
-            for (let i = 0; i < 4; i++) {
-                if (Math.random() < 0.5) {
-                    const sx = cx + (Math.random() - 0.5) * 20;
-                    const sy = cy - 10 - Math.random() * 20;
-                    ctx.beginPath();
-                    ctx.arc(sx, sy, Math.random() * 1.5, 0, Math.PI * 2);
-                    ctx.fillStyle = `rgba(255,200,50,${Math.random() * 0.9})`;
-                    ctx.fill();
-                }
-            }
-        }
-
-        else if (t.id === 'ghost') {
-            for (let i = 0; i < 5; i++) {
-                const ox = Math.sin(time * 0.8 + i * 1.2) * 12;
-                const oy = Math.cos(time * 0.6 + i * 0.9) * 8;
-                const r = 10 + i * 3;
-                const alpha = 0.06 + (Math.sin(time + i) * 0.5 + 0.5) * 0.08;
-                ctx.beginPath();
-                ctx.arc(cx + ox, cy + oy, r, 0, Math.PI * 2);
-                ctx.fillStyle = `rgba(200,210,255,${alpha})`;
-                ctx.fill();
-            }
-            for (let i = 0; i < 4; i++) {
-                const bx = cx + Math.cos(time * 1.2 + i * 1.57) * 20;
-                const by = cy + Math.sin(time + i * 1.57) * 14;
-                ctx.beginPath();
-                ctx.arc(bx, by, 4 + Math.sin(time * 2 + i) * 2, 0, Math.PI * 2);
-                ctx.fillStyle = `rgba(220,230,255,${0.15 + Math.sin(time + i) * 0.08})`;
-                ctx.fill();
-            }
-            ctx.shadowBlur = 0;
-            ctx.shadowColor = 'rgba(200,210,255,0.6)';
-            ctx.beginPath();
-            ctx.arc(cx, cy, 8, 0, Math.PI * 2);
-            ctx.fillStyle = 'rgba(230,235,255,0.45)';
-            ctx.fill();
-            ctx.shadowBlur = 0;
-        }
-
-        else if (t.id === 'fractura') {
-            ctx.beginPath();
-            ctx.arc(cx, cy, 18, 0, Math.PI * 2);
-            ctx.fillStyle = 'rgba(80,140,255,0.08)';
-            ctx.fill();
-            for (let i = 0; i < 5; i++) {
-                if (Math.random() < 0.7) {
-                    const angle = (i / 5) * Math.PI * 2 + time * 3;
-                    const len = 18 + Math.random() * 10;
-                    ctx.beginPath();
-                    ctx.moveTo(cx, cy);
-                    const mid1x = cx + Math.cos(angle) * len * 0.33 + (Math.random() - 0.5) * 8;
-                    const mid1y = cy + Math.sin(angle) * len * 0.33 + (Math.random() - 0.5) * 8;
-                    const mid2x = cx + Math.cos(angle) * len * 0.66 + (Math.random() - 0.5) * 8;
-                    const mid2y = cy + Math.sin(angle) * len * 0.66 + (Math.random() - 0.5) * 8;
-                    const ex = cx + Math.cos(angle) * len;
-                    const ey = cy + Math.sin(angle) * len;
-                    ctx.lineTo(mid1x, mid1y);
-                    ctx.lineTo(mid2x, mid2y);
-                    ctx.lineTo(ex, ey);
-                    ctx.strokeStyle = `rgba(120,180,255,${0.5 + Math.random() * 0.5})`;
-                    ctx.lineWidth = 1 + Math.random();
-                    ctx.stroke();
-                    ctx.beginPath();
-                    ctx.arc(ex, ey, 2, 0, Math.PI * 2);
-                    ctx.fillStyle = 'rgba(200,230,255,0.9)';
-                    ctx.fill();
-                }
-            }
-            ctx.shadowBlur = 0;
-            ctx.shadowColor = '#4488ff';
-            ctx.beginPath();
-            ctx.arc(cx, cy, 8, 0, Math.PI * 2);
-            ctx.fillStyle = '#aaccff';
-            ctx.fill();
-            ctx.shadowBlur = 0;
-        }
-
-        else if (t.id === 'rayo') {
-            ctx.save();
-            ctx.globalCompositeOperation = 'lighter';
-            ctx.shadowBlur = 0;
-            ctx.shadowColor = '#9fd2ff';
-            for (let i = 0; i < 4; i++) {
-                const y = cy - 16 + i * 10;
-                ctx.beginPath();
-                ctx.moveTo(cx + 22, y);
-                ctx.lineTo(cx + 10, y + 6);
-                ctx.lineTo(cx - 2, y + 1);
-                ctx.lineTo(cx - 15, y + 8);
-                ctx.lineTo(cx - 26, y + 4);
-                ctx.strokeStyle = `rgba(150,210,255,${0.82 - i * 0.12})`;
-                ctx.lineWidth = Math.max(1, 3 - i * 0.35);
-                ctx.stroke();
-                ctx.strokeStyle = `rgba(245,250,255,${0.75 - i * 0.1})`;
-                ctx.lineWidth = 1;
-                ctx.stroke();
-            }
-            ctx.restore();
-            ctx.shadowBlur = 0;
-            ctx.shadowColor = '#4488ff';
-            ctx.beginPath();
-            ctx.arc(cx, cy, 8, 0, Math.PI * 2);
-            ctx.fillStyle = '#aaccff';
-            ctx.fill();
-            ctx.shadowBlur = 0;
-        }
-
-        else if (t.id === 'hielo') {
-            ctx.save();
-            ctx.globalCompositeOperation = 'screen';
-            for (let i = 0; i < 6; i++) {
-                const a = time * 1.5 + i;
-                ctx.beginPath();
-                ctx.moveTo(cx + Math.cos(a) * 8, cy + Math.sin(a) * 8);
-                ctx.lineTo(cx + Math.cos(a) * 26, cy + Math.sin(a) * 26);
-                ctx.strokeStyle = `rgba(160,225,255,${0.65 - i * 0.06})`;
-                ctx.lineWidth = 1.4;
-                ctx.stroke();
-            }
-            ctx.beginPath();
-            ctx.arc(cx, cy, 9, 0, Math.PI * 2);
-            ctx.fillStyle = '#c8f3ff';
-            ctx.fill();
-            ctx.restore();
-        }
-
-        else if (t.id === 'toxico') {
-            ctx.save();
-            ctx.globalCompositeOperation = 'lighter';
-            for (let i = 0; i < 7; i++) {
-                const ox = Math.sin(time * 2 + i) * 18;
-                const oy = Math.cos(time * 1.7 + i) * 12;
-                ctx.beginPath();
-                ctx.arc(cx + ox, cy + oy, 4 + Math.sin(time + i) * 2, 0, Math.PI * 2);
-                ctx.fillStyle = `rgba(141,255,90,${0.18 + i * 0.035})`;
-                ctx.fill();
-            }
-            ctx.beginPath();
-            ctx.arc(cx, cy, 8, 0, Math.PI * 2);
-            ctx.fillStyle = '#8dff5a';
-            ctx.fill();
-            ctx.restore();
-        }
-
-        else if (t.id === 'rainbow') {
-            const hue = (animateTrailCards.lastFrame * 0.1) % 360;
-            for (let i = 3; i >= 0; i--) {
-                ctx.beginPath();
-                ctx.arc(cx, cy, 10 + i * 6, 0, Math.PI * 2);
-                ctx.strokeStyle = `hsla(${(hue + i * 40) % 360},100%,60%,${0.3 - i * 0.06})`;
-                ctx.lineWidth = 3;
-                ctx.stroke();
-            }
-            ctx.shadowBlur = 0;
-            ctx.shadowColor = `hsl(${hue},100%,60%)`;
-            ctx.beginPath();
-            ctx.arc(cx, cy, 9, 0, Math.PI * 2);
-            ctx.fillStyle = `hsl(${hue},100%,65%)`;
-            ctx.fill();
-            ctx.shadowBlur = 0;
-            for (let i = 0; i < 4; i++) {
-                const px = cx + Math.cos(time * 2 + i * 1.57) * 22;
-                const py = cy + Math.sin(time * 2 + i * 1.57) * 22;
-                ctx.beginPath();
-                ctx.arc(px, py, 2.5, 0, Math.PI * 2);
-                ctx.fillStyle = `hsla(${(hue + i * 90) % 360},100%,70%,0.9)`;
-                ctx.fill();
-            }
-        }
-    });
-
-    if (document.getElementById('trail-card-basic') && document.getElementById('shopPanel')?.style.display !== 'none') {
-        trailAnimId = requestAnimationFrame(animateTrailCards);
-    }
+        startTrailArcAnim();
+        startTrailBallAnim();
+        highlightSelectedCard();
+        updateTrailCardsCarousel();
+        initTrailCardsDrag();
+    }, 40);
 }
 
 function isTrailOwned(effectId) {
@@ -4080,310 +3994,851 @@ function isTrailOwned(effectId) {
     );
 }
 
-function selectTrailEffect(effectId) {
-    window.playSfx?.('selectTrail', 0.7);
-    selectedTrailEffect = effectId;
-    selectedTrailColor = null;
-
-    const panel = document.getElementById('trail-color-panel');
-    const dots = document.getElementById('trail-color-dots');
-    panel.style.display = 'block';
-
-    dots.innerHTML = TRAIL_COLOR_LIST.map(c => {
-        const owned = localStorage.getItem(`trail_${effectId}_${c.id}`) === 'true';
-        const equipped = localStorage.getItem('equippedTrail') === `${effectId}_${c.id}`;
-
+function renderTrailCardNew(t, index) {
+    // Tarjeta especial para "Ninguna"
+    if (t.id === 'none') {
+        const equippedId = localStorage.getItem('equippedTrail') || '';
+        const isEquipped = equippedId === 'none';
         return `
-        <div onclick="selectTrailColor('${c.id}')"
-            style="position:relative; width:36px; height:36px; border-radius:50%; background:${getTrailColorStyle(c)};
-            border:2px solid ${equipped ? '#ffd700' : owned ? '#00ff88' : 'rgba(255,255,255,0.2)'};
-            cursor:pointer; box-shadow:0 0 8px ${getTrailSolidColor(c)}66;
-            transition:0.15s;"
-            onmouseover="this.style.transform='scale(1.2)'"
-            onmouseout="this.style.transform='scale(1)'">
-            ${owned ? `<div style="position:absolute; top:-4px; right:-4px; width:12px; height:12px; border-radius:50%; background:#00ff88; border:1px solid #000; font-size:7px; display:flex; align-items:center; justify-content:center;">✔</div>` : ''}
-            ${!owned && c.premium ? `<div style="position:absolute; bottom:-7px; left:50%; transform:translateX(-50%); color:#ff4dff; font-family:monospace; font-size:8px; font-weight:bold;">RGB</div>` : ''}
-        </div>`;
-    }).join('');
-
-    document.getElementById('trail-preview-panel').style.display = 'none';
-}
-
-function selectTrailColor(colorId) {
-    window.playSfx?.('colorSelect', 0.7);
-    selectedTrailColor = colorId;
-    showTrailPreview();
-}
-
-function showTrailPreview() {
-    const previewContainer = document.getElementById('trail-preview-panel');
-
-    const trail = TRAILS_DATA.find(t => t.id === selectedTrailEffect);
-    const color = TRAIL_COLOR_LIST.find(c => c.id === selectedTrailColor);
-    if (trail?.id === 'trail_custom_text') {
-        previewContainer.style.display = 'block';
-        previewContainer.innerHTML = `
-            <div class="normal-custom-trail-preview">
-                <div>
-                    <div class="vip-mini-type">TRAIL PERSONALIZABLE</div>
-                    <h3>Texto Personalizado</h3>
-                    <canvas id="normal-custom-text-trail-canvas" width="340" height="96" class="vip-custom-trail-preview"></canvas>
-                    <p>Disponible solo desde Tienda VIP.</p>
-                </div>
-                <button onclick="openVIP()" type="button">IR A VIP</button>
+        <div id="trail-card-new-none" onclick="selectTrailEffectNew('none', ${index})" class="trail-card-3d" style="
+            flex-shrink:0; width:135px; height:200px;
+            background:#070d1a;
+            border:2px solid ${isEquipped ? '#00ffe7' : 'rgba(255,255,255,0.12)'};
+            border-radius:14px; padding:10px;
+            display:flex; flex-direction:column; align-items:center; justify-content:space-between;
+            cursor:pointer;
+            box-shadow: ${isEquipped ? '0 0 15px rgba(0,255,231,0.25)' : '0 10px 20px rgba(0,0,0,0.5)'};
+            transform-origin: center bottom;
+            transition: border-color 0.3s, box-shadow 0.3s, transform 0.3s, opacity 0.3s;
+        ">
+            <div style="width:100%; height:110px; border-radius:10px; background:rgba(0,0,0,0.45); display:flex; align-items:center; justify-content:center;">
+                <div style="color:rgba(255,255,255,0.15); font-size:32px;">∅</div>
             </div>
-        `;
-        setTimeout(() => startCustomTextTrailPreview('normal-custom-text-trail-canvas', 'customTrailPhrase'), 20);
-        return;
+            <div style="display:flex; flex-direction:column; align-items:center; gap:2px; width:100%;">
+                <div style="color:white; font-size:10px; letter-spacing:1px; font-weight:bold; text-align:center; font-family:'Geom',monospace;">NINGUNA</div>
+                <div style="color:#888; font-size:8px; letter-spacing:2px; font-weight:bold;">BASICA</div>
+            </div>
+            <div style="width:100%; display:flex; justify-content:center;">
+                <div style="color:#00ff88; font-size:9px; font-weight:bold; letter-spacing:1px;">✔ GRATIS</div>
+            </div>
+        </div>`;
     }
-    const owned = localStorage.getItem(`trail_${selectedTrailEffect}_${selectedTrailColor}`) === 'true';
-    const equipped = localStorage.getItem('equippedTrail') === `${selectedTrailEffect}_${selectedTrailColor}`;
-    const purchase = getTrailPurchaseInfo(trail, color);
-    const priceIcon = purchase.currency === 'gems'
+
+    const isOwned    = isTrailOwned(t.id);
+    const equippedId = localStorage.getItem('equippedTrail') || '';
+    // Trails específicos sin variantes de color
+    const specificTrails = ['none', 'spark', 'ghost', 'fractura', 'hielo', 'toxico', 
+                           'trail_vampiro', 'trail_zombie', 'trail_fire', 'trail_water', 
+                           'trail_wind', 'trail_ice', 'trail_lava', 'trail_nature', 
+                           'trail_custom_text'];
+    const isEquipped = specificTrails.includes(t.id) 
+        ? equippedId === t.id 
+        : equippedId.startsWith(t.id + '_');
+    const priceIcon  = t.priceType === 'gems'
         ? 'assets/Imagenes/Monetizacion/Rubies.png'
         : 'assets/Imagenes/Monetizacion/DEAD_COIN.png';
 
-    // Precio con imagen según tipo
-    let priceHTML = '';
-    if (owned) {
-        priceHTML = equipped
-            ? `<span style="color:#ffd700; font-family:monospace; font-size:13px; letter-spacing:2px;">✔ EQUIPADO</span>`
-            : `<span style="color:#00ff88; font-family:monospace; font-size:13px; letter-spacing:2px;">✔ YA LO TIENES</span>`;
-    } else {
-        priceHTML = `
-            <div style="display:flex; align-items:center; gap:6px;">
-                <img src="${priceIcon}" style="width:22px;height:22px;object-fit:contain;">
-                <span style="color:white; font-family:monospace; font-size:18px; font-weight:bold;">${purchase.amount}</span>
-            </div>`;
-    }
+    // Cargar la portada de la carpeta assets/UI/Store/Imagenes Trails/Trails portadas/
+    const coverImages = {
+        'solid': 'assets/UI/Store/Imagenes Trails/Trails portadas/Basic_trail.png',
+        'glow': 'assets/UI/Store/Imagenes Trails/Trails portadas/Normal_trail.png',
+        'glow_shapes': 'assets/UI/Store/Imagenes Trails/Trails portadas/Figure_trail.png'
+    };
+    const cover = coverImages[t.id] || t.image;
 
-    previewContainer.style.display = 'block';
-    previewContainer.innerHTML = `
-        <div style="
-            background: rgba(0,0,0,0.55);
-            border: 1px solid rgba(255,255,255,0.12);
-            border-radius: 16px;
-            padding: 24px 28px;
-            display: flex;
-            align-items: center;
-            gap: 28px;
-        ">
-            <div style="
-                background: rgba(0,0,0,0.4);
-                border: 1px solid rgba(255,255,255,0.08);
-                border-radius: 12px;
-                padding: 10px;
-                flex-shrink: 0;
-            ">
-                <canvas id="trailPreviewCanvas" width="260" height="80" style="display:block; border-radius:8px;"></canvas>
-            </div>
-
-            <div style="display:flex; flex-direction:column; gap:10px; flex:1;">
-                <div style="color:rgba(255,255,255,0.35); font-family:monospace; font-size:10px; letter-spacing:4px;">PREVIEW</div>
-                <div style="color:white; font-family:monospace; font-size:16px; font-weight:bold; letter-spacing:2px;">${trail.name} · <span style="color:${getTrailSolidColor(color)};">${selectedTrailColor.toUpperCase()}</span></div>
-                <div style="color:${trail.rarityColor}; font-family:monospace; font-size:10px; letter-spacing:3px;">${trail.rarity}</div>
-
-                <div style="margin-top:4px;">
-                    ${priceHTML}
-                </div>
-
-                <div style="display:flex; gap:10px; margin-top:4px;">
-                    <button onclick="confirmBuyTrail()" id="trail-buy-btn" style="
-                        padding:10px 28px;
-                        border:1px solid ${owned ? (equipped ? '#ffd700' : '#00ff88') : '#ffee00'};
-                        background:rgba(255,238,0,0.08);
-                        color:${owned ? (equipped ? '#ffd700' : '#00ff88') : '#ffee00'};
-                        font-family:monospace; font-size:12px; letter-spacing:2px;
-                        border-radius:8px; cursor:pointer;">
-                        ${owned ? (equipped ? '✔ EQUIPADO' : 'EQUIPAR') : 'COMPRAR'}
-                    </button>
-                    <button onclick="cancelTrailPreview()" style="
-                        padding:10px 28px;
-                        border:1px solid rgba(255,255,255,0.15);
-                        background:none;
-                        color:rgba(255,255,255,0.35);
-                        font-family:monospace; font-size:12px; letter-spacing:2px;
-                        border-radius:8px; cursor:pointer;">
-                        CANCELAR
-                    </button>
-                </div>
-            </div>
+    return `
+    <div id="trail-card-new-${t.id}" onclick="selectTrailEffectNew('${t.id}', ${index})" class="trail-card-3d" style="
+        flex-shrink:0; width:135px; height:200px;
+        background:#070d1a;
+        border:2px solid ${isEquipped ? '#00ffe7' : 'rgba(255,255,255,0.12)'};
+        border-radius:14px; padding:10px;
+        display:flex; flex-direction:column; align-items:center; justify-content:space-between;
+        cursor:pointer;
+        box-shadow: ${isEquipped ? '0 0 15px rgba(0,255,231,0.25)' : '0 10px 20px rgba(0,0,0,0.5)'};
+        transform-origin: center bottom;
+        transition: border-color 0.3s, box-shadow 0.3s, transform 0.3s, opacity 0.3s;
+    ">
+        <div style="width:100%; height:110px; border-radius:10px; background:rgba(0,0,0,0.45); overflow:hidden; display:flex; align-items:center; justify-content:center;">
+            ${cover
+                ? `<img src="${cover}" style="width:100%; height:100%; object-fit:cover;" draggable="false">`
+                : `<canvas id="trail-card-${t.id}" width="100" height="100"></canvas>`}
         </div>
-    `;
-
-    // Animar preview canvas
-    if (previewTrailAnim) cancelAnimationFrame(previewTrailAnim);
-    const cvs = document.getElementById('trailPreviewCanvas');
-    const pctx = cvs.getContext('2d');
-    let px = 30;
-    let pts = [];
-    const rgb = color?.rgb || '0,255,231';
-
-    let previewLastFrame = 0;
-    function animatePreview(timestamp = 0) {
-        if (document.getElementById('shopPanel')?.style.display === 'none' || !document.body.contains(cvs)) {
-            previewTrailAnim = null;
-            return;
-        }
-        if (!isCanvasPreviewVisible(cvs)) {
-            previewTrailAnim = requestAnimationFrame(animatePreview);
-            return;
-        }
-        const frameGap = isShopPerformanceMode() ? 120 : 33;
-        if (timestamp && previewLastFrame && timestamp - previewLastFrame < frameGap) {
-            previewTrailAnim = requestAnimationFrame(animatePreview);
-            return;
-        }
-        previewLastFrame = timestamp || performance.now();
-        pctx.clearRect(0, 0, 260, 80);
-        px += 1.2;
-        if (px > 240) px = 30;
-
-        pts.push({ x: px, y: 40, life: 1.0, seed: Math.random() });
-        if (pts.length > 50) pts.shift();
-        for (let p of pts) p.life -= 0.012;
-
-        pctx.__previewNow = previewLastFrame;
-        for (let p of pts) {
-            if (p.life <= 0) continue;
-            drawPreviewTrailPoint(pctx, p, selectedTrailEffect, rgb, selectedTrailColor);
-        }
-
-        // Bolita con el color real elegido
-        pctx.shadowBlur = 0;
-        pctx.shadowColor = getTrailSolidColor(color);
-        pctx.beginPath();
-        pctx.arc(px, 40, 8, 0, Math.PI * 2);
-        pctx.fillStyle = color?.id === 'rgb' ? `hsl(${(previewLastFrame * 0.18) % 360},100%,64%)` : getTrailSolidColor(color);
-        pctx.fill();
-        pctx.shadowBlur = 0;
-
-        previewTrailAnim = requestAnimationFrame(animatePreview);
-    }
-    animatePreview();
+        <div style="display:flex; flex-direction:column; align-items:center; gap:2px; width:100%;">
+            <div style="color:white; font-size:10px; letter-spacing:1px; font-weight:bold; text-align:center; font-family:'Geom',monospace;">${t.name.toUpperCase()}</div>
+            <div style="color:${t.rarityColor}; font-size:8px; letter-spacing:2px; font-weight:bold;">${t.rarity}</div>
+        </div>
+        <div style="width:100%; display:flex; justify-content:center; align-items:center;">
+            ${isOwned
+                ? `<div style="color:#00ff88; font-size:9px; font-weight:bold; letter-spacing:1px;">✔ TIENES</div>`
+                : `<div style="display:flex; align-items:center; gap:4px; background:rgba(255,255,255,0.04); padding:4px 8px; border-radius:6px; border:1px solid rgba(255,255,255,0.08);">
+                    <img src="${priceIcon}" style="width:11px;height:11px;object-fit:contain;">
+                    <span style="color:#ffffff; font-size:9px; font-weight:bold;">${t.price}</span>
+                   </div>`}
+        </div>
+    </div>`;
 }
 
-function drawPreviewTrailPoint(pctx, p, effect, rgb, colorId) {
-    effect = normalizeTrailEffectId(effect);
-    const life = p.life;
-    // rgb SIEMPRE viene del color elegido, nunca null para colores normales
-    const rgbMode = colorId === 'rgb';
-    const hue = (((pctx.__previewNow || performance.now()) * 0.18) + p.x * 0.7) % 360;
-    const safeRgb = rgb || '255,80,255';
-    const fill = (alpha, boost = 0) => rgbMode
-        ? `hsla(${(hue + boost) % 360},100%,64%,${alpha})`
-        : `rgba(${safeRgb},${alpha})`;
+function updateTrailCardsCarousel() {
+    const container = document.getElementById('trail-cards-container');
+    if (!container) return;
+    const cards = container.children;
+    const total = cards.length;
 
-    if (effect === 'basic') {
-        const r = 6 * life;
-        const grad = pctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, r * 3);
-        grad.addColorStop(0, fill(life * 0.7));
-        grad.addColorStop(0.4, fill(life * 0.25));
-        grad.addColorStop(1, fill(0));
-        pctx.beginPath();
-        pctx.arc(p.x, p.y, r * 3, 0, Math.PI * 2);
-        pctx.fillStyle = grad;
-        pctx.fill();
+    for (let i = 0; i < total; i++) {
+        const card = cards[i];
+        const diff = i - activeTrailIndex;
+        
+        let zIndex = 10 - Math.abs(diff);
+        let opacity = 1;
+        let translateX = diff * 135; 
+        let rotateY = 0;
+        let translateZ = 0;
+        let scale = 1;
 
-    } else if (effect === 'fire') {
-        for (let f = 0; f < 5; f++) {
-            const fy = p.y + Math.sin(p.x * 0.12 + f) * 5 * life;
-            const fw = (15 - f * 2) * life;
-            pctx.beginPath();
-            pctx.ellipse(p.x - f * 7 * life, fy, fw, fw * 0.42, 0, 0, Math.PI * 2);
-            pctx.fillStyle = f < 2 ? `rgba(255,220,60,${life * 0.32})` : fill(life * (0.28 - f * 0.03), f * 18);
-            pctx.fill();
+        if (diff === 0) {
+            scale = 1.15;
+            translateZ = 60;
+            rotateY = 0;
+            opacity = 1;
+        } else if (diff < 0) {
+            rotateY = 32; 
+            translateX = diff * 115 - 40; 
+            translateZ = -20 - Math.abs(diff) * 15;
+            opacity = Math.max(0.35, 1 - Math.abs(diff) * 0.25);
+        } else {
+            rotateY = -32; 
+            translateX = diff * 115 + 40; 
+            translateZ = -20 - Math.abs(diff) * 15;
+            opacity = Math.max(0.35, 1 - Math.abs(diff) * 0.25);
         }
 
-    } else if (effect === 'ghost') {
-        for (let i = 0; i < 3; i++) {
-            pctx.beginPath();
-            pctx.arc(p.x - i * 8 * life, p.y + Math.sin(p.x * 0.06 + i) * 9 * life, (14 + i * 6) * life, 0, Math.PI * 2);
-            pctx.fillStyle = fill(life * (0.06 + i * 0.025), i * 30);
-            pctx.fill();
+        card.style.position = 'absolute';
+        card.style.left = '50%';
+        card.style.transform = `translateX(-50%) translate3d(${translateX}px, 0px, ${translateZ}px) rotateY(${rotateY}deg) scale(${scale})`;
+        card.style.zIndex = zIndex;
+        card.style.opacity = opacity;
+        card.style.pointerEvents = Math.abs(diff) > 2 ? 'none' : 'auto';
+        card.style.transition = 'transform 0.45s cubic-bezier(0.25, 0.8, 0.25, 1), opacity 0.45s, z-index 0.45s, border-color 0.3s, box-shadow 0.3s';
+    }
+}
+
+function initTrailCardsDrag() {
+    const container = document.getElementById('trail-cards-container');
+    if (!container) return;
+    const total = container.children.length;
+
+    let cardDragStartX = 0;
+    let isCardDragging = false;
+
+    container.onmousedown = e => {
+        cardDragStartX = e.clientX;
+        isCardDragging = true;
+    };
+    container.onmousemove = e => {
+        if (!isCardDragging) return;
+        const deltaX = e.clientX - cardDragStartX;
+        if (Math.abs(deltaX) > 65) {
+            if (deltaX > 0 && activeTrailIndex > 0) {
+                activeTrailIndex--;
+                selectTrailEffectNew(TRAILS_DATA[activeTrailIndex].id, activeTrailIndex);
+                isCardDragging = false;
+            } else if (deltaX < 0 && activeTrailIndex < total - 1) {
+                activeTrailIndex++;
+                selectTrailEffectNew(TRAILS_DATA[activeTrailIndex].id, activeTrailIndex);
+                isCardDragging = false;
+            }
         }
+    };
+    container.onmouseup = container.onmouseleave = () => {
+        isCardDragging = false;
+    };
 
-    } else if (effect === 'rayo') {
-        // línea principal con zigzag
-        pctx.beginPath();
-        pctx.moveTo(p.x, p.y);
-        pctx.lineTo(p.x - 10 * life, p.y - 7 * life);
-        pctx.lineTo(p.x - 18 * life, p.y + 4 * life);
-        pctx.lineTo(p.x - 28 * life, p.y - 5 * life);
-        pctx.lineTo(p.x - 38 * life, p.y + 8 * life);
-        pctx.strokeStyle = fill(life * 0.9);
-        pctx.lineWidth = Math.max(1, 2.5 * life);
-        pctx.stroke();
-        // brillo blanco encima
-        pctx.beginPath();
-        pctx.moveTo(p.x, p.y);
-        pctx.lineTo(p.x - 10 * life, p.y - 7 * life);
-        pctx.lineTo(p.x - 18 * life, p.y + 4 * life);
-        pctx.lineTo(p.x - 28 * life, p.y - 5 * life);
-        pctx.lineTo(p.x - 38 * life, p.y + 8 * life);
-        pctx.strokeStyle = `rgba(240,250,255,${life * 0.55})`;
-        pctx.lineWidth = Math.max(0.5, life * 0.8);
-        pctx.stroke();
+    container.ontouchstart = e => {
+        cardDragStartX = e.touches[0].clientX;
+        isCardDragging = true;
+    };
+    container.ontouchmove = e => {
+        if (!isCardDragging) return;
+        const deltaX = e.touches[0].clientX - cardDragStartX;
+        if (Math.abs(deltaX) > 65) {
+            if (deltaX > 0 && activeTrailIndex > 0) {
+                activeTrailIndex--;
+                selectTrailEffectNew(TRAILS_DATA[activeTrailIndex].id, activeTrailIndex);
+                isCardDragging = false;
+            } else if (deltaX < 0 && activeTrailIndex < total - 1) {
+                activeTrailIndex++;
+                selectTrailEffectNew(TRAILS_DATA[activeTrailIndex].id, activeTrailIndex);
+                isCardDragging = false;
+            }
+        }
+    };
+    container.ontouchend = () => {
+        isCardDragging = false;
+    };
+}
 
-    } else if (effect === 'hielo') {
-        for (let i = 0; i < 1; i++) {
-            const size = Math.max(5, (10 + i * 4 + (p.seed || 0.5) * 8) * life);
-            const x = p.x - (i * 11 + 4) * life;
-            const y = p.y + Math.sin((pctx.__previewNow || performance.now()) * 0.006 + i + (p.seed || 0)) * 8 * life;
-            pctx.save();
-            pctx.translate(x, y);
-            pctx.rotate((p.seed || 0.5) * Math.PI * 2 + (pctx.__previewNow || performance.now()) * (0.002 + i * 0.0008));
-            pctx.globalAlpha = Math.min(0.9, life * (0.45 + i * 0.13));
-            if (SHOP_SNOWFLAKE_IMAGE.complete && SHOP_SNOWFLAKE_IMAGE.naturalWidth > 0) {
-                pctx.drawImage(SHOP_SNOWFLAKE_IMAGE, -size / 2, -size / 2, size, size);
-            } else {
-                pctx.strokeStyle = fill(life * 0.55);
-                pctx.lineWidth = Math.max(0.7, size * 0.08);
-                for (let arm = 0; arm < 3; arm++) {
-                    pctx.rotate(Math.PI / 3);
-                    pctx.beginPath();
-                    pctx.moveTo(-size * 0.45, 0);
-                    pctx.lineTo(size * 0.45, 0);
-                    pctx.stroke();
+// ─── Arco de colores giratorio ────────────────────────
+let trailArcAnimId = null;
+// arcOffset: cuánto se ha desplazado el arco desde su posición inicial (en pasos de índice)
+let arcOffset = 0;
+
+// ─────────────────────────────────────────────────────────────────────────────
+// startTrailArcAnim — Arco semicircular con TODOS los colores visibles
+// • El arco va de izquierda a derecha (180°) en la parte SUPERIOR del canvas
+// • El orb del color seleccionado queda siempre en el TOPE del arco
+// • Drag con mouse/touch: arrastra el arco izquierda/derecha, todos los orbs se mueven
+// • Al soltar: snap suave al orb más cercano al tope → se selecciona ese color
+// • Click sobre un orb: lo centra y selecciona
+// ─────────────────────────────────────────────────────────────────────────────
+function startTrailArcAnim() {
+    if (trailArcAnimId) cancelAnimationFrame(trailArcAnimId);
+    const cvs = document.getElementById('trailArcCanvas');
+    if (!cvs) return;
+    const ctx = cvs.getContext('2d');
+
+    const arcColors = TRAIL_COLOR_LIST.map(c => ({ id: c.id, color: c.color, rgb: c.rgb }));
+    const total     = arcColors.length;
+
+    // Círculo COMPLETO que rota — todos los colores distribuidos en 360°
+    // El orb en el tope (-π/2) es el seleccionado
+    // Los orbs de la mitad inferior quedan ocultos detrás de las cards
+    const ARC_SPAN  = Math.PI * 2;              // 360°
+    const ARC_START = -Math.PI / 2;             // empezamos en el tope
+
+    // Inicializar arcOffset para que el color seleccionado quede en el tope (-π/2)
+    const selIdx = arcColors.findIndex(c => c.id === selectedTrailColor);
+    if (selIdx >= 0) {
+        // tope del arco = ARC_START + (selIdx / (total-1)) * ARC_SPAN = -π/2
+        // => arcOffset = -π/2 - (ARC_START + selIdx/(total-1)*ARC_SPAN)
+        arcOffset = -Math.PI / 2 - (ARC_START + (selIdx / (total - 1)) * ARC_SPAN);
+    }
+
+    // ── Helpers ──────────────────────────────────────────────────────────────
+    function getOrbAngle(i) {
+        const t = total === 1 ? 0.5 : i / (total - 1);
+        return ARC_START + t * ARC_SPAN + arcOffset;
+    }
+
+    function getCenter(W, H) {
+        // cy = borde inferior del canvas (donde empiezan las cards)
+        // R = cy - margen_superior → tope del arco justo bajo el título
+        const cy = H;
+        const R  = H - H * 0.16; // tope a 16% del alto desde arriba
+        return { cx: W / 2, cy, R };
+    }
+
+    // Índice del orb más cercano al tope del arco (-π/2)
+    function getTopIndex() {
+        const target = -Math.PI / 2;
+        let best = 0, bestD = Infinity;
+        for (let i = 0; i < total; i++) {
+            let d = Math.abs(((getOrbAngle(i) - target + Math.PI * 3) % (Math.PI * 2)) - Math.PI);
+            if (d < bestD) { bestD = d; best = i; }
+        }
+        return best;
+    }
+
+    // Snap suave: mueve arcOffset para centrar el orb `idx` en el tope
+    function snapTo(idx) {
+        const targetOrbAngle = ARC_START + (idx / (total - 1)) * ARC_SPAN;
+        const wantedOffset   = -Math.PI / 2 - targetOrbAngle;
+        // Diferencia mínima
+        let diff = wantedOffset - arcOffset;
+        // Normalizar a [-π, π] — aunque el arco no es periódico completo,
+        // esto evita girar más de lo necesario
+        while (diff >  Math.PI) diff -= Math.PI * 2;
+        while (diff < -Math.PI) diff += Math.PI * 2;
+        const start = arcOffset, end = arcOffset + diff;
+        const t0 = performance.now();
+        function anim(now) {
+            if (!document.getElementById('trailArcCanvas')) return;
+            const p    = Math.min(1, (now - t0) / 320);
+            const ease = 1 - Math.pow(1 - p, 3);
+            arcOffset  = start + (end - start) * ease;
+            if (p < 1) requestAnimationFrame(anim);
+        }
+        requestAnimationFrame(anim);
+    }
+
+    // ── Drag ─────────────────────────────────────────────────────────────────
+    let isDragging     = false;
+    let dragStartX     = 0;
+    let dragStartOff   = 0;
+    let dragMoved      = false;
+    let lastTs         = 0;
+
+    cvs.style.cursor = 'grab';
+    cvs.style.touchAction = 'none';
+
+    cvs.onpointerdown = e => {
+        isDragging   = true;
+        dragMoved    = false;
+        dragStartX   = e.clientX;
+        dragStartOff = arcOffset;
+        cvs.style.cursor = 'grabbing';
+        cvs.setPointerCapture(e.pointerId);
+    };
+
+    cvs.onpointermove = e => {
+        if (!isDragging) return;
+        const deltaX = e.clientX - dragStartX;
+        if (Math.abs(deltaX) > 3) dragMoved = true;
+        // Sensibilidad: 1px de drag = 0.004 rad (ajustable)
+        arcOffset = dragStartOff + deltaX * 0.005;
+        // Resaltar el orb más cercano al tope en tiempo real
+        const topIdx = getTopIndex();
+        if (arcColors[topIdx] && arcColors[topIdx].id !== selectedTrailColor) {
+            selectedTrailColor = arcColors[topIdx].id;
+            window.playSfx?.('menuHover', 0.25);
+        }
+    };
+
+    cvs.onpointerup = cvs.onpointercancel = e => {
+        if (!isDragging) return;
+        isDragging = false;
+        cvs.style.cursor = 'grab';
+        if (!dragMoved) {
+            // Click — ver si hizo click sobre un orb
+            const W = cvs.width, H = cvs.height;
+            const { cx, cy, R } = getCenter(W, H);
+            const rect = cvs.getBoundingClientRect();
+            const mx = (e.clientX - rect.left) * (W / rect.width);
+            const my = (e.clientY - rect.top)  * (H / rect.height);
+            for (let i = 0; i < total; i++) {
+                const a = getOrbAngle(i);
+                const ox = cx + Math.cos(a) * R;
+                const oy = cy + Math.sin(a) * R;
+                if (Math.hypot(ox - mx, oy - my) < 28) {
+                    selectedTrailColor = arcColors[i].id;
+                    selectTrailColorNew(arcColors[i].id);
+                    snapTo(i);
+                    return;
                 }
             }
-            pctx.restore();
+        } else {
+            // Snap al orb más cercano al tope
+            const topIdx = getTopIndex();
+            selectedTrailColor = arcColors[topIdx].id;
+            selectTrailColorNew(arcColors[topIdx].id);
+            snapTo(topIdx);
         }
-    } else if (effect === 'navidad') {
-        pctx.beginPath();
-        pctx.ellipse(p.x - 12 * life, p.y, 18 * life, 5 * life, 0, 0, Math.PI * 2);
-        pctx.fillStyle = `rgba(40,255,120,${life * 0.18})`;
-        pctx.fill();
-        pctx.strokeStyle = `rgba(255,55,70,${life * 0.45})`;
-        pctx.lineWidth = Math.max(1, 2 * life);
-        pctx.stroke();
-        if (SHOP_CANDY_PARTICLE_IMAGE.complete && SHOP_CANDY_PARTICLE_IMAGE.naturalWidth > 0 && (p.seed || 0.5) > 0.45) {
-            const size = Math.max(7, (13 + (p.seed || 0.5) * 6) * life);
-            pctx.save();
-            pctx.translate(p.x - 18 * life, p.y + Math.sin(p.x * 0.08) * 6 * life);
-            pctx.rotate((p.seed || 0.5) * Math.PI);
-            pctx.globalAlpha = Math.min(0.8, life * 0.7);
-            pctx.drawImage(SHOP_CANDY_PARTICLE_IMAGE, -size / 2, -size / 2, size, size);
-            pctx.restore();
-        }
-    } else if (effect === 'toxico') {
-        for (let i = 0; i < 4; i++) {
-            pctx.beginPath();
-            pctx.arc(p.x - i * 8 * life, p.y + Math.sin(p.x * 0.08 + i) * 8 * life, (7 + i) * life, 0, Math.PI * 2);
-            pctx.fillStyle = fill(life * (0.1 + i * 0.04), i * 18);
-            pctx.fill();
-        }
-    } else if (['water', 'wind', 'nature', 'vampiro', 'zombie', 'lava'].includes(effect)) {
-        const tone = effect === 'water' ? '68,136,255' : effect === 'wind' ? '180,255,245' : effect === 'nature' ? '68,255,136' : effect === 'vampiro' ? '255,77,109' : effect === 'zombie' ? '120,255,143' : '255,86,28';
-        for (let i = 0; i < 4; i++) {
-            const wave = Math.sin(p.x * 0.08 + i) * 8 * life;
-            pctx.beginPath();
-            pctx.ellipse(p.x - i * 10 * life, p.y + wave, (16 - i * 2) * life, (5 + i) * life, 0, 0, Math.PI * 2);
-            pctx.fillStyle = `rgba(${tone},${life * (0.22 - i * 0.03)})`;
-            pctx.fill();
-        }
+    };
+
+    // ── Partículas flotantes ──────────────────────────────────────────────────
+    const particles = [];
+    for (let i = 0; i < 38; i++) {
+        particles.push({
+            angle:  Math.random() * Math.PI * 2,
+            offset: (Math.random() - 0.5) * 28,   // desviación radial
+            speed:  (Math.random() - 0.5) * 0.004, // velocidad angular
+            size:   Math.random() * 2.2 + 0.5,
+            alpha:  Math.random() * 0.5 + 0.15,
+            colorIdx: Math.floor(Math.random() * arcColors.length),
+            twinkle: Math.random() * Math.PI * 2,
+            twinkleSpeed: Math.random() * 0.08 + 0.02,
+        });
     }
+
+    // ── Frame loop ───────────────────────────────────────────────────────────
+    function frame(ts) {
+        if (!document.getElementById('trailArcCanvas')) { trailArcAnimId = null; return; }
+        trailArcAnimId = requestAnimationFrame(frame);
+        if (ts - lastTs < 16) return;
+        lastTs = ts;
+
+        const W = cvs.width, H = cvs.height;
+        const { cx, cy, R } = getCenter(W, H);
+
+        ctx.clearRect(0, 0, W, H);
+
+        // ── Clip: solo mostrar lo que esté dentro del canvas ──
+        ctx.save();
+        ctx.beginPath();
+        ctx.rect(0, 0, W, H);
+        ctx.clip();
+
+        // ── A) Línea del arco con gradiente de colores ──────────────────────
+        // Dibujamos segmentos cortos con el color interpolado entre orbs adyacentes
+        const segments = 120;
+        for (let s = 0; s < segments; s++) {
+            const a1 = -Math.PI + (s / segments) * Math.PI * 2;
+            const a2 = -Math.PI + ((s + 1) / segments) * Math.PI * 2;
+            const mx = cx + Math.cos((a1 + a2) / 2) * R;
+            const my = cy + Math.sin((a1 + a2) / 2) * R;
+            // Interpolar color según posición en el arco
+            const t  = ((s / segments) * arcColors.length) % arcColors.length;
+            const i0 = Math.floor(t) % arcColors.length;
+            const i1 = (i0 + 1) % arcColors.length;
+            const c0 = arcColors[i0].id === 'rgb' ? '#ff44ff' : arcColors[i0].color;
+            const c1 = arcColors[i1].id === 'rgb' ? '#44ffff' : arcColors[i1].color;
+            const x1 = cx + Math.cos(a1) * R, y1 = cy + Math.sin(a1) * R;
+            const x2 = cx + Math.cos(a2) * R, y2 = cy + Math.sin(a2) * R;
+            const grd = ctx.createLinearGradient(x1, y1, x2, y2);
+            grd.addColorStop(0, c0 + '44');
+            grd.addColorStop(1, c1 + '44');
+            ctx.beginPath();
+            ctx.moveTo(x1, y1);
+            ctx.lineTo(x2, y2);
+            ctx.strokeStyle = grd;
+            ctx.lineWidth   = 2.5;
+            ctx.stroke();
+        }
+
+        // ── B) Partículas flotantes alrededor del arco ───────────────────────
+        for (const p of particles) {
+            p.angle   += p.speed;
+            p.twinkle += p.twinkleSpeed;
+            const pr  = R + p.offset;
+            const px  = cx + Math.cos(p.angle) * pr;
+            const py  = cy + Math.sin(p.angle) * pr;
+            if (py > H + 10) continue; // fuera del canvas
+            const col = arcColors[p.colorIdx % arcColors.length];
+            const c   = col.id === 'rgb' ? '#ff88ff' : col.color;
+            const a   = p.alpha * (0.5 + 0.5 * Math.sin(p.twinkle));
+            ctx.save();
+            ctx.globalAlpha = a;
+            ctx.shadowBlur  = 6;
+            ctx.shadowColor = c;
+            ctx.fillStyle   = c;
+            ctx.beginPath();
+            ctx.arc(px, py, p.size, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.restore();
+        }
+
+        // ── C) Conexiones entre orbs adyacentes ─────────────────────────────
+        for (let i = 0; i < total; i++) {
+            const i2  = (i + 1) % total;
+            const a1  = getOrbAngle(i);
+            const a2  = getOrbAngle(i2);
+            const ox1 = cx + Math.cos(a1) * R, oy1 = cy + Math.sin(a1) * R;
+            const ox2 = cx + Math.cos(a2) * R, oy2 = cy + Math.sin(a2) * R;
+            if (oy1 > H + 10 && oy2 > H + 10) continue;
+            const c1  = arcColors[i].id  === 'rgb' ? '#ff44ff' : arcColors[i].color;
+            const c2  = arcColors[i2].id === 'rgb' ? '#44ffff' : arcColors[i2].color;
+            const grd = ctx.createLinearGradient(ox1, oy1, ox2, oy2);
+            grd.addColorStop(0, c1 + '55');
+            grd.addColorStop(1, c2 + '55');
+            ctx.save();
+            ctx.beginPath();
+            ctx.moveTo(ox1, oy1);
+            ctx.lineTo(ox2, oy2);
+            ctx.strokeStyle = grd;
+            ctx.lineWidth   = 1;
+            ctx.stroke();
+            ctx.restore();
+        }
+
+        // ── Flecha indicadora en el tope ─────────────────────────────────────
+        {
+            const topX     = cx;
+            const topY     = cy - R;
+            const topColor = arcColors[getTopIndex()]?.color || '#00ffe7';
+            const pulse    = 0.7 + 0.3 * Math.sin(ts * 0.004);
+            ctx.save();
+            ctx.shadowBlur  = 14 * pulse;
+            ctx.shadowColor = topColor;
+            ctx.fillStyle   = topColor;
+            ctx.globalAlpha = pulse;
+            const aw = 9, ah = 11;
+            ctx.beginPath();
+            ctx.moveTo(topX,      topY - ah - 24);
+            ctx.lineTo(topX - aw, topY - 24);
+            ctx.lineTo(topX + aw, topY - 24);
+            ctx.closePath();
+            ctx.fill();
+            ctx.restore();
+        }
+
+        // ── D) Orbs con pulso y efectos ──────────────────────────────────────
+        for (let i = 0; i < total; i++) {
+            const a   = getOrbAngle(i);
+            const ox  = cx + Math.cos(a) * R;
+            const oy  = cy + Math.sin(a) * R;
+            if (oy > H + 10) continue;
+
+            const isTop    = oy < cy;
+            const orbAlpha = isTop ? 1.0 : 0.65;
+            const sel      = arcColors[i].id === selectedTrailColor;
+            const pulse    = sel ? 1 + 0.12 * Math.sin(ts * 0.005 + i) : 1;
+            const r        = (sel ? 15 : 10) * pulse;
+            const col      = arcColors[i].id === 'rgb'
+                ? `hsl(${(ts * 0.18 + i * 45) % 360},100%,68%)`
+                : arcColors[i].color;
+
+            ctx.save();
+            ctx.globalAlpha = orbAlpha;
+
+            // Anillo expansivo del seleccionado (efecto pulso)
+            if (sel) {
+                const ringPhase = (ts * 0.002) % 1;
+                const ringR     = r + ringPhase * 22;
+                ctx.beginPath();
+                ctx.arc(ox, oy, ringR, 0, Math.PI * 2);
+                ctx.strokeStyle = col + Math.floor((1 - ringPhase) * 120).toString(16).padStart(2,'0');
+                ctx.lineWidth   = 1.5;
+                ctx.stroke();
+            }
+
+            // Glow exterior
+            ctx.shadowBlur  = sel ? 24 : 10;
+            ctx.shadowColor = col;
+
+            // Borde exterior
+            ctx.beginPath();
+            ctx.arc(ox, oy, r + 3, 0, Math.PI * 2);
+            ctx.strokeStyle = sel ? 'rgba(255,255,255,0.9)' : 'rgba(255,255,255,0.18)';
+            ctx.lineWidth   = sel ? 2.5 : 1.2;
+            ctx.stroke();
+
+            // Relleno con gradiente radial
+            const grd = ctx.createRadialGradient(ox - r*0.3, oy - r*0.3, 0, ox, oy, r);
+            if (arcColors[i].id === 'rgb') {
+                const h = (ts * 0.18 + i * 45) % 360;
+                grd.addColorStop(0,   `hsl(${h},100%,88%)`);
+                grd.addColorStop(0.5, `hsl(${(h+120)%360},100%,65%)`);
+                grd.addColorStop(1,   `hsl(${(h+240)%360},100%,45%)`);
+            } else {
+                grd.addColorStop(0, 'rgba(255,255,255,0.9)');
+                grd.addColorStop(0.35, col);
+                grd.addColorStop(1,   col + 'aa');
+            }
+            ctx.fillStyle = grd;
+            ctx.beginPath();
+            ctx.arc(ox, oy, r, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Brillo interior
+            ctx.shadowBlur = 0;
+            ctx.beginPath();
+            ctx.arc(ox - r*0.28, oy - r*0.28, r * (sel ? 0.28 : 0.22), 0, Math.PI*2);
+            ctx.fillStyle = 'rgba(255,255,255,0.75)';
+            ctx.fill();
+
+            ctx.restore();
+        }
+
+        ctx.restore(); // cierra el clip
+    }
+    trailArcAnimId = requestAnimationFrame(frame);
 }
+
+// ─── Vista previa de bola 2D en órbita ─────────────────
+let trailBallAnimId = null;
+
+function startTrailBallAnim() {
+    if (trailBallAnimId) cancelAnimationFrame(trailBallAnimId);
+    const cvs = document.getElementById('trailBallCanvas');
+    if (!cvs) return;
+    const ctx = cvs.getContext('2d');
+
+    let ballPts = [];
+    let lastTs  = 0;
+
+    function frame(ts) {
+        if (!document.getElementById('trailBallCanvas')) { trailBallAnimId = null; return; }
+        trailBallAnimId = requestAnimationFrame(frame);
+        if (ts - lastTs < 24) return;
+        lastTs = ts;
+
+        const W = cvs.width, H = cvs.height;
+        const cx = W / 2;
+        const cy = H * 0.48; // Centrado en la ventana del arco
+
+        // Generar órbita caótica 2D usando curvas de Lissajous y modulación
+        const tVal = ts * 0.0018;
+        const rx = Math.min(W, H) * 0.32; 
+        const ry = Math.min(W, H) * 0.22; 
+        
+        const ballX = cx + rx * Math.sin(tVal) * (1.1 + 0.3 * Math.cos(2.2 * tVal));
+        const ballY = cy + ry * Math.cos(2.2 * tVal) * (0.8 + 0.2 * Math.sin(tVal));
+
+        ctx.clearRect(0, 0, W, H);
+
+        ballPts.push({ x: ballX, y: ballY });
+        if (ballPts.length > 55) ballPts.shift();
+        
+        const len = ballPts.length;
+        for (let i = 0; i < len; i++) ballPts[i].life = (i + 1) / len;
+
+        // Trail
+        let colorKey = selectedTrailColor || 'cyan';
+        let effect   = selectedTrailEffect || 'solid';
+        const hueBase  = (ts * 0.18) % 360;
+        let rgbMode  = colorKey === 'rgb';
+        let rgb      = TRAIL_COLOR_LIST.find(c => c.id === colorKey)?.rgb || '0,255,231';
+
+        // Color especial para spark
+        if (effect === 'spark') {
+            rgbMode = false;
+            rgb = '255,255,0';
+        }
+
+        function rgba(alpha, hs) {
+            return rgbMode
+                ? `hsla(${((hueBase + (hs||0)) % 360)},100%,65%,${alpha})`
+                : `rgba(${rgb},${alpha})`;
+        }
+        function solidCol() {
+            return rgbMode ? `hsl(${hueBase},100%,64%)` : `rgb(${rgb})`;
+        }
+
+        // Dibujar trail usando drawPreviewTrailPoint (mismo render que gameplay)
+        if (len >= 2 && typeof window.drawPreviewTrailPoint === 'function') {
+            ctx.__previewNow = ts;
+            for (let i = 0; i < len; i++) {
+                const p = ballPts[i];
+                if (p.life <= 0) continue;
+                if (p.seed === undefined) p.seed = ((i * 7919) % 997) / 997;
+                window.drawPreviewTrailPoint(ctx, p, effect, rgb, colorKey);
+            }
+        } else if (len >= 2) {
+            // Fallback básico si trails.js aún no cargó
+            ctx.save();
+            ctx.lineCap = 'round';
+            for (let i = 1; i < len; i++) {
+                const l = ballPts[i].life;
+                ctx.beginPath();
+                ctx.moveTo(ballPts[i-1].x, ballPts[i-1].y);
+                ctx.lineTo(ballPts[i].x, ballPts[i].y);
+                ctx.strokeStyle = `rgba(${rgb},${l * 0.9})`;
+                ctx.lineWidth = Math.max(1, 4 * l);
+                ctx.stroke();
+            }
+            ctx.restore();
+        }
+
+        // Bolita
+        const SKIN_COLORS = {
+            cyan:'#00ffe7',red:'#ff4444',blue:'#5045eb',yellow:'#ffee00',
+            orange:'#ff8800',green:'#3fe969',purple:'#cc44ff',white:'#ffffff',black:'#444'
+        };
+        const skinId    = window._cachedEquippedSkin || 'cyan';
+        const ballColor = SKIN_COLORS[skinId] || '#00ffe7';
+        ctx.save();
+        ctx.shadowBlur = 20; ctx.shadowColor = ballColor;
+        ctx.beginPath(); ctx.arc(ballX, ballY, 14, 0, Math.PI * 2);
+        ctx.fillStyle = ballColor; ctx.fill();
+        ctx.shadowBlur = 0;
+        ctx.beginPath(); ctx.arc(ballX - 4, ballY - 4, 5, 0, Math.PI * 2);
+        ctx.fillStyle = 'rgba(255,255,255,0.5)'; ctx.fill();
+        ctx.restore();
+    }
+    trailBallAnimId = requestAnimationFrame(frame);
+}
+
+function highlightSelectedCard() {
+    TRAILS_DATA.forEach(t => {
+        const el = document.getElementById(`trail-card-new-${t.id}`);
+        if (!el) return;
+        const sel = t.id === selectedTrailEffect;
+        el.style.borderColor = sel ? '#00ffe7' : 'rgba(255,255,255,0.12)';
+        el.style.boxShadow = sel ? '0 0 15px rgba(0,255,231,0.25)' : '0 10px 20px rgba(0,0,0,0.5)';
+    });
+}
+
+function equipNoneTrail() {
+    localStorage.setItem('equippedTrail', 'none');
+    window.equippedTrailId = 'none';
+    window.playSfx?.('colorSelect', 0.7);
+    showTrailBuyPanel();
+    highlightSelectedCard();
+}
+
+function equipSpecificTrail(trailId) {
+    // Desbloquear temporalmente para pruebas
+    localStorage.setItem(`trail_${trailId}_cyan`, 'true');
+    
+    localStorage.setItem('equippedTrail', trailId);
+    if (typeof bannerTrail !== 'undefined') bannerTrail = [];
+    window.playSfx?.('colorSelect', 0.7);
+    showTrailBuyPanel();
+    highlightSelectedCard();
+}
+
+function buySpecificTrail(trailId) {
+    const trail = TRAILS_DATA.find(t => t.id === trailId);
+    if (!trail) return;
+    
+    const canAfford = trail.priceType === 'gems'
+        ? parseInt(localStorage.getItem('gems') || '0') >= trail.price
+        : parseInt(localStorage.getItem('deadCoins') || '0') >= trail.price;
+    
+    if (!canAfford) {
+        alert('No tienes suficientes monedas/gemas');
+        return;
+    }
+    
+    // Gastar monedas/gemas
+    if (trail.priceType === 'gems') {
+        const gems = parseInt(localStorage.getItem('gems') || '0') - trail.price;
+        localStorage.setItem('gems', gems);
+    } else {
+        const coins = parseInt(localStorage.getItem('deadCoins') || '0') - trail.price;
+        localStorage.setItem('deadCoins', coins);
+        if (window.playerData) window.playerData.deadCoins = coins;
+    }
+    
+    // Marcar como comprado y equipar
+    localStorage.setItem(`trail_${trailId}_cyan`, 'true');
+    localStorage.setItem('equippedTrail', trailId);
+    if (typeof bannerTrail !== 'undefined') bannerTrail = [];
+    
+    window.playSfx?.('spend');
+    updateMenuHUD();
+    showTrailBuyPanel();
+    highlightSelectedCard();
+}
+
+function selectTrailEffectNew(effectId, idx) {
+    window.playSfx?.('selectTrail', 0.7);
+    selectedTrailEffect = effectId;
+    
+    // Trails específicos sin variantes de color
+    const specificTrails = ['none', 'spark', 'ghost', 'fractura', 'hielo', 'toxico', 
+                           'trail_vampiro', 'trail_zombie', 'trail_fire', 'trail_water', 
+                           'trail_wind', 'trail_ice', 'trail_lava', 'trail_nature', 
+                           'trail_custom_text'];
+    
+    if (specificTrails.includes(effectId)) {
+        selectedTrailColor = 'cyan';
+    }
+    
+    if (idx !== undefined) {
+        activeTrailIndex = idx;
+        updateTrailCardsCarousel();
+    }
+    highlightSelectedCard();
+    showTrailBuyPanel();
+}
+
+function selectTrailColorNew(colorId) {
+    window.playSfx?.('colorSelect', 0.4);
+    selectedTrailColor = colorId;
+    highlightSelectedCard();
+    showTrailBuyPanel();
+}
+
+function showTrailBuyPanel() {
+    const panel = document.getElementById('trail-buy-panel');
+    if (!panel) return;
+
+    // Trails específicos sin variantes de color
+    const specificTrails = ['none', 'spark', 'ghost', 'fractura', 'hielo', 'toxico', 
+                           'trail_vampiro', 'trail_zombie', 'trail_fire', 'trail_water', 
+                           'trail_wind', 'trail_ice', 'trail_lava', 'trail_nature', 
+                           'trail_custom_text'];
+
+    if (specificTrails.includes(selectedTrailEffect)) {
+        const trail = TRAILS_DATA.find(t => t.id === selectedTrailEffect);
+        if (!trail) return;
+
+        const owned = localStorage.getItem(`trail_${selectedTrailEffect}_cyan`) === 'true';
+        const equipped = localStorage.getItem('equippedTrail') === selectedTrailEffect;
+        
+        panel.style.display = 'block';
+        panel.innerHTML = `
+        <div style="display:flex; align-items:center; justify-content:space-between; height:100%; width:100%; box-sizing:border-box; font-family:monospace;">
+            <div style="display:flex; flex-direction:column; justify-content:center;">
+                <div style="color:${trail.rarityColor}; font-size:8px; letter-spacing:3px; margin-bottom:2px; font-weight:bold;">${trail.rarity}</div>
+                <div style="color:#fff; font-size:18px; font-weight:bold;">${trail.name}</div>
+                <div style="color:rgba(255,255,255,0.5); font-size:10px; margin-top:4px;">Trail exclusivo</div>
+            </div>
+            ${owned 
+                ? `<button onclick="equipSpecificTrail('${selectedTrailEffect}')" type="button" style="
+                    background:${equipped ? '#ffd700' : '#00ff88'};
+                    color:${equipped ? '#000' : '#000'};
+                    border:2px solid ${equipped ? '#ffd700' : '#00ff88'};
+                    padding:12px 24px; border-radius:8px; font-weight:bold; cursor:pointer;
+                ">${equipped ? '✔ EQUIPADO' : 'EQUIPAR'}</button>`
+                : `<button onclick="buySpecificTrail('${selectedTrailEffect}')" type="button" style="
+                    background:rgba(255,255,255,0.1);
+                    color:#fff;
+                    border:2px solid rgba(255,255,255,0.2);
+                    padding:12px 24px; border-radius:8px; font-weight:bold; cursor:pointer;
+                ">${renderPrice(trail.price, trail.priceType)}</button>`
+            }
+        </div>`;
+        return;
+    }
+
+    if (!selectedTrailEffect || !selectedTrailColor) return;
+    const trail   = TRAILS_DATA.find(t => t.id === selectedTrailEffect);
+    const color   = TRAIL_COLOR_LIST.find(c => c.id === selectedTrailColor);
+    if (!trail || !color) return;
+
+    const owned    = localStorage.getItem(`trail_${selectedTrailEffect}_${selectedTrailColor}`) === 'true';
+    const equipped = localStorage.getItem('equippedTrail') === `${selectedTrailEffect}_${selectedTrailColor}`;
+    const purchase = getTrailPurchaseInfo(trail, color);
+    const pIcon    = purchase.currency === 'gems'
+        ? 'assets/Imagenes/Monetizacion/Rubies.png'
+        : 'assets/Imagenes/Monetizacion/DEAD_COIN.png';
+    const dot      = color.id === 'rgb'
+        ? `<span style="font-size:13px;margin-right:3px;vertical-align:middle;">🌈</span>`
+        : `<span style="display:inline-block;width:11px;height:11px;border-radius:50%;background:${color.color};vertical-align:middle;margin-right:5px;box-shadow: 0 0 6px ${color.color}cc;"></span>`;
+
+    panel.style.display = 'block';
+    panel.innerHTML = `
+        <div style="display: flex; align-items: center; justify-content: space-between; height: 100%; width: 100%; box-sizing: border-box; font-family: monospace;">
+            <!-- Left Side: Title, Details -->
+            <div style="display: flex; flex-direction: column; justify-content: center; text-align: left;">
+                <div style="color:rgba(255,255,255,0.36); font-size:8px; letter-spacing:3px; margin-bottom:2px; font-weight:bold;">SELECCIONADO</div>
+                <div style="color:white; font-size:12px; font-weight:bold; letter-spacing:1px; margin-bottom:2px; font-family:'Geom',monospace;">
+                    ${dot}${trail.name.toUpperCase()}
+                </div>
+                <div style="color:${trail.rarityColor}; font-size:8px; letter-spacing:2px; font-weight:bold;">
+                    ${trail.rarity} · <span style="color:${color.id==='rgb'?'#ff4dff':color.color}">${color.id.toUpperCase()}</span>
+                </div>
+            </div>
+            
+            <!-- Right Side: Buy/Equip action -->
+            <div style="display: flex; align-items: center; gap: 8px; margin-right: 10px;">
+                ${owned
+                    ? `<div style="display:flex; gap:6px; align-items:center;">
+                        ${equipped
+                            ? `<span style="color:#00ffe7; font-size:11px; letter-spacing:2px; font-weight:bold; text-shadow: 0 0 8px rgba(0,255,231,0.5);">✔ EQUIPADO</span>`
+                            : `<button onclick="confirmBuyTrailNew()" style="padding:6px 14px; background:rgba(0,255,231,0.12); border:1px solid #00ffe7; border-radius:8px; color:#00ffe7; font-family:'Geom',monospace; font-size:10px; letter-spacing:2px; cursor:pointer; font-weight:bold; box-shadow: 0 0 10px rgba(0,255,231,0.15); transition: 0.2s;" onmouseover="this.style.background='rgba(0,255,231,0.2)'" onmouseout="this.style.background='rgba(0,255,231,0.12)'">EQUIPAR</button>`
+                        }
+                       </div>`
+                    : `<div style="display:flex; gap:8px; align-items:center;">
+                        <div style="display:flex; align-items:center; gap:4px; background:rgba(0,0,0,0.3); padding:4px 8px; border-radius:6px; border:1px solid rgba(255,255,255,0.06);">
+                            <img src="${pIcon}" style="width:13px; height:13px; object-fit:contain;">
+                            <span style="color:white; font-size:11px; font-weight:bold;">${purchase.amount}</span>
+                        </div>
+                        <button onclick="confirmBuyTrailNew()" style="padding:6px 14px; background:rgba(255,238,0,0.15); border:1px solid #ffee00; border-radius:8px; color:#ffee00; font-family:'Geom',monospace; font-size:10px; letter-spacing:2px; cursor:pointer; font-weight:bold; box-shadow: 0 0 10px rgba(255,238,0,0.15); transition: 0.2s;" onmouseover="this.style.background='rgba(255,238,0,0.25)'" onmouseout="this.style.background='rgba(255,238,0,0.15)'">COMPRAR</button>
+                       </div>`
+                }
+            </div>
+        </div>`;
+}
+
+function hideTrailBuyPanel() {
+    const p = document.getElementById('trail-buy-panel');
+    if (p) p.style.display = 'none';
+}
+window.hideTrailBuyPanel = hideTrailBuyPanel;
+
+function confirmBuyTrailNew() {
+    confirmBuyTrail();
+}
+window.confirmBuyTrailNew   = confirmBuyTrailNew;
+window.selectTrailEffectNew = selectTrailEffectNew;
+window.selectTrailColorNew  = selectTrailColorNew;
+window.updateTrailCardsCarousel = updateTrailCardsCarousel;
+window.initTrailCardsDrag       = initTrailCardsDrag;
+
+// Redirigir la vista previa antigua a la nueva para no romper completeTrailPurchase
+function showTrailPreview() {
+    showTrailBuyPanel();
+    highlightSelectedCard();
+    const coins = window.playerData?.deadCoins ?? parseInt(localStorage.getItem('deadCoins') || '0');
+    const gems  = window.playerData?.gems       ?? parseInt(localStorage.getItem('gems')      || '0');
+    const elCoins = document.getElementById('trail-hud-coins');
+    if (elCoins) elCoins.textContent = coins.toLocaleString();
+    const elGems = document.getElementById('trail-hud-gems');
+    if (elGems) elGems.textContent = gems.toLocaleString();
+}
+window.showTrailPreview = showTrailPreview;
 
 function normalizeTrailEffectId(effect) {
     if (effect === 'trail_custom_text') return 'custom_text';

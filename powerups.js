@@ -2002,14 +2002,20 @@ function showPowerupHelpPanel() {
     }).join('');
 
     panel.style.display = 'grid';
-    panel.classList.add('showing');
+    panel.classList.remove('entering', 'leaving');
+    void panel.offsetWidth;
+    panel.classList.add('entering');
 }
 
 function closePowerupHelpPanel() {
     const panel = document.getElementById('powerupHelpPanel');
     if (panel) {
-        panel.classList.remove('showing');
-        setTimeout(() => panel.style.display = 'none', 300);
+        panel.classList.remove('entering');
+        panel.classList.add('leaving');
+        setTimeout(() => {
+            panel.style.display = 'none';
+            panel.classList.remove('leaving');
+        }, 350);
     }
 }
 

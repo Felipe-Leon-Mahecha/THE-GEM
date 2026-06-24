@@ -20,41 +20,57 @@ document.getElementById("play-btn").onclick = () => {
     window.playSfx?.('menuSelect');
 
     if (window.menuMusic) {
-
         window.applyAudioSettings?.();
-
         window.menuMusic.play().catch(() => { });
-
     }
 
-    const overlay =
-        document.getElementById("overlay");
+    const overlay = document.getElementById("overlay");
+    const ls = document.getElementById("levelSelect");
 
-    overlay.classList.add("slide-down");
+    ls.style.display = "flex";
+    ls.classList.remove("entering", "leaving");
+    void ls.offsetWidth;
+    ls.classList.add("entering");
+
+    if (overlay) {
+        overlay.classList.remove('exit-shop', 'enter-shop', 'exit-inventory', 'enter-inventory', 'exit-play', 'enter-play');
+        void overlay.offsetWidth;
+        overlay.classList.add("exit-play");
+    }
 
     setTimeout(() => {
-
-        overlay.style.display = "none";
-
-        overlay.classList.remove("slide-down");
-
+        if (overlay) {
+            overlay.style.display = "none";
+            overlay.classList.remove("exit-play");
+        }
         window.showLevelSelect();
-
-        drawCarousel();
-
-        const ls =
-            document.getElementById("levelSelect");
-
-        ls.classList.add("slide-up");
-
-        setTimeout(() => {
-
-            ls.classList.remove("slide-up");
-
-        }, 500);
-
+        if (typeof drawCarousel === 'function') drawCarousel();
+        ls.classList.remove("entering");
     }, 450);
+};
 
+window.closeLevelSelect = function () {
+    window.playSfx?.('menuSelect', 0.6);
+    const ls = document.getElementById("levelSelect");
+    const overlay = document.getElementById("overlay");
+
+    if (ls) {
+        ls.classList.remove("entering");
+        ls.classList.add("leaving");
+    }
+
+    if (overlay) {
+        overlay.style.display = "flex";
+        overlay.classList.remove('exit-play', 'enter-play');
+        void overlay.offsetWidth;
+        overlay.classList.add("enter-play");
+    }
+
+    setTimeout(() => {
+        window.hideLevelSelect();
+        if (ls) ls.classList.remove("leaving");
+        if (overlay) overlay.classList.remove("enter-play");
+    }, 450);
 };
 
 const shopBtn = document.getElementById("shop-btn");
@@ -106,6 +122,28 @@ function formatTime(seconds) {
     return `${minutes}:${secs.toString().padStart(2, '0')}`;
 }
 
+function getDaysPlayedCount() {
+    try {
+        const playedDays = JSON.parse(localStorage.getItem('playedDays') || '[]');
+        return Array.isArray(playedDays) ? playedDays.length : 0;
+    } catch (e) {
+        return 0;
+    }
+}
+
+function getLastPlayedText() {
+    const lastPlayedAt = localStorage.getItem('lastPlayedAt');
+    if (!lastPlayedAt) return 'N/A';
+    const last = new Date(lastPlayedAt);
+    if (isNaN(last.getTime())) return 'N/A';
+    const now = new Date();
+    const startOfDay = (d) => new Date(d.getFullYear(), d.getMonth(), d.getDate());
+    const diffDays = Math.round((startOfDay(now) - startOfDay(last)) / 86400000);
+    if (diffDays <= 0) return 'Hoy';
+    if (diffDays === 1) return 'Ayer';
+    return `Hace ${diffDays} días`;
+}
+
 function getBestSurvivalValue() {
     const fallbackKeys = [
         'bestSurvivalTime',
@@ -128,6 +166,53 @@ function getBestSurvivalValue() {
     }
 
     return 'N/A';
+}
+
+// ─── PUNTOS DE COLECCIÓN ───────────────────────────
+// Pondera cada item que el jugador tiene según su rareza.
+// BASICA/BASICO/DEFAULT=1, ESPECIAL=2, EPICA=4, DEMON=8, VIP=15
+// (escala escalonada: una sola VIP vale tanto como 15 básicas)
+function getCollectionRarityWeight(rarity) {
+    const r = (rarity || '').toString().toUpperCase();
+    if (r === 'VIP') return 15;
+    if (r === 'DEMON') return 8;
+    if (r === 'EPICA' || r === 'EPIC') return 4;
+    if (r === 'ESPECIAL' || r === 'RARE') return 2;
+    return 1; // BASICA, BASICO, DEFAULT, o cualquier rareza desconocida
+}
+
+function getCollectionScore() {
+    let total = 0;
+    try {
+        // Skins (getAllShopSkins ya trae .owned y .rarity resueltos,
+        // incluye skins normales + VIP + de fragmentos)
+        if (typeof getAllShopSkins === 'function') {
+            getAllShopSkins().forEach(skin => {
+                // 'cyan' es la skin gratis de inicio, no cuenta como "coleccionada"
+                if (skin.owned && skin.id !== 'cyan') {
+                    total += getCollectionRarityWeight(skin.rarity);
+                }
+            });
+        }
+        // Banners
+        if (typeof BANNERS_DATA !== 'undefined' && Array.isArray(BANNERS_DATA)) {
+            BANNERS_DATA.forEach(b => {
+                // el banner por defecto tampoco cuenta, lo tiene todo el mundo
+                if (b.id === 'Banner_Deafult') return;
+                const owned = localStorage.getItem('banner_' + b.id) === 'true' || b.owned === true;
+                if (owned) total += getCollectionRarityWeight(b.rarity);
+            });
+        }
+        // Emotes
+        if (typeof EMOTES_DATA !== 'undefined' && Array.isArray(EMOTES_DATA) && typeof isEmoteOwned === 'function') {
+            EMOTES_DATA.forEach(e => {
+                if (isEmoteOwned(e)) total += getCollectionRarityWeight(e.rarity);
+            });
+        }
+    } catch (err) {
+        console.warn('[Stats] Error calculando puntos de colección:', err);
+    }
+    return total;
 }
 
 function getUnlockedLevelsCount() {
@@ -163,7 +248,7 @@ function updateProfilePanelStats() {
     const gemsValue = window.infiniteCoinsMode ? '∞' : (parseInt(localStorage.getItem('gems') || '0', 10) || 0);
 
     const profileFields = {
-        'menu-profile-rank': rankName,
+        'menu-profile-rank': rankName,  // se oculta visualmente si XP=0 (ver bloque rankObj)
         'profileStat-total-xp': totalXP.toLocaleString(),
         'profileStat-xp-to-next': nextRank
             ? xpToNext.toLocaleString() + ' XP'
@@ -175,10 +260,11 @@ function updateProfilePanelStats() {
         'profileStat-game-wins': wins,
         'profileStat-game-losses': losses,
         'profileStat-games-played': gamesPlayed,
-        'profileStat-total-time': formatTime(stats.totalTimePlayed),
+        'profileStat-days-played': getDaysPlayedCount(),
+        'profileStat-last-played': getLastPlayedText(),
         'profileStat-current-coins': coinsValue,
         'profileStat-current-gems': gemsValue,
-        'profileStat-unlocked-levels': getUnlockedLevelsCount(),
+        'profileStat-collection-score': getCollectionScore(),
         'profileStat-best-survival': getBestSurvivalValue()
     };
 
@@ -197,6 +283,10 @@ function updateProfilePanelStats() {
         }
         if (menuRankEl) {
             menuRankEl.style.color = rankObj.color;
+            // Ocultar rango si el jugador aún no tiene XP
+            const xpActual = window.rankSystem ? window.rankSystem.getXP() : 0;
+            menuRankEl.style.display = xpActual === 0 ? 'none' : '';
+            if (xpActual === 0) menuRankEl.textContent = '';
         }
         // Barra de progreso
         const progressBar = document.getElementById('rank-progress-bar-fill');
@@ -244,7 +334,78 @@ window.closeProfileMenu = function () {
     if (panel) panel.classList.remove("showing");
 };
 
-// Profile editing is not currently displayed in the profile panel.
+// =====================================================
+// PROFILE EDIT MODAL — cambiar nombre y avatar
+// =====================================================
+
+let pendingProfileAvatar = null;
+
+function renderProfileEditAvatarGrid() {
+    const grid = document.getElementById('profileEditAvatarGrid');
+    if (!grid) return;
+    grid.innerHTML = '';
+
+    PROFILE_AVATARS.forEach((url) => {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'profile-edit-avatar-option';
+        btn.style.backgroundImage = `url("${url}")`;
+        btn.setAttribute('aria-label', 'Elegir este avatar');
+        if (url === pendingProfileAvatar) btn.classList.add('selected');
+        btn.onclick = () => {
+            pendingProfileAvatar = url;
+            grid.querySelectorAll('.profile-edit-avatar-option').forEach(el => el.classList.remove('selected'));
+            btn.classList.add('selected');
+        };
+        grid.appendChild(btn);
+    });
+}
+
+window.openProfileEditModal = function () {
+    const modal = document.getElementById('profileEditModal');
+    const nameInput = document.getElementById('profileEditNameInput');
+    const errorEl = document.getElementById('profileEditError');
+
+    pendingProfileAvatar = localStorage.getItem('playerAvatar') || PROFILE_AVATARS[0];
+    if (nameInput) nameInput.value = localStorage.getItem('playerName') || '';
+    if (errorEl) errorEl.textContent = '';
+
+    renderProfileEditAvatarGrid();
+
+    if (modal) modal.classList.add('showing');
+    window.playSfx?.('menuSelect', 0.5);
+};
+
+window.closeProfileEditModal = function () {
+    const modal = document.getElementById('profileEditModal');
+    if (modal) modal.classList.remove('showing');
+};
+
+window.savePlayerProfileEdit = function () {
+    const nameInput = document.getElementById('profileEditNameInput');
+    const errorEl = document.getElementById('profileEditError');
+    const rawName = nameInput ? nameInput.value.trim() : '';
+
+    if (!rawName) {
+        if (errorEl) errorEl.textContent = 'Escribe un nombre antes de guardar.';
+        return;
+    }
+    if (rawName.length > 16) {
+        if (errorEl) errorEl.textContent = 'El nombre no puede tener más de 16 caracteres.';
+        return;
+    }
+
+    localStorage.setItem('playerName', rawName);
+    localStorage.setItem('playerAvatar', pendingProfileAvatar || PROFILE_AVATARS[0]);
+
+    // Mantener selectedProfileAvatar sincronizado para refreshProfilePreview()
+    selectedProfileAvatar = pendingProfileAvatar || PROFILE_AVATARS[0];
+
+    refreshProfilePreview();
+    updateProfilePanelStats();
+    window.closeProfileEditModal();
+    window.playSfx?.('menuSelect', 0.6);
+};
 
 // =====================================================
 // CONTROLS TOGGLE
@@ -396,6 +557,7 @@ function bindOptionSliders() {
 function toggleReducedMotion() {
     const next = localStorage.getItem('reducedMotion') !== 'true';
     localStorage.setItem('reducedMotion', next ? 'true' : 'false');
+    window._cachedReducedMotion = next;
     document.body.classList.toggle('reduced-motion', next);
     document.body.classList.toggle('performance-mode', next);
     updateMotionText();
@@ -769,6 +931,47 @@ function unlockTrophyAchievement(goal) {
     showAchievementNotification({ img: goal.icon, name: goal.name });
 }
 
+// ── Notificación de subida de rango ──
+// Se llama desde rank-system.js → _onRankUp
+// Cuando tengas las PNGs ponlas en: assets/UI/Rangos/rango_<id>.png
+window.showRankUpNotification = function (rankObj, imgPath) {
+    const notification = document.createElement('div');
+    notification.className = 'achievement-notification rank-up-notification';
+    notification.style.cssText = `
+        border-color: ${rankObj.color} !important;
+        box-shadow: 0 0 18px ${rankObj.color}66 !important;
+    `;
+
+    // Intentar cargar la imagen del rango; si no existe, mostrar el emoji
+    const imgEl = document.createElement('img');
+    imgEl.src = imgPath;
+    imgEl.className = 'achievement-icon';
+    imgEl.style.cssText = 'width:50px;height:50px;object-fit:contain;';
+    imgEl.onerror = () => {
+        // Fallback: emoji grande en lugar de imagen rota
+        const emojiEl = document.createElement('div');
+        emojiEl.style.cssText = `width:50px;height:50px;display:flex;align-items:center;justify-content:center;font-size:32px;flex-shrink:0;`;
+        emojiEl.textContent = rankObj.emoji;
+        imgEl.replaceWith(emojiEl);
+    };
+
+    const info = document.createElement('div');
+    info.className = 'achievement-info';
+    info.innerHTML = `
+        <strong style="color:${rankObj.color};letter-spacing:2px;">¡NUEVO RANGO!</strong>
+        <span style="color:#fff;font-size:13px;">${rankObj.emoji} ${rankObj.name}</span>
+    `;
+
+    notification.appendChild(imgEl);
+    notification.appendChild(info);
+    document.body.appendChild(notification);
+    notification.classList.add('showing');
+    setTimeout(() => {
+        notification.classList.remove('showing');
+        setTimeout(() => notification.remove(), 300);
+    }, 4000);
+};
+
 function showAchievementNotification(achievement) {
     const notification = document.createElement('div');
     notification.className = 'achievement-notification';
@@ -814,14 +1017,20 @@ function showAchievementsPanel() {
         `;
 
     panel.style.display = 'grid';
-    panel.classList.add('showing');
+    panel.classList.remove('entering', 'leaving');
+    void panel.offsetWidth;
+    panel.classList.add('entering');
 }
 
 function closeAchievementsPanel() {
     const panel = document.getElementById('achievementsPanel');
     if (panel) {
-        panel.classList.remove('showing');
-        setTimeout(() => panel.style.display = 'none', 300);
+        panel.classList.remove('entering');
+        panel.classList.add('leaving');
+        setTimeout(() => {
+            panel.style.display = 'none';
+            panel.classList.remove('leaving');
+        }, 350);
     }
 }
 

@@ -283,6 +283,27 @@
     align-items: flex-end;
 }
 
+/* ── MENÚ PRINCIPAL: Tamaño de los botones en pareja ──
+   Cada grid de 2 columnas (TIENDA+INVENTARIO, LOGROS+AYUDA) recibe
+   su proporción "fr fr" desde config.js. Usar fr en vez de % evita
+   que un botón se desborde o se descuadre del otro: el grid siempre
+   reparte el 100% del espacio disponible entre ambas columnas. */
+#grid-shop-inventory {
+    grid-template-columns: var(--grid-shop-inventory-cols, 1fr 1fr) !important;
+}
+
+#grid-achievements-help {
+    grid-template-columns: var(--grid-achievements-help-cols, 1fr 1fr) !important;
+}
+
+body.is-touch-device #grid-shop-inventory {
+    grid-template-columns: var(--grid-shop-inventory-cols-mobile, 1fr 1fr) !important;
+}
+
+body.is-touch-device #grid-achievements-help {
+    grid-template-columns: var(--grid-achievements-help-cols-mobile, 1fr 1fr) !important;
+}
+
 /* ── Fila individual (Rubíes o Monedas) ── */
 .menu-profile-currency-container .shop-currency-item {
     display: inline-flex;
@@ -294,9 +315,155 @@
     color: rgba(255, 255, 255, 0.8);
 }
 
+/* ============================================================
+   PERFIL DEL JUGADOR (MODAL) — controlado desde config.js → perfilModal
+   La ventana grande de "ESTADÍSTICAS DEL JUGADOR" (NO el banner
+   chiquito de arriba a la derecha, ese usa --menu-profile-*).
+   ============================================================ */
+
+.profile-card {
+    width: var(--pp-card-width, min(760px, calc(100vw - 32px))) !important;
+    max-height: var(--pp-card-maxheight, calc(100dvh - 28px)) !important;
+}
+
+.profile-hero {
+    padding: var(--pp-hero-padding, 32px 28px 24px) !important;
+    gap: var(--pp-hero-gap, 22px) !important;
+}
+
+.profile-preview {
+    width: var(--pp-avatar-size, 110px) !important;
+    height: var(--pp-avatar-size, 110px) !important;
+}
+
+.profile-hero-name {
+    font-size: var(--pp-name-font, 28px) !important;
+}
+
+.profile-hero-rank {
+    font-size: var(--pp-rank-font, 15px) !important;
+}
+
+.profile-section-title {
+    font-size: var(--pp-section-title-font, 11px) !important;
+}
+
+.profile-stat-row {
+    font-size: var(--pp-statrow-font, 12px) !important;
+}
+
+.profile-stat-row .value {
+    font-size: var(--pp-statrow-value-font, 22px) !important;
+}
+
+.profile-stats-grid {
+    grid-template-columns: repeat(var(--pp-statsgrid-cols, 2), minmax(0, 1fr)) !important;
+    gap: var(--pp-statsgrid-gap, 10px) !important;
+}
+
+.profile-stat-card {
+    padding: var(--pp-statcard-padding, 16px 18px) !important;
+}
+
+.profile-stat-card .stat-title {
+    font-size: var(--pp-statcard-title-font, 11px) !important;
+}
+
+.profile-stat-card .stat-value {
+    font-size: var(--pp-statcard-value-font, 22px) !important;
+}
+
+/* ── Variante MÓVIL: el body recibe la clase is-touch-device en
+   celulares/tablets. Estos valores leen el set "mobile" de config.js. ── */
+body.is-touch-device .profile-card {
+    width: var(--pp-card-width-mobile, min(760px, calc(100vw - 32px))) !important;
+    max-height: var(--pp-card-maxheight-mobile, calc(100dvh - 28px)) !important;
+}
+
+body.is-touch-device .profile-hero {
+    padding: var(--pp-hero-padding-mobile, 32px 28px 24px) !important;
+    gap: var(--pp-hero-gap-mobile, 22px) !important;
+}
+
+body.is-touch-device .profile-preview {
+    width: var(--pp-avatar-size-mobile, 110px) !important;
+    height: var(--pp-avatar-size-mobile, 110px) !important;
+}
+
+body.is-touch-device .profile-hero-name {
+    font-size: var(--pp-name-font-mobile, 28px) !important;
+}
+
+body.is-touch-device .profile-hero-rank {
+    font-size: var(--pp-rank-font-mobile, 15px) !important;
+}
+
+body.is-touch-device .profile-section-title {
+    font-size: var(--pp-section-title-font-mobile, 11px) !important;
+}
+
+body.is-touch-device .profile-stat-row {
+    font-size: var(--pp-statrow-font-mobile, 12px) !important;
+}
+
+body.is-touch-device .profile-stat-row .value {
+    font-size: var(--pp-statrow-value-font-mobile, 22px) !important;
+}
+
+body.is-touch-device .profile-stats-grid {
+    grid-template-columns: repeat(var(--pp-statsgrid-cols-mobile, 2), minmax(0, 1fr)) !important;
+    gap: var(--pp-statsgrid-gap-mobile, 10px) !important;
+}
+
+body.is-touch-device .profile-stat-card {
+    padding: var(--pp-statcard-padding-mobile, 16px 18px) !important;
+}
+
+body.is-touch-device .profile-stat-card .stat-title {
+    font-size: var(--pp-statcard-title-font-mobile, 11px) !important;
+}
+
+body.is-touch-device .profile-stat-card .stat-value {
+    font-size: var(--pp-statcard-value-font-mobile, 22px) !important;
+}
+
 /* ── PNG de moneda/gema en el menú ── */
 .menu-currency-icon {
     width: var(--menu-currency-icon-size, 14px) !important;
     height: var(--menu-currency-icon-size, 14px) !important;
     object-fit: contain !important;
+}
+/* ============================================================
+   CAMINO DE RANGOS — controlado desde config.js → RANK_MAP_CONFIG
+   NO edites los valores aquí — edita config.js en su lugar.
+   ============================================================ */
+
+/* ── Nodo normal ── */
+.rsm-node .rsm-circle {
+    width:  var(--rsm-node-size, 42px) !important;
+    height: var(--rsm-node-size, 42px) !important;
+    font-size: var(--rsm-node-font, 15px) !important;
+}
+
+/* ── Nodo actual (el del jugador) ── */
+.rsm-current .rsm-circle {
+    width:  var(--rsm-node-size-current, 54px) !important;
+    height: var(--rsm-node-size-current, 54px) !important;
+    font-size: var(--rsm-node-font-current, 20px) !important;
+}
+
+/* ── Avatar del jugador ── */
+#rsm-player-avatar {
+    width:  var(--rsm-avatar-size, 46px) !important;
+    height: var(--rsm-avatar-size, 46px) !important;
+}
+
+/* ── Etiqueta nombre del rango ── */
+.rsm-node .rsm-label div:first-child {
+    font-size: var(--rsm-label-font, 10px) !important;
+}
+
+/* ── XP bajo el nombre ── */
+.rsm-node .rsm-label div:last-child {
+    font-size: var(--rsm-xp-font, 9px) !important;
 }

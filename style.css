@@ -194,9 +194,6 @@ body.is-touch-device.is-playing-touch #touch-controls {
     flex-direction: column;
     justify-content: center;
     z-index: 2;
-    /* Perspectiva + inclinación 3D para los botones */
-    transform: perspective(800px) rotateY(-9deg);
-    transform-origin: right center;
 }
 
 /* Espaciado interno del panel de botones (gap entre filas + padding) */
@@ -1390,6 +1387,14 @@ body.is-touch-device .active-emote-bubble {
     flex-direction: column;
 }
 
+/* FIX SCROLL: sin esto, cuando el contenido no cabe en max-height,
+   flexbox "aplasta" cada hijo en vez de dejar que el panel scrollee.
+   Con flex-shrink:0 cada sección conserva su tamaño real y el que
+   se mueve es el scroll de .profile-card, no el contenido. */
+.profile-card>* {
+    flex-shrink: 0;
+}
+
 /* Hero section — avatar grande arriba a la derecha, nombre/rango a la izquierda */
 .profile-hero {
     display: flex;
@@ -1536,6 +1541,220 @@ body.is-touch-device .active-emote-bubble {
     align-items: center;
     justify-content: center;
     backdrop-filter: blur(4px);
+}
+
+/* =====================================================
+   EDITAR PERFIL — botón de lápiz + modal de edición
+===================================================== */
+
+/* Wrapper del avatar grande para poder posicionar el lápiz encima */
+.profile-preview-wrap {
+    position: relative;
+    flex-shrink: 0;
+}
+
+/* Botón de lápiz flotante sobre el avatar grande */
+.profile-preview-edit-btn {
+    position: absolute;
+    right: -4px;
+    bottom: -4px;
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    border: 2px solid rgba(5, 6, 10, 0.9);
+    background: var(--color-cian, #00ffe7);
+    color: #05060a;
+    font-size: 14px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 0 14px rgba(0, 255, 231, 0.45);
+    transition: transform 0.15s ease, filter 0.15s ease;
+}
+
+.profile-preview-edit-btn:hover {
+    transform: scale(1.08);
+    filter: brightness(1.1);
+}
+
+.profile-preview-edit-btn:active {
+    transform: scale(0.94);
+}
+
+/* Botón de texto "Editar perfil" debajo del nombre/rango */
+.profile-edit-btn {
+    align-self: flex-start;
+    margin-top: 4px;
+    padding: 7px 14px;
+    border-radius: 8px;
+    border: 1px solid rgba(0, 255, 231, 0.3);
+    background: rgba(0, 255, 231, 0.08);
+    color: var(--color-cian, #00ffe7);
+    font-family: var(--font-secundaria);
+    font-size: 11px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: background 0.15s ease, transform 0.15s ease;
+}
+
+.profile-edit-btn:hover {
+    background: rgba(0, 255, 231, 0.16);
+}
+
+.profile-edit-btn:active {
+    transform: scale(0.96);
+}
+
+/* ── Modal de edición ── */
+#profileEditModal {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 36500;
+    place-items: center;
+    padding: 20px;
+}
+
+#profileEditModal.showing {
+    display: grid;
+}
+
+.profile-edit-card {
+    position: relative;
+    width: min(420px, calc(100vw - 32px));
+    max-height: min(86vh, 640px);
+    overflow-y: auto;
+    padding: 28px 26px 26px;
+    border-radius: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    background: linear-gradient(180deg, rgba(18, 20, 28, 0.98), rgba(5, 6, 10, 0.95));
+    box-shadow: 0 36px 120px rgba(0, 0, 0, 0.75), inset 0 0 80px rgba(0, 255, 231, 0.06);
+    backdrop-filter: blur(14px) saturate(1.1);
+    -webkit-backdrop-filter: blur(14px) saturate(1.1);
+    color: #fff;
+    font-family: var(--font-secundaria);
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.profile-edit-title {
+    font-size: 18px;
+    font-weight: 900;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+    color: #fff;
+}
+
+.profile-edit-label {
+    font-size: 11px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.55);
+    margin-top: 10px;
+}
+
+.profile-edit-name-input {
+    width: 100%;
+    padding: 11px 14px;
+    border-radius: 10px;
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    background: rgba(255, 255, 255, 0.04);
+    color: #fff;
+    font-family: var(--font-secundaria);
+    font-size: 15px;
+    letter-spacing: 1px;
+    outline: none;
+    transition: border-color 0.15s ease, background 0.15s ease;
+}
+
+.profile-edit-name-input:focus {
+    border-color: var(--color-cian, #00ffe7);
+    background: rgba(0, 255, 231, 0.06);
+}
+
+.profile-edit-avatar-grid {
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 10px;
+    margin-top: 4px;
+}
+
+.profile-edit-avatar-option {
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    border-radius: 50%;
+    border: 3px solid rgba(255, 255, 255, 0.12);
+    background-size: cover;
+    background-position: center;
+    background-color: rgba(255, 255, 255, 0.04);
+    cursor: pointer;
+    transition: border-color 0.15s ease, transform 0.15s ease;
+    padding: 0;
+}
+
+.profile-edit-avatar-option:hover {
+    transform: scale(1.06);
+}
+
+.profile-edit-avatar-option.selected {
+    border-color: var(--color-cian, #00ffe7);
+    box-shadow: 0 0 14px rgba(0, 255, 231, 0.45);
+}
+
+.profile-edit-error {
+    min-height: 16px;
+    font-size: 12px;
+    color: var(--color-rojo-error, #ff4466);
+    letter-spacing: 0.5px;
+}
+
+.profile-edit-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 6px;
+}
+
+.profile-edit-cancel,
+.profile-edit-save {
+    padding: 10px 18px;
+    border-radius: 10px;
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    font-family: var(--font-secundaria);
+    font-size: 13px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: filter 0.15s ease, transform 0.15s ease;
+}
+
+.profile-edit-cancel {
+    background: rgba(255, 255, 255, 0.05);
+    color: rgba(255, 255, 255, 0.75);
+}
+
+.profile-edit-cancel:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.profile-edit-save {
+    background: var(--color-cian, #00ffe7);
+    border-color: transparent;
+    color: #05060a;
+    font-weight: 700;
+}
+
+.profile-edit-save:hover {
+    filter: brightness(1.1);
+}
+
+.profile-edit-cancel:active,
+.profile-edit-save:active {
+    transform: scale(0.96);
 }
 
 .settings-float-btn {
@@ -1846,14 +2065,14 @@ body.is-touch-device .active-emote-bubble {
 }
 
 .shop-modal-media {
-    width: 132px;
-    height: 112px;
+    width: 140px;
+    height: 140px;
     border-radius: 8px;
-    border: 1px dashed rgba(255, 215, 0, 0.32);
-    background: rgba(255, 255, 255, 0.05);
+    border: none;
+    background: transparent;
     display: grid;
     place-items: center;
-    overflow: hidden;
+    overflow: visible;
 }
 
 .shop-modal-card.shop-modal-card-wide {
@@ -7648,17 +7867,7 @@ h1 {
     pointer-events: none;
 }
 
-/* ── Clip-path en el BOTÓN (no en el wrapper) ── */
-#play-btn {
-    clip-path: polygon(0 0, calc(100% - 20px) 0, 100% 20px, 100% 100%, 20px 100%, 0 calc(100% - 20px));
-}
-
-#shop-btn,
-#inventory-btn,
-#achievements-btn,
-#help-btn {
-    clip-path: polygon(0 0, calc(100% - 14px) 0, 100% 14px, 100% 100%, 14px 100%, 0 calc(100% - 14px));
-}
+/* clip-path removido — los PNGs ya tienen su forma con fondo transparente */
 
 /* ── Delays escalonados en el WRAPPER ── */
 #wrap-play {
@@ -7702,23 +7911,19 @@ h1 {
 ── */
 #wrap-play:hover {
     transform: scale(1.03);
-    filter: brightness(1.12) drop-shadow(7px 0px 5px rgba(255, 50, 80, 0.85)) drop-shadow(5px 0px 13px rgba(255, 50, 80, 0.6)) drop-shadow(15px 0px 24px rgba(255, 50, 80, 0.3)) drop-shadow(-2px 0px 6px rgba(255, 50, 80, 0.2)) drop-shadow(0px 3px 8px rgba(255, 50, 80, 0.22)) drop-shadow(0px -2px 6px rgba(255, 50, 80, 0.18));
 }
 
 #wrap-shop:hover,
 #wrap-achievements:hover {
     transform: scale(1.03);
-    filter: brightness(1.12) drop-shadow(7px 0px 5px rgba(255, 200, 0, 0.85)) drop-shadow(5px 0px 13px rgba(255, 200, 0, 0.6)) drop-shadow(15px 0px 24px rgba(255, 200, 0, 0.3)) drop-shadow(-2px 0px 6px rgba(255, 200, 0, 0.2)) drop-shadow(0px 3px 8px rgba(255, 200, 0, 0.22)) drop-shadow(0px -2px 6px rgba(255, 200, 0, 0.18));
 }
 
 #wrap-inventory:hover {
     transform: scale(1.03);
-    filter: brightness(1.12) drop-shadow(7px 0px 5px rgba(0, 220, 210, 0.85)) drop-shadow(5px 0px 13px rgba(0, 220, 210, 0.6)) drop-shadow(15px 0px 24px rgba(0, 220, 210, 0.3)) drop-shadow(-2px 0px 6px rgba(0, 220, 210, 0.2)) drop-shadow(0px 3px 8px rgba(0, 220, 210, 0.22)) drop-shadow(0px -2px 6px rgba(0, 220, 210, 0.18));
 }
 
 #wrap-help:hover {
     transform: scale(1.03);
-    filter: brightness(1.12) drop-shadow(7px 0px 4px rgba(220, 220, 220, 0.75)) drop-shadow(5px 0px 12px rgba(200, 200, 200, 0.5)) drop-shadow(14px 0px 22px rgba(200, 200, 200, 0.25)) drop-shadow(-2px 0px 5px rgba(200, 200, 200, 0.18)) drop-shadow(0px 3px 7px rgba(200, 200, 200, 0.2)) drop-shadow(0px -2px 5px rgba(200, 200, 200, 0.15));
 }
 
 /* ── Click ── */
@@ -7954,25 +8159,41 @@ h1 {
     letter-spacing: 2px;
 }
 
-/* Banner rango actual */
-.rs-current-banner {
+/* Banner rango actual — ahora compacto dentro del header */
+.rs-compact-profile {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    padding: 6px 12px;
+    flex-shrink: 0;
+}
+
+/* Barra XP delgada bajo el header */
+.rs-xp-bar-row {
     position: relative;
     z-index: 2;
     display: flex;
     align-items: center;
-    gap: 18px;
-    margin: 16px 24px;
-    padding: 28px 32px;
-    min-height: 120px;
-    /* Mantener ratio 5:1 como la imagen (1200x240) */
-    aspect-ratio: 5 / 1;
-    border-radius: 14px;
-    border: 1px solid rgba(180, 30, 30, 0.4);
-    background: linear-gradient(135deg, rgba(120, 0, 0, 0.4) 0%, rgba(0, 0, 0, 0.7) 100%);
-    backdrop-filter: blur(4px);
+    gap: 12px;
+    padding: 6px 28px 8px;
     flex-shrink: 0;
-    box-shadow: 0 0 40px rgba(180, 0, 0, 0.2), 0 4px 24px rgba(0, 0, 0, 0.5);
-    overflow: hidden;
+    background: rgba(0, 0, 0, 0.25);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.rs-xp-bar-row .rs-current-bar {
+    flex: 1;
+    height: 5px;
+    margin-bottom: 0;
+}
+
+.rs-xp-bar-row .rs-current-xp-info {
+    font-size: 10px;
+    white-space: nowrap;
+    flex-shrink: 0;
 }
 
 .rs-current-avatar {
@@ -8068,39 +8289,31 @@ h1 {
 /* Mapa scrolleable */
 .rs-map-scroll {
     flex: 1;
-    overflow-y: auto;
-    overflow-x: hidden;
+    overflow-x: auto;
+    overflow-y: hidden;
     position: relative;
     z-index: 2;
     scrollbar-width: thin;
-    scrollbar-color: rgba(0, 255, 231, 0.2) transparent;
+    scrollbar-color: rgba(0,255,231,0.25) transparent;
+    cursor: grab;
 }
 
+.rs-map-scroll:active { cursor: grabbing; }
+
+.rs-map-scroll::-webkit-scrollbar { height: 4px; }
+.rs-map-scroll::-webkit-scrollbar-track { background: transparent; }
+.rs-map-scroll::-webkit-scrollbar-thumb { background: rgba(0,255,231,0.25); border-radius: 4px; }
+
+/* El mapa es más ancho que la pantalla — genera el scroll horizontal */
 .rs-map-inner {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 32px 20px 60px;
-    gap: 0;
-    min-height: 100%;
     position: relative;
+    width: var(--rs-map-width, 2200px);
+    height: 100%;
+    overflow: visible;
+    flex-shrink: 0;
 }
 
-/* Línea central del camino */
-.rs-map-inner::before {
-    content: '';
-    position: absolute;
-    left: 50%;
-    top: 20px;
-    bottom: 60px;
-    width: 3px;
-    background: linear-gradient(180deg,
-            rgba(0, 255, 231, 0.15) 0%,
-            rgba(0, 255, 231, 0.08) 50%,
-            rgba(0, 255, 231, 0.03) 100%);
-    transform: translateX(-50%);
-    z-index: 0;
-}
+.rs-map-inner::before { display: none; }
 
 /* Nodo individual */
 .rs-node {
@@ -9057,4 +9270,91 @@ article.vip-mini-item.trophy-skin .skin-name {
 [class*="ruby-pass"] img {
     object-fit: cover !important;
     object-position: center !important;
+}
+
+/*
+============================================================
+PARCHE DE PERFORMANCE — style.css
+El lag del MENÚ viene principalmente de aquí:
+  - 30 backdrop-filter: blur() activos simultáneamente
+  - 15+ animaciones CSS corriendo infinito todo el tiempo
+  - En PC afecta igual porque el canvas loop corre siempre,
+    y el browser compone el menú encima con blur = GPU stress
+
+AÑADE ESTE BLOQUE al FINAL de style.css
+============================================================
+*/
+
+/* ── FIX GLOBAL: Reducir coste de backdrop-filter ───────── */
+/* El overlay principal del menú tiene blur(6px) siempre activo.
+   En pantallas grandes esto es caro. Lo reducimos: */
+#overlay {
+    backdrop-filter: blur(2px) !important;
+    -webkit-backdrop-filter: blur(2px) !important;
+}
+
+/* ── FIX: Desactivar animaciones infinitas del menú en PC ── */
+/* Estos elementos tienen animaciones corriendo TODO el tiempo
+   incluso cuando el jugador no los está viendo.
+   Con will-change les decimos al browser que los promueva
+   a su propia capa GPU (compositor thread) para que no
+   bloqueen el hilo principal. */
+.ring,
+.ring1,
+.ring2,
+.ls-play-glow,
+.ls-system-bar {
+    will-change: transform;
+}
+
+/* ── FIX: Canvas del juego en capa propia ─────────────────  */
+/* Esto evita que el browser recomponga el canvas junto con
+   los elementos del menú en cada frame */
+#gameCanvas {
+    will-change: contents;
+}
+
+/* ── FIX FUERTE: Modo reducción de movimiento del sistema ── */
+/* Si el usuario tiene activado "Reducir movimiento" en su OS
+   (Windows: Configuración > Accesibilidad > Efectos visuales)
+   apagamos TODAS las animaciones infinitas automáticamente */
+@media (prefers-reduced-motion: reduce) {
+
+    .ring,
+    .ring1,
+    .ring2,
+    .ls-play-glow,
+    .ls-system-bar,
+    [class*="vipCapsule"],
+    [class*="vipGloss"],
+    [class*="vipSlow"],
+    .ruby-pass-arc {
+        animation: none !important;
+    }
+
+    backdrop-filter,
+    -webkit-backdrop-filter {
+        filter: none !important;
+    }
+}
+
+/* ── FIX EXTRA: En modo performance (reducedMotion del juego) */
+/* Cuando el jugador activa "Rendimiento alto" en opciones,
+   la clase .performance-mode se añade a body.
+   Aprovechamos para matar las animaciones pesadas del menú */
+body.performance-mode .ring,
+body.performance-mode .ring1,
+body.performance-mode .ring2,
+body.performance-mode .ls-play-glow,
+body.performance-mode .ls-system-bar {
+    animation: none !important;
+}
+
+body.performance-mode #overlay,
+body.performance-mode #levelSelect,
+body.performance-mode #shopPanel,
+body.performance-mode #profilePanel,
+body.performance-mode #pausePanel {
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
 }

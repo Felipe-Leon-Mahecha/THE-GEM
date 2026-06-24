@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generador de Imágenes de Trails</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #1a1a2e;
+            color: #fff;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        canvas {
+            border: 2px solid #333;
+            margin: 10px;
+            background: #0f0f1a;
+        }
+        button {
+            background: #4a9eff;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 18px;
+            cursor: pointer;
+            border-radius: 8px;
+            margin: 10px;
+        }
+        button:hover {
+            background: #3a8eef;
+        }
+        #status {
+            margin: 20px 0;
+            padding: 15px;
+            background: #2a2a3e;
+            border-radius: 8px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Generador de Imágenes de Trails</h1>
+        <button onclick="generateAllImages()">Generar Todas las Imágenes</button>
+        <div id="status">Haz clic en el botón para generar las imágenes</div>
+        <div id="canvases"></div>
+    </div>
+
+    <script>
+        const TRAILS_DATA = [
+            { id: 'none', name: 'Ninguna', rarity: 'BASICA', rarityColor: '#888888' },
+            { id: 'basic', name: 'Basica', rarity: 'BASICA', rarityColor: '#57b7dd' },
+            { id: 'ghost', name: 'Ghost', rarity: 'EPICA', rarityColor: '#cc44ff' },
+            { id: 'fractura', name: 'Fractura', rarity: 'EPICA', rarityColor: '#cc44ff' },
+            { id: 'hielo', name: 'Hielo', rarity: 'ESPECIAL', rarityColor: '#7fd8ff' },
+            { id: 'toxico', name: 'Toxico', rarity: 'ESPECIAL', rarityColor: '#8dff5a' },
+            { id: 'trail_vampiro', name: 'Vampiro', rarity: 'VIP', rarityColor: '#ff4d6d' },
+            { id: 'trail_zombie', name: 'Zombie', rarity: 'VIP', rarityColor: '#78ff8f' },
+            { id: 'trail_fire', name: 'Elemento Fuego', rarity: 'VIP', rarityColor: '#ff8a00' },
+            { id: 'trail_water', name: 'Elemento Agua', rarity: 'VIP', rarityColor: '#4488ff' },
+            { id: 'trail_wind', name: 'Elemento Viento', rarity: 'VIP', rarityColor: '#00ffe7' },
+            { id: 'trail_ice', name: 'Elemento Hielo', rarity: 'VIP', rarityColor: '#7fd8ff' },
+            { id: 'trail_lava', name: 'Elemento Lava', rarity: 'VIP', rarityColor: '#ff4444' },
+            { id: 'trail_nature', name: 'Elemento Naturaleza', rarity: 'VIP', rarityColor: '#44ff88' },
+            { id: 'trail_custom_text', name: 'Texto Personalizado', rarity: 'VIP', rarityColor: '#ffda3a' },
+        ];
+
+        const TRAIL_COLORS = {
+            cyan:   '0,255,231',
+            red:    '255,68,68',
+            blue:   '68,136,255',
+            yellow: '255,238,0',
+            orange: '255,136,0',
+            green:  '68,255,136',
+            purple: '204,68,255',
+        };
+
+        function getTrailColor(trailId) {
+            switch(trailId) {
+                case 'basic': return TRAIL_COLORS.cyan;
+                case 'ghost': return TRAIL_COLORS.purple;
+                case 'fractura': return TRAIL_COLORS.red;
+                case 'hielo': return TRAIL_COLORS.blue;
+                case 'toxico': return TRAIL_COLORS.green;
+                case 'trail_vampiro': return '255,0,0';
+                case 'trail_zombie': return '120,255,143';
+                case 'trail_fire': return '255,138,0';
+                case 'trail_water': return '68,136,255';
+                case 'trail_wind': return '0,255,231';
+                case 'trail_ice': return '127,216,255';
+                case 'trail_lava': return '255,68,68';
+                case 'trail_nature': return '68,255,136';
+                case 'trail_custom_text': return '255,218,58';
+                default: return TRAIL_COLORS.cyan;
+            }
+        }
+
+        function drawTrailEffect(ctx, trailId, width, height) {
+            const centerX = width / 2;
+            const centerY = height / 2;
+            const color = getTrailColor(trailId);
+            
+            // Fondo oscuro
+            ctx.fillStyle = '#0f0f1a';
+            ctx.fillRect(0, 0, width, height);
+
+            if (trailId === 'none') {
+                ctx.fillStyle = '#333';
+                ctx.font = 'bold 24px Arial';
+                ctx.textAlign = 'center';
+                ctx.fillText('Sin Trail', centerX, centerY);
+                return;
+            }
+
+            // Generar puntos del trail simulando movimiento circular
+            const trailPoints = [];
+            const numPoints = 40;
+            const radius = 80;
+            
+            for (let i = 0; i < numPoints; i++) {
+                const angle = (i / numPoints) * Math.PI * 2;
+                const x = centerX + Math.cos(angle) * radius;
+                const y = centerY + Math.sin(angle) * radius;
+                const life = (i + 1) / numPoints;
+                trailPoints.push({ x, y, life, seed: Math.random() });
+            }
+
+            // Dibujar según el tipo de trail
+            if (trailId === 'basic') {
+                // Trail básico - línea sólida
+                ctx.lineCap = 'round';
+                for (let i = 1; i < trailPoints.length; i++) {
+                    const t = trailPoints[i];
+                    const prev = trailPoints[i - 1];
+                    ctx.beginPath();
+                    ctx.moveTo(prev.x, prev.y);
+                    ctx.lineTo(t.x, t.y);
+                    ctx.strokeStyle = `rgba(${color}, ${t.life * 0.9})`;
+                    ctx.lineWidth = Math.max(2, 6 * t.life);
+                    ctx.shadowBlur = 10 * t.life;
+                    ctx.shadowColor = `rgba(${color}, 1)`;
+                    ctx.stroke();
+                }
+            } else if (trailId === 'ghost') {
+                // Ghost - trail difuminado
+                ctx.globalCompositeOperation = 'lighter';
+                for (let i = 0; i < trailPoints.length; i++) {
+                    const t = trailPoints[i];
+                    ctx.beginPath();
+                    ctx.arc(t.x, t.y, 15 * t.life, 0, Math.PI * 2);
+                    ctx.fillStyle = `rgba(${color}, ${t.life * 0.3})`;
+                    ctx.shadowBlur = 20 * t.life;
+                    ctx.shadowColor = `rgba(${color}, 1)`;
+                    ctx.fill();
+                }
+                ctx.globalCompositeOperation = 'source-over';
+            } else if (trailId === 'fractura') {
+                // Fractura - trail con fragmentos
+                ctx.lineCap = 'round';
+                for (let i = 1; i < trailPoints.length; i++) {
+                    const t = trailPoints[i];
+                    const prev = trailPoints[i - 1];
+                    ctx.beginPath();
+                    ctx.moveTo(prev.x, prev.y);
+                    ctx.lineTo(t.x, t.y);
+                    ctx.strokeStyle = `rgba(${color}, ${t.life * 0.8})`;
+                    ctx.lineWidth = Math.max(2, 5 * t.life);
+                    ctx.shadowBlur = 15 * t.life;
+                    ctx.shadowColor = `rgba(${color}, 1)`;
+                    ctx.stroke();
+                    
+                    // Fragmentos
+                    if (i % 3 === 0) {
+                        for (let j = 0; j < 3; j++) {
+                            const angle = Math.random() * Math.PI * 2;
+                            const dist = 10 + Math.random() * 20;
+                            ctx.beginPath();
+                            ctx.arc(t.x + Math.cos(angle) * dist, t.y + Math.sin(angle) * dist, 3 * t.life, 0, Math.PI * 2);
+                            ctx.fillStyle = `rgba(${color}, ${t.life * 0.6})`;
+                            ctx.fill();
+                        }
+                    }
+                }
+            } else if (trailId === 'hielo') {
+                // Hielo - trail cristalino
+                ctx.globalCompositeOperation = 'lighter';
+                for (let i = 0; i < trailPoints.length; i++) {
+                    const t = trailPoints[i];
+                    ctx.beginPath();
+                    ctx.arc(t.x, t.y, 12 * t.life, 0, Math.PI * 2);
+                    ctx.fillStyle = `rgba(${color}, ${t.life * 0.4})`;
+                    ctx.shadowBlur = 25 * t.life;
+                    ctx.shadowColor = `rgba(${color}, 1)`;
+                    ctx.fill();
+                    
+                    // Copos de nieve
+                    if (i % 4 === 0) {
+                        ctx.beginPath();
+                        ctx.arc(t.x, t.y, 8 * t.life, 0, Math.PI * 2);
+                        ctx.strokeStyle = `rgba(255, 255, 255, ${t.life * 0.8})`;
+                        ctx.lineWidth = 2;
+                        ctx.stroke();
+                    }
+                }
+                ctx.globalCompositeOperation = 'source-over';
+            } else if (trailId === 'toxico') {
+                // Tóxico - trail con burbujas
+                ctx.globalCompositeOperation = 'lighter';
+                for (let i = 0; i < trailPoints.length; i++) {
+                    const t = trailPoints[i];
+                    ctx.beginPath();
+                    ctx.arc(t.x, t.y, 18 * t.life, 0, Math.PI * 2);
+                    ctx.fillStyle = `rgba(${color}, ${t.life * 0.25})`;
+                    ctx.shadowBlur = 20 * t.life;
+                    ctx.shadowColor = `rgba(${color}, 1)`;
+                    ctx.fill();
+                    
+                    // Burbujas
+                    if (t.seed > 0.5) {
+                        ctx.beginPath();
+                        ctx.arc(t.x + (Math.random() - 0.5) * 30, t.y + (Math.random() - 0.5) * 30, 5 * t.life, 0, Math.PI * 2);
+                        ctx.strokeStyle = `rgba(${color}, ${t.life * 0.7})`;
+                        ctx.lineWidth = 1;
+                        ctx.stroke();
+                    }
+                }
+                ctx.globalCompositeOperation = 'source-over';
+            } else {
+                // Trails VIP - efectos especiales
+                ctx.globalCompositeOperation = 'lighter';
+                
+                if (trailId === 'trail_fire') {
+                    // Fuego
+                    for (let i = 0; i < trailPoints.length; i++) {
+                        const t = trailPoints[i];
+                        const gradient = ctx.createRadialGradient(t.x, t.y, 0, t.x, t.y, 25 * t.life);
+                        gradient.addColorStop(0, `rgba(255, 255, 200, ${t.life * 0.8})`);
+                        gradient.addColorStop(0.3, `rgba(255, 200, 0, ${t.life * 0.6})`);
+                        gradient.addColorStop(1, `rgba(255, 68, 0, 0)`);
+                        ctx.beginPath();
+                        ctx.arc(t.x, t.y, 25 * t.life, 0, Math.PI * 2);
+                        ctx.fillStyle = gradient;
+                        ctx.fill();
+                    }
+                } else if (trailId === 'trail_water') {
+                    // Agua
+                    for (let i = 0; i < trailPoints.length; i++) {
+                        const t = trailPoints[i];
+                        ctx.beginPath();
+                        ctx.arc(t.x, t.y, 20 * t.life, 0, Math.PI * 2);
+                        ctx.fillStyle = `rgba(${color}, ${t.life * 0.3})`;
+                        ctx.shadowBlur = 30 * t.life;
+                        ctx.shadowColor = `rgba(${color}, 1)`;
+                        ctx.fill();
+                        
+                        // Ondas
+                        if (i % 3 === 0) {
+                            ctx.beginPath();
+                            ctx.arc(t.x, t.y, 25 * t.life, 0, Math.PI * 2);
+                            ctx.strokeStyle = `rgba(255, 255, 255, ${t.life * 0.4})`;
+                            ctx.lineWidth = 2;
+                            ctx.stroke();
+                        }
+                    }
+                } else if (trailId === 'trail_wind') {
+                    // Viento
+                    for (let i = 0; i < trailPoints.length; i++) {
+                        const t = trailPoints[i];
+                        ctx.beginPath();
+                        ctx.arc(t.x, t.y, 15 * t.life, 0, Math.PI * 2);
+                        ctx.fillStyle = `rgba(${color}, ${t.life * 0.2})`;
+                        ctx.shadowBlur = 20 * t.life;
+                        ctx.shadowColor = `rgba(${color}, 1)`;
+                        ctx.fill();
+                        
+                        // Líneas de viento
+                        ctx.beginPath();
+                        ctx.moveTo(t.x - 20 * t.life, t.y);
+                        ctx.lineTo(t.x + 20 * t.life, t.y);
+                        ctx.strokeStyle = `rgba(255, 255, 255, ${t.life * 0.5})`;
+                        ctx.lineWidth = 2;
+                        ctx.stroke();
+                    }
+                } else if (trailId === 'trail_ice') {
+                    // Hielo VIP
+                    for (let i = 0; i < trailPoints.length; i++) {
+                        const t = trailPoints[i];
+                        ctx.beginPath();
+                        ctx.arc(t.x, t.y, 18 * t.life, 0, Math.PI * 2);
+                        ctx.fillStyle = `rgba(${color}, ${t.life * 0.4})`;
+                        ctx.shadowBlur = 30 * t.life;
+                        ctx.shadowColor = `rgba(200, 240, 255, 1)`;
+                        ctx.fill();
+                    }
+                } else if (trailId === 'trail_lava') {
+                    // Lava
+                    for (let i = 0; i < trailPoints.length; i++) {
+                        const t = trailPoints[i];
+                        const gradient = ctx.createRadialGradient(t.x, t.y, 0, t.x, t.y, 30 * t.life);
+                        gradient.addColorStop(0, `rgba(255, 255, 100, ${t.life * 0.8})`);
+                        gradient.addColorStop(0.5, `rgba(255, 100, 0, ${t.life * 0.5})`);
+                        gradient.addColorStop(1, `rgba(100, 0, 0, 0)`);
+                        ctx.beginPath();
+                        ctx.arc(t.x, t.y, 30 * t.life, 0, Math.PI * 2);
+                        ctx.fillStyle = gradient;
+                        ctx.fill();
+                    }
+                } else if (trailId === 'trail_nature') {
+                    // Naturaleza
+                    for (let i = 0; i < trailPoints.length; i++) {
+                        const t = trailPoints[i];
+                        ctx.beginPath();
+                        ctx.arc(t.x, t.y, 20 * t.life, 0, Math.PI * 2);
+                        ctx.fillStyle = `rgba(${color}, ${t.life * 0.3})`;
+                        ctx.shadowBlur = 25 * t.life;
+                        ctx.shadowColor = `rgba(${color}, 1)`;
+                        ctx.fill();
+                        
+                        // Hojas
+                        if (i % 4 === 0) {
+                            ctx.beginPath();
+                            ctx.ellipse(t.x + (Math.random() - 0.5) * 25, t.y + (Math.random() - 0.5) * 25, 8 * t.life, 4 * t.life, Math.random() * Math.PI, 0, Math.PI * 2);
+                            ctx.fillStyle = `rgba(${color}, ${t.life * 0.6})`;
+                            ctx.fill();
+                        }
+                    }
+                } else if (trailId === 'trail_vampiro') {
+                    // Vampiro
+                    for (let i = 0; i < trailPoints.length; i++) {
+                        const t = trailPoints[i];
+                        ctx.beginPath();
+                        ctx.arc(t.x, t.y, 15 * t.life, 0, Math.PI * 2);
+                        ctx.fillStyle = `rgba(${color}, ${t.life * 0.4})`;
+                        ctx.shadowBlur = 25 * t.life;
+                        ctx.shadowColor = `rgba(255, 0, 0, 1)`;
+                        ctx.fill();
+                    }
+                } else if (trailId === 'trail_zombie') {
+                    // Zombie
+                    for (let i = 0; i < trailPoints.length; i++) {
+                        const t = trailPoints[i];
+                        ctx.beginPath();
+                        ctx.arc(t.x, t.y, 18 * t.life, 0, Math.PI * 2);
+                        ctx.fillStyle = `rgba(${color}, ${t.life * 0.3})`;
+                        ctx.shadowBlur = 20 * t.life;
+                        ctx.shadowColor = `rgba(120, 255, 143, 1)`;
+                        ctx.fill();
+                    }
+                } else if (trailId === 'trail_custom_text') {
+                    // Texto personalizado
+                    for (let i = 0; i < trailPoints.length; i++) {
+                        const t = trailPoints[i];
+                        ctx.beginPath();
+                        ctx.arc(t.x, t.y, 20 * t.life, 0, Math.PI * 2);
+                        ctx.fillStyle = `rgba(${color}, ${t.life * 0.3})`;
+                        ctx.shadowBlur = 25 * t.life;
+                        ctx.shadowColor = `rgba(${color}, 1)`;
+                        ctx.fill();
+                    }
+                }
+                
+                ctx.globalCompositeOperation = 'source-over';
+            }
+
+            // Nombre del trail
+            ctx.fillStyle = '#fff';
+            ctx.font = 'bold 28px Arial';
+            ctx.textAlign = 'center';
+            ctx.shadowColor = 'rgba(0,0,0,0.8)';
+            ctx.shadowBlur = 4;
+            ctx.fillText(TRAILS_DATA.find(t => t.id === trailId).name, centerX, height - 30);
+            
+            // Rareza
+            const trail = TRAILS_DATA.find(t => t.id === trailId);
+            ctx.font = 'bold 16px Arial';
+            ctx.fillStyle = trail.rarityColor;
+            ctx.fillText(trail.rarity, centerX, height - 10);
+        }
+
+        function generateAllImages() {
+            const statusDiv = document.getElementById('status');
+            const canvasesDiv = document.getElementById('canvases');
+            canvasesDiv.innerHTML = '';
+            
+            const width = 400;
+            const height = 400;
+            
+            TRAILS_DATA.forEach((trail, index) => {
+                const canvas = document.createElement('canvas');
+                canvas.width = width;
+                canvas.height = height;
+                canvas.id = `canvas_${trail.id}`;
+                canvasesDiv.appendChild(canvas);
+                
+                const ctx = canvas.getContext('2d');
+                drawTrailEffect(ctx, trail.id, width, height);
+                
+                // Descargar imagen
+                const link = document.createElement('a');
+                link.download = `${trail.name.replace(/\s+/g, '_')}_trail.png`;
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+            });
+            
+            statusDiv.innerHTML = `✅ Se generaron ${TRAILS_DATA.length} imágenes. Las descargas deberían comenzar automáticamente.`;
+        }
+    </script>
+</body>
+</html>

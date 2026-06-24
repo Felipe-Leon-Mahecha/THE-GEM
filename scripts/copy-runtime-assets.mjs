@@ -12,7 +12,7 @@ const runtimeFiles = [
   "levelselect.js",
   "shop.js",
   "obstacles.js",
-  "particles.js",
+  "trails.js",
   "menuball.js",
   "src/main.js",
   "combo-system.js",

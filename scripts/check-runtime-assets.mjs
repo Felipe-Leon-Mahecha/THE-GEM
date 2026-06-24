@@ -6,7 +6,7 @@ const runtimeFiles = [
   "skins-side.js",
   "powerups.js",
   "src/main.js",
-  "particles.js",
+  "trails.js",
   "levelselect.js",
   "index.html",
   "style.css"

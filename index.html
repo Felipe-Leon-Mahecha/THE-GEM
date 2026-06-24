@@ -193,7 +193,7 @@
             </div>
 
             <!-- TIENDA + INVENTARIO -->
-            <div class="menu-btn-pair-grid">
+            <div id="grid-shop-inventory" class="menu-btn-pair-grid">
                 <div id="wrap-shop" class="menu-btn-wrap">
                     <button id="shop-btn" class="menu-png-btn">
                         <img src="assets/Imagenes/Botones menu/TIENDA.png"
@@ -209,7 +209,7 @@
             </div>
 
             <!-- LOGROS + AYUDA -->
-            <div class="menu-btn-pair-grid">
+            <div id="grid-achievements-help" class="menu-btn-pair-grid">
                 <div id="wrap-achievements" class="menu-btn-wrap">
                     <button id="achievements-btn" class="menu-png-btn" onclick="showAchievementsPanel()">
                         <img src="assets/Imagenes/Botones menu/LOGROS.png"
@@ -227,16 +227,16 @@
         </div>
 
         <!-- VERSION — esquina inferior izquierda -->
-        <div style="position:absolute; bottom:20px; left:20px; width:clamp(180px, 22%, 260px);">
+        <div style="position:absolute; bottom:20px; left:20px; width:clamp(180px, 22%, 260px); z-index:5;">
             <div style="position:relative;">
                 <img src="assets/Imagenes/Botones menu/VERSION.png" style="width:100%; height:auto; display:block;">
                 <!-- Texto centrado dentro del banner: top/left ajustan la posición -->
                 <div style="position:absolute; top:50%; left:50%; transform:translate(-50%, -50%);
                             pointer-events:none; line-height:1.4; text-align:center; width:80%;">
-                    <div style="color:rgba(255,255,255,0.9); font-family:monospace;
+                    <div id="version-banner-line1" style="color:rgba(255,255,255,0.9); font-family:monospace;
                                 font-size:clamp(8px,1.1vw,11px); letter-spacing:2px; font-weight:bold;">
                         VERSION 0.5</div>
-                    <div style="color:rgba(255,77,109,1); font-family:monospace;
+                    <div id="version-banner-line2" style="color:rgba(255,77,109,1); font-family:monospace;
                                 font-size:clamp(7px,0.9vw,10px); letter-spacing:2px;">
                         MADE BY FELIX</div>
                 </div>
@@ -579,7 +579,11 @@
                         · <span id="profileStat-xp-to-next">— XP para siguiente</span>
                     </div>
                 </div>
-                <div id="profilePreview" class="profile-preview" aria-label="Avatar de jugador"></div>
+                <div class="profile-preview-wrap">
+                    <div id="profilePreview" class="profile-preview" aria-label="Avatar de jugador"></div>
+                    <button type="button" class="profile-preview-edit-btn" onclick="openProfileEditModal()"
+                        aria-label="Editar avatar y nombre">✎</button>
+                </div>
             </div>
             <div class="profile-section-title">ESTADÍSTICAS DEL JUGADOR</div>
             <div class="profile-stat-row">
@@ -596,8 +600,8 @@
                     <div class="stat-value" id="profileStat-games-played">0</div>
                 </div>
                 <div class="profile-stat-card">
-                    <div class="stat-title">Total horas</div>
-                    <div class="stat-value" id="profileStat-total-time">0:00</div>
+                    <div class="stat-title">Días jugados</div>
+                    <div class="stat-value" id="profileStat-days-played">0</div>
                 </div>
                 <div class="profile-stat-card">
                     <div class="stat-title">Monedas actuales</div>
@@ -608,12 +612,20 @@
                     <div class="stat-value" id="profileStat-current-gems">0</div>
                 </div>
                 <div class="profile-stat-card">
-                    <div class="stat-title">Niveles desbloqueados</div>
-                    <div class="stat-value" id="profileStat-unlocked-levels">0 / 0</div>
+                    <div class="stat-title">Colección</div>
+                    <div class="stat-value" id="profileStat-collection-score">0</div>
                 </div>
                 <div class="profile-stat-card">
                     <div class="stat-title">Supervivencia mejor</div>
                     <div class="stat-value" id="profileStat-best-survival">N/A</div>
+                </div>
+                <div class="profile-stat-card">
+                    <div class="stat-title">Último acceso</div>
+                    <div class="stat-value" id="profileStat-last-seen">-</div>
+                </div>
+                <div class="profile-stat-card">
+                    <div class="stat-title">Mejor racha</div>
+                    <div class="stat-value" id="profileStat-best-streak">0</div>
                 </div>
             </div>
 
@@ -629,6 +641,31 @@
         </div>
     </div>
 
+    <!-- =====================================================
+         MODAL: Editar nombre y avatar del jugador
+         ===================================================== -->
+    <div id="profileEditModal">
+        <div class="profile-dim" onclick="closeProfileEditModal()"></div>
+        <div class="profile-edit-card">
+            <button class="profile-close" type="button" onclick="closeProfileEditModal()">×</button>
+            <div class="profile-edit-title">EDITAR PERFIL</div>
+
+            <label class="profile-edit-label" for="profileEditNameInput">Nombre de jugador</label>
+            <input id="profileEditNameInput" class="profile-edit-name-input" type="text" maxlength="16"
+                placeholder="Jugador" autocomplete="off">
+
+            <div class="profile-edit-label">Elegir avatar</div>
+            <div id="profileEditAvatarGrid" class="profile-edit-avatar-grid"></div>
+
+            <div id="profileEditError" class="profile-edit-error"></div>
+
+            <div class="profile-edit-actions">
+                <button type="button" class="profile-edit-cancel" onclick="closeProfileEditModal()">Cancelar</button>
+                <button type="button" class="profile-edit-save" onclick="savePlayerProfileEdit()">Guardar</button>
+            </div>
+        </div>
+    </div>
+
 
     <!-- =====================================================
          PANTALLA DE RANGOS — Mapa de progresión
@@ -640,28 +677,15 @@
         <canvas id="ranksParticleCanvas"
             style="position:absolute; inset:0; width:100%; height:100%; pointer-events:none; z-index:0;"></canvas>
 
-        <!-- Header -->
+        <!-- Header compacto todo-en-uno -->
         <div class="rs-header">
-            <button class="rs-back-btn" onclick="closeRanksScreen()">← VOLVER</button>
-            <div class="rs-title-block">
-                <div class="rs-kicker">THE GEM</div>
-                <div class="rs-title">CAMINO DE RANGOS</div>
-            </div>
-            <!-- XP del jugador en vivo -->
-            <div class="rs-xp-block">
-                <div class="rs-xp-label">TU XP</div>
-                <div class="rs-xp-value" id="rs-player-xp">0</div>
-            </div>
-        </div>
 
-        <!-- Rango actual del jugador — usa el mini banner del menú -->
-        <div class="rs-current-banner" id="rs-current-banner">
-            <div id="rs-mini-profile" class="menu-profile-banner"
-                style="pointer-events:none; width:100%; max-width:460px; margin:0 auto;">
+            <!-- IZQUIERDA: Mini perfil + XP -->
+            <div class="rs-compact-profile">
                 <div id="rs-profile-avatar" class="menu-profile-avatar" aria-hidden="true"></div>
                 <div class="menu-profile-text">
                     <span id="rs-profile-name" class="menu-profile-name">Jugador</span>
-                    <span id="rs-current-name" class="menu-profile-rank">✦ Chispa</span>
+                    <span id="rs-current-name" class="menu-profile-rank">&#10022; Chispa</span>
                 </div>
                 <div class="menu-profile-currency">
                     <span class="menu-profile-chip">
@@ -674,13 +698,28 @@
                     </span>
                 </div>
             </div>
-            <!-- Barra de XP debajo del banner delgado -->
-            <div style="width:100%; max-width:460px; margin:6px auto 0; padding:0 4px; box-sizing:border-box;">
-                <div class="rs-current-bar">
-                    <div class="rs-current-bar-fill" id="rs-current-bar-fill" style="width:0%"></div>
-                </div>
-                <div class="rs-current-xp-info" id="rs-current-xp-info">0 XP · Próximo: 100 XP</div>
+            <div class="rs-xp-block">
+                <div class="rs-xp-label">TU XP</div>
+                <div class="rs-xp-value" id="rs-player-xp">0</div>
             </div>
+
+            <!-- Spacer -->
+            <div style="flex:1;"></div>
+
+            <!-- DERECHA: Titulo + boton volver -->
+            <div class="rs-title-block" style="text-align:right;">
+                <div class="rs-title">CAMINO DE RANGOS</div>
+            </div>
+            <button class="rs-back-btn" onclick="closeRanksScreen()">&#8592; VOLVER</button>
+
+        </div>
+
+        <!-- Barra de XP compacta bajo el header -->
+        <div class="rs-xp-bar-row" id="rs-current-banner">
+            <div class="rs-current-bar" style="flex:1;">
+                <div class="rs-current-bar-fill" id="rs-current-bar-fill" style="width:0%"></div>
+            </div>
+            <div class="rs-current-xp-info" id="rs-current-xp-info">0 XP · Próximo: 100 XP</div>
         </div>
 
         <!-- Mapa scrolleable de rangos -->
@@ -703,8 +742,7 @@
             <div class="ls-title-zone">
                 <div class="ls-title">SELECCIONAR NIVEL</div>
             </div>
-            <button class="ls-back-btn"
-                onclick="hideLevelSelect(); document.getElementById('overlay').style.display='flex';">← VOLVER</button>
+            <button class="ls-back-btn" onclick="window.closeLevelSelect();">← VOLVER</button>
         </div>
 
         <!-- BARRA JUGADOR -->
@@ -790,7 +828,7 @@
     <script src="skins-side.js"></script>
     <script src="src/main.js"></script>
     <script src="obstacles.js"></script>
-    <script src="particles.js"></script>
+    <script src="trails.js"></script>
     <script src="ui.js"></script>
     <script src="src/keybinds-integration.js"></script>
 
@@ -976,12 +1014,173 @@
         }
 
         /* Animaciones pop-from-center para paneles flotantes */
-        #shopPanel.entering,
-        #inventoryPanel.entering,
         #optionsPanel.entering,
-        #profilePanel.entering,
-        #achievementsPanel.entering {
+        #profilePanel.entering {
             animation: popFromCenter 0.35s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+        }
+
+        /* ══════════════════════════════════════════════════════
+           ANIMACIONES DE PANELES Y TRANSICIONES DE PANTALLA
+           ══════════════════════════════════════════════════════ */
+
+        /* 1. Direcciones horizontales (Tienda a la derecha, Inventario a la izquierda) */
+
+        /* Enters Shop (Slide to Right: from left -100% to 0) */
+        #shopPanel.entering {
+            animation: slideInRightDir 0.4s cubic-bezier(0.25, 1, 0.5, 1) forwards !important;
+        }
+
+        /* Exits Shop (Slide to Left: from 0 to -100%) */
+        #shopPanel.leaving {
+            animation: slideOutLeftDir 0.4s cubic-bezier(0.25, 1, 0.5, 1) forwards !important;
+        }
+
+        /* Enters Inventory (Slide to Left: from right 100% to 0) */
+        #inventoryPanel.entering {
+            animation: slideInLeftDir 0.4s cubic-bezier(0.25, 1, 0.5, 1) forwards !important;
+        }
+
+        /* Exits Inventory (Slide to Right: from 0 to 100%) */
+        #inventoryPanel.leaving {
+            animation: slideOutRightDir 0.4s cubic-bezier(0.25, 1, 0.5, 1) forwards !important;
+        }
+
+        /* 2. Comportamiento del Menu Overlay en transiciones horizontales */
+        #overlay.exit-shop {
+            animation: slideOutRightDir 0.4s cubic-bezier(0.25, 1, 0.5, 1) forwards !important;
+        }
+
+        #overlay.enter-shop {
+            animation: slideInLeftDir 0.4s cubic-bezier(0.25, 1, 0.5, 1) forwards !important;
+        }
+
+        #overlay.exit-inventory {
+            animation: slideOutLeftDir 0.4s cubic-bezier(0.25, 1, 0.5, 1) forwards !important;
+        }
+
+        #overlay.enter-inventory {
+            animation: slideInRightDir 0.4s cubic-bezier(0.25, 1, 0.5, 1) forwards !important;
+        }
+
+        /* 3. Direcciones verticales (Play / LevelSelect / Ranks hacia arriba) */
+
+        /* Enters LevelSelect (Slide Up: from bottom 100% to 0) */
+        #levelSelect.entering,
+        #ranksScreen.entering {
+            animation: slideInUpDir 0.45s cubic-bezier(0.25, 1, 0.5, 1) forwards !important;
+        }
+
+        /* Exits LevelSelect (Slide Down: from 0 to bottom 100%) */
+        #levelSelect.leaving,
+        #ranksScreen.leaving {
+            animation: slideOutDownDir 0.45s cubic-bezier(0.25, 1, 0.5, 1) forwards !important;
+        }
+
+        /* Comportamiento del Menu Overlay en transiciones verticales */
+        #overlay.exit-play {
+            animation: slideOutUpDir 0.45s cubic-bezier(0.25, 1, 0.5, 1) forwards !important;
+        }
+
+        #overlay.enter-play {
+            animation: slideInDownDir 0.45s cubic-bezier(0.25, 1, 0.5, 1) forwards !important;
+        }
+
+        /* 4. Logros y Ayuda (Deslizamiento de abajo hacia arriba) */
+        #achievementsPanel,
+        #powerupHelpPanel {
+            transition: opacity 0.35s ease !important;
+        }
+
+        /* Animaciones para las tarjetas de contenido */
+        #achievementsPanel.entering .achievements-content,
+        #powerupHelpPanel.entering .powerup-help-content {
+            animation: slideInUpDir 0.4s cubic-bezier(0.25, 1, 0.3, 1) forwards !important;
+        }
+
+        #achievementsPanel.leaving .achievements-content,
+        #powerupHelpPanel.leaving .powerup-help-content {
+            animation: slideOutDownDir 0.35s cubic-bezier(0.25, 1, 0.3, 1) forwards !important;
+        }
+
+        /* Keyframes */
+        @keyframes slideInLeftDir {
+            from {
+                transform: translateX(100%);
+            }
+
+            to {
+                transform: translateX(0);
+            }
+        }
+
+        @keyframes slideOutLeftDir {
+            from {
+                transform: translateX(0);
+            }
+
+            to {
+                transform: translateX(-100%);
+            }
+        }
+
+        @keyframes slideInRightDir {
+            from {
+                transform: translateX(-100%);
+            }
+
+            to {
+                transform: translateX(0);
+            }
+        }
+
+        @keyframes slideOutRightDir {
+            from {
+                transform: translateX(0);
+            }
+
+            to {
+                transform: translateX(100%);
+            }
+        }
+
+        @keyframes slideInUpDir {
+            from {
+                transform: translateY(100%);
+            }
+
+            to {
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes slideOutUpDir {
+            from {
+                transform: translateY(0);
+            }
+
+            to {
+                transform: translateY(-100%);
+            }
+        }
+
+        @keyframes slideInDownDir {
+            from {
+                transform: translateY(-100%);
+            }
+
+            to {
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes slideOutDownDir {
+            from {
+                transform: translateY(0);
+            }
+
+            to {
+                transform: translateY(100%);
+            }
         }
 
         @keyframes popFromCenter {
@@ -1069,9 +1268,11 @@
             }
         }
 
-        /* Animaciones de botones */
-        .menu-btn-wrap,
-        button,
+        /* Animaciones de botones genéricos (shop-item, inventory-item, achievement-item)
+           NOTA: .menu-btn-wrap, .menu-png-btn y "button" genérico se eliminaron de
+           aquí porque duplicaban y chocaban con las reglas de style.css (líneas
+           ~7619-7711), causando los cuadros de box-shadow detrás de los PNG con
+           forma irregular y doble transición en CADA botón de la página (lag). */
         .shop-item,
         .inventory-item,
         .achievement-item {
@@ -1080,40 +1281,18 @@
                 filter 0.2s ease;
         }
 
-        .menu-btn-wrap:hover,
-        button:hover {
+        .shop-item:hover,
+        .inventory-item:hover,
+        .achievement-item:hover {
             transform: scale(1.05);
             filter: brightness(1.15);
         }
 
-        .menu-btn-wrap:active,
-        button:active {
+        .shop-item:active,
+        .inventory-item:active,
+        .achievement-item:active {
             transform: scale(0.95);
             filter: brightness(0.9);
-        }
-
-        /* Glow en botones importantes */
-        .menu-btn-wrap:hover,
-        #play-btn:hover,
-        #shop-btn:hover,
-        #inventory-btn:hover {
-            box-shadow: 0 0 20px rgba(0, 255, 231, 0.4);
-        }
-
-        /* Animaciones específicas para botones del menú principal */
-        .menu-btn-wrap {
-            transition: transform 0.2s ease, filter 0.2s ease;
-            will-change: transform;
-        }
-
-        .menu-btn-wrap:hover {
-            transform: scale(1.04) translateY(-2px);
-            filter: brightness(1.12) drop-shadow(0 0 12px rgba(255, 255, 255, 0.25));
-        }
-
-        .menu-btn-wrap:active {
-            transform: scale(0.97) translateY(0);
-            filter: brightness(0.95);
         }
 
         /* Glow en powerups disponibles */

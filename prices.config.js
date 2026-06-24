@@ -27,6 +27,7 @@ const SHOP_PRICES = {
         fractura:            { price: 1000, priceType: 'coins' },
         hielo:               { price: 260,  priceType: 'coins' },
         toxico:              { price: 320,  priceType: 'coins' },
+        spark:               { price: 1200, priceType: 'coins' },
         trail_vampiro:       { price: 0,    priceType: 'gems' },
         trail_zombie:        { price: 0,    priceType: 'gems' },
         trail_fire:          { price: 0,    priceType: 'gems' },

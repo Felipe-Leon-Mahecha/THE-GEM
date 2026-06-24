@@ -1,3 +1,6 @@
+window._cachedEquippedSkin = localStorage.getItem('equippedSkin') || 'cyan';
+window._cachedReducedMotion = localStorage.getItem('reducedMotion') === 'true';
+
 function preloadLevelImages(lvl) {
     const config = window.getLevelConfig?.(lvl);
     if (!config?.assets) return;
@@ -88,7 +91,7 @@ window.GAME_PERF = {
     frame: 0,
     now: 0,
     lowPower() {
-        return document.body.classList.contains("is-touch-device") || localStorage.getItem("reducedMotion") === "true";
+        return document.body.classList.contains("is-touch-device") || window._cachedReducedMotion;
     }
 };
 
@@ -650,7 +653,7 @@ rubyImg.src = "assets/Imagenes/Monetizacion/Rubies.png";
 function update() {
     if (!window.running) return;
     if (window.paused) return;
-    const levelConfig = window.getCurrentLevelConfig ? window.getCurrentLevelConfig() : {};
+    const levelConfig = window._cachedLevelConfig ?? (window.getCurrentLevelConfig?.() ?? {});
     const powerupTimeScale = window.getPowerupTimeScale?.() ?? 1;
     if (window.updatePowerups) window.updatePowerups();
 
@@ -752,7 +755,9 @@ function update() {
         window.keys.powerE = false;
     }
 
-    updateTrail();
+    const _px = canvas.width / 2 + Math.cos(window.angle) * (BASE_RADIUS + window.offset);
+    const _py = canvas.height / 2 + Math.sin(window.angle) * (BASE_RADIUS + window.offset);
+    updateTrail(_px, _py);
 
     // SPAWN OBSTACLES
     window.spawnTimer += powerupTimeScale;
@@ -1097,7 +1102,7 @@ function distanceToSegment(px, py, x1, y1, x2, y2) {
 function draw() {
     if (!window.running && !window.paused) return;
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    const levelConfig = window.getCurrentLevelConfig ? window.getCurrentLevelConfig() : { assets: {} };
+    const levelConfig = window._cachedLevelConfig ?? (window.getCurrentLevelConfig?.() ?? { assets: {} });
     const levelAssets = levelConfig.assets || {};
     const visual = levelConfig.visual || {};
 
@@ -1231,14 +1236,17 @@ function draw() {
     const dotRadius = progressH * 0.4;
 
     // Glow del puntito
-    const glowGradient = ctx.createRadialGradient(dotX, dotY, 0, dotX, dotY, dotRadius * 3);
-    glowGradient.addColorStop(0, 'rgba(255,255,255,0.8)');
-    glowGradient.addColorStop(0.5, 'rgba(255,255,255,0.3)');
-    glowGradient.addColorStop(1, 'rgba(255,255,255,0)');
-    ctx.fillStyle = glowGradient;
-    ctx.beginPath();
-    ctx.arc(dotX, dotY, dotRadius * 3, 0, Math.PI * 2);
-    ctx.fill();
+    if (!window.GAME_PERF?.lowPower()) {
+
+        const glowGradient = ctx.createRadialGradient(dotX, dotY, 0, dotX, dotY, dotRadius * 3);
+        glowGradient.addColorStop(0, 'rgba(255,255,255,0.8)');
+        glowGradient.addColorStop(0.5, 'rgba(255,255,255,0.3)');
+        glowGradient.addColorStop(1, 'rgba(255,255,255,0)');
+        ctx.fillStyle = glowGradient;
+        ctx.beginPath();
+        ctx.arc(dotX, dotY, dotRadius * 3, 0, Math.PI * 2);
+        ctx.fill();
+    }
 
     // Puntito blanco brillante
     ctx.fillStyle = "#ffffff";
@@ -1292,7 +1300,7 @@ function drawPlayer(cx, cy) {
     ctx.save();
     ctx.translate(px, py);
     if (window.invulnerable && Math.floor(now / 100) % 2 === 0) ctx.globalAlpha = 0.2;
-    const equippedId = localStorage.getItem('equippedSkin') || 'cyan';
+    const equippedId = window._cachedEquippedSkin || 'cyan';
     const SKIN_COLORS = {
         cyan: { color: '#00ffe7', glow: '#00ffe7' },
         red: { color: '#ff4444', glow: '#ff4444' },
@@ -1584,6 +1592,7 @@ window.startGame = function (levelIndex = 0, skipStartSound = false) {
         return;
     }
     window.level = levelIndex + 1;
+    window._cachedLevelConfig = window.getCurrentLevelConfig?.() ?? {};
     const levelConfig = window.getCurrentLevelConfig ? window.getCurrentLevelConfig() : {};
 
     clearInterval(window.reviveTimer);
@@ -1792,6 +1801,8 @@ window.showGameOverWithRevive = function () {
     window.bgMusic.pause();
     window.bgMusic.currentTime = 0;
     window.playSfx?.('gameOver', 0.9);
+    window.updateWinStreak?.(false);
+    window.recordPlayDate?.();
 
     const go = document.getElementById('gameOver');
     document.getElementById('go-title').textContent = 'NIVEL ' + window.level;
@@ -1974,6 +1985,8 @@ function winGame() {
     let wins = parseInt(localStorage.getItem('gamesWon') || '0');
     wins++;
     localStorage.setItem('gamesWon', wins);
+    window.recordPlayDate?.();
+    window.updateWinStreak?.(true);
 }
 // NOTA: updateRank(wins) se elimina — lo maneja rank-system.js automáticamente
 
