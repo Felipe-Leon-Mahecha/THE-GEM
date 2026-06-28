@@ -20,6 +20,96 @@
     <link rel="stylesheet" href="responsive.css">
     <!-- Hoja de estilos principal -->
     <link rel="stylesheet" href="style.css">
+    <!-- Firebase CDN -->
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+    <script>
+        firebase.initializeApp({
+            apiKey: "AIzaSyBUyJZec0G6tT6WJqQgsSvi9q_9-SoiMhA",
+            authDomain: "the-gem.firebaseapp.com",
+            projectId: "the-gem",
+            storageBucket: "the-gem.firebasestorage.app",
+            messagingSenderId: "52213023173",
+            appId: "1:52213023173:web:97f35e488a73d6c5d58bac"
+        });
+        window.fbAuth = firebase.auth();
+        window.fbDb = firebase.firestore();
+        window.fbProvider = new firebase.auth.GoogleAuthProvider();
+
+        window.loginGoogle = async function () {
+            try {
+                const btn = document.getElementById('btn-google-login');
+                if (btn) btn.textContent = 'Conectando...';
+                const result = await window.fbAuth.signInWithPopup(window.fbProvider);
+                const user = result.user;
+                window._firebaseUID = user.uid;
+                await window.bajarDatosFirebase(user.uid);
+                window.actualizarBtnLogin(user);
+            } catch (e) {
+                console.error('Login error:', e);
+                const btn = document.getElementById('btn-google-login');
+                if (btn) btn.textContent = '🔑 Iniciar sesión con Google';
+            }
+        };
+
+        window.logoutGoogle = async function () {
+            await window.fbAuth.signOut();
+            window._firebaseUID = null;
+            const btn = document.getElementById('btn-google-login');
+            if (btn) btn.innerHTML = '🔑 Iniciar sesión con Google';
+            btn.onclick = window.loginGoogle;
+        };
+
+        window.subirDatosFirebase = async function (uid) {
+            if (!uid) return;
+            const datos = {};
+            Object.keys(localStorage).forEach(k => { datos[k] = localStorage.getItem(k); });
+            try {
+                await window.fbDb.collection('jugadores').doc(uid).set(
+                    { datos, ultimaSync: new Date().toISOString() },
+                    { merge: true }
+                );
+            } catch (e) { console.error('Error subiendo datos:', e); }
+        };
+
+        window.bajarDatosFirebase = async function (uid) {
+            try {
+                const snap = await window.fbDb.collection('jugadores').doc(uid).get();
+                if (snap.exists && snap.data().datos) {
+                    Object.entries(snap.data().datos).forEach(([k, v]) => {
+                        if (v !== null && v !== undefined) localStorage.setItem(k, v);
+                    });
+                    if (window.updateProfileUI) window.updateProfileUI();
+                    if (window.updateHUD) window.updateHUD();
+                    console.log('✅ Datos cargados desde Firebase');
+                }
+            } catch (e) { console.error('Error bajando datos:', e); }
+        };
+
+        window.actualizarBtnLogin = function (user) {
+            const btn = document.getElementById('btn-google-login');
+            if (!btn) return;
+            btn.innerHTML = '✅ ' + user.displayName + ' &nbsp;<span style="color:#ff4466;font-size:12px;cursor:pointer" onclick="window.logoutGoogle()">Salir</span>';
+            btn.onclick = null;
+        };
+
+        window.fbAuth.onAuthStateChanged(function (user) {
+            if (user) {
+                window._firebaseUID = user.uid;
+                window.actualizarBtnLogin(user);
+            }
+        });
+
+        // Auto-sync cuando cambian monedas/XP
+        const _origSet = localStorage.setItem.bind(localStorage);
+        localStorage.setItem = function (key, value) {
+            _origSet(key, value);
+            if (window._firebaseUID && ['deadCoins', 'gems', 'totalXP', 'gamesWon'].includes(key)) {
+                window.subirDatosFirebase(window._firebaseUID);
+            }
+        };
+    </script>
     <!-- Manifest para PWA -->
     <link rel="manifest" href="manifest.json">
     <!-- Registro de Service Worker para PWA -->
@@ -27,9 +117,100 @@
         // ⚠️ DESACTIVADO TEMPORALMENTE PARA DESARROLLO — el SW cachea archivos y
         // hace que los cambios no se vean aunque hagas hard refresh.
         // Descomenta esta línea cuando vayas a publicar el juego:
-        // if ('serviceWorker' in navigator) {
-        //     navigator.serviceWorker.register('/service-worker.js');
-        // }
+        //if ('serviceWorker' in navigator) {
+        //    navigator.serviceWorker.register('/service-worker.js');
+        //}
+    </script>
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+    <script>
+        // Inicializar Firebase
+        const firebaseConfig = {
+            apiKey: "AIzaSyBUyJZec0G6tT6WJqQgsSvi9q_9-SoiMhA",
+            authDomain: "the-gem.firebaseapp.com",
+            projectId: "the-gem",
+            storageBucket: "the-gem.firebasestorage.app",
+            messagingSenderId: "52213023173",
+            appId: "1:52213023173:web:97f35e488a73d6c5d58bac"
+        };
+        firebase.initializeApp(firebaseConfig);
+        window.fbAuth = firebase.auth();
+        window.fbDb = firebase.firestore();
+        window.fbProvider = new firebase.auth.GoogleAuthProvider();
+
+        // LOGIN CON GOOGLE
+        window.loginGoogle = async function () {
+            try {
+                const result = await window.fbAuth.signInWithPopup(window.fbProvider);
+                const user = result.user;
+                window._firebaseUID = user.uid;
+                await window.bajarDatosFirebase(user.uid);
+                window.actualizarBtnLogin(user);
+            } catch (e) { console.error(e); }
+        };
+
+        // CERRAR SESIÓN
+        window.logoutGoogle = async function () {
+            await window.fbAuth.signOut();
+            window._firebaseUID = null;
+            const btn = document.getElementById('btn-google-login');
+            if (btn) btn.innerHTML = '🔑 Iniciar sesión con Google';
+        };
+
+        // SUBIR datos localStorage → Firestore
+        window.subirDatosFirebase = async function (uid) {
+            if (!uid) return;
+            const datos = {};
+            Object.keys(localStorage).forEach(k => { datos[k] = localStorage.getItem(k); });
+            await window.fbDb.collection('jugadores').doc(uid).set(
+                { datos, ultimaSync: new Date().toISOString() },
+                { merge: true }
+            );
+        };
+
+        // BAJAR datos Firestore → localStorage
+        window.bajarDatosFirebase = async function (uid) {
+            const snap = await window.fbDb.collection('jugadores').doc(uid).get();
+            if (snap.exists && snap.data().datos) {
+                Object.entries(snap.data().datos).forEach(([k, v]) => {
+                    if (v !== null) localStorage.setItem(k, v);
+                });
+                // Refrescar UI
+                if (window.updateProfileUI) window.updateProfileUI();
+                if (window.updateHUD) window.updateHUD();
+                console.log('✅ Datos cargados desde Firebase');
+            }
+        };
+
+        // DETECTAR sesión activa al cargar
+        window.fbAuth.onAuthStateChanged(user => {
+            if (user) {
+                window._firebaseUID = user.uid;
+                window.actualizarBtnLogin(user);
+            }
+        });
+
+        window.actualizarBtnLogin = function (user) {
+            const btn = document.getElementById('btn-google-login');
+            if (!btn) return;
+            btn.style.borderColor = '#34A853';
+            btn.style.color = '#34A853';
+            btn.style.boxShadow = '0 0 14px rgba(52,168,83,0.25)';
+            btn.innerHTML = `
+    <svg width="16" height="16" viewBox="0 0 48 48">
+      <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/>
+      <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/>
+      <path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/>
+      <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.18 1.48-4.97 2.31-8.16 2.31-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/>
+    </svg>
+    ${user.displayName}
+    <span style="margin-left:auto;font-size:11px;color:#ff4466;cursor:pointer;letter-spacing:1px"
+      onclick="event.stopPropagation();window.logoutGoogle()">SALIR</span>
+  `;
+            btn.onclick = null;
+        };
     </script>
 </head>
 
@@ -111,6 +292,37 @@
 ">
         <img src="assets/Imagenes/Icono/Opciones.png" style="width:100%;height:100%;">
     </div>
+    <!-- Botón flotante Sala de Reyes -->
+    <button id="leaderboard-float-btn" style="
+    position:fixed;
+    bottom:20px;
+    right:215px;
+    z-index:10000;
+    cursor:pointer;
+    height:52px;
+    padding:0 18px;
+    background:rgba(0,0,0,0.35);
+    border:1px solid rgba(255,215,0,0.35);
+    border-radius:14px;
+    backdrop-filter:blur(6px);
+    -webkit-backdrop-filter:blur(6px);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:8px;
+    font-family:var(--font-principal,monospace);
+    font-size:12px;
+    letter-spacing:2px;
+    color:#ffd700;
+    text-shadow:0 0 10px rgba(255,215,0,0.5);
+    white-space:nowrap;
+    -webkit-tap-highlight-color:transparent;
+    touch-action:manipulation;
+    user-select:none;
+    -webkit-user-select:none;
+">
+        👑 REYES
+    </button>
 
     <!-- Botón flotante de monedas infinitas (DEV) -->
     <div id="infinite-coins-float-btn" onclick="toggleInfiniteCoins()" style="
@@ -222,6 +434,31 @@
                             style="width:100%; height:auto; display:block; pointer-events:none;">
                     </button>
                 </div>
+            </div>
+
+            <!-- REYES (fila completa debajo) -->
+            <div id="wrap-reyes" class="menu-btn-wrap menu-btn-play-size" style="margin-top:0;">
+                <button id="reyes-menu-btn" class="menu-png-btn" style="
+                    background: linear-gradient(135deg, rgba(255,215,0,.12), rgba(255,160,0,.06));
+                    border: 1px solid rgba(255,215,0,.35);
+                    border-radius: 14px;
+                    color: #ffd700;
+                    font-family: var(--font-principal, monospace);
+                    font-size: clamp(13px, 2vw, 17px);
+                    letter-spacing: 3px;
+                    padding: 14px 24px;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    gap: 10px;
+                    width: 100%;
+                    text-shadow: 0 0 12px rgba(255,215,0,.6);
+                    box-shadow: 0 0 18px rgba(255,215,0,.08);
+                    -webkit-tap-highlight-color: transparent;
+                    touch-action: manipulation;
+                ">
+                    👑 &nbsp;SALA DE REYES
+                </button>
             </div>
 
         </div>
@@ -401,6 +638,42 @@
                 <button class="achievements-close" onclick="closeAchievementsPanel()">×</button>
             </div>
             <div class="achievements-body" id="achievementsBody"></div>
+        </div>
+    </div>
+
+    <div id="leaderboardPanel" class="lb-overlay">
+        <div class="lb-card">
+
+            <!-- Fondo decorativo -->
+            <div class="lb-bg-deco" aria-hidden="true">
+                <div class="lb-bg-crown">👑</div>
+            </div>
+
+            <!-- Cabecera -->
+            <div class="lb-header">
+                <div class="lb-header-crown">👑</div>
+                <div>
+                    <h2 class="lb-title">SALA DE REYES</h2>
+                    <p class="lb-subtitle">Clasificación global · The Gem</p>
+                </div>
+                <button class="lb-close-btn" id="lb-close-top">✕</button>
+            </div>
+
+            <!-- Podio top-3 -->
+            <div id="lb-podium" class="lb-podium-wrap">
+                <!-- renderizado por JS -->
+            </div>
+
+            <!-- Divisor -->
+            <div class="lb-divider"><span>— GUERREROS —</span></div>
+
+            <!-- Lista scrolleable 4º en adelante -->
+            <div id="lb-list" class="lb-list-wrap">
+                <!-- renderizado por JS -->
+            </div>
+
+            <!-- Botón cerrar -->
+            <button class="lb-btn-close-bottom" id="lb-close-bottom">CERRAR</button>
         </div>
     </div>
 
@@ -585,6 +858,31 @@
                         aria-label="Editar avatar y nombre">✎</button>
                 </div>
             </div>
+            <!-- Botón login Google -->
+            <button id="btn-google-login" onclick="window.loginGoogle()" style="display:flex;align-items:center;justify-content:center;gap:10px;
+         margin:16px 28px 20px;padding:12px 20px;
+         background:linear-gradient(135deg,#1a1a2e,#0d0d1a);
+         border:1.5px solid #ff6a00;
+         color:#ff6a00;border-radius:10px;cursor:pointer;
+         font-size:13px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;
+         width:calc(100% - 56px);box-sizing:border-box;
+         box-shadow:0 0 14px rgba(255,106,0,0.25);
+         transition:all 0.2s;"
+                onmouseover="this.style.background='linear-gradient(135deg,#1f1a10,#0d0d1a)';this.style.boxShadow='0 0 28px rgba(255,106,0,0.5)'"
+                onmouseout="this.style.background='linear-gradient(135deg,#1a1a2e,#0d0d1a)';this.style.boxShadow='0 0 14px rgba(255,106,0,0.25)'">
+                <svg width="18" height="18" viewBox="0 0 48 48">
+                    <path fill="#EA4335"
+                        d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z" />
+                    <path fill="#4285F4"
+                        d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z" />
+                    <path fill="#FBBC05"
+                        d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z" />
+                    <path fill="#34A853"
+                        d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.18 1.48-4.97 2.31-8.16 2.31-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z" />
+                    <path fill="none" d="M0 0h48v48H0z" />
+                </svg>
+                Iniciar sesión con Google
+            </button>
             <div class="profile-section-title">ESTADÍSTICAS DEL JUGADOR</div>
             <div class="profile-stat-row">
                 <div class="profile-stat-row-item"><span>Top Combo</span><span class="value"
@@ -1322,7 +1620,438 @@
         #infinite-coins-float-btn:hover {
             box-shadow: 0 0 15px rgba(0, 255, 231, 0.5);
         }
+
+        /* ── Overlay backdrop ── */
+        .lb-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,.88);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            z-index: 99999;
+            align-items: center;
+            justify-content: center;
+            padding: 0;
+            /* Forzar repaint en WebView Capacitor */
+            transform: translateZ(0);
+            -webkit-transform: translateZ(0);
+        }
+
+        /* ── Tarjeta principal ── */
+        .lb-card {
+            width: min(560px, 100%);
+            height: 100dvh;
+            max-height: 100dvh;
+            background: linear-gradient(160deg, rgba(8, 8, 18, .97), rgba(4, 4, 12, .99));
+            border: none;
+            border-radius: 0;
+            box-shadow: none;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* Desktop: limitar altura y mostrar como modal */
+        @media (min-width: 600px) {
+            .lb-overlay { padding: 20px; }
+            .lb-card {
+                height: min(92vh, 700px);
+                max-height: 700px;
+                border: 1px solid rgba(0,255,231,.2);
+                border-radius: 22px;
+                box-shadow: 0 0 60px rgba(0,255,231,.12), 0 0 120px rgba(0,0,0,.7);
+            }
+        }
+
+        /* Fondo decorativo */
+        .lb-bg-deco {
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            overflow: hidden;
+            z-index: 0;
+        }
+        .lb-bg-crown {
+            position: absolute;
+            top: -20px;
+            right: -20px;
+            font-size: 200px;
+            opacity: .025;
+            line-height: 1;
+            user-select: none;
+        }
+
+        /* ── Animaciones entering / leaving (igual que otros paneles) ── */
+        .lb-overlay.entering .lb-card {
+            animation: lbPopIn .35s cubic-bezier(.34, 1.56, .64, 1) both;
+        }
+
+        .lb-overlay.leaving .lb-card {
+            animation: lbPopOut .3s ease-in both;
+        }
+
+        @keyframes lbPopIn {
+            from {
+                opacity: 0;
+                transform: scale(.82)
+            }
+
+            to {
+                opacity: 1;
+                transform: scale(1)
+            }
+        }
+
+        @keyframes lbPopOut {
+            from {
+                opacity: 1;
+                transform: scale(1)
+            }
+
+            to {
+                opacity: 0;
+                transform: scale(.82)
+            }
+        }
+
+        /* ── Cabecera ── */
+        .lb-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 20px 22px 14px;
+            border-bottom: 1px solid rgba(0, 255, 231, .1);
+            flex-shrink: 0;
+            position: relative;
+            z-index: 1;
+        }
+
+        .lb-header-crown {
+            font-size: 32px;
+            filter: drop-shadow(0 0 10px rgba(255, 215, 0, .7));
+        }
+
+        .lb-title {
+            font-family: var(--font-principal, 'Audiowide', monospace);
+            font-size: clamp(16px, 4vw, 22px);
+            color: #fff;
+            text-shadow: 0 0 18px rgba(0, 255, 231, .6);
+            margin: 0;
+            letter-spacing: 3px;
+        }
+
+        .lb-subtitle {
+            font-family: var(--font-secundaria, monospace);
+            font-size: 10px;
+            color: rgba(0, 255, 231, .5);
+            letter-spacing: 2px;
+            margin: 2px 0 0;
+        }
+
+        .lb-close-btn {
+            margin-left: auto;
+            background: none;
+            border: 1px solid rgba(255, 77, 109, .4);
+            color: rgba(255, 77, 109, .8);
+            border-radius: 50%;
+            width: 32px;
+            height: 32px;
+            cursor: pointer;
+            font-size: 14px;
+            flex-shrink: 0;
+            transition: all .2s;
+        }
+
+        .lb-close-btn:hover {
+            background: rgba(255, 77, 109, .15);
+            color: #ff4d6d;
+            border-color: #ff4d6d;
+        }
+
+        /* ── Podio ── */
+        .lb-podium-wrap {
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+            gap: 8px;
+            padding: 22px 16px 0;
+            flex-shrink: 0;
+            position: relative;
+            z-index: 1;
+        }
+
+        .lb-podium-slot {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            max-width: 140px;
+        }
+
+        .lb-podium-empty {
+            opacity: .25;
+        }
+
+        .lb-podium-first {
+            transform: translateY(-8px);
+        }
+
+        .lb-podium-medal {
+            font-size: 20px;
+        }
+
+        .lb-podium-avatar {
+            width: 46px;
+            height: 46px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, .05);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            border: 2px solid rgba(255, 255, 255, .15);
+        }
+
+        .lb-podium-first .lb-podium-avatar {
+            width: 58px;
+            height: 58px;
+        }
+
+        .lb-podium-name {
+            font-family: var(--font-principal, 'Audiowide', monospace);
+            font-size: clamp(9px, 2vw, 11px);
+            color: #fff;
+            letter-spacing: 1px;
+            text-align: center;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 110px;
+        }
+
+        .lb-podium-rank {
+            font-family: var(--font-secundaria, monospace);
+            font-size: 9px;
+            letter-spacing: 1px;
+            text-align: center;
+        }
+
+        .lb-podium-xp {
+            font-family: var(--font-secundaria, monospace);
+            font-size: 10px;
+            color: rgba(255, 255, 255, .6);
+            letter-spacing: 1px;
+        }
+
+        .lb-podium-base {
+            width: 100%;
+            margin-top: 6px;
+            background: linear-gradient(180deg, rgba(0, 255, 231, .12), rgba(0, 255, 231, .04));
+            border-top: 2px solid rgba(0, 255, 231, .35);
+            border-radius: 6px 6px 0 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .lb-podium-pos {
+            font-family: var(--font-principal, 'Audiowide', monospace);
+            font-size: 22px;
+            color: rgba(255, 255, 255, .25);
+            line-height: 1;
+        }
+
+        /* ── Divisor ── */
+        .lb-divider {
+            text-align: center;
+            margin: 16px 22px 8px;
+            border-top: 1px solid rgba(255, 255, 255, .07);
+            position: relative;
+            z-index: 1;
+            flex-shrink: 0;
+        }
+
+        .lb-divider span {
+            position: relative;
+            top: -9px;
+            background: rgba(8, 8, 18, 1);
+            padding: 0 10px;
+            font-family: var(--font-secundaria, monospace);
+            font-size: 9px;
+            letter-spacing: 3px;
+            color: rgba(0, 255, 231, .4);
+        }
+
+        /* ── Lista scrolleable ── */
+        .lb-list-wrap {
+            overflow-y: auto;
+            flex: 1;
+            padding: 0 16px 4px;
+            scrollbar-width: thin;
+            scrollbar-color: rgba(0, 255, 231, .2) transparent;
+            position: relative;
+            z-index: 1;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .lb-list-wrap::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        .lb-list-wrap::-webkit-scrollbar-thumb {
+            background: rgba(0, 255, 231, .25);
+            border-radius: 4px;
+        }
+
+        /* ── Fila de jugador ── */
+        .lb-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 9px 10px;
+            border-radius: 10px;
+            margin-bottom: 4px;
+            background: rgba(255, 255, 255, .03);
+            border: 1px solid transparent;
+            transition: background .15s;
+        }
+
+        .lb-row:hover {
+            background: rgba(0, 255, 231, .05);
+        }
+
+        .lb-row-me {
+            background: rgba(0, 255, 231, .08) !important;
+            border-color: rgba(0, 255, 231, .25) !important;
+            box-shadow: 0 0 12px rgba(0, 255, 231, .08);
+        }
+
+        .lb-row-pos {
+            font-family: var(--font-principal, 'Audiowide', monospace);
+            font-size: 11px;
+            color: rgba(255, 255, 255, .35);
+            min-width: 22px;
+            text-align: right;
+        }
+
+        .lb-row-avatar {
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, .05);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            flex-shrink: 0;
+        }
+
+        .lb-row-info {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+            min-width: 0;
+        }
+
+        .lb-row-name {
+            font-family: var(--font-principal, 'Audiowide', monospace);
+            font-size: clamp(9px, 2vw, 11px);
+            color: #fff;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .lb-row-rank {
+            font-family: var(--font-secundaria, monospace);
+            font-size: 9px;
+            letter-spacing: 1px;
+        }
+
+        .lb-row-xp {
+            font-family: var(--font-secundaria, monospace);
+            font-size: 10px;
+            color: rgba(0, 255, 231, .7);
+            letter-spacing: 1px;
+            flex-shrink: 0;
+        }
+
+        .lb-you-tag {
+            font-size: 8px;
+            background: rgba(0, 255, 231, .15);
+            color: var(--color-cian, #00ffe7);
+            border: 1px solid rgba(0, 255, 231, .3);
+            border-radius: 4px;
+            padding: 1px 4px;
+            letter-spacing: 1px;
+            vertical-align: middle;
+        }
+
+        /* ── Mensajes de estado ── */
+        .lb-loading,
+        .lb-error,
+        .lb-empty {
+            padding: 28px 16px;
+            text-align: center;
+            font-family: var(--font-secundaria, monospace);
+            font-size: 12px;
+            letter-spacing: 2px;
+            color: rgba(255, 255, 255, .4);
+            width: 100%;
+        }
+
+        .lb-error {
+            color: rgba(255, 77, 109, .7);
+            line-height: 1.6;
+        }
+
+        .lb-error small {
+            display: block;
+            margin-top: 6px;
+            font-size: 10px;
+            letter-spacing: 1px;
+            opacity: .7;
+        }
+
+        /* ── Botón cerrar inferior ── */
+        .lb-btn-close-bottom {
+            margin: 12px 22px 18px;
+            padding: 14px;
+            border-radius: 12px;
+            background: rgba(0, 255, 231, .12);
+            border: 1px solid rgba(0, 255, 231, .25);
+            color: var(--color-cian, #00ffe7);
+            font-family: var(--font-secundaria, monospace);
+            font-size: 13px;
+            letter-spacing: 3px;
+            cursor: pointer;
+            transition: background .2s;
+            flex-shrink: 0;
+            position: relative;
+            z-index: 1;
+            -webkit-tap-highlight-color: transparent;
+            touch-action: manipulation;
+        }
+
+        .lb-btn-close-bottom:hover {
+            background: rgba(0, 255, 231, .22);
+        }
+
+        /* ── Responsive mobile ── */
+        @media (max-width: 599px) {
+            .lb-header { padding: 16px 18px 12px; }
+            .lb-podium-name { max-width: 80px; font-size: 9px; }
+            .lb-podium-wrap { padding: 16px 10px 0; gap: 4px; }
+            .lb-btn-close-bottom { margin: 8px 16px 24px; }
+        }
     </style>
+
+    <script src="leaderboard.js"></script>
+
 </body>
 
 </html>

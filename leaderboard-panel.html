@@ -1,0 +1,343 @@
+<!-- =====================================================
+     SALA DE REYES — Panel de clasificación global
+     Pegar DENTRO del <body>, junto a los demás paneles
+     (ej. justo después del bloque #achievementsPanel)
+     ===================================================== -->
+
+<div id="leaderboardPanel" class="lb-overlay">
+    <div class="lb-card">
+
+        <!-- Cabecera -->
+        <div class="lb-header">
+            <div class="lb-header-crown">👑</div>
+            <div>
+                <h2 class="lb-title">SALA DE REYES</h2>
+                <p class="lb-subtitle">Clasificación global · The Gem</p>
+            </div>
+            <button class="lb-close-btn" onclick="window.closeLeaderboard()">✕</button>
+        </div>
+
+        <!-- Podio top-3 -->
+        <div id="lb-podium" class="lb-podium-wrap">
+            <!-- renderizado por JS -->
+        </div>
+
+        <!-- Divisor -->
+        <div class="lb-divider"><span>— GUERREROS —</span></div>
+
+        <!-- Lista scrolleable 4º en adelante -->
+        <div id="lb-list" class="lb-list-wrap">
+            <!-- renderizado por JS -->
+        </div>
+
+        <!-- Botón cerrar -->
+        <button class="lb-btn-close-bottom" onclick="window.closeLeaderboard()">CERRAR</button>
+    </div>
+</div>
+
+
+<!-- =====================================================
+     CSS — pegar dentro del <style> global O en style.css
+     ===================================================== -->
+<style>
+/* ── Overlay backdrop ── */
+.lb-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,.82);
+    backdrop-filter: blur(6px);
+    z-index: 200;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+}
+
+/* ── Tarjeta principal ── */
+.lb-card {
+    width: min(500px, 100%);
+    max-height: 90vh;
+    background: linear-gradient(160deg, rgba(8,8,18,.97), rgba(4,4,12,.99));
+    border: 1px solid rgba(0,255,231,.2);
+    border-radius: 22px;
+    box-shadow:
+        0 0 40px rgba(0,255,231,.10),
+        0 0 80px rgba(0,0,0,.6);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+/* ── Animaciones entering / leaving (igual que otros paneles) ── */
+.lb-overlay.entering .lb-card {
+    animation: lbPopIn .35s cubic-bezier(.34,1.56,.64,1) both;
+}
+.lb-overlay.leaving .lb-card {
+    animation: lbPopOut .3s ease-in both;
+}
+@keyframes lbPopIn  { from { opacity:0; transform:scale(.82) } to { opacity:1; transform:scale(1) } }
+@keyframes lbPopOut { from { opacity:1; transform:scale(1)   } to { opacity:0; transform:scale(.82) } }
+
+/* ── Cabecera ── */
+.lb-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 20px 22px 14px;
+    border-bottom: 1px solid rgba(0,255,231,.1);
+    flex-shrink: 0;
+}
+.lb-header-crown {
+    font-size: 32px;
+    filter: drop-shadow(0 0 10px rgba(255,215,0,.7));
+}
+.lb-title {
+    font-family: var(--font-principal, 'Audiowide', monospace);
+    font-size: clamp(16px, 4vw, 22px);
+    color: #fff;
+    text-shadow: 0 0 18px rgba(0,255,231,.6);
+    margin: 0;
+    letter-spacing: 3px;
+}
+.lb-subtitle {
+    font-family: var(--font-secundaria, monospace);
+    font-size: 10px;
+    color: rgba(0,255,231,.5);
+    letter-spacing: 2px;
+    margin: 2px 0 0;
+}
+.lb-close-btn {
+    margin-left: auto;
+    background: none;
+    border: 1px solid rgba(255,77,109,.4);
+    color: rgba(255,77,109,.8);
+    border-radius: 50%;
+    width: 32px; height: 32px;
+    cursor: pointer;
+    font-size: 14px;
+    flex-shrink: 0;
+    transition: all .2s;
+}
+.lb-close-btn:hover {
+    background: rgba(255,77,109,.15);
+    color: #ff4d6d;
+    border-color: #ff4d6d;
+}
+
+/* ── Podio ── */
+.lb-podium-wrap {
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    gap: 8px;
+    padding: 22px 16px 0;
+    flex-shrink: 0;
+}
+.lb-podium-slot {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    max-width: 140px;
+}
+.lb-podium-empty { opacity: .25; }
+.lb-podium-first { transform: translateY(-8px); }
+
+.lb-podium-medal { font-size: 20px; }
+
+.lb-podium-avatar {
+    width: 46px; height: 46px;
+    border-radius: 50%;
+    background: rgba(255,255,255,.05);
+    display: flex; align-items: center; justify-content: center;
+    overflow: hidden;
+    border: 2px solid rgba(255,255,255,.15);
+}
+.lb-podium-first .lb-podium-avatar {
+    width: 58px; height: 58px;
+}
+
+.lb-podium-name {
+    font-family: var(--font-principal, 'Audiowide', monospace);
+    font-size: clamp(9px, 2vw, 11px);
+    color: #fff;
+    letter-spacing: 1px;
+    text-align: center;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 110px;
+}
+.lb-podium-rank {
+    font-family: var(--font-secundaria, monospace);
+    font-size: 9px;
+    letter-spacing: 1px;
+    text-align: center;
+}
+.lb-podium-xp {
+    font-family: var(--font-secundaria, monospace);
+    font-size: 10px;
+    color: rgba(255,255,255,.6);
+    letter-spacing: 1px;
+}
+
+.lb-podium-base {
+    width: 100%;
+    margin-top: 6px;
+    background: linear-gradient(180deg, rgba(0,255,231,.12), rgba(0,255,231,.04));
+    border-top: 2px solid rgba(0,255,231,.35);
+    border-radius: 6px 6px 0 0;
+    display: flex; align-items: center; justify-content: center;
+}
+.lb-podium-pos {
+    font-family: var(--font-principal, 'Audiowide', monospace);
+    font-size: 22px;
+    color: rgba(255,255,255,.25);
+    line-height: 1;
+}
+
+/* ── Divisor ── */
+.lb-divider {
+    text-align: center;
+    margin: 16px 22px 8px;
+    border-top: 1px solid rgba(255,255,255,.07);
+    position: relative;
+    flex-shrink: 0;
+}
+.lb-divider span {
+    position: relative;
+    top: -9px;
+    background: rgba(8,8,18,1);
+    padding: 0 10px;
+    font-family: var(--font-secundaria, monospace);
+    font-size: 9px;
+    letter-spacing: 3px;
+    color: rgba(0,255,231,.4);
+}
+
+/* ── Lista scrolleable ── */
+.lb-list-wrap {
+    overflow-y: auto;
+    flex: 1;
+    padding: 0 16px 4px;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(0,255,231,.2) transparent;
+}
+.lb-list-wrap::-webkit-scrollbar { width: 4px; }
+.lb-list-wrap::-webkit-scrollbar-thumb { background: rgba(0,255,231,.25); border-radius: 4px; }
+
+/* ── Fila de jugador ── */
+.lb-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 9px 10px;
+    border-radius: 10px;
+    margin-bottom: 4px;
+    background: rgba(255,255,255,.03);
+    border: 1px solid transparent;
+    transition: background .15s;
+}
+.lb-row:hover { background: rgba(0,255,231,.05); }
+.lb-row-me {
+    background: rgba(0,255,231,.08) !important;
+    border-color: rgba(0,255,231,.25) !important;
+    box-shadow: 0 0 12px rgba(0,255,231,.08);
+}
+
+.lb-row-pos {
+    font-family: var(--font-principal, 'Audiowide', monospace);
+    font-size: 11px;
+    color: rgba(255,255,255,.35);
+    min-width: 22px;
+    text-align: right;
+}
+.lb-row-avatar {
+    width: 34px; height: 34px;
+    border-radius: 50%;
+    background: rgba(255,255,255,.05);
+    display: flex; align-items: center; justify-content: center;
+    overflow: hidden;
+    flex-shrink: 0;
+}
+.lb-row-info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+}
+.lb-row-name {
+    font-family: var(--font-principal, 'Audiowide', monospace);
+    font-size: clamp(9px,2vw,11px);
+    color: #fff;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.lb-row-rank {
+    font-family: var(--font-secundaria, monospace);
+    font-size: 9px;
+    letter-spacing: 1px;
+}
+.lb-row-xp {
+    font-family: var(--font-secundaria, monospace);
+    font-size: 10px;
+    color: rgba(0,255,231,.7);
+    letter-spacing: 1px;
+    flex-shrink: 0;
+}
+.lb-you-tag {
+    font-size: 8px;
+    background: rgba(0,255,231,.15);
+    color: var(--color-cian, #00ffe7);
+    border: 1px solid rgba(0,255,231,.3);
+    border-radius: 4px;
+    padding: 1px 4px;
+    letter-spacing: 1px;
+    vertical-align: middle;
+}
+
+/* ── Mensajes de estado ── */
+.lb-loading, .lb-error, .lb-empty {
+    padding: 28px 16px;
+    text-align: center;
+    font-family: var(--font-secundaria, monospace);
+    font-size: 12px;
+    letter-spacing: 2px;
+    color: rgba(255,255,255,.4);
+    width: 100%;
+}
+.lb-error {
+    color: rgba(255,77,109,.7);
+    line-height: 1.6;
+}
+.lb-error small { display: block; margin-top: 6px; font-size: 10px; letter-spacing: 1px; opacity: .7; }
+
+/* ── Botón cerrar inferior ── */
+.lb-btn-close-bottom {
+    margin: 12px 22px 18px;
+    padding: 12px;
+    border: none;
+    border-radius: 10px;
+    background: rgba(0,255,231,.12);
+    border: 1px solid rgba(0,255,231,.25);
+    color: var(--color-cian, #00ffe7);
+    font-family: var(--font-secundaria, monospace);
+    font-size: 12px;
+    letter-spacing: 3px;
+    cursor: pointer;
+    transition: background .2s;
+    flex-shrink: 0;
+}
+.lb-btn-close-bottom:hover {
+    background: rgba(0,255,231,.22);
+}
+
+/* ── Responsive mobile ── */
+@media (max-width: 480px) {
+    .lb-card { border-radius: 16px; }
+    .lb-podium-name { max-width: 80px; font-size: 9px; }
+}
+</style>
