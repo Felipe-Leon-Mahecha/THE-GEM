@@ -113,7 +113,19 @@
         const myUID = window._firebaseUID || null;
 
         // Estado de carga
-        podiumEl.innerHTML = `<div class="lb-loading">⚙ Cargando clasificación…</div>`;
+        podiumEl.innerHTML = `
+            <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;padding:32px;gap:16px;width:100%;">
+                <div style="
+                    width:40px;height:40px;
+                    border:3px solid rgba(0,255,231,.1);
+                    border-top:3px solid rgba(0,255,231,.8);
+                    border-radius:50%;
+                    animation:lbSpin 0.8s linear infinite;
+                "></div>
+                <span style="font-family:monospace;font-size:11px;letter-spacing:3px;color:rgba(0,255,231,.4);">CARGANDO…</span>
+            </div>
+            <style>@keyframes lbSpin{to{transform:rotate(360deg)}}</style>
+        `;
         listEl.innerHTML = '';
 
         if (!window.fbDb) {
@@ -207,8 +219,11 @@
         }, 350);
     }
 
-    // ── Registrar todos los listeners al cargar el DOM ──
-    document.addEventListener('DOMContentLoaded', function () {
+    // ── Registrar todos los listeners ──────────────
+    // DOMContentLoaded ya disparó si el script está al final del body,
+    // así que ejecutamos directamente. Si por algún motivo el DOM aún
+    // no está listo, esperamos.
+    function bindListeners() {
 
         // ── Botón REYES en menú principal ────────────
         const reyesMenuBtn = document.getElementById('reyes-menu-btn');
@@ -225,25 +240,13 @@
         // ── Botón flotante REYES ──────────────────────
         const btn = document.getElementById('leaderboard-float-btn');
         if (btn) {
-            // Técnica Capacitor: touchend con preventDefault evita
-            // que el click sintético llegue tarde y dispare doble
             let touchMoved = false;
-            btn.addEventListener('touchstart', function () {
-                touchMoved = false;
-            }, { passive: true });
-            btn.addEventListener('touchmove', function () {
-                touchMoved = true;
-            }, { passive: true });
+            btn.addEventListener('touchstart', function () { touchMoved = false; }, { passive: true });
+            btn.addEventListener('touchmove', function () { touchMoved = true; }, { passive: true });
             btn.addEventListener('touchend', function (e) {
-                if (!touchMoved) {
-                    e.preventDefault();
-                    window.showLeaderboard();
-                }
+                if (!touchMoved) { e.preventDefault(); window.showLeaderboard(); }
             }, { passive: false });
-            // Fallback para PC/navegador
-            btn.addEventListener('click', function () {
-                window.showLeaderboard();
-            });
+            btn.addEventListener('click', function () { window.showLeaderboard(); });
         }
 
         // ── Botones de cierre ─────────────────────────
@@ -254,29 +257,34 @@
                 e.preventDefault();
                 window.closeLeaderboard();
             }, { passive: false });
-            el.addEventListener('click', function () {
-                window.closeLeaderboard();
-            });
+            el.addEventListener('click', function () { window.closeLeaderboard(); });
         }
         addCloseHandler('lb-close-top');
         addCloseHandler('lb-close-bottom');
 
-        // Cerrar con clic en el backdrop (fuera de la card)
+        // Cerrar tocando el backdrop
         const panel = document.getElementById(PANEL_ID);
         if (panel) {
             panel.addEventListener('touchend', function (e) {
-                if (e.target === panel) {
-                    e.preventDefault();
-                    window.closeLeaderboard();
-                }
+                if (e.target === panel) { e.preventDefault(); window.closeLeaderboard(); }
             }, { passive: false });
             panel.addEventListener('click', function (e) {
                 if (e.target === panel) window.closeLeaderboard();
             });
         }
-    });
+    }
+
+    // Ejecutar: si el DOM ya está listo (readyState != 'loading') directo,
+    // si no, esperar el evento.
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', bindListeners);
+    } else {
+        bindListeners();
+    }
 
     // ── Exponer globalmente ─────────────────────────
+    // Sobreescribir los stubs del head con la versión completa
+    window._lbLoad = loadLeaderboard;
     window.showLeaderboard = showLeaderboard;
     window.closeLeaderboard = closeLeaderboard;
 

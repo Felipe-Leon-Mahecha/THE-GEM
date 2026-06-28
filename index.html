@@ -20,11 +20,12 @@
     <link rel="stylesheet" href="responsive.css">
     <!-- Hoja de estilos principal -->
     <link rel="stylesheet" href="style.css">
-    <!-- Firebase CDN -->
+    <!-- Firebase CDN — una sola vez -->
     <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
     <script>
+        // ── Inicializar Firebase (UNA SOLA VEZ) ──────────────────────────────
         firebase.initializeApp({
             apiKey: "AIzaSyBUyJZec0G6tT6WJqQgsSvi9q_9-SoiMhA",
             authDomain: "the-gem.firebaseapp.com",
@@ -37,30 +38,72 @@
         window.fbDb = firebase.firestore();
         window.fbProvider = new firebase.auth.GoogleAuthProvider();
 
+        // ── Detectar Capacitor ───────────────────────────────────────────────
+        window._isCapacitor = !!(window.Capacitor && window.Capacitor.isNativePlatform && window.Capacitor.isNativePlatform());
+        console.log('[THE GEM] isCapacitor:', window._isCapacitor);
+
+        // ── LOGIN CON GOOGLE ─────────────────────────────────────────────────
         window.loginGoogle = async function () {
+            const btn = document.getElementById('btn-google-login');
             try {
-                const btn = document.getElementById('btn-google-login');
                 if (btn) btn.textContent = 'Conectando...';
+
+                if (window._isCapacitor) {
+                    // Login no disponible en móvil por ahora
+                    if (btn) {
+                        btn.textContent = '🎮 Solo en PC';
+                        btn.style.borderColor = '#444';
+                        btn.style.color = '#666';
+                        btn.style.cursor = 'default';
+                        btn.onclick = null;
+                    }
+                    return;
+                }
+
+                // Navegador web: popup normal
+                window.fbProvider.setCustomParameters({ prompt: 'select_account' });
                 const result = await window.fbAuth.signInWithPopup(window.fbProvider);
-                const user = result.user;
-                window._firebaseUID = user.uid;
-                await window.bajarDatosFirebase(user.uid);
-                window.actualizarBtnLogin(user);
+                window._firebaseUID = result.user.uid;
+                await window.bajarDatosFirebase(result.user.uid);
+                window.actualizarBtnLogin(result.user);
+
             } catch (e) {
-                console.error('Login error:', e);
-                const btn = document.getElementById('btn-google-login');
-                if (btn) btn.textContent = '🔑 Iniciar sesión con Google';
+                console.error('[THE GEM] Login error:', e);
+                if (btn) {
+                    btn.style.borderColor = '#ff4466';
+                    btn.style.color = '#ff4466';
+                    btn.textContent = 'Error — reintentar';
+                    setTimeout(() => {
+                        btn.style.borderColor = '#ff6a00';
+                        btn.style.color = '#ff6a00';
+                        btn.innerHTML = '<svg width="14" height="14" viewBox="0 0 48 48" style="flex-shrink:0"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.18 1.48-4.97 2.31-8.16 2.31-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg><span>Iniciar sesión</span>';
+                        btn.onclick = window.loginGoogle;
+                    }, 3000);
+                }
             }
         };
 
+        // ── CERRAR SESIÓN ────────────────────────────────────────────────────
         window.logoutGoogle = async function () {
-            await window.fbAuth.signOut();
+            try {
+                if (window._isCapacitor) {
+                    const FirebaseAuthentication = window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.FirebaseAuthentication;
+                    if (FirebaseAuthentication) await FirebaseAuthentication.signOut();
+                }
+                await window.fbAuth.signOut();
+            } catch (e) { console.error('Logout error:', e); }
             window._firebaseUID = null;
             const btn = document.getElementById('btn-google-login');
-            if (btn) btn.innerHTML = '🔑 Iniciar sesión con Google';
-            btn.onclick = window.loginGoogle;
+            if (btn) {
+                btn.style.borderColor = '#ff6a00';
+                btn.style.color = '#ff6a00';
+                btn.style.boxShadow = '0 0 14px rgba(255,106,0,0.25)';
+                btn.innerHTML = '<svg width="16" height="16" viewBox="0 0 48 48" style="flex-shrink:0;"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.18 1.48-4.97 2.31-8.16 2.31-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Iniciar sesión</span>';
+                btn.onclick = window.loginGoogle;
+            }
         };
 
+        // ── SUBIR datos localStorage → Firestore ─────────────────────────────
         window.subirDatosFirebase = async function (uid) {
             if (!uid) return;
             const datos = {};
@@ -73,6 +116,7 @@
             } catch (e) { console.error('Error subiendo datos:', e); }
         };
 
+        // ── BAJAR datos Firestore → localStorage ─────────────────────────────
         window.bajarDatosFirebase = async function (uid) {
             try {
                 const snap = await window.fbDb.collection('jugadores').doc(uid).get();
@@ -87,21 +131,48 @@
             } catch (e) { console.error('Error bajando datos:', e); }
         };
 
+        // ── ACTUALIZAR BOTÓN tras login exitoso ──────────────────────────────
         window.actualizarBtnLogin = function (user) {
             const btn = document.getElementById('btn-google-login');
             if (!btn) return;
-            btn.innerHTML = '✅ ' + user.displayName + ' &nbsp;<span style="color:#ff4466;font-size:12px;cursor:pointer" onclick="window.logoutGoogle()">Salir</span>';
+            const firstName = (user.displayName || 'Usuario').split(' ')[0];
+            btn.style.borderColor = '#34A853';
+            btn.style.color = '#34A853';
+            btn.style.boxShadow = '0 0 14px rgba(52,168,83,0.25)';
+            btn.innerHTML = `<svg width="14" height="14" viewBox="0 0 48 48" style="flex-shrink:0"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.18 1.48-4.97 2.31-8.16 2.31-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1">${firstName}</span><span style="color:#ff4466;font-size:10px;cursor:pointer;flex-shrink:0" onclick="event.stopPropagation();window.logoutGoogle()">SALIR</span>`;
             btn.onclick = null;
         };
 
+        // ── DETECTAR sesión activa al cargar ─────────────────────────────────
         window.fbAuth.onAuthStateChanged(function (user) {
             if (user) {
                 window._firebaseUID = user.uid;
                 window.actualizarBtnLogin(user);
+            } else if (window._isCapacitor) {
+                const btn = document.getElementById('btn-google-login');
+                if (btn) {
+                    btn.textContent = '🎮 Solo en PC';
+                    btn.style.borderColor = '#444';
+                    btn.style.color = '#666';
+                    btn.style.cursor = 'default';
+                    btn.onclick = null;
+                }
             }
         });
+        // Capturar resultado de redirect al iniciar
+        if (window._isCapacitor) {
+            window.fbAuth.getRedirectResult().then(function (result) {
+                if (result && result.user) {
+                    window._firebaseUID = result.user.uid;
+                    window.bajarDatosFirebase(result.user.uid);
+                    window.actualizarBtnLogin(result.user);
+                }
+            }).catch(function (e) {
+                console.error('[THE GEM] Redirect result error:', e);
+            });
+        }
 
-        // Auto-sync cuando cambian monedas/XP
+        // ── Auto-sync cuando cambian datos clave ─────────────────────────────
         const _origSet = localStorage.setItem.bind(localStorage);
         localStorage.setItem = function (key, value) {
             _origSet(key, value);
@@ -114,107 +185,56 @@
     <link rel="manifest" href="manifest.json">
     <!-- Registro de Service Worker para PWA -->
     <script>
-        // ⚠️ DESACTIVADO TEMPORALMENTE PARA DESARROLLO — el SW cachea archivos y
-        // hace que los cambios no se vean aunque hagas hard refresh.
-        // Descomenta esta línea cuando vayas a publicar el juego:
+        // ⚠️ DESACTIVADO TEMPORALMENTE PARA DESARROLLO
         //if ('serviceWorker' in navigator) {
         //    navigator.serviceWorker.register('/service-worker.js');
         //}
     </script>
-    <!-- Firebase SDK -->
-    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
-    <script>
-        // Inicializar Firebase
-        const firebaseConfig = {
-            apiKey: "AIzaSyBUyJZec0G6tT6WJqQgsSvi9q_9-SoiMhA",
-            authDomain: "the-gem.firebaseapp.com",
-            projectId: "the-gem",
-            storageBucket: "the-gem.firebasestorage.app",
-            messagingSenderId: "52213023173",
-            appId: "1:52213023173:web:97f35e488a73d6c5d58bac"
-        };
-        firebase.initializeApp(firebaseConfig);
-        window.fbAuth = firebase.auth();
-        window.fbDb = firebase.firestore();
-        window.fbProvider = new firebase.auth.GoogleAuthProvider();
-
-        // LOGIN CON GOOGLE
-        window.loginGoogle = async function () {
-            try {
-                const result = await window.fbAuth.signInWithPopup(window.fbProvider);
-                const user = result.user;
-                window._firebaseUID = user.uid;
-                await window.bajarDatosFirebase(user.uid);
-                window.actualizarBtnLogin(user);
-            } catch (e) { console.error(e); }
-        };
-
-        // CERRAR SESIÓN
-        window.logoutGoogle = async function () {
-            await window.fbAuth.signOut();
-            window._firebaseUID = null;
-            const btn = document.getElementById('btn-google-login');
-            if (btn) btn.innerHTML = '🔑 Iniciar sesión con Google';
-        };
-
-        // SUBIR datos localStorage → Firestore
-        window.subirDatosFirebase = async function (uid) {
-            if (!uid) return;
-            const datos = {};
-            Object.keys(localStorage).forEach(k => { datos[k] = localStorage.getItem(k); });
-            await window.fbDb.collection('jugadores').doc(uid).set(
-                { datos, ultimaSync: new Date().toISOString() },
-                { merge: true }
-            );
-        };
-
-        // BAJAR datos Firestore → localStorage
-        window.bajarDatosFirebase = async function (uid) {
-            const snap = await window.fbDb.collection('jugadores').doc(uid).get();
-            if (snap.exists && snap.data().datos) {
-                Object.entries(snap.data().datos).forEach(([k, v]) => {
-                    if (v !== null) localStorage.setItem(k, v);
-                });
-                // Refrescar UI
-                if (window.updateProfileUI) window.updateProfileUI();
-                if (window.updateHUD) window.updateHUD();
-                console.log('✅ Datos cargados desde Firebase');
-            }
-        };
-
-        // DETECTAR sesión activa al cargar
-        window.fbAuth.onAuthStateChanged(user => {
-            if (user) {
-                window._firebaseUID = user.uid;
-                window.actualizarBtnLogin(user);
-            }
-        });
-
-        window.actualizarBtnLogin = function (user) {
-            const btn = document.getElementById('btn-google-login');
-            if (!btn) return;
-            btn.style.borderColor = '#34A853';
-            btn.style.color = '#34A853';
-            btn.style.boxShadow = '0 0 14px rgba(52,168,83,0.25)';
-            btn.innerHTML = `
-    <svg width="16" height="16" viewBox="0 0 48 48">
-      <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/>
-      <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/>
-      <path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/>
-      <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.18 1.48-4.97 2.31-8.16 2.31-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/>
-    </svg>
-    ${user.displayName}
-    <span style="margin-left:auto;font-size:11px;color:#ff4466;cursor:pointer;letter-spacing:1px"
-      onclick="event.stopPropagation();window.logoutGoogle()">SALIR</span>
-  `;
-            btn.onclick = null;
-        };
-    </script>
 </head>
 
 <body>
+
+    <!-- Stub global: garantiza que window.showLeaderboard/closeLeaderboard
+         existen SIEMPRE, incluso antes de que leaderboard.js cargue.
+         El JS real los sobreescribe cuando el script termina de cargar. -->
+    <script>
+        window.showLeaderboard = function () {
+            var panel = document.getElementById('leaderboardPanel');
+            if (!panel) return;
+            panel.style.opacity = '0';
+            panel.style.display = 'flex';
+            void panel.getBoundingClientRect();
+            panel.style.opacity = '';
+            panel.classList.remove('entering', 'leaving');
+            void panel.offsetWidth;
+            panel.classList.add('entering');
+            // Si leaderboard.js ya cargó, usar la versión completa
+            if (typeof window._lbLoad === 'function') {
+                window._lbLoad();
+            } else {
+                // Mostrar spinner mientras leaderboard.js carga
+                var podium = document.getElementById('lb-podium');
+                if (podium) podium.innerHTML = '<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;padding:32px;gap:16px;width:100%;"><div style="width:40px;height:40px;border:3px solid rgba(0,255,231,.1);border-top:3px solid rgba(0,255,231,.8);border-radius:50%;animation:lbSpin 0.8s linear infinite;"></div><span style="font-family:monospace;font-size:11px;letter-spacing:3px;color:rgba(0,255,231,.4);">CARGANDO…</span></div><style>@keyframes lbSpin{to{transform:rotate(360deg)}}</style>';
+                // Reintentar cada 100ms hasta que el módulo cargue
+                var t = setInterval(function () {
+                    if (typeof window._lbLoad === 'function') {
+                        clearInterval(t);
+                        window._lbLoad();
+                    }
+                }, 100);
+            }
+        };
+        window.closeLeaderboard = function () {
+            var panel = document.getElementById('leaderboardPanel');
+            if (!panel) return;
+            panel.classList.remove('entering');
+            panel.classList.add('leaving');
+            setTimeout(function () {
+                panel.style.display = 'none';
+                panel.classList.remove('leaving');
+            }, 350);
+        };
+    </script>
 
     <!-- Pantalla de carga inicial -->
     <div id="loading-screen" style="
@@ -292,37 +312,7 @@
 ">
         <img src="assets/Imagenes/Icono/Opciones.png" style="width:100%;height:100%;">
     </div>
-    <!-- Botón flotante Sala de Reyes -->
-    <button id="leaderboard-float-btn" style="
-    position:fixed;
-    bottom:20px;
-    right:215px;
-    z-index:10000;
-    cursor:pointer;
-    height:52px;
-    padding:0 18px;
-    background:rgba(0,0,0,0.35);
-    border:1px solid rgba(255,215,0,0.35);
-    border-radius:14px;
-    backdrop-filter:blur(6px);
-    -webkit-backdrop-filter:blur(6px);
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    gap:8px;
-    font-family:var(--font-principal,monospace);
-    font-size:12px;
-    letter-spacing:2px;
-    color:#ffd700;
-    text-shadow:0 0 10px rgba(255,215,0,0.5);
-    white-space:nowrap;
-    -webkit-tap-highlight-color:transparent;
-    touch-action:manipulation;
-    user-select:none;
-    -webkit-user-select:none;
-">
-        👑 REYES
-    </button>
+    <!-- Botón REYES: integrado en el menú (ver #wrap-reyes en #overlay-panel) -->
 
     <!-- Botón flotante de monedas infinitas (DEV) -->
     <div id="infinite-coins-float-btn" onclick="toggleInfiniteCoins()" style="
@@ -434,31 +424,6 @@
                             style="width:100%; height:auto; display:block; pointer-events:none;">
                     </button>
                 </div>
-            </div>
-
-            <!-- REYES (fila completa debajo) -->
-            <div id="wrap-reyes" class="menu-btn-wrap menu-btn-play-size" style="margin-top:0;">
-                <button id="reyes-menu-btn" class="menu-png-btn" style="
-                    background: linear-gradient(135deg, rgba(255,215,0,.12), rgba(255,160,0,.06));
-                    border: 1px solid rgba(255,215,0,.35);
-                    border-radius: 14px;
-                    color: #ffd700;
-                    font-family: var(--font-principal, monospace);
-                    font-size: clamp(13px, 2vw, 17px);
-                    letter-spacing: 3px;
-                    padding: 14px 24px;
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-                    gap: 10px;
-                    width: 100%;
-                    text-shadow: 0 0 12px rgba(255,215,0,.6);
-                    box-shadow: 0 0 18px rgba(255,215,0,.08);
-                    -webkit-tap-highlight-color: transparent;
-                    touch-action: manipulation;
-                ">
-                    👑 &nbsp;SALA DE REYES
-                </button>
             </div>
 
         </div>
@@ -858,31 +823,54 @@
                         aria-label="Editar avatar y nombre">✎</button>
                 </div>
             </div>
-            <!-- Botón login Google -->
-            <button id="btn-google-login" onclick="window.loginGoogle()" style="display:flex;align-items:center;justify-content:center;gap:10px;
-         margin:16px 28px 20px;padding:12px 20px;
-         background:linear-gradient(135deg,#1a1a2e,#0d0d1a);
-         border:1.5px solid #ff6a00;
-         color:#ff6a00;border-radius:10px;cursor:pointer;
-         font-size:13px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;
-         width:calc(100% - 56px);box-sizing:border-box;
-         box-shadow:0 0 14px rgba(255,106,0,0.25);
-         transition:all 0.2s;"
-                onmouseover="this.style.background='linear-gradient(135deg,#1f1a10,#0d0d1a)';this.style.boxShadow='0 0 28px rgba(255,106,0,0.5)'"
-                onmouseout="this.style.background='linear-gradient(135deg,#1a1a2e,#0d0d1a)';this.style.boxShadow='0 0 14px rgba(255,106,0,0.25)'">
-                <svg width="18" height="18" viewBox="0 0 48 48">
-                    <path fill="#EA4335"
-                        d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z" />
-                    <path fill="#4285F4"
-                        d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z" />
-                    <path fill="#FBBC05"
-                        d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z" />
-                    <path fill="#34A853"
-                        d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.18 1.48-4.97 2.31-8.16 2.31-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z" />
-                    <path fill="none" d="M0 0h48v48H0z" />
-                </svg>
-                Iniciar sesión con Google
-            </button>
+            <!-- Fila: Google + REYES -->
+            <div style="display:flex;gap:10px;margin:16px 28px 20px;width:calc(100% - 56px);box-sizing:border-box;">
+
+                <!-- Botón login Google (mitad izquierda) -->
+                <button id="btn-google-login" onclick="window.loginGoogle()" style="
+                    flex:1;min-width:0;
+                    display:flex;align-items:center;justify-content:center;gap:8px;
+                    padding:12px 10px;
+                    background:linear-gradient(135deg,#1a1a2e,#0d0d1a);
+                    border:1.5px solid #ff6a00;
+                    color:#ff6a00;border-radius:10px;cursor:pointer;
+                    font-size:12px;font-weight:700;letter-spacing:1px;text-transform:uppercase;
+                    box-shadow:0 0 14px rgba(255,106,0,0.25);
+                    transition:all 0.2s;
+                    -webkit-tap-highlight-color:transparent;touch-action:manipulation;"
+                    onmouseover="this.style.boxShadow='0 0 28px rgba(255,106,0,0.5)'"
+                    onmouseout="this.style.boxShadow='0 0 14px rgba(255,106,0,0.25)'">
+                    <svg width="16" height="16" viewBox="0 0 48 48" style="flex-shrink:0;">
+                        <path fill="#EA4335"
+                            d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z" />
+                        <path fill="#4285F4"
+                            d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z" />
+                        <path fill="#FBBC05"
+                            d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z" />
+                        <path fill="#34A853"
+                            d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.18 1.48-4.97 2.31-8.16 2.31-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z" />
+                    </svg>
+                    <span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Iniciar sesión</span>
+                </button>
+
+                <!-- Botón REYES (mitad derecha) -->
+                <button id="btn-reyes-perfil" onclick="window.showLeaderboard()"
+                    ontouchend="event.preventDefault();window.showLeaderboard();" style="
+                    flex:1;min-width:0;
+                    display:flex;align-items:center;justify-content:center;gap:8px;
+                    padding:12px 10px;
+                    background:linear-gradient(135deg,rgba(255,215,0,.1),rgba(255,160,0,.05));
+                    border:1.5px solid rgba(255,215,0,.5);
+                    color:#ffd700;border-radius:10px;cursor:pointer;
+                    font-size:12px;font-weight:700;letter-spacing:1px;text-transform:uppercase;
+                    box-shadow:0 0 14px rgba(255,215,0,.15);
+                    text-shadow:0 0 8px rgba(255,215,0,.5);
+                    transition:all 0.2s;
+                    -webkit-tap-highlight-color:transparent;touch-action:manipulation;">
+                    👑 REYES
+                </button>
+
+            </div>
             <div class="profile-section-title">ESTADÍSTICAS DEL JUGADOR</div>
             <div class="profile-stat-row">
                 <div class="profile-stat-row-item"><span>Top Combo</span><span class="value"
@@ -1626,7 +1614,7 @@
             display: none;
             position: fixed;
             inset: 0;
-            background: rgba(0,0,0,.88);
+            background: rgba(0, 0, 0, .88);
             backdrop-filter: blur(8px);
             -webkit-backdrop-filter: blur(8px);
             z-index: 99999;
@@ -1655,13 +1643,16 @@
 
         /* Desktop: limitar altura y mostrar como modal */
         @media (min-width: 600px) {
-            .lb-overlay { padding: 20px; }
+            .lb-overlay {
+                padding: 20px;
+            }
+
             .lb-card {
                 height: min(92vh, 700px);
                 max-height: 700px;
-                border: 1px solid rgba(0,255,231,.2);
+                border: 1px solid rgba(0, 255, 231, .2);
                 border-radius: 22px;
-                box-shadow: 0 0 60px rgba(0,255,231,.12), 0 0 120px rgba(0,0,0,.7);
+                box-shadow: 0 0 60px rgba(0, 255, 231, .12), 0 0 120px rgba(0, 0, 0, .7);
             }
         }
 
@@ -1673,6 +1664,7 @@
             overflow: hidden;
             z-index: 0;
         }
+
         .lb-bg-crown {
             position: absolute;
             top: -20px;
@@ -2043,13 +2035,27 @@
 
         /* ── Responsive mobile ── */
         @media (max-width: 599px) {
-            .lb-header { padding: 16px 18px 12px; }
-            .lb-podium-name { max-width: 80px; font-size: 9px; }
-            .lb-podium-wrap { padding: 16px 10px 0; gap: 4px; }
-            .lb-btn-close-bottom { margin: 8px 16px 24px; }
+            .lb-header {
+                padding: 16px 18px 12px;
+            }
+
+            .lb-podium-name {
+                max-width: 80px;
+                font-size: 9px;
+            }
+
+            .lb-podium-wrap {
+                padding: 16px 10px 0;
+                gap: 4px;
+            }
+
+            .lb-btn-close-bottom {
+                margin: 8px 16px 24px;
+            }
         }
     </style>
 
+    <!-- Plugin @capacitor-firebase/authentication se accede directamente via Capacitor.Plugins.FirebaseAuthentication -->
     <script src="leaderboard.js"></script>
 
 </body>
