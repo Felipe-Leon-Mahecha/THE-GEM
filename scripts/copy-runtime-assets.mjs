@@ -18,7 +18,14 @@ const runtimeFiles = [
   "combo-system.js",
   "fragment-system.js",
   "src/keybinds-integration.js",
-  "style.css"
+  "style.css",
+  "config.js",
+  "rank-system.js",
+  "leaderboard.js",
+  "skins-side.js",
+  "survival-level.js",
+  "prices.config.js",
+  "rubypass.config.js"
 ];
 
 await mkdir(join(dist, "src"), { recursive: true });
