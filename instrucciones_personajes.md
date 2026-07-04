@@ -108,9 +108,16 @@ match this new style. Same transparent background, no text, no watermark,
 1024x1024.
 ```
 
-> Si el resultado pierde algún detalle importante, pídele en un segundo mensaje:
-> *"Keep this new style, but make sure [detalle específico] is still visible,
-> exactly like in the original reference image."*
+## 🎨 TRANSFERENCIA DE ESTILO (Para portadas de paquetes baners etc)
+
+Sube la imagen del baner o panel y pega esto — no hace falta rediseñar desde cero:
+
+```
+Transform this image into a premium AAA game UI artwork while preserving the original composition, layout, proportions, and recognizable objects. Redesign every element using a futuristic cosmic fantasy style with glowing neon blue and magenta energy, crystalline metallic materials, sharp angular shapes, cinematic lighting, bloom, lens flares, high contrast, vibrant highlights, subtle energy particles, and premium game interface aesthetics. Give every object depth, polished reflections, glowing edges, and ultra-clean details. The background should become a dark cosmic space with nebulae, subtle hexagonal patterns, light streaks, and atmospheric effects. Keep the original subject instantly recognizable while making it look like official promotional artwork for a high-end fantasy MMORPG or sci-fi game. Ultra detailed, crisp, 3D-inspired digital illustration, epic lighting, professional splash art, premium game store banner quality, 8k.
+```
+
+> Si quieres que la IA NO cambie la composición añade esto al final:
+> *"Do not change the composition, camera angle, perspective, object positions, proportions, or layout. Preserve the original silhouette and readability. Only transform the visual style."*
 
 ---
 

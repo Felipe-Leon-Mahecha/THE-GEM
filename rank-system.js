@@ -7,6 +7,19 @@
 try {
 
     // ─────────────────────────────────────────────
+    // 0. CONFIG DE LA BARRA DE PROGRESO POR NODOS
+    // Si config.js define window.NODE_BAR_CFG antes de este script,
+    // esos valores tienen prioridad y estos quedan como fallback.
+    // ─────────────────────────────────────────────
+    window.NODE_BAR_CFG = Object.assign({
+        trackHeight: 4,       // grosor de la línea (px)
+        dotSize: 12,          // diámetro de los nodos normales (px)
+        dotSizeCurrent: 20,   // diámetro del nodo donde está el jugador (px)
+        endDotSize: 32,       // diámetro del nodo final (rango siguiente) (px)
+        barHeight: 90,        // alto total del contenedor de la barra (px)
+    }, window.NODE_BAR_CFG || {});
+
+    // ─────────────────────────────────────────────
     // 1. TABLA DE RANGOS (17 rangos, lista definitiva)
     // ─────────────────────────────────────────────
     const RANKS = [
@@ -218,6 +231,19 @@ try {
                     menuRankEl.textContent = rank.name;
                     menuRankEl.style.color = rank.color;
                 }
+
+                // Chip de rango junto al banner de perfil (acceso al Camino de Rangos)
+                const chipEl = document.getElementById('menu-rank-chip');
+                if (chipEl) chipEl.style.setProperty('--rank-chip-color', rank.color);
+
+                const chipIconEl = document.getElementById('menu-rank-chip-icon');
+                if (chipIconEl) chipIconEl.textContent = rank.emoji;
+
+                const chipNameEl = document.getElementById('menu-rank-chip-name');
+                if (chipNameEl) chipNameEl.textContent = rank.name;
+
+                const chipBarEl = document.getElementById('menu-rank-chip-bar-fill');
+                if (chipBarEl) chipBarEl.style.width = (progress * 100).toFixed(1) + '%';
 
                 // profilePanel
                 const heroRankEl = document.getElementById('profileHeroRank');
@@ -568,7 +594,7 @@ const MAP_DEFS = [
     },
     {
         id: 2, name: 'El Núcleo Ardiente',
-        bg: null, bgColor: '#120800',
+        bg: 'assets/UI/Imagenes Camino de reyes/Islas_mapa_2.png', bgColor: '#120800',
         starColor: 'rgba(255,140,0,{a})',
         pathColor: '#ff8c00', pathGlow: '#ff6600',
         gemImage: 'assets/UI/Imagenes Camino de reyes/GEMA_2.png',
@@ -577,7 +603,7 @@ const MAP_DEFS = [
     },
     {
         id: 3, name: 'El Palacio de Cristal',
-        bg: null, bgColor: '#08060f',
+        bg: 'assets/UI/Imagenes Camino de reyes/Islas_mapa_3.png', bgColor: '#08060f',
         starColor: 'rgba(255,215,0,{a})',
         pathColor: '#ffd700', pathGlow: '#ffaa00',
         gemImage: 'assets/UI/Imagenes Camino de reyes/GEMA_3.png',
@@ -642,26 +668,7 @@ window.buildRanksScreen = function () {
         const nameEl = document.getElementById('rs-current-name');
         if (nameEl) { nameEl.textContent = `${currentRank.emoji} ${currentRank.name}`; nameEl.style.color = currentRank.color; }
 
-        const barFill = document.getElementById('rs-current-bar-fill');
-        if (barFill) { barFill.style.width = (progress * 100).toFixed(1) + '%'; barFill.style.background = `linear-gradient(90deg, ${currentRank.color}, ${currentRank.color}88)`; }
-
-        const xpInfo = document.getElementById('rs-current-xp-info');
-        if (xpInfo) {
-            if (nextRank) {
-                const xpFalta = nextRank.threshold - currentXP;
-                const pct = Math.round((progress || 0) * 100);
-                xpInfo.innerHTML = `
-                    <span style="color:#fff;font-weight:600;">${currentXP.toLocaleString()} XP</span>
-                    <span style="color:rgba(255,255,255,0.4);margin:0 6px;">·</span>
-                    <span style="color:rgba(255,255,255,0.6);">Hacia <strong style="color:${nextRank.color || '#fff'}">${nextRank.name}</strong></span>
-                    <span style="color:rgba(255,255,255,0.4);margin:0 6px;">·</span>
-                    <span style="color:rgba(255,255,255,0.5);">faltan <strong style="color:#fff">${xpFalta.toLocaleString()} XP</strong></span>
-                    <span style="color:rgba(255,255,255,0.3);margin-left:6px;">(${pct}%)</span>
-                `;
-            } else {
-                xpInfo.innerHTML = `<span style="color:#ffd700;font-weight:600;">⚡ ${currentXP.toLocaleString()} XP · ¡Rango máximo alcanzado!</span>`;
-            }
-        }
+        window._renderNodeProgressBar(currentRank, nextRank, currentXP);
 
         const avatarUrl = localStorage.getItem('playerAvatar') || '';
         const rsAvatar = document.getElementById('rs-profile-avatar');
@@ -684,6 +691,10 @@ window.buildRanksScreen = function () {
         }
         _activeMap = mapIdx;
 
+        // Aplica el tema visual del header (hielo/fuego/dorado) según el mapa actual,
+        // y el banner equipado real del jugador como fondo del mini-perfil.
+        if (window.aplicarTemaHeaderRangos) window.aplicarTemaHeaderRangos(mapIdx);
+
         window._renderRankMap(mapIdx, currentXP, currentRank, allRanks);
 
     } catch (e) { console.warn('[RankSystem] buildRanksScreen:', e); }
@@ -697,6 +708,11 @@ window._renderRankMap = function (mapIdx, currentXP, currentRank, allRanks) {
 
     container.innerHTML = '';
     if (_mapRafId) { cancelAnimationFrame(_mapRafId); _mapRafId = null; }
+
+    // Limpiar el flag de drag para que los listeners se re-registren
+    // correctamente con el nuevo mapa (evita acumulación de handlers)
+    const scrollElReset = document.getElementById('rs-map-scroll');
+    if (scrollElReset) scrollElReset._dragBound = false;
 
     if (map.bg) {
         container.style.backgroundImage = `url("${map.bg}")`;
@@ -733,7 +749,6 @@ window._renderRankMap = function (mapIdx, currentXP, currentRank, allRanks) {
     // Obtener rangos desde todas las fuentes posibles
     const ranksSource = (allRanks && allRanks.length > 0) ? allRanks : (window.RANKS || []);
     const mapRanks = ranksSource.filter(r => map.rankIds.includes(Number(r.id)));
-    console.log('[RankMap] W:', W, 'H:', H, 'mapRanks:', mapRanks.length, 'nodesPct:', nodesPct.length, 'rankIds:', map.rankIds, 'ids en source:', ranksSource.map(r => r.id));
     const absNodes = nodesPct.map(p => ({ x: p.x / 100 * W, y: p.y / 100 * H }));
     const pathD = _buildPathD(nodesPct, W, H);
 
@@ -1042,24 +1057,167 @@ window._renderRankMap = function (mapIdx, currentXP, currentRank, allRanks) {
         }
     }
 
-    // Loop animación estrellas
-    function drawBg() {
-        ctx.clearRect(0, 0, W, H);
-        stars.forEach(s => {
-            s.a += s.da;
-            if (s.a > 0.6 || s.a < 0.05) s.da *= -1;
-            ctx.beginPath();
-            ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
-            ctx.fillStyle = map.starColor.replace('{a}', s.a.toFixed(2));
-            ctx.fill();
-        });
+    // Loop animación estrellas — throttleado a ~30fps para evitar lag.
+    // Token local para que un loop antiguo no siga corriendo si _switchMap
+    // arranca uno nuevo antes de que pare.
+    const rafToken = { active: true };
+    let _lastStarDraw = 0;
+    function drawBg(ts) {
+        if (!rafToken.active) return;
+        if (ts - _lastStarDraw >= 33) {
+            _lastStarDraw = ts;
+            ctx.clearRect(0, 0, W, H);
+            stars.forEach(s => {
+                s.a += s.da;
+                if (s.a > 0.6 || s.a < 0.05) s.da *= -1;
+                ctx.beginPath();
+                ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+                ctx.fillStyle = map.starColor.replace('{a}', s.a.toFixed(2));
+                ctx.fill();
+            });
+        }
         const screen = document.getElementById('ranksScreen');
         if (screen && screen.style.display !== 'none') {
             _mapRafId = requestAnimationFrame(drawBg);
+        } else {
+            rafToken.active = false;
         }
     }
-    cancelAnimationFrame(_mapRafId);
-    drawBg();
+    // Invalidar cualquier loop anterior antes de arrancar el nuevo
+    if (_mapRafId) { cancelAnimationFrame(_mapRafId); _mapRafId = null; }
+    drawBg(0);
+};
+
+// ─────────────────────────────────────────────────────────────────────────────
+// BARRA DE PROGRESO POR NODOS (mini camino: rango actual → siguiente rango)
+// ─────────────────────────────────────────────────────────────────────────────
+
+// Calcula qué tramo de nodos (del mapa de niveles) corresponde al segmento
+// "rango actual → siguiente rango" y qué tan avanzado está el jugador en él.
+window._getNodeBarSegment = function (currentXP, currentRank) {
+    const cfg = window.RANK_MAP_CONFIG || {};
+    const rewards = cfg.nodeRewards || [];
+    const allRanks = window.RANKS || [];
+    if (!rewards.length) return null;
+
+    let mapIdx = 0;
+    for (let m = MAP_DEFS.length - 1; m >= 0; m--) {
+        if (MAP_DEFS[m].rankIds.includes(currentRank.id)) { mapIdx = m; break; }
+    }
+    const mapDef = MAP_DEFS[mapIdx];
+    if (!mapDef) return null;
+
+    const rankNodes = rewards
+        .map((r, i) => ({ ...r, nodeIdx: i }))
+        .filter(r => r.rankId !== null && mapDef.rankIds.includes(r.rankId));
+    if (!rankNodes.length) return null;
+
+    // Caso especial: antes de llegar a Hierro, viaje Origen → Cobre
+    if (mapIdx === 0) {
+        const hierro = allRanks.find(r => r.id === 2);
+        if (hierro && currentXP < hierro.threshold) {
+            const hierroNodeIdx = rewards.findIndex(r => r.rankId === 2);  // ← CAMBIO: buscar Hierro, no Cobre
+            const endIdx = hierroNodeIdx >= 0 ? hierroNodeIdx : 5;
+            const pct = currentXP === 0 ? 0 : Math.min(1, currentXP / hierro.threshold);
+            return { pct, nodes: rewards.slice(0, endIdx + 1), maxed: false };
+        }
+    }
+
+    let currentRankNode = rankNodes[0];
+    let nextRankNode = rankNodes[1] || null;
+    for (let i = 0; i < rankNodes.length; i++) {
+        const rank = allRanks.find(r => r.id === rankNodes[i].rankId);
+        if (rank && currentXP >= rank.threshold) {
+            currentRankNode = rankNodes[i];
+            nextRankNode = rankNodes[i + 1] || null;
+        }
+    }
+
+    if (!nextRankNode) {
+        return { pct: 1, nodes: [rewards[currentRankNode.nodeIdx]], maxed: true };
+    }
+
+    const rankA = allRanks.find(r => r.id === currentRankNode.rankId);
+    const rankB = allRanks.find(r => r.id === nextRankNode.rankId);
+    const xpInSegment = currentXP - rankA.threshold;
+    const xpNeeded = rankB.threshold - rankA.threshold;
+    const pct = Math.min(1, xpInSegment / (xpNeeded || 1));
+
+    return { pct, nodes: rewards.slice(currentRankNode.nodeIdx, nextRankNode.nodeIdx + 1), maxed: false };
+};
+
+// Dibuja la barra: ícono+nombre del rango actual, línea con nodos,
+// nodo final grande (siguiente rango), y etiqueta "Inicio" / nombre siguiente.
+window._renderNodeProgressBar = function (currentRank, nextRank, currentXP) {
+    const wrap = document.getElementById('rs-nodebar-track-wrap');
+    const iconEl = document.getElementById('rs-nodebar-rank-icon');
+    const nameEl = document.getElementById('rs-nodebar-rank-name');
+    const endLabelEl = document.getElementById('rs-nodebar-end-label');
+    if (!wrap) return;
+
+    if (iconEl) {
+        iconEl.textContent = currentRank.emoji;
+        iconEl.style.color = currentRank.color;
+        iconEl.style.borderColor = currentRank.color;
+    }
+    if (nameEl) { nameEl.textContent = currentRank.name; nameEl.style.color = currentRank.color; }
+    if (endLabelEl) {
+        endLabelEl.textContent = nextRank ? nextRank.name : '¡MÁXIMO!';
+        endLabelEl.style.color = nextRank ? nextRank.color : '#ffd700';
+    }
+
+    wrap.innerHTML = '';
+    const seg = window._getNodeBarSegment(currentXP, currentRank);
+    if (!seg || !seg.nodes.length) return;
+
+    const cfg = window.NODE_BAR_CFG || {};
+    const dotSize = cfg.dotSize || 12;
+    const dotSizeCurrent = cfg.dotSizeCurrent || 20;
+    const endDotSize = cfg.endDotSize || 32;
+    const trackHeight = cfg.trackHeight || 4;
+
+    const total = seg.nodes.length;
+    const floatPos = seg.maxed ? (total - 1) : (seg.pct * (total - 1));
+
+    const line = document.createElement('div');
+    line.className = 'rs-nodebar-line';
+    line.style.height = trackHeight + 'px';
+    wrap.appendChild(line);
+
+    const lineFill = document.createElement('div');
+    lineFill.className = 'rs-nodebar-line-fill';
+    lineFill.style.height = trackHeight + 'px';
+    lineFill.style.background = currentRank.color;
+    const fillPct = total > 1 ? (Math.min(floatPos, total - 1) / (total - 1)) * 100 : 100;
+    lineFill.style.width = fillPct + '%';
+    wrap.appendChild(lineFill);
+
+    const dotsHolder = document.createElement('div');
+    dotsHolder.className = 'rs-nodebar-dots';
+    wrap.appendChild(dotsHolder);
+
+    seg.nodes.forEach((node, i) => {
+        const posPct = total > 1 ? (i / (total - 1)) * 100 : 100;
+        const isEnd = i === total - 1;
+        const isPassed = i <= Math.floor(floatPos + 0.001);
+        const isCurrent = !isEnd && !seg.maxed && i === Math.floor(floatPos);
+
+        const dot = document.createElement('div');
+        dot.className = 'rs-nodebar-dot' + (isEnd ? ' end' : '') + (isPassed ? ' filled' : '') + (isCurrent ? ' current' : '');
+        const size = isEnd ? endDotSize : (isCurrent ? dotSizeCurrent : dotSize);
+        dot.style.width = size + 'px';
+        dot.style.height = size + 'px';
+        dot.style.left = posPct + '%';
+        dot.style.fontSize = Math.round(size * 0.5) + 'px';
+
+        const color = isEnd ? (nextRank ? nextRank.color : '#ffd700') : currentRank.color;
+        dot.style.borderColor = color;
+        dot.style.color = color;
+        dot.style.background = (isPassed || isEnd) ? color : 'transparent';
+        if (isEnd) dot.textContent = nextRank ? nextRank.emoji : '👑';
+
+        dotsHolder.appendChild(dot);
+    });
 };
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -1277,6 +1435,10 @@ window._switchMap = function (mi) {
     const currentRank = window.rankSystem ? window.rankSystem.getCurrentRank() : { id: 1, name: 'Chispa', color: '#aaa', emoji: '✦', threshold: 0 };
     const allRanks = window.RANKS || [];
     _activeMap = mi;
+    // Cancelar el loop de animación del mapa anterior antes de redibujar
+    if (_mapRafId) { cancelAnimationFrame(_mapRafId); _mapRafId = null; }
+    // Actualizar el tema visual del header (hielo/fuego/dorado) al cambiar de mapa
+    if (window.aplicarTemaHeaderRangos) window.aplicarTemaHeaderRangos(mi);
     window._renderRankMap(mi, currentXP, currentRank, allRanks);
 };
 
@@ -1321,30 +1483,65 @@ window._switchMap = function (mi) {
             from { transform: scale(0.85); opacity: 0; }
             to   { transform: scale(1);    opacity: 1; }
         }
-        /* Barra XP más visible */
-        .rs-xp-bar-row {
-            padding: 8px 28px 10px !important;
-            background: rgba(0,0,0,0.4) !important;
-            border-bottom: 1px solid rgba(255,255,255,0.08) !important;
+        /* Barra de progreso por nodos */
+        .rs-nodebar {
+            margin: 10px 20px 6px !important;
+            padding: 12px 18px 10px !important;
+            background: rgba(8,12,22,0.55) !important;
+            border: 1px solid rgba(255,255,255,0.08) !important;
+            border-radius: 14px !important;
         }
-        .rs-current-bar {
-            height: 7px !important;
-            background: rgba(255,255,255,0.08) !important;
-            border-radius: 4px !important;
-            overflow: hidden;
+        .rs-nodebar-header {
+            display: flex; align-items: center; gap: 8px;
+            margin-bottom: 16px;
         }
-        .rs-current-bar-fill {
-            height: 100% !important;
-            border-radius: 4px !important;
-            transition: width 0.6s cubic-bezier(.4,0,.2,1) !important;
-            box-shadow: 0 0 8px currentColor !important;
-        }
-        .rs-current-xp-info {
-            font-size: 11px !important;
-            white-space: nowrap;
+        .rs-nodebar-rank-icon {
+            width: 24px; height: 24px; border-radius: 50%;
+            border: 2px solid currentColor;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 12px; background: rgba(255,255,255,0.05);
             flex-shrink: 0;
-            line-height: 1.4;
         }
+        .rs-nodebar-rank-name {
+            font-weight: 700; font-size: 13px; letter-spacing: .3px;
+        }
+        .rs-nodebar-track-wrap {
+            position: relative;
+            height: 28px;
+            margin: 0 4px;
+        }
+        .rs-nodebar-line {
+            position: absolute; left: 0; right: 0; top: 50%;
+            transform: translateY(-50%);
+            background: rgba(255,255,255,0.12);
+            border-radius: 4px;
+        }
+        .rs-nodebar-line-fill {
+            position: absolute; left: 0; top: 50%;
+            transform: translateY(-50%);
+            border-radius: 4px;
+            transition: width 0.6s cubic-bezier(.4,0,.2,1);
+            box-shadow: 0 0 8px currentColor;
+        }
+        .rs-nodebar-dots { position: absolute; inset: 0; }
+        .rs-nodebar-dot {
+            position: absolute; top: 50%;
+            transform: translate(-50%,-50%);
+            border-radius: 50%;
+            border: 2px solid rgba(255,255,255,0.25);
+            box-sizing: border-box;
+            display: flex; align-items: center; justify-content: center;
+            transition: width .5s, height .5s, background .5s, box-shadow .5s;
+        }
+        .rs-nodebar-dot.filled { box-shadow: 0 0 6px currentColor; }
+        .rs-nodebar-dot.current { box-shadow: 0 0 14px 2px currentColor; z-index: 2; }
+        .rs-nodebar-dot.end { font-weight: 700; }
+        .rs-nodebar-footer {
+            display: flex; justify-content: space-between;
+            margin-top: 6px; font-size: 11px;
+        }
+        .rs-nodebar-start-label { color: rgba(255,255,255,0.4); }
+        .rs-nodebar-end-label { font-weight: 700; }
         @keyframes rsm-skin-spin {
             from { transform: rotate(0deg); }
             to   { transform: rotate(360deg); }

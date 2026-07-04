@@ -1,173 +1,116 @@
-# 💎 THE GEM
+<div align="center">
+  <img src="./img/Logo_THE_GEM.png" alt="Logo THE GEM" width="140px"/>
 
-> Juego arcade/survival 2D desarrollado con HTML5 Canvas, JavaScript nativo y Capacitor para Android.
+  # THE GEM — Landing Page
 
-🔗 **[Jugar en línea](https://thegembyfelixcompany.netlify.app/)** *(versión de demostración — puede no estar actualizada)*
+  > Landing page del proyecto integrador del módulo 1 — Soy Henry Full Stack 3.0
+> 
+🔗 **[Ver demo en vivo](https://felipe-leon-mahecha.github.io/ProyectoM1_FelipeLeon/)**
 
----
-
-## 🎮 ¿De qué trata el juego?
-
-**THE GEM** es un juego de habilidad y reflejos donde controlas una **bolita** que se mueve de forma **orbital** dentro de un túnel circular. Tu objetivo es **sobrevivir el tiempo que dura cada nivel** esquivando obstáculos mientras recolectas monedas y gemas.
-
-La bolita se desplaza entre dos zonas:
-- **Núcleo interno** — la parte de adentro del túnel
-- **Domo externo** — la parte de afuera del túnel
-
-Alternar entre ambas zonas con un solo toque es la mecánica central. Cada nivel tiene su propio tiempo de supervivencia, sus obstáculos y su tema visual.
-
-Los obstáculos incluyen **pinchos**, **sierras rotativas** y **láseres**.
+</div>
 
 ---
 
-## ✨ Características principales
+## 📄 ¿Qué es este proyecto?
 
-- 🌀 **Movimiento orbital** único — no es un juego de plataformas común
-- ⏱️ **Tiempo variable por nivel** — cada nivel define su propio reto de duración
-- 💀 **Dead Coins** y **Rubíes** como monedas del juego
-- 🛍️ **Tienda** con skins, trails, emotes, banners y power-ups desbloqueables
-- 🎯 **Sistema de combos** y esquives perfectos (near-miss) con efectos visuales y multiplicadores de recompensa
-- 🏆 **17 rangos** de progresión por XP: desde *Cobre* hasta *The Gem*
-- 🗺️ **Camino de Rangos** — mapa visual con islas flotantes y nodos de recompensa
-- 🧩 **Sistema de fragmentos** — desbloquea skins especiales coleccionando 4 fragmentos
-- 📱 **Compatible con Android** (empaquetado con Capacitor)
-- 🎵 Música de fondo y efectos de sonido
+Landing page de **Color Fly Studio**, un generador de paletas de colores en HSL y HEX, desarrollado como proyecto integrador del Módulo 1 del bootcamp Full Stack de Soy Henry.
+
+Construida con **HTML5, CSS3 y JavaScript vanilla** — sin frameworks, sin librerías externas. Toda la interactividad fue implementada a mano.
 
 ---
 
-## 🕹️ Cómo se juega
+## 🗂️ Secciones de la página
 
-| Plataforma | Acción |
-|-----------|--------|
-| **Móvil** | Toca la pantalla para cambiar de zona (núcleo ↔ domo) |
-| **PC / Navegador** | Clic o barra espaciadora para cambiar de zona |
-
-Esquiva todos los obstáculos y sobrevive el tiempo del nivel para ganar. Recolecta monedas en el camino para desbloquear contenido en la tienda.
-
----
-
-## 🗺️ Niveles disponibles
-
-| # | Nombre | Obstáculos |
-|---|--------|-----------|
-| 1 | The Beggin | Pinchos |
-| 2 | Volcano | Pinchos + Sierras |
-| 3 | Frozen World | Pinchos + Sierras + Láseres |
+| Sección | Descripción |
+|---|---|
+| **Herramienta** | Generador de paletas de colores (GEM Color Studio) |
+| **Características** | Cards con las funcionalidades principales de la herramienta |
+| **Sobre mí** | Perfil del creador y links del proyecto |
+| **Contacto / Footer** | Links de redes y datos de contacto |
 
 ---
 
-## 🏅 Sistema de rangos
+## 🎨 GEM Color Studio
 
-Hay **17 rangos** que se desbloquean acumulando XP al ganar partidas:
+Herramienta interactiva que genera paletas de colores al estilo visual de THE GEM.
 
-`Cobre → Hierro → Plata → Oro → Ámbar → Diamante → Granate → Rubí → Obsidiana → Zafiro → Esmeralda → Amatista → Prisma → Ópalo → Celestita → Voidita → The Gem`
+- Paletas de **6, 8 o 9 colores** generados aleatoriamente en rangos HSL
+- Visualización en formato **HSL o HEX**
+- **Clic en cualquier color** para copiar su HEX al portapapeles
+- Toast de microfeedback al generar o copiar
+- Animación de entrada en las tarjetas
+- Regeneración automática al cambiar tamaño o formato
 
-El progreso se visualiza en el **Camino de Rangos**, un mapa con islas flotantes y nodos de recompensa reclamables.
-
----
-
-## 🚀 Cómo ejecutarlo localmente
-
-### Requisitos previos
-- [Node.js](https://nodejs.org/) versión 16 o superior
-- npm (viene incluido con Node.js)
-
-### Pasos
-
-```bash
-# 1. Clona el repositorio
-git clone https://github.com/Felipe-Leon-Mahecha/THE-GEM.git
-
-# 2. Entra a la carpeta
-cd THE-GEM
-
-# 3. Instala las dependencias
-npm install
-
-# 4. Inicia el servidor de desarrollo
-npm run dev
-```
-
-Luego abre tu navegador en `http://localhost:5173` (o el puerto que indique Vite en consola).
+<div align="center">
+  <img src="./img/Cap_2.png" alt="GEM Color Studio" width="80%"/>
+</div>
 
 ---
 
-## 📱 Compilar para Android
+## 🛠️ Tecnologías utilizadas
 
-> Requiere tener instalado Android Studio y el SDK de Android.
-
-```bash
-# 1. Genera el build de producción
-npm run build
-
-# 2. Sincroniza con el proyecto Android
-npx cap sync android
-
-# 3. Abre en Android Studio
-npx cap open android
-```
-
-Desde Android Studio puedes correrlo en un emulador o conectando tu celular por USB con **Depuración USB** activada.
+- **HTML5** — estructura semántica con `<article>`, `<section>`, `<aside>`, `<nav>`
+- **CSS3** — diseño responsive con variables CSS, grid y flexbox
+- **JavaScript ES6** — lógica del generador de paletas y dinámica del DOM
+- **Netlify** — deploy del sitio
 
 ---
 
 ## 🗂️ Estructura del proyecto
 
 ```
-THE-GEM/
-├── index.html              # Punto de entrada
-├── config.js               # Configuración visual centralizada (colores, fuentes, etc.)
-├── levels.config.js        # Configuración de niveles y tiempos
-├── prices.config.js        # Precios de la tienda
-├── responsive.css          # Variables CSS y diseño responsive
-├── style.css               # Estilos generales
-├── main.js                 # Bucle del juego, físicas y colisiones
-├── ui.js                   # Interfaz de usuario (HUD, pantallas)
-├── shop.js                 # Sistema de tienda
-├── levelselect.js          # Pantalla de selección de nivel
-├── obstacles.js            # Obstáculos (pinchos, sierras, láseres)
-├── particles.js            # Sistema de partículas
-├── rank-system.js          # Sistema de rangos y XP
-├── combo-system.js         # Sistema de combos y near-miss
-├── powerups.js             # Potenciadores
-├── fragment-system.js      # Fragmentos y skins especiales
-├── skins-side.js           # Datos de skins con perfil lateral
-├── trails.js               # Estelas visuales
-├── player.js               # Lógica del jugador
-├── assets/                 # Imágenes, sonidos y fuentes
-├── android/                # Proyecto nativo Android (Capacitor)
-├── capacitor.config.json   # Configuración de Capacitor
-└── vite.config.js          # Configuración de Vite
+the-gem-landing/
+├── index.html          # Estructura principal de la página
+├── css/
+│   └── styles.css      # Estilos y variables CSS
+├── js/
+│   ├── app.js          # Inicialización y año del footer
+│   └── paleta.js       # Generador de paletas (GEM Color Studio)
+└── img/
+    ├── Logo_THE_GEM.png
+    └── Cap_2.png
 ```
 
 ---
 
-## 💾 Guardado de datos
+## 🚀 Cómo ejecutarlo localmente
 
-El juego guarda tu progreso automáticamente en el navegador (`localStorage`), incluyendo monedas, gemas, XP, skins desbloqueadas y configuración de audio. No necesitas cuenta ni conexión a internet para jugar localmente.
+```bash
+# 1. Clona el repositorio
+git clone https://github.com/tu-usuario/the-gem-landing.git
 
-> 🥚 **Easter egg:** Ingresa el nombre **"LEX"** en tu perfil y verás qué pasa.
+# 2. Entra a la carpeta
+cd the-gem-landing
+
+# 3. Abre index.html en tu navegador
+#    (o usá Live Server en VS Code)
+```
+
+> No requiere instalación de dependencias. Es HTML/CSS/JS puro.
 
 ---
 
-## 🛠️ Tecnologías utilizadas
+## 🤖 Proceso de desarrollo con IA
 
-- **HTML5 Canvas** — renderizado del juego
-- **JavaScript ES6** — lógica y mecánicas
-- **Vite** — bundler y servidor de desarrollo
-- **Capacitor** — empaquetado para Android
-- **CSS Variables** — sistema de diseño responsive
+Durante el desarrollo usé IA (Claude) como herramienta de aprendizaje y apoyo técnico, no como reemplazo del proceso:
+
+- **Generación de funciones:** Le mostraba capturas de la interfaz o describía el comportamiento esperado, y la IA me ayudaba a implementar la función (por ejemplo, la lógica del generador de paletas HSL y la conversión a HEX).
+- **Explicación línea por línea:** Cuando no entendía una parte del código, pegaba la línea o el bloque y pedía que me lo explicara en detalle antes de seguir.
+- **Revisión y corrección:** Usé capturas del comportamiento visual para detectar bugs y discutir soluciones.
+- **Todo el código fue revisado y comprendido** antes de integrarlo al proyecto.
+
+> El objetivo fue usar la IA como haría con un senior developer: consultando, preguntando el porqué, y tomando las decisiones finales yo mismo.
 
 ---
 
 ## 👤 Autor
 
-**Felipe León Mahecha**  
-Estudiante de Tecnología en Análisis y Desarrollo de Software — SENA  
+**Felipe León Mahecha**
+Estudiante Full Stack — Soy Henry Bootcamp 3.0
 📍 Paipa, Boyacá, Colombia
 
 ---
 
 ## 📄 Estado del proyecto
 
-🚧 **En desarrollo activo** — nuevas mecánicas, niveles y contenido siendo añadidos constantemente.
+✅ **Entregado** — Proyecto integrador Módulo 1, Soy Henry Full Stack 3.0

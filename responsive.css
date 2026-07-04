@@ -334,6 +334,21 @@ body.is-touch-device #grid-achievements-help {
 .profile-preview {
     width: var(--pp-avatar-size, 110px) !important;
     height: var(--pp-avatar-size, 110px) !important;
+    border-width: var(--pp-avatar-border-width, 3px) !important;
+}
+
+/* ── Botón × (cerrar el modal) ── */
+.profile-close {
+    width: var(--pp-close-btn-size, 34px) !important;
+    height: var(--pp-close-btn-size, 34px) !important;
+    font-size: var(--pp-close-btn-font, 16px) !important;
+}
+
+/* ── Botón lápiz (editar avatar/nombre) flotante sobre el avatar grande ── */
+.profile-preview-edit-btn {
+    width: var(--pp-edit-btn-size, 34px) !important;
+    height: var(--pp-edit-btn-size, 34px) !important;
+    font-size: var(--pp-edit-btn-icon-size, 14px) !important;
 }
 
 .profile-hero-name {
@@ -344,8 +359,22 @@ body.is-touch-device #grid-achievements-help {
     font-size: var(--pp-rank-font, 15px) !important;
 }
 
+/* ── Barra de progreso de XP (debajo del rango) ── */
+.rank-progress-bar {
+    height: var(--pp-xp-bar-height, 6px) !important;
+    margin-top: var(--pp-xp-bar-margin-top, 6px) !important;
+}
+
+.rank-xp-labels {
+    font-size: var(--pp-xp-label-font, 10px) !important;
+}
+
 .profile-section-title {
     font-size: var(--pp-section-title-font, 11px) !important;
+}
+
+.profile-stat-row-item {
+    padding: var(--pp-statrow-padding, 14px 16px) !important;
 }
 
 .profile-stat-row {
@@ -373,6 +402,15 @@ body.is-touch-device #grid-achievements-help {
     font-size: var(--pp-statcard-value-font, 22px) !important;
 }
 
+/* ── Botón REYES (dentro del modal de perfil) ── */
+#btn-reyes-perfil {
+    font-size: var(--pp-reyes-font, 12px) !important;
+}
+
+#btn-reyes-perfil .pp-reyes-icon {
+    font-size: var(--pp-reyes-icon-size, 14px) !important;
+}
+
 /* ── Variante MÓVIL: el body recibe la clase is-touch-device en
    celulares/tablets. Estos valores leen el set "mobile" de config.js. ── */
 body.is-touch-device .profile-card {
@@ -388,6 +426,19 @@ body.is-touch-device .profile-hero {
 body.is-touch-device .profile-preview {
     width: var(--pp-avatar-size-mobile, 110px) !important;
     height: var(--pp-avatar-size-mobile, 110px) !important;
+    border-width: var(--pp-avatar-border-width-mobile, 3px) !important;
+}
+
+body.is-touch-device .profile-close {
+    width: var(--pp-close-btn-size-mobile, 34px) !important;
+    height: var(--pp-close-btn-size-mobile, 34px) !important;
+    font-size: var(--pp-close-btn-font-mobile, 16px) !important;
+}
+
+body.is-touch-device .profile-preview-edit-btn {
+    width: var(--pp-edit-btn-size-mobile, 34px) !important;
+    height: var(--pp-edit-btn-size-mobile, 34px) !important;
+    font-size: var(--pp-edit-btn-icon-size-mobile, 14px) !important;
 }
 
 body.is-touch-device .profile-hero-name {
@@ -398,8 +449,21 @@ body.is-touch-device .profile-hero-rank {
     font-size: var(--pp-rank-font-mobile, 15px) !important;
 }
 
+body.is-touch-device .rank-progress-bar {
+    height: var(--pp-xp-bar-height-mobile, 6px) !important;
+    margin-top: var(--pp-xp-bar-margin-top-mobile, 6px) !important;
+}
+
+body.is-touch-device .rank-xp-labels {
+    font-size: var(--pp-xp-label-font-mobile, 10px) !important;
+}
+
 body.is-touch-device .profile-section-title {
     font-size: var(--pp-section-title-font-mobile, 11px) !important;
+}
+
+body.is-touch-device .profile-stat-row-item {
+    padding: var(--pp-statrow-padding-mobile, 14px 16px) !important;
 }
 
 body.is-touch-device .profile-stat-row {
@@ -425,6 +489,14 @@ body.is-touch-device .profile-stat-card .stat-title {
 
 body.is-touch-device .profile-stat-card .stat-value {
     font-size: var(--pp-statcard-value-font-mobile, 22px) !important;
+}
+
+body.is-touch-device #btn-reyes-perfil {
+    font-size: var(--pp-reyes-font-mobile, 12px) !important;
+}
+
+body.is-touch-device #btn-reyes-perfil .pp-reyes-icon {
+    font-size: var(--pp-reyes-icon-size-mobile, 14px) !important;
 }
 
 /* ── PNG de moneda/gema en el menú ── */
@@ -467,3 +539,292 @@ body.is-touch-device .profile-stat-card .stat-value {
 .rsm-node .rsm-label div:last-child {
     font-size: var(--rsm-xp-font, 9px) !important;
 }
+
+/* ============================================================
+   CAMINO DE RANGOS — HEADER TEMÁTICO (hielo / fuego / dorado)
+   controlado desde config.js → RANK_HEADER_CONFIG
+   NO edites los valores aquí — edita config.js en su lugar.
+   ============================================================ */
+
+/* ── Tamaño/posición del header y sus bloques (válido para los 3 temas) ── */
+.rs-header {
+    padding: var(--rh-header-padding, 20px 28px 16px) !important;
+    gap: var(--rh-header-gap, 20px) !important;
+    position: relative;
+    overflow: hidden;
+}
+
+.rs-header-deco {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+}
+
+.rs-compact-profile {
+    position: relative;
+    overflow: hidden;
+    z-index: 1;
+}
+
+.rs-compact-profile-banner-bg {
+    position: absolute;
+    inset: 0;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    border-radius: inherit;
+    z-index: -1;
+    /* Oscurece un poco para que el texto siga siendo legible encima */
+    -webkit-mask-image: linear-gradient(90deg, rgba(0,0,0,0.55) 0%, rgba(0,0,0,0.75) 100%);
+    mask-image: linear-gradient(90deg, rgba(0,0,0,0.55) 0%, rgba(0,0,0,0.75) 100%);
+}
+
+.rs-xp-block {
+    position: relative;
+    z-index: 1;
+    overflow: visible;
+    padding: var(--rh-xp-padding, 8px 18px) !important;
+    border-radius: var(--rh-xp-radius, 10px) !important;
+    clip-path: polygon(8px 0, 100% 0, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%, 0 8px);
+}
+
+.rs-xp-block-particles {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    overflow: visible;
+}
+
+.rs-xp-label {
+    font-size: var(--rh-xp-label-font, 8px) !important;
+    letter-spacing: var(--rh-xp-label-spacing, 4px) !important;
+    text-align: center;
+    text-transform: uppercase;
+}
+
+.rs-xp-value-row {
+    display: flex;
+    align-items: baseline;
+    gap: 4px;
+    justify-content: center;
+}
+
+.rs-xp-value {
+    font-size: var(--rh-xp-value-font, 22px) !important;
+    font-weight: 900;
+}
+
+.rs-xp-unit {
+    font-size: var(--rh-xp-unit-font, 9px) !important;
+}
+
+.rs-title {
+    font-size: var(--rh-title-font, 19px) !important;
+    letter-spacing: var(--rh-title-spacing, 3px) !important;
+    text-transform: uppercase;
+    position: relative;
+    z-index: 1;
+}
+
+/* ── Línea de glow animada bajo el header ── */
+.rs-header-glow-line {
+    position: relative;
+    height: var(--rh-glow-height, 2px);
+    overflow: hidden;
+    flex-shrink: 0;
+}
+
+.rs-header-glow-line span {
+    position: absolute;
+    top: 0;
+    left: -30%;
+    width: 30%;
+    height: 100%;
+    animation: rsHeaderGlowSlide var(--rh-glow-speed, 2.4s) linear infinite;
+}
+
+@keyframes rsHeaderGlowSlide {
+    0%   { left: -30%; }
+    100% { left: 100%; }
+}
+
+/* ───────────── TEMA HIELO (Mapa 1) ───────────── */
+.rs-header.tema-hielo {
+    background: linear-gradient(120deg, rgba(120,220,255,0.16) 0%, rgba(10,16,22,0.6) 35%, rgba(180,240,255,0.10) 100%);
+}
+
+.rs-header.tema-hielo .rs-compact-profile,
+.rs-header.tema-hielo .rs-back-btn {
+    border-color: rgba(150, 230, 255, 0.3) !important;
+}
+
+.rs-header.tema-hielo .rs-xp-block {
+    background: linear-gradient(135deg, rgba(120,220,255,0.16), rgba(10,16,22,0.6));
+    border: 1px solid rgba(150, 230, 255, 0.4);
+}
+
+.rs-header.tema-hielo .rs-xp-label { color: rgba(160, 230, 255, 0.7); }
+.rs-header.tema-hielo .rs-xp-value { color: #eafcff; text-shadow: 0 0 10px rgba(120,220,255,0.6); }
+.rs-header.tema-hielo .rs-xp-unit { color: rgba(255,255,255,0.5); }
+
+.rs-header.tema-hielo .rs-title {
+    font-family: 'Orbitron', monospace;
+    color: #eafcff;
+    text-shadow: 0 0 4px #fff, 0 0 16px #6fd6ff, 0 0 28px #2bb8ff;
+}
+
+.rs-header.tema-hielo ~ .rs-header-glow-line {
+    background: linear-gradient(90deg, transparent, #9fe7ff, transparent);
+}
+.rs-header.tema-hielo ~ .rs-header-glow-line span {
+    background: linear-gradient(90deg, transparent, #fff, transparent);
+    box-shadow: 0 0 12px 2px #6fd6ff;
+}
+
+/* Esquineros tipo grieta de escarcha */
+.rs-header.tema-hielo .rs-header-deco::before,
+.rs-header.tema-hielo .rs-header-deco::after {
+    content: '';
+    position: absolute;
+    width: 34px;
+    height: 34px;
+    top: 4px;
+    background-image:
+        linear-gradient(0deg, transparent 47%, rgba(189,243,255,0.7) 47%, rgba(189,243,255,0.7) 53%, transparent 53%),
+        linear-gradient(90deg, transparent 47%, rgba(189,243,255,0.7) 47%, rgba(189,243,255,0.7) 53%, transparent 53%);
+    background-size: 14px 1px, 1px 14px;
+    background-position: top left, top left;
+    background-repeat: no-repeat;
+}
+.rs-header.tema-hielo .rs-header-deco::before { left: 4px; }
+.rs-header.tema-hielo .rs-header-deco::after { right: 4px; transform: scaleX(-1); }
+
+/* Copos de nieve cayendo (los genera JS dentro de .rs-header-deco) */
+.rs-header.tema-hielo .rs-snowflake {
+    position: absolute;
+    top: -10px;
+    border-radius: 50%;
+    background: #e8fbff;
+    box-shadow: 0 0 4px #fff;
+    animation: rsSnowFall linear infinite;
+}
+@keyframes rsSnowFall {
+    0%   { transform: translateY(-10px) rotate(0deg); }
+    100% { transform: translateY(100px) rotate(180deg); }
+}
+
+/* ───────────── TEMA FUEGO (Mapa 2) ───────────── */
+.rs-header.tema-fuego {
+    background: linear-gradient(120deg, rgba(255,90,0,0.18) 0%, rgba(20,8,4,0.65) 40%, rgba(255,30,0,0.12) 100%);
+}
+
+.rs-header.tema-fuego .rs-compact-profile,
+.rs-header.tema-fuego .rs-back-btn {
+    border-color: rgba(255, 140, 0, 0.3) !important;
+}
+
+.rs-header.tema-fuego .rs-xp-block {
+    background: linear-gradient(135deg, rgba(255,90,0,0.18), rgba(20,8,4,0.65));
+    border: 1px solid rgba(255, 140, 0, 0.4);
+}
+
+.rs-header.tema-fuego .rs-xp-label { color: rgba(255, 180, 100, 0.75); }
+.rs-header.tema-fuego .rs-xp-value { color: #fff3e0; text-shadow: 0 0 10px rgba(255,138,0,0.6); }
+.rs-header.tema-fuego .rs-xp-unit { color: rgba(255,255,255,0.5); }
+
+.rs-header.tema-fuego .rs-title {
+    font-family: 'Orbitron', monospace;
+    color: #fff3e0;
+    text-shadow: 0 0 6px #fff, 0 0 16px #ff8a00, 0 0 30px #ff3d00;
+}
+
+.rs-header.tema-fuego ~ .rs-header-glow-line {
+    background: linear-gradient(90deg, #ff3d00, #ffae00, #ff3d00);
+    background-size: 200% 100%;
+    animation: rsEmberFlow 2s linear infinite;
+}
+.rs-header.tema-fuego ~ .rs-header-glow-line span { display: none; }
+
+@keyframes rsEmberFlow {
+    0%   { background-position: 0% 0; }
+    100% { background-position: 200% 0; }
+}
+
+/* Brasas subiendo (las genera JS dentro de .rs-header-deco) */
+.rs-header.tema-fuego .rs-ember {
+    position: absolute;
+    bottom: -6px;
+    border-radius: 50%;
+    box-shadow: 0 0 6px #ff5500;
+    animation: rsEmberRise ease-in infinite;
+}
+@keyframes rsEmberRise {
+    0%   { transform: translateY(0); opacity: 0; }
+    15%  { opacity: 1; }
+    100% { transform: translateY(-90px); opacity: 0; }
+}
+
+/* ───────────── TEMA DORADO / ÉLITE (Mapa 3) ───────────── */
+.rs-header.tema-dorado {
+    background: linear-gradient(120deg, rgba(255,215,0,0.10) 0%, rgba(18,16,10,0.7) 40%, rgba(255,255,255,0.06) 100%);
+}
+
+.rs-header.tema-dorado .rs-compact-profile,
+.rs-header.tema-dorado .rs-back-btn {
+    border-color: rgba(255, 215, 0, 0.35) !important;
+}
+
+.rs-header.tema-dorado .rs-xp-block {
+    background: linear-gradient(135deg, rgba(255,215,0,0.14), rgba(10,10,20,0.6));
+    border: 1px solid rgba(255, 215, 0, 0.4);
+}
+
+.rs-header.tema-dorado .rs-xp-label { color: rgba(255, 215, 0, 0.7); }
+.rs-header.tema-dorado .rs-xp-value { color: #fff; }
+.rs-header.tema-dorado .rs-xp-unit { color: rgba(255,255,255,0.5); }
+
+.rs-header.tema-dorado .rs-title {
+    font-family: 'Cinzel', serif;
+    font-weight: 700;
+    color: #fdf2c8;
+    background: linear-gradient(90deg, #fdf2c8 0%, #fff8e1 35%, #ffd700 50%, #fdf2c8 65%, #fdf2c8 100%);
+    background-size: 200% 100%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: rsGoldShimmer var(--rh-shimmer-speed, 3.5s) linear infinite;
+    filter: drop-shadow(0 0 6px rgba(255,215,0,0.4));
+}
+
+@keyframes rsGoldShimmer {
+    0%   { background-position: 200% 0; }
+    100% { background-position: -50% 0; }
+}
+
+.rs-header.tema-dorado ~ .rs-header-glow-line {
+    background: linear-gradient(90deg, transparent, #ffd700, transparent);
+}
+.rs-header.tema-dorado ~ .rs-header-glow-line span {
+    background: linear-gradient(90deg, transparent, #fff, transparent);
+    box-shadow: 0 0 12px 2px #ffd700;
+}
+
+/* Ornamentos curvos dorados en las esquinas (más "élite" que un grid genérico) */
+.rs-header.tema-dorado .rs-header-deco::before,
+.rs-header.tema-dorado .rs-header-deco::after {
+    content: '';
+    position: absolute;
+    width: 40px;
+    height: 100%;
+    top: 0;
+    background-image:
+        linear-gradient(180deg, transparent 6%, rgba(255,215,0,0.4) 6%, rgba(255,215,0,0.4) 94%, transparent 94%);
+    background-size: 1px 100%;
+    background-position: 20px center;
+    background-repeat: no-repeat;
+    opacity: 0.6;
+}
+.rs-header.tema-dorado .rs-header-deco::before { left: 0; }
+.rs-header.tema-dorado .rs-header-deco::after { right: 0; }
+
