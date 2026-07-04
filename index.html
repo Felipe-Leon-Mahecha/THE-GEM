@@ -14,8 +14,9 @@
     <!-- Preconexión a Google Fonts para mejor rendimiento -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <!-- Fuente Geom del juego -->
-    <link href="https://fonts.googleapis.com/css2?family=Geom:ital,wght@0,300..900;1,300..900&display=swap"
+    <!-- Fuentes del juego (Geom, Orbitron, Cinzel) — consolidadas en una sola petición -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Geom:ital,wght@0,300..900;1,300..900&family=Orbitron:wght@700;900&family=Cinzel:wght@600;700&display=swap"
         rel="stylesheet">
     <link rel="stylesheet" href="responsive.css">
     <!-- Hoja de estilos principal -->
@@ -47,26 +48,25 @@
             const btn = document.getElementById('btn-google-login');
             try {
                 if (btn) btn.textContent = 'Conectando...';
+                window.fbProvider.setCustomParameters({ prompt: 'select_account' });
 
                 if (window._isCapacitor) {
-                    // Login no disponible en móvil por ahora
-                    if (btn) {
-                        btn.textContent = '🎮 Solo en PC';
-                        btn.style.borderColor = '#444';
-                        btn.style.color = '#666';
-                        btn.style.cursor = 'default';
-                        btn.onclick = null;
+                    // En Capacitor: primero verificar si hay resultado de un redirect previo
+                    const result = await window.fbAuth.getRedirectResult();
+                    if (result && result.user) {
+                        window._firebaseUID = result.user.uid;
+                        await window.bajarDatosFirebase(result.user.uid);
+                        window.actualizarBtnLogin(result.user);
+                        return;
                     }
-                    return;
+                    // Si no hay resultado, lanzar el redirect
+                    await window.fbAuth.signInWithRedirect(window.fbProvider);
+                } else {
+                    const result = await window.fbAuth.signInWithPopup(window.fbProvider);
+                    window._firebaseUID = result.user.uid;
+                    await window.bajarDatosFirebase(result.user.uid);
+                    window.actualizarBtnLogin(result.user);
                 }
-
-                // Navegador web: popup normal
-                window.fbProvider.setCustomParameters({ prompt: 'select_account' });
-                const result = await window.fbAuth.signInWithPopup(window.fbProvider);
-                window._firebaseUID = result.user.uid;
-                await window.bajarDatosFirebase(result.user.uid);
-                window.actualizarBtnLogin(result.user);
-
             } catch (e) {
                 console.error('[THE GEM] Login error:', e);
                 if (btn) {
@@ -148,15 +148,6 @@
             if (user) {
                 window._firebaseUID = user.uid;
                 window.actualizarBtnLogin(user);
-            } else if (window._isCapacitor) {
-                const btn = document.getElementById('btn-google-login');
-                if (btn) {
-                    btn.textContent = '🎮 Solo en PC';
-                    btn.style.borderColor = '#444';
-                    btn.style.color = '#666';
-                    btn.style.cursor = 'default';
-                    btn.onclick = null;
-                }
             }
         });
         // Capturar resultado de redirect al iniciar
@@ -183,13 +174,7 @@
     </script>
     <!-- Manifest para PWA -->
     <link rel="manifest" href="manifest.json">
-    <!-- Registro de Service Worker para PWA -->
-    <script>
-        // ⚠️ DESACTIVADO TEMPORALMENTE PARA DESARROLLO
-        //if ('serviceWorker' in navigator) {
-        //    navigator.serviceWorker.register('/service-worker.js');
-        //}
-    </script>
+
 </head>
 
 <body>
@@ -964,10 +949,14 @@
             style="position:absolute; inset:0; width:100%; height:100%; pointer-events:none; z-index:0;"></canvas>
 
         <!-- Header compacto todo-en-uno -->
-        <div class="rs-header">
+        <div class="rs-header" id="rs-header">
+
+            <!-- Capas decorativas del tema (hielo/fuego/dorado) — generadas por JS -->
+            <div class="rs-header-deco" id="rs-header-deco"></div>
 
             <!-- IZQUIERDA: Mini perfil + XP -->
-            <div class="rs-compact-profile">
+            <div class="rs-compact-profile" id="rs-compact-profile">
+                <div class="rs-compact-profile-banner-bg" id="rs-compact-profile-banner-bg"></div>
                 <div id="rs-profile-avatar" class="menu-profile-avatar" aria-hidden="true"></div>
                 <div class="menu-profile-text">
                     <span id="rs-profile-name" class="menu-profile-name">Jugador</span>
@@ -984,9 +973,13 @@
                     </span>
                 </div>
             </div>
-            <div class="rs-xp-block">
-                <div class="rs-xp-label">TU XP</div>
-                <div class="rs-xp-value" id="rs-player-xp">0</div>
+            <div class="rs-xp-block" id="rs-xp-block">
+                <div class="rs-xp-block-particles" id="rs-xp-block-particles"></div>
+                <div class="rs-xp-label">EXPERIENCIA</div>
+                <div class="rs-xp-value-row">
+                    <span class="rs-xp-value" id="rs-player-xp">0</span>
+                    <span class="rs-xp-unit">XP</span>
+                </div>
             </div>
 
             <!-- Spacer -->
@@ -994,18 +987,26 @@
 
             <!-- DERECHA: Titulo + boton volver -->
             <div class="rs-title-block" style="text-align:right;">
-                <div class="rs-title">CAMINO DE RANGOS</div>
+                <div class="rs-title" id="rs-title">CAMINO DE RANGOS</div>
             </div>
             <button class="rs-back-btn" onclick="closeRanksScreen()">&#8592; VOLVER</button>
 
         </div>
 
-        <!-- Barra de XP compacta bajo el header -->
-        <div class="rs-xp-bar-row" id="rs-current-banner">
-            <div class="rs-current-bar" style="flex:1;">
-                <div class="rs-current-bar-fill" id="rs-current-bar-fill" style="width:0%"></div>
+        <!-- Línea de glow animada bajo el header -->
+        <div class="rs-header-glow-line" id="rs-header-glow-line"><span></span></div>
+
+        <!-- Barra de progreso por nodos (estilo camino de niveles) -->
+        <div class="rs-nodebar" id="rs-current-banner">
+            <div class="rs-nodebar-header">
+                <span class="rs-nodebar-rank-icon" id="rs-nodebar-rank-icon">✦</span>
+                <span class="rs-nodebar-rank-name" id="rs-nodebar-rank-name">Cobre</span>
             </div>
-            <div class="rs-current-xp-info" id="rs-current-xp-info">0 XP · Próximo: 100 XP</div>
+            <div class="rs-nodebar-track-wrap" id="rs-nodebar-track-wrap"></div>
+            <div class="rs-nodebar-footer">
+                <span class="rs-nodebar-start-label">Inicio</span>
+                <span class="rs-nodebar-end-label" id="rs-nodebar-end-label">Hierro</span>
+            </div>
         </div>
 
         <!-- Mapa scrolleable de rangos -->
@@ -1121,27 +1122,43 @@
     <!-- Script de carga inicial -->
     <script>
         let prog = 0;
+        let yaOculto = false;
         const bar = document.getElementById('loading-bar');
         const pct = document.getElementById('loading-percent');
+
+        function ocultarLoading() {
+            if (yaOculto) return; // evita ejecutarlo dos veces (ej: load + timeout casi al mismo tiempo)
+            yaOculto = true;
+            clearInterval(iv);
+            clearTimeout(safetyTimeout);
+            bar.style.width = '100%';
+            pct.textContent = '100%';
+            setTimeout(() => {
+                const screen = document.getElementById('loading-screen');
+                if (!screen) return;
+                screen.style.opacity = '0';
+                screen.style.transition = 'opacity 0.5s';
+                setTimeout(() => {
+                    screen.remove();
+                    // Activar animaciones del menú después de que la pantalla de carga se oculte
+                    document.getElementById('overlay').classList.add('menu-loaded');
+                }, 500);
+            }, 300);
+        }
+
         const iv = setInterval(() => {
             prog = Math.min(prog + Math.random() * 12, 90);
             bar.style.width = prog + '%';
             pct.textContent = Math.floor(prog) + '%';
         }, 200);
-        window.addEventListener('load', () => {
-            clearInterval(iv);
-            bar.style.width = '100%';
-            pct.textContent = '100%';
-            setTimeout(() => {
-                document.getElementById('loading-screen').style.opacity = '0';
-                document.getElementById('loading-screen').style.transition = 'opacity 0.5s';
-                setTimeout(() => {
-                    document.getElementById('loading-screen').remove();
-                    // Activar animaciones del menú después de que la pantalla de carga se oculte
-                    document.getElementById('overlay').classList.add('menu-loaded');
-                }, 500);
-            }, 300);
-        });
+
+        window.addEventListener('load', ocultarLoading);
+
+        // ── RED DE SEGURIDAD ──
+        // Si por lo que sea (Firebase lento, internet inestable, un recurso que
+        // tarda) el evento "load" nunca llega, esto fuerza a ocultar la pantalla
+        // de carga igual a los 8 segundos. Así el juego nunca se queda pegado.
+        const safetyTimeout = setTimeout(ocultarLoading, 8000);
     </script>
 
 
@@ -1249,811 +1266,7 @@
         })();
     </script>
 
-    <!-- Animaciones del menú -->
-    <style>
-        /* Animaciones de entrada del menú */
-        #overlay:not(.menu-loaded) #overlay-cover,
-        #overlay:not(.menu-loaded) #overlay-panel,
-        #overlay:not(.menu-loaded) .menu-btn-wrap {
-            opacity: 0;
-            transform: translateY(20px);
-        }
-
-        #overlay.menu-loaded #overlay-cover {
-            animation: menuFadeIn 0.6s cubic-bezier(0.22, 1, 0.36, 1) forwards;
-        }
-
-        #overlay.menu-loaded #overlay-panel {
-            animation: menuFadeIn 0.6s cubic-bezier(0.22, 1, 0.36, 1) 0.1s forwards;
-        }
-
-        #overlay.menu-loaded .menu-btn-wrap {
-            animation: menuFadeIn 0.5s cubic-bezier(0.22, 1, 0.36, 1) forwards;
-        }
-
-        #overlay.menu-loaded .menu-btn-wrap:nth-child(1) {
-            animation-delay: 0.15s;
-        }
-
-        #overlay.menu-loaded .menu-btn-wrap:nth-child(2) {
-            animation-delay: 0.2s;
-        }
-
-        #overlay.menu-loaded .menu-btn-wrap:nth-child(3) {
-            animation-delay: 0.25s;
-        }
-
-        #overlay.menu-loaded .menu-btn-wrap:nth-child(4) {
-            animation-delay: 0.3s;
-        }
-
-        @keyframes menuFadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        /* Animaciones pop-from-center para paneles flotantes */
-        #optionsPanel.entering,
-        #profilePanel.entering {
-            animation: popFromCenter 0.35s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-        }
-
-        /* ══════════════════════════════════════════════════════
-           ANIMACIONES DE PANELES Y TRANSICIONES DE PANTALLA
-           ══════════════════════════════════════════════════════ */
-
-        /* 1. Direcciones horizontales (Tienda a la derecha, Inventario a la izquierda) */
-
-        /* Enters Shop (Slide to Right: from left -100% to 0) */
-        #shopPanel.entering {
-            animation: slideInRightDir 0.4s cubic-bezier(0.25, 1, 0.5, 1) forwards !important;
-        }
-
-        /* Exits Shop (Slide to Left: from 0 to -100%) */
-        #shopPanel.leaving {
-            animation: slideOutLeftDir 0.4s cubic-bezier(0.25, 1, 0.5, 1) forwards !important;
-        }
-
-        /* Enters Inventory (Slide to Left: from right 100% to 0) */
-        #inventoryPanel.entering {
-            animation: slideInLeftDir 0.4s cubic-bezier(0.25, 1, 0.5, 1) forwards !important;
-        }
-
-        /* Exits Inventory (Slide to Right: from 0 to 100%) */
-        #inventoryPanel.leaving {
-            animation: slideOutRightDir 0.4s cubic-bezier(0.25, 1, 0.5, 1) forwards !important;
-        }
-
-        /* 2. Comportamiento del Menu Overlay en transiciones horizontales */
-        #overlay.exit-shop {
-            animation: slideOutRightDir 0.4s cubic-bezier(0.25, 1, 0.5, 1) forwards !important;
-        }
-
-        #overlay.enter-shop {
-            animation: slideInLeftDir 0.4s cubic-bezier(0.25, 1, 0.5, 1) forwards !important;
-        }
-
-        #overlay.exit-inventory {
-            animation: slideOutLeftDir 0.4s cubic-bezier(0.25, 1, 0.5, 1) forwards !important;
-        }
-
-        #overlay.enter-inventory {
-            animation: slideInRightDir 0.4s cubic-bezier(0.25, 1, 0.5, 1) forwards !important;
-        }
-
-        /* 3. Direcciones verticales (Play / LevelSelect / Ranks hacia arriba) */
-
-        /* Enters LevelSelect (Slide Up: from bottom 100% to 0) */
-        #levelSelect.entering,
-        #ranksScreen.entering {
-            animation: slideInUpDir 0.45s cubic-bezier(0.25, 1, 0.5, 1) forwards !important;
-        }
-
-        /* Exits LevelSelect (Slide Down: from 0 to bottom 100%) */
-        #levelSelect.leaving,
-        #ranksScreen.leaving {
-            animation: slideOutDownDir 0.45s cubic-bezier(0.25, 1, 0.5, 1) forwards !important;
-        }
-
-        /* Comportamiento del Menu Overlay en transiciones verticales */
-        #overlay.exit-play {
-            animation: slideOutUpDir 0.45s cubic-bezier(0.25, 1, 0.5, 1) forwards !important;
-        }
-
-        #overlay.enter-play {
-            animation: slideInDownDir 0.45s cubic-bezier(0.25, 1, 0.5, 1) forwards !important;
-        }
-
-        /* 4. Logros y Ayuda (Deslizamiento de abajo hacia arriba) */
-        #achievementsPanel,
-        #powerupHelpPanel {
-            transition: opacity 0.35s ease !important;
-        }
-
-        /* Animaciones para las tarjetas de contenido */
-        #achievementsPanel.entering .achievements-content,
-        #powerupHelpPanel.entering .powerup-help-content {
-            animation: slideInUpDir 0.4s cubic-bezier(0.25, 1, 0.3, 1) forwards !important;
-        }
-
-        #achievementsPanel.leaving .achievements-content,
-        #powerupHelpPanel.leaving .powerup-help-content {
-            animation: slideOutDownDir 0.35s cubic-bezier(0.25, 1, 0.3, 1) forwards !important;
-        }
-
-        /* Keyframes */
-        @keyframes slideInLeftDir {
-            from {
-                transform: translateX(100%);
-            }
-
-            to {
-                transform: translateX(0);
-            }
-        }
-
-        @keyframes slideOutLeftDir {
-            from {
-                transform: translateX(0);
-            }
-
-            to {
-                transform: translateX(-100%);
-            }
-        }
-
-        @keyframes slideInRightDir {
-            from {
-                transform: translateX(-100%);
-            }
-
-            to {
-                transform: translateX(0);
-            }
-        }
-
-        @keyframes slideOutRightDir {
-            from {
-                transform: translateX(0);
-            }
-
-            to {
-                transform: translateX(100%);
-            }
-        }
-
-        @keyframes slideInUpDir {
-            from {
-                transform: translateY(100%);
-            }
-
-            to {
-                transform: translateY(0);
-            }
-        }
-
-        @keyframes slideOutUpDir {
-            from {
-                transform: translateY(0);
-            }
-
-            to {
-                transform: translateY(-100%);
-            }
-        }
-
-        @keyframes slideInDownDir {
-            from {
-                transform: translateY(-100%);
-            }
-
-            to {
-                transform: translateY(0);
-            }
-        }
-
-        @keyframes slideOutDownDir {
-            from {
-                transform: translateY(0);
-            }
-
-            to {
-                transform: translateY(100%);
-            }
-        }
-
-        @keyframes popFromCenter {
-            0% {
-                opacity: 0;
-                transform: scale(0.3) translate(-50%, -50%);
-                transform-origin: center center;
-            }
-
-            50% {
-                opacity: 1;
-                transform: scale(1.05) translate(-50%, -50%);
-            }
-
-            100% {
-                opacity: 1;
-                transform: scale(1) translate(0, 0);
-            }
-        }
-
-        /* Efectos de pantalla al ganar/perder */
-        .screen-flash-white {
-            position: fixed;
-            inset: 0;
-            background: white;
-            z-index: 99999;
-            pointer-events: none;
-            animation: flashWhite 0.4s ease-out forwards;
-        }
-
-        .screen-flash-red {
-            position: fixed;
-            inset: 0;
-            background: rgba(255, 0, 0, 0.5);
-            z-index: 99999;
-            pointer-events: none;
-            animation: flashRed 0.3s ease-out forwards;
-        }
-
-        .screen-shake {
-            animation: shake 0.3s cubic-bezier(.36, .07, .19, .97) both;
-        }
-
-        @keyframes flashWhite {
-            0% {
-                opacity: 0.8;
-            }
-
-            100% {
-                opacity: 0;
-            }
-        }
-
-        @keyframes flashRed {
-            0% {
-                opacity: 0.6;
-            }
-
-            100% {
-                opacity: 0;
-            }
-        }
-
-        @keyframes shake {
-
-            10%,
-            90% {
-                transform: translate3d(-2px, 0, 0);
-            }
-
-            20%,
-            80% {
-                transform: translate3d(4px, 0, 0);
-            }
-
-            30%,
-            50%,
-            70% {
-                transform: translate3d(-6px, 0, 0);
-            }
-
-            40%,
-            60% {
-                transform: translate3d(6px, 0, 0);
-            }
-        }
-
-        /* Animaciones de botones genéricos (shop-item, inventory-item, achievement-item)
-           NOTA: .menu-btn-wrap, .menu-png-btn y "button" genérico se eliminaron de
-           aquí porque duplicaban y chocaban con las reglas de style.css (líneas
-           ~7619-7711), causando los cuadros de box-shadow detrás de los PNG con
-           forma irregular y doble transición en CADA botón de la página (lag). */
-        .shop-item,
-        .inventory-item,
-        .achievement-item {
-            transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1),
-                box-shadow 0.2s ease,
-                filter 0.2s ease;
-        }
-
-        .shop-item:hover,
-        .inventory-item:hover,
-        .achievement-item:hover {
-            transform: scale(1.05);
-            filter: brightness(1.15);
-        }
-
-        .shop-item:active,
-        .inventory-item:active,
-        .achievement-item:active {
-            transform: scale(0.95);
-            filter: brightness(0.9);
-        }
-
-        /* Glow en powerups disponibles */
-        .powerup-available {
-            animation: powerupGlow 1s ease-in-out infinite;
-        }
-
-        @keyframes powerupGlow {
-
-            0%,
-            100% {
-                filter: brightness(1) drop-shadow(0 0 5px rgba(0, 255, 231, 0.5));
-            }
-
-            50% {
-                filter: brightness(1.2) drop-shadow(0 0 15px rgba(0, 255, 231, 0.8));
-            }
-        }
-
-        /* Glow en elementos del HUD importantes */
-        #pause-btn.is-playing {
-            box-shadow: 0 0 10px rgba(0, 255, 231, 0.4);
-        }
-
-        /* Glow en botones flotantes */
-        #options-float-btn:hover,
-        #infinite-coins-float-btn:hover {
-            box-shadow: 0 0 15px rgba(0, 255, 231, 0.5);
-        }
-
-        /* ── Overlay backdrop ── */
-        .lb-overlay {
-            display: none;
-            position: fixed;
-            inset: 0;
-            background: rgba(0, 0, 0, .88);
-            backdrop-filter: blur(8px);
-            -webkit-backdrop-filter: blur(8px);
-            z-index: 99999;
-            align-items: center;
-            justify-content: center;
-            padding: 0;
-            /* Forzar repaint en WebView Capacitor */
-            transform: translateZ(0);
-            -webkit-transform: translateZ(0);
-        }
-
-        /* ── Tarjeta principal ── */
-        .lb-card {
-            width: min(560px, 100%);
-            height: 100dvh;
-            max-height: 100dvh;
-            background: linear-gradient(160deg, rgba(8, 8, 18, .97), rgba(4, 4, 12, .99));
-            border: none;
-            border-radius: 0;
-            box-shadow: none;
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-            position: relative;
-        }
-
-        /* Desktop: limitar altura y mostrar como modal */
-        @media (min-width: 600px) {
-            .lb-overlay {
-                padding: 20px;
-            }
-
-            .lb-card {
-                height: min(92vh, 700px);
-                max-height: 700px;
-                border: 1px solid rgba(0, 255, 231, .2);
-                border-radius: 22px;
-                box-shadow: 0 0 60px rgba(0, 255, 231, .12), 0 0 120px rgba(0, 0, 0, .7);
-            }
-        }
-
-        /* Fondo decorativo */
-        .lb-bg-deco {
-            position: absolute;
-            inset: 0;
-            pointer-events: none;
-            overflow: hidden;
-            z-index: 0;
-        }
-
-        .lb-bg-crown {
-            position: absolute;
-            top: -20px;
-            right: -20px;
-            font-size: 200px;
-            opacity: .025;
-            line-height: 1;
-            user-select: none;
-        }
-
-        /* ── Animaciones entering / leaving (igual que otros paneles) ── */
-        .lb-overlay.entering .lb-card {
-            animation: lbPopIn .35s cubic-bezier(.34, 1.56, .64, 1) both;
-        }
-
-        .lb-overlay.leaving .lb-card {
-            animation: lbPopOut .3s ease-in both;
-        }
-
-        @keyframes lbPopIn {
-            from {
-                opacity: 0;
-                transform: scale(.82)
-            }
-
-            to {
-                opacity: 1;
-                transform: scale(1)
-            }
-        }
-
-        @keyframes lbPopOut {
-            from {
-                opacity: 1;
-                transform: scale(1)
-            }
-
-            to {
-                opacity: 0;
-                transform: scale(.82)
-            }
-        }
-
-        /* ── Cabecera ── */
-        .lb-header {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 20px 22px 14px;
-            border-bottom: 1px solid rgba(0, 255, 231, .1);
-            flex-shrink: 0;
-            position: relative;
-            z-index: 1;
-        }
-
-        .lb-header-crown {
-            font-size: 32px;
-            filter: drop-shadow(0 0 10px rgba(255, 215, 0, .7));
-        }
-
-        .lb-title {
-            font-family: var(--font-principal, 'Audiowide', monospace);
-            font-size: clamp(16px, 4vw, 22px);
-            color: #fff;
-            text-shadow: 0 0 18px rgba(0, 255, 231, .6);
-            margin: 0;
-            letter-spacing: 3px;
-        }
-
-        .lb-subtitle {
-            font-family: var(--font-secundaria, monospace);
-            font-size: 10px;
-            color: rgba(0, 255, 231, .5);
-            letter-spacing: 2px;
-            margin: 2px 0 0;
-        }
-
-        .lb-close-btn {
-            margin-left: auto;
-            background: none;
-            border: 1px solid rgba(255, 77, 109, .4);
-            color: rgba(255, 77, 109, .8);
-            border-radius: 50%;
-            width: 32px;
-            height: 32px;
-            cursor: pointer;
-            font-size: 14px;
-            flex-shrink: 0;
-            transition: all .2s;
-        }
-
-        .lb-close-btn:hover {
-            background: rgba(255, 77, 109, .15);
-            color: #ff4d6d;
-            border-color: #ff4d6d;
-        }
-
-        /* ── Podio ── */
-        .lb-podium-wrap {
-            display: flex;
-            align-items: flex-end;
-            justify-content: center;
-            gap: 8px;
-            padding: 22px 16px 0;
-            flex-shrink: 0;
-            position: relative;
-            z-index: 1;
-        }
-
-        .lb-podium-slot {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 4px;
-            max-width: 140px;
-        }
-
-        .lb-podium-empty {
-            opacity: .25;
-        }
-
-        .lb-podium-first {
-            transform: translateY(-8px);
-        }
-
-        .lb-podium-medal {
-            font-size: 20px;
-        }
-
-        .lb-podium-avatar {
-            width: 46px;
-            height: 46px;
-            border-radius: 50%;
-            background: rgba(255, 255, 255, .05);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            overflow: hidden;
-            border: 2px solid rgba(255, 255, 255, .15);
-        }
-
-        .lb-podium-first .lb-podium-avatar {
-            width: 58px;
-            height: 58px;
-        }
-
-        .lb-podium-name {
-            font-family: var(--font-principal, 'Audiowide', monospace);
-            font-size: clamp(9px, 2vw, 11px);
-            color: #fff;
-            letter-spacing: 1px;
-            text-align: center;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            max-width: 110px;
-        }
-
-        .lb-podium-rank {
-            font-family: var(--font-secundaria, monospace);
-            font-size: 9px;
-            letter-spacing: 1px;
-            text-align: center;
-        }
-
-        .lb-podium-xp {
-            font-family: var(--font-secundaria, monospace);
-            font-size: 10px;
-            color: rgba(255, 255, 255, .6);
-            letter-spacing: 1px;
-        }
-
-        .lb-podium-base {
-            width: 100%;
-            margin-top: 6px;
-            background: linear-gradient(180deg, rgba(0, 255, 231, .12), rgba(0, 255, 231, .04));
-            border-top: 2px solid rgba(0, 255, 231, .35);
-            border-radius: 6px 6px 0 0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .lb-podium-pos {
-            font-family: var(--font-principal, 'Audiowide', monospace);
-            font-size: 22px;
-            color: rgba(255, 255, 255, .25);
-            line-height: 1;
-        }
-
-        /* ── Divisor ── */
-        .lb-divider {
-            text-align: center;
-            margin: 16px 22px 8px;
-            border-top: 1px solid rgba(255, 255, 255, .07);
-            position: relative;
-            z-index: 1;
-            flex-shrink: 0;
-        }
-
-        .lb-divider span {
-            position: relative;
-            top: -9px;
-            background: rgba(8, 8, 18, 1);
-            padding: 0 10px;
-            font-family: var(--font-secundaria, monospace);
-            font-size: 9px;
-            letter-spacing: 3px;
-            color: rgba(0, 255, 231, .4);
-        }
-
-        /* ── Lista scrolleable ── */
-        .lb-list-wrap {
-            overflow-y: auto;
-            flex: 1;
-            padding: 0 16px 4px;
-            scrollbar-width: thin;
-            scrollbar-color: rgba(0, 255, 231, .2) transparent;
-            position: relative;
-            z-index: 1;
-            -webkit-overflow-scrolling: touch;
-        }
-
-        .lb-list-wrap::-webkit-scrollbar {
-            width: 4px;
-        }
-
-        .lb-list-wrap::-webkit-scrollbar-thumb {
-            background: rgba(0, 255, 231, .25);
-            border-radius: 4px;
-        }
-
-        /* ── Fila de jugador ── */
-        .lb-row {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            padding: 9px 10px;
-            border-radius: 10px;
-            margin-bottom: 4px;
-            background: rgba(255, 255, 255, .03);
-            border: 1px solid transparent;
-            transition: background .15s;
-        }
-
-        .lb-row:hover {
-            background: rgba(0, 255, 231, .05);
-        }
-
-        .lb-row-me {
-            background: rgba(0, 255, 231, .08) !important;
-            border-color: rgba(0, 255, 231, .25) !important;
-            box-shadow: 0 0 12px rgba(0, 255, 231, .08);
-        }
-
-        .lb-row-pos {
-            font-family: var(--font-principal, 'Audiowide', monospace);
-            font-size: 11px;
-            color: rgba(255, 255, 255, .35);
-            min-width: 22px;
-            text-align: right;
-        }
-
-        .lb-row-avatar {
-            width: 34px;
-            height: 34px;
-            border-radius: 50%;
-            background: rgba(255, 255, 255, .05);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            overflow: hidden;
-            flex-shrink: 0;
-        }
-
-        .lb-row-info {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            gap: 2px;
-            min-width: 0;
-        }
-
-        .lb-row-name {
-            font-family: var(--font-principal, 'Audiowide', monospace);
-            font-size: clamp(9px, 2vw, 11px);
-            color: #fff;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-
-        .lb-row-rank {
-            font-family: var(--font-secundaria, monospace);
-            font-size: 9px;
-            letter-spacing: 1px;
-        }
-
-        .lb-row-xp {
-            font-family: var(--font-secundaria, monospace);
-            font-size: 10px;
-            color: rgba(0, 255, 231, .7);
-            letter-spacing: 1px;
-            flex-shrink: 0;
-        }
-
-        .lb-you-tag {
-            font-size: 8px;
-            background: rgba(0, 255, 231, .15);
-            color: var(--color-cian, #00ffe7);
-            border: 1px solid rgba(0, 255, 231, .3);
-            border-radius: 4px;
-            padding: 1px 4px;
-            letter-spacing: 1px;
-            vertical-align: middle;
-        }
-
-        /* ── Mensajes de estado ── */
-        .lb-loading,
-        .lb-error,
-        .lb-empty {
-            padding: 28px 16px;
-            text-align: center;
-            font-family: var(--font-secundaria, monospace);
-            font-size: 12px;
-            letter-spacing: 2px;
-            color: rgba(255, 255, 255, .4);
-            width: 100%;
-        }
-
-        .lb-error {
-            color: rgba(255, 77, 109, .7);
-            line-height: 1.6;
-        }
-
-        .lb-error small {
-            display: block;
-            margin-top: 6px;
-            font-size: 10px;
-            letter-spacing: 1px;
-            opacity: .7;
-        }
-
-        /* ── Botón cerrar inferior ── */
-        .lb-btn-close-bottom {
-            margin: 12px 22px 18px;
-            padding: 14px;
-            border-radius: 12px;
-            background: rgba(0, 255, 231, .12);
-            border: 1px solid rgba(0, 255, 231, .25);
-            color: var(--color-cian, #00ffe7);
-            font-family: var(--font-secundaria, monospace);
-            font-size: 13px;
-            letter-spacing: 3px;
-            cursor: pointer;
-            transition: background .2s;
-            flex-shrink: 0;
-            position: relative;
-            z-index: 1;
-            -webkit-tap-highlight-color: transparent;
-            touch-action: manipulation;
-        }
-
-        .lb-btn-close-bottom:hover {
-            background: rgba(0, 255, 231, .22);
-        }
-
-        /* ── Responsive mobile ── */
-        @media (max-width: 599px) {
-            .lb-header {
-                padding: 16px 18px 12px;
-            }
-
-            .lb-podium-name {
-                max-width: 80px;
-                font-size: 9px;
-            }
-
-            .lb-podium-wrap {
-                padding: 16px 10px 0;
-                gap: 4px;
-            }
-
-            .lb-btn-close-bottom {
-                margin: 8px 16px 24px;
-            }
-        }
-    </style>
+    <!-- Estilos de animaciones en style.css -->
 
     <!-- Plugin @capacitor-firebase/authentication se accede directamente via Capacitor.Plugins.FirebaseAuthentication -->
     <script src="leaderboard.js"></script>

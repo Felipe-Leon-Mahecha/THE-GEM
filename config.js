@@ -1164,6 +1164,20 @@ RANK_MAP_CONFIG.nodeRewards = [
 // Exponer globalmente para que rank-system.js lo lea
 window.RANK_MAP_CONFIG = RANK_MAP_CONFIG;
 
+// ============================================================
+//  BARRA DE PROGRESO POR NODOS (mini-camino arriba del mapa)
+//  Muestra: ícono del rango actual → puntos → gema del siguiente rango
+// ============================================================
+window.NODE_BAR_CFG = {
+    maxWidth: null,       // px del ancho total de la barra ("largo"). null = 100% (ancho actual, sin cambios)
+    trackWrapHeight: 28,  // alto del área donde se dibujan los puntos (px)
+    trackHeight: 4,       // grosor de la línea del camino (px)
+    dotSize: 12,          // diámetro de los nodos "paso" intermedios (px)
+    dotSizeCurrent: 20,   // diámetro del nodo donde está el jugador ahora (px)
+    endDotSize: 32,       // diámetro del nodo final (gema del siguiente rango) (px)
+    rankIconSize: 24,     // diámetro del ícono del rango actual, arriba a la izquierda (px)
+};
+
 // =================================================================
 //  HEADER DEL CAMINO DE RANGOS — decoración temática por mapa
 //  (hielo / fuego / dorado, banner equipado, bloque de XP)

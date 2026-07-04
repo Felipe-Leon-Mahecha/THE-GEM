@@ -12,20 +12,23 @@ try {
     // esos valores tienen prioridad y estos quedan como fallback.
     // ─────────────────────────────────────────────
     window.NODE_BAR_CFG = Object.assign({
-        trackHeight: 4,       // grosor de la línea (px)
-        dotSize: 12,          // diámetro de los nodos normales (px)
-        dotSizeCurrent: 20,   // diámetro del nodo donde está el jugador (px)
-        endDotSize: 32,       // diámetro del nodo final (rango siguiente) (px)
-        barHeight: 90,        // alto total del contenedor de la barra (px)
+        maxWidth: null,        // px del ancho total de la barra ("largo"). null = 100%
+        trackWrapHeight: 28,   // alto del área donde se dibujan los puntos (px)
+        trackHeight: 4,        // grosor de la línea (px)
+        dotSize: 12,           // diámetro de los nodos "paso" intermedios (px)
+        dotSizeCurrent: 20,    // diámetro del nodo donde está el jugador (px)
+        endDotSize: 32,        // diámetro del nodo final (gema del siguiente rango) (px)
+        rankIconSize: 24,      // diámetro del ícono del rango actual (px)
     }, window.NODE_BAR_CFG || {});
 
     // ─────────────────────────────────────────────
     // 1. TABLA DE RANGOS (17 rangos, lista definitiva)
     // ─────────────────────────────────────────────
     const RANKS = [
-        { id: 1, name: "Cobre", threshold: 0, color: "#b87333", emoji: "✦" },
-        { id: 2, name: "Hierro", threshold: 100, color: "#a8a9ad", emoji: "◈" },
-        { id: 3, name: "Plata", threshold: 300, color: "#c0c0c0", emoji: "◇" },
+        { id: 0, name: "Principiante", threshold: 0, color: "#7a7a7a", emoji: "○" },
+        { id: 1, name: "Cobre", threshold: 100, color: "#b87333", emoji: "✦" },
+        { id: 2, name: "Hierro", threshold: 200, color: "#a8a9ad", emoji: "◈" },
+        { id: 3, name: "Plata", threshold: 400, color: "#c0c0c0", emoji: "◇" },
         { id: 4, name: "Oro", threshold: 600, color: "#ffd700", emoji: "⬡" },
         { id: 5, name: "Ámbar", threshold: 1000, color: "#ffbf00", emoji: "⬢" },
         { id: 6, name: "Diamante", threshold: 1500, color: "#00ffe7", emoji: "◈" },
@@ -231,19 +234,6 @@ try {
                     menuRankEl.textContent = rank.name;
                     menuRankEl.style.color = rank.color;
                 }
-
-                // Chip de rango junto al banner de perfil (acceso al Camino de Rangos)
-                const chipEl = document.getElementById('menu-rank-chip');
-                if (chipEl) chipEl.style.setProperty('--rank-chip-color', rank.color);
-
-                const chipIconEl = document.getElementById('menu-rank-chip-icon');
-                if (chipIconEl) chipIconEl.textContent = rank.emoji;
-
-                const chipNameEl = document.getElementById('menu-rank-chip-name');
-                if (chipNameEl) chipNameEl.textContent = rank.name;
-
-                const chipBarEl = document.getElementById('menu-rank-chip-bar-fill');
-                if (chipBarEl) chipBarEl.style.width = (progress * 100).toFixed(1) + '%';
 
                 // profilePanel
                 const heroRankEl = document.getElementById('profileHeroRank');
@@ -858,10 +848,9 @@ window._renderRankMap = function (mapIdx, currentXP, currentRank, allRanks) {
             wrap.appendChild(label);
         }
 
-        // Badge "ACTUAL" si es el nodo de rango actual
-        const isPlayerHere = currentXP === 0
-            ? (i === 0)
-            : (isRankNode && rank && rank.id === currentRank.id);
+        // Badge "ACTUAL" — sigue la posición interpolada real del avatar (floatPos),
+        // no el nodo de rango fijo, para que no "salte" al cambiar de rango.
+        const isPlayerHere = i === Math.round(floatPos);
         if (isPlayerHere) {
             const badgeColor = isRankNode ? rank.color : map.pathColor;
             const badge = document.createElement('div');
@@ -1112,15 +1101,13 @@ window._getNodeBarSegment = function (currentXP, currentRank) {
         .filter(r => r.rankId !== null && mapDef.rankIds.includes(r.rankId));
     if (!rankNodes.length) return null;
 
-    // Caso especial: antes de llegar a Hierro, viaje Origen → Cobre
-    if (mapIdx === 0) {
-        const hierro = allRanks.find(r => r.id === 2);
-        if (hierro && currentXP < hierro.threshold) {
-            const hierroNodeIdx = rewards.findIndex(r => r.rankId === 2);  // ← CAMBIO: buscar Hierro, no Cobre
-            const endIdx = hierroNodeIdx >= 0 ? hierroNodeIdx : 5;
-            const pct = currentXP === 0 ? 0 : Math.min(1, currentXP / hierro.threshold);
-            return { pct, nodes: rewards.slice(0, endIdx + 1), maxed: false };
-        }
+    // Caso especial: Principiante (id 0) no tiene nodo propio en el mapa.
+    // El tramo va desde el inicio del camino (nodo 0, "Origen") hasta el nodo de Cobre.
+    if (currentRank.id === 0) {
+        const firstRankNode = rankNodes[0];
+        const firstRank = allRanks.find(r => r.id === firstRankNode.rankId);
+        const pct = Math.max(0, Math.min(1, currentXP / (firstRank.threshold || 1)));
+        return { pct, nodes: rewards.slice(0, firstRankNode.nodeIdx + 1), maxed: false };
     }
 
     let currentRankNode = rankNodes[0];
@@ -1141,25 +1128,62 @@ window._getNodeBarSegment = function (currentXP, currentRank) {
     const rankB = allRanks.find(r => r.id === nextRankNode.rankId);
     const xpInSegment = currentXP - rankA.threshold;
     const xpNeeded = rankB.threshold - rankA.threshold;
-    const pct = Math.min(1, xpInSegment / (xpNeeded || 1));
+    const pct = Math.max(0, Math.min(1, xpInSegment / (xpNeeded || 1)));
 
     return { pct, nodes: rewards.slice(currentRankNode.nodeIdx, nextRankNode.nodeIdx + 1), maxed: false };
+};
+
+// Pone la gema PNG real del rango (la misma que usa la notificación "¡NUEVO RANGO!",
+// en assets/UI/Rangos/rango_<id>.png). Si no existe esa imagen, cae al emoji + círculo de color.
+window._setRankGemIcon = function (container, rank, sizePx) {
+    container.innerHTML = '';
+    container.style.width = sizePx + 'px';
+    container.style.height = sizePx + 'px';
+    container.style.flexShrink = '0';
+    container.style.display = 'flex';
+    container.style.alignItems = 'center';
+    container.style.justifyContent = 'center';
+    container.style.borderRadius = '0';
+    container.style.border = 'none';
+    container.style.background = 'none';
+    const img = document.createElement('img');
+    img.src = `assets/UI/Rangos/rango_${rank.id}.png`;
+    img.alt = rank.name;
+    img.style.cssText = `width:100%;height:100%;object-fit:contain;filter:drop-shadow(0 0 6px ${rank.color}99);`;
+    img.onerror = function () {
+        container.innerHTML = '';
+        container.style.borderRadius = '50%';
+        container.style.border = `2px solid ${rank.color}`;
+        container.style.background = 'rgba(255,255,255,0.05)';
+        container.style.fontSize = Math.round(sizePx * 0.5) + 'px';
+        container.style.color = rank.color;
+        container.textContent = rank.emoji;
+    };
+    container.appendChild(img);
 };
 
 // Dibuja la barra: ícono+nombre del rango actual, línea con nodos,
 // nodo final grande (siguiente rango), y etiqueta "Inicio" / nombre siguiente.
 window._renderNodeProgressBar = function (currentRank, nextRank, currentXP) {
+    const cardEl = document.getElementById('rs-current-banner');
     const wrap = document.getElementById('rs-nodebar-track-wrap');
     const iconEl = document.getElementById('rs-nodebar-rank-icon');
     const nameEl = document.getElementById('rs-nodebar-rank-name');
     const endLabelEl = document.getElementById('rs-nodebar-end-label');
     if (!wrap) return;
 
-    if (iconEl) {
-        iconEl.textContent = currentRank.emoji;
-        iconEl.style.color = currentRank.color;
-        iconEl.style.borderColor = currentRank.color;
-    }
+    const cfg = window.NODE_BAR_CFG || {};
+    const dotSize = cfg.dotSize || 12;
+    const dotSizeCurrent = cfg.dotSizeCurrent || 20;
+    const endDotSize = cfg.endDotSize || 32;
+    const trackHeight = cfg.trackHeight || 4;
+    const trackWrapHeight = cfg.trackWrapHeight || 28;
+    const rankIconSize = cfg.rankIconSize || 24;
+
+    if (cardEl) cardEl.style.maxWidth = cfg.maxWidth ? cfg.maxWidth + 'px' : '';
+    wrap.style.height = trackWrapHeight + 'px';
+
+    if (iconEl) window._setRankGemIcon(iconEl, currentRank, rankIconSize);
     if (nameEl) { nameEl.textContent = currentRank.name; nameEl.style.color = currentRank.color; }
     if (endLabelEl) {
         endLabelEl.textContent = nextRank ? nextRank.name : '¡MÁXIMO!';
@@ -1169,12 +1193,6 @@ window._renderNodeProgressBar = function (currentRank, nextRank, currentXP) {
     wrap.innerHTML = '';
     const seg = window._getNodeBarSegment(currentXP, currentRank);
     if (!seg || !seg.nodes.length) return;
-
-    const cfg = window.NODE_BAR_CFG || {};
-    const dotSize = cfg.dotSize || 12;
-    const dotSizeCurrent = cfg.dotSizeCurrent || 20;
-    const endDotSize = cfg.endDotSize || 32;
-    const trackHeight = cfg.trackHeight || 4;
 
     const total = seg.nodes.length;
     const floatPos = seg.maxed ? (total - 1) : (seg.pct * (total - 1));
@@ -1203,18 +1221,25 @@ window._renderNodeProgressBar = function (currentRank, nextRank, currentXP) {
         const isCurrent = !isEnd && !seg.maxed && i === Math.floor(floatPos);
 
         const dot = document.createElement('div');
-        dot.className = 'rs-nodebar-dot' + (isEnd ? ' end' : '') + (isPassed ? ' filled' : '') + (isCurrent ? ' current' : '');
-        const size = isEnd ? endDotSize : (isCurrent ? dotSizeCurrent : dotSize);
-        dot.style.width = size + 'px';
-        dot.style.height = size + 'px';
+        dot.className = 'rs-nodebar-dot' + (isPassed ? ' filled' : '') + (isCurrent ? ' current' : '');
+        dot.style.position = 'absolute';
+        dot.style.top = '50%';
         dot.style.left = posPct + '%';
-        dot.style.fontSize = Math.round(size * 0.5) + 'px';
+        dot.style.transform = 'translate(-50%,-50%)';
 
-        const color = isEnd ? (nextRank ? nextRank.color : '#ffd700') : currentRank.color;
-        dot.style.borderColor = color;
-        dot.style.color = color;
-        dot.style.background = (isPassed || isEnd) ? color : 'transparent';
-        if (isEnd) dot.textContent = nextRank ? nextRank.emoji : '👑';
+        if (isEnd) {
+            // Nodo final = gema PNG real del siguiente rango (o corona si ya es el máximo)
+            const gemRank = nextRank || { id: currentRank.id, name: '¡MÁXIMO!', color: '#ffd700', emoji: '👑' };
+            window._setRankGemIcon(dot, gemRank, endDotSize);
+        } else {
+            const size = isCurrent ? dotSizeCurrent : dotSize;
+            dot.style.width = size + 'px';
+            dot.style.height = size + 'px';
+            dot.style.borderRadius = '50%';
+            dot.style.boxSizing = 'border-box';
+            dot.style.border = `2px solid ${currentRank.color}`;
+            dot.style.background = isPassed ? currentRank.color : 'transparent';
+        }
 
         dotsHolder.appendChild(dot);
     });
@@ -1233,14 +1258,14 @@ window._getPlayerNodePosition = function (currentXP, mapIdx) {
     const rewards = cfg.nodeRewards || [];
     const allRanks = window.RANKS || [];
 
-    // En mapa 0, antes de alcanzar Hierro el jugador viaja gradualmente
-    // del nodo ORIGEN (0) al nodo Cobre. Con XP=0 queda en el origen.
+    // En mapa 0, antes de alcanzar Cobre (fase "Principiante") el jugador viaja
+    // gradualmente del nodo ORIGEN (0) al nodo Cobre. Con XP=0 queda en el origen.
     if (mapIdx === 0) {
-        const hierro = allRanks.find(r => r.id === 2);
-        if (hierro && currentXP < hierro.threshold) {
+        const cobre = allRanks.find(r => r.id === 1);
+        if (cobre && currentXP < cobre.threshold) {
             const cobreNodeIdx = rewards.findIndex(r => r.rankId === 1);
             const endNode = cobreNodeIdx >= 0 ? cobreNodeIdx : 2;
-            const floatPos = currentXP === 0 ? 0 : (currentXP / hierro.threshold) * endNode;
+            const floatPos = currentXP === 0 ? 0 : (currentXP / cobre.threshold) * endNode;
             return { nodeIdx: Math.floor(floatPos), floatPos, progress: floatPos % 1 };
         }
     }
