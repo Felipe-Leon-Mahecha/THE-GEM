@@ -368,6 +368,16 @@
             </div>
         </div>
 
+        <!-- Botón "Clasificación" (Sala de Reyes) — pegado al banner de perfil, con espacio configurable entre ambos (ver GEM_CONFIG.menu.reyes en config.js) -->
+        <div id="menu-clasificacion-wrap" class="menu-clasificacion-wrap-positioned">
+            <div id="menu-clasificacion-btn" class="menu-clasificacion-banner" onclick="window.showLeaderboard()"
+                ontouchend="event.preventDefault();window.showLeaderboard();" role="button" tabindex="0"
+                aria-label="Ver clasificación">
+                <div class="shop-profile-banner-overlay"></div>
+                <span class="menu-clasificacion-label">CLASIFICACIÓN</span>
+            </div>
+        </div>
+
         <!-- Panel derecho (3D) — solo los botones -->
         <div id="overlay-panel" class="menu-overlay-panel-spacing">
 
@@ -696,37 +706,29 @@
     </div>
 
     <!-- Panel de opciones -->
-    <div class="panel-popup options-card" id="optionsPanel">
+    <div class="panel-popup options-card opt-panel" id="optionsPanel">
 
-        <div class="popup-title">
-            OPCIONES
-        </div>
+        <div class="popup-title opt-title"><span class="opt-title-icon">⚙</span> OPCIONES</div>
 
-        <!-- Controles del juego -->
-        <p style="line-height:2;">
-            A / D → Mover<br>
-            S → Invertir gravedad<br>
-            W → Potenciador slot 1<br>
-            E → Potenciador slot 2
-        </p>
+        <div class="opt-scroll">
 
-        <button onclick="toggleControlsMode()">
+            <!-- Controles del juego -->
+            <div class="opt-section">
+                <div class="opt-section-title"><span>&#9698;</span> CONTROLES</div>
+                <div class="opt-keys-grid">
+                    <span class="opt-key">A</span><span class="opt-key">D</span><span class="opt-key-label">Mover</span>
+                    <span class="opt-key">S</span><span class="opt-key-empty"></span><span class="opt-key-label">Invertir gravedad</span>
+                    <span class="opt-key">W</span><span class="opt-key-empty"></span><span class="opt-key-label">Potenciador slot 1</span>
+                    <span class="opt-key">E</span><span class="opt-key-empty"></span><span class="opt-key-label">Potenciador slot 2</span>
+                </div>
 
-            CAMBIAR CONTROLES
+                <button class="opt-toggle-btn" onclick="toggleControlsMode()">CAMBIAR CONTROLES</button>
+                <p class="opt-mode-text" id="controls-mode-text">Adaptive Controls</p>
+            </div>
 
-        </button>
-
-        <p id="controls-mode-text">
-
-            Adaptive Controls
-
-        </p>
-
-        <!-- Configuración de opciones -->
-        <div class="option-settings">
             <!-- Reasignación de teclas -->
-            <div class="keybind-section">
-                <div class="keybind-title">REASIGNAR TECLAS</div>
+            <div class="opt-section">
+                <div class="opt-section-title"><span>&#9000;</span> REASIGNAR TECLAS</div>
                 <div class="keybind-row">
                     <span>Mover Izquierda</span>
                     <button class="keybind-btn" data-action="left" onclick="startKeybind(this)">A</button>
@@ -747,40 +749,60 @@
                     <span>Potenciador 2</span>
                     <button class="keybind-btn" data-action="powerE" onclick="startKeybind(this)">E</button>
                 </div>
-                <button class="option-action" onclick="resetKeybinds()">RESTAURAR POR DEFECTO</button>
+                <button class="option-action opt-action-full" onclick="resetKeybinds()">RESTAURAR POR DEFECTO</button>
             </div>
 
-            <!-- Volumen de audio -->
-            <label class="option-row"><span>MUSICA</span><input id="music-volume" type="range" min="0" max="100"
-                    value="45"></label>
-            <label class="option-row"><span>EFECTOS</span><input id="sfx-volume" type="range" min="0" max="100"
-                    value="75"></label>
-            <button class="option-action" onclick="toggleReducedMotion()">MODO RENDIMIENTO</button>
-            <p id="motion-mode-text">Animaciones normales</p>
-            <!-- Modo pruebas -->
-            <div class="option-mobile">
-                <div class="option-mobile-title">MODO PRUEBAS (DEV)</div>
-                <button class="option-action" id="infinite-coins-btn" onclick="toggleInfiniteCoins()">MONEDAS INFINITAS:
-                    OFF</button>
+            <!-- Audio -->
+            <div class="opt-section">
+                <div class="opt-section-title"><span>&#9834;</span> AUDIO</div>
+                <label class="opt-slider-row">
+                    <span>MÚSICA</span>
+                    <input id="music-volume" class="opt-slider" type="range" min="0" max="100" value="45">
+                </label>
+                <label class="opt-slider-row">
+                    <span>EFECTOS</span>
+                    <input id="sfx-volume" class="opt-slider" type="range" min="0" max="100" value="75">
+                </label>
             </div>
+
+            <!-- Visual -->
+            <div class="opt-section">
+                <div class="opt-section-title"><span>&#9788;</span> VISUAL</div>
+                <button class="option-action opt-action-full" onclick="toggleReducedMotion()">MODO RENDIMIENTO</button>
+                <p class="opt-mode-text" id="motion-mode-text">Animaciones normales</p>
+            </div>
+
             <!-- Controles móviles -->
-            <div class="option-mobile">
-                <div class="option-mobile-title">CONTROLES CELULAR</div>
-                <label>BOTONES LATERALES <input id="touch-side-offset" type="range" min="0" max="100"
-                        value="50"></label>
-                <label>TAMAÑO BOTONES <input id="touch-size" type="range" min="50" max="150" value="100"></label>
-                <label>TRANSPARENCIA <input id="touch-opacity" type="range" min="20" max="100" value="100"></label>
-                <label>BOTON GRAVEDAD <input id="touch-gravity-offset" type="range" min="0" max="100"
-                        value="50"></label>
-                <button class="option-action" onclick="saveTouchLayout()">GUARDAR CONFIGURACIÓN</button>
+            <div class="opt-section opt-section-mobile">
+                <div class="opt-section-title"><span>&#9737;</span> CONTROLES CELULAR</div>
+                <label class="opt-slider-row">
+                    <span>BOTONES LATERALES</span>
+                    <input id="touch-side-offset" class="opt-slider" type="range" min="0" max="100" value="50">
+                </label>
+                <label class="opt-slider-row">
+                    <span>TAMAÑO BOTONES</span>
+                    <input id="touch-size" class="opt-slider" type="range" min="50" max="150" value="100">
+                </label>
+                <label class="opt-slider-row">
+                    <span>TRANSPARENCIA</span>
+                    <input id="touch-opacity" class="opt-slider" type="range" min="20" max="100" value="100">
+                </label>
+                <label class="opt-slider-row">
+                    <span>BOTÓN GRAVEDAD</span>
+                    <input id="touch-gravity-offset" class="opt-slider" type="range" min="0" max="100" value="50">
+                </label>
+                <button class="option-action opt-action-full" onclick="saveTouchLayout()">GUARDAR CONFIGURACIÓN</button>
             </div>
+
+            <!-- Modo pruebas -->
+            <div class="opt-section opt-section-dev">
+                <div class="opt-section-title opt-section-title-dev"><span>&#9888;</span> MODO PRUEBAS (DEV)</div>
+                <button class="option-action opt-action-full" id="infinite-coins-btn" onclick="toggleInfiniteCoins()">MONEDAS INFINITAS: OFF</button>
+            </div>
+
         </div>
 
-        <button class="popup-close" onclick="closePanels()">
-
-            CERRAR
-
-        </button>
+        <button class="popup-close" onclick="closePanels()">CERRAR</button>
 
     </div>
 
@@ -808,10 +830,10 @@
                         aria-label="Editar avatar y nombre">✎</button>
                 </div>
             </div>
-            <!-- Fila: Google + REYES -->
+            <!-- Fila: Google -->
             <div style="display:flex;gap:10px;margin:16px 28px 20px;width:calc(100% - 56px);box-sizing:border-box;">
 
-                <!-- Botón login Google (mitad izquierda) -->
+                <!-- Botón login Google -->
                 <button id="btn-google-login" onclick="window.loginGoogle()" style="
                     flex:1;min-width:0;
                     display:flex;align-items:center;justify-content:center;gap:8px;
@@ -836,23 +858,6 @@
                             d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.18 1.48-4.97 2.31-8.16 2.31-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z" />
                     </svg>
                     <span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Iniciar sesión</span>
-                </button>
-
-                <!-- Botón REYES (mitad derecha) -->
-                <button id="btn-reyes-perfil" onclick="window.showLeaderboard()"
-                    ontouchend="event.preventDefault();window.showLeaderboard();" style="
-                    flex:1;min-width:0;
-                    display:flex;align-items:center;justify-content:center;gap:8px;
-                    padding:12px 10px;
-                    background:linear-gradient(135deg,rgba(255,215,0,.1),rgba(255,160,0,.05));
-                    border:1.5px solid rgba(255,215,0,.5);
-                    color:#ffd700;border-radius:10px;cursor:pointer;
-                    font-size:12px;font-weight:700;letter-spacing:1px;text-transform:uppercase;
-                    box-shadow:0 0 14px rgba(255,215,0,.15);
-                    text-shadow:0 0 8px rgba(255,215,0,.5);
-                    transition:all 0.2s;
-                    -webkit-tap-highlight-color:transparent;touch-action:manipulation;">
-                    👑 REYES
                 </button>
 
             </div>
@@ -948,66 +953,65 @@
         <canvas id="ranksParticleCanvas"
             style="position:absolute; inset:0; width:100%; height:100%; pointer-events:none; z-index:0;"></canvas>
 
-        <!-- Header compacto todo-en-uno -->
+        <!-- Header compacto todo-en-uno (fila superior + barra de progreso) -->
         <div class="rs-header" id="rs-header">
 
             <!-- Capas decorativas del tema (hielo/fuego/dorado) — generadas por JS -->
             <div class="rs-header-deco" id="rs-header-deco"></div>
 
-            <!-- IZQUIERDA: Mini perfil + XP -->
-            <div class="rs-compact-profile" id="rs-compact-profile">
-                <div class="rs-compact-profile-banner-bg" id="rs-compact-profile-banner-bg"></div>
-                <div id="rs-profile-avatar" class="menu-profile-avatar" aria-hidden="true"></div>
-                <div class="menu-profile-text">
-                    <span id="rs-profile-name" class="menu-profile-name">Jugador</span>
-                    <span id="rs-current-name" class="menu-profile-rank">&#10022; Chispa</span>
+            <!-- FILA 1: perfil + XP + título + volver -->
+            <div class="rs-header-row" id="rs-header-row">
+                <!-- IZQUIERDA: Mini perfil + XP -->
+                <div class="rs-compact-profile" id="rs-compact-profile">
+                    <div class="rs-compact-profile-banner-bg" id="rs-compact-profile-banner-bg"></div>
+                    <div id="rs-profile-avatar" class="menu-profile-avatar" aria-hidden="true"></div>
+                    <div class="menu-profile-text">
+                        <span id="rs-profile-name" class="menu-profile-name">Jugador</span>
+                        <span id="rs-current-name" class="menu-profile-rank">&#10022; Chispa</span>
+                    </div>
+                    <div class="menu-profile-currency">
+                        <span class="menu-profile-chip">
+                            <img src="assets/Imagenes/Monetizacion/Rubies.png" class="menu-profile-chip-icon">
+                            <span id="rs-display-gems">0</span>
+                        </span>
+                        <span class="menu-profile-chip">
+                            <img src="assets/Imagenes/Monetizacion/DEAD_COIN.png" class="menu-profile-chip-icon">
+                            <span id="rs-display-coins">0</span>
+                        </span>
+                    </div>
                 </div>
-                <div class="menu-profile-currency">
-                    <span class="menu-profile-chip">
-                        <img src="assets/Imagenes/Monetizacion/Rubies.png" class="menu-profile-chip-icon">
-                        <span id="rs-display-gems">0</span>
-                    </span>
-                    <span class="menu-profile-chip">
-                        <img src="assets/Imagenes/Monetizacion/DEAD_COIN.png" class="menu-profile-chip-icon">
-                        <span id="rs-display-coins">0</span>
-                    </span>
+                <div class="rs-xp-block" id="rs-xp-block">
+                    <div class="rs-xp-block-particles" id="rs-xp-block-particles"></div>
+                    <div class="rs-xp-label">EXPERIENCIA</div>
+                    <div class="rs-xp-value-row">
+                        <span class="rs-xp-value" id="rs-player-xp">0</span>
+                        <span class="rs-xp-unit">XP</span>
+                    </div>
                 </div>
-            </div>
-            <div class="rs-xp-block" id="rs-xp-block">
-                <div class="rs-xp-block-particles" id="rs-xp-block-particles"></div>
-                <div class="rs-xp-label">EXPERIENCIA</div>
-                <div class="rs-xp-value-row">
-                    <span class="rs-xp-value" id="rs-player-xp">0</span>
-                    <span class="rs-xp-unit">XP</span>
+
+                <!-- Spacer -->
+                <div style="flex:1;"></div>
+
+                <!-- DERECHA: Titulo + boton volver -->
+                <div class="rs-title-block" style="text-align:right;">
+                    <div class="rs-title" id="rs-title">CAMINO DE RANGOS</div>
                 </div>
+                <button class="rs-back-btn" onclick="closeRanksScreen()">&#8592; VOLVER</button>
             </div>
 
-            <!-- Spacer -->
-            <div style="flex:1;"></div>
-
-            <!-- DERECHA: Titulo + boton volver -->
-            <div class="rs-title-block" style="text-align:right;">
-                <div class="rs-title" id="rs-title">CAMINO DE RANGOS</div>
+            <!-- FILA 2: barra de progreso por nodos, integrada en el mismo banner -->
+            <div class="rs-header-progress-row" id="rs-current-banner">
+                <div class="rs-nodebar-track-wrap" id="rs-nodebar-track-wrap"></div>
+                <div class="rs-nodebar-footer">
+                    <span class="rs-nodebar-start-label" id="rs-nodebar-start-label">Cobre</span>
+                    <span class="rs-nodebar-end-label" id="rs-nodebar-end-label">Hierro</span>
+                </div>
             </div>
-            <button class="rs-back-btn" onclick="closeRanksScreen()">&#8592; VOLVER</button>
 
         </div>
 
         <!-- Línea de glow animada bajo el header -->
         <div class="rs-header-glow-line" id="rs-header-glow-line"><span></span></div>
-
-        <!-- Barra de progreso por nodos (estilo camino de niveles) -->
-        <div class="rs-nodebar" id="rs-current-banner">
-            <div class="rs-nodebar-header">
-                <span class="rs-nodebar-rank-icon" id="rs-nodebar-rank-icon">✦</span>
-                <span class="rs-nodebar-rank-name" id="rs-nodebar-rank-name">Cobre</span>
-            </div>
-            <div class="rs-nodebar-track-wrap" id="rs-nodebar-track-wrap"></div>
-            <div class="rs-nodebar-footer">
-                <span class="rs-nodebar-start-label">Inicio</span>
-                <span class="rs-nodebar-end-label" id="rs-nodebar-end-label">Hierro</span>
-            </div>
-        </div>
 
         <!-- Mapa scrolleable de rangos -->
         <div class="rs-map-scroll" id="rs-map-scroll">

@@ -126,30 +126,46 @@ canvas {
     pointer-events: auto;
     touch-action: none;
     backdrop-filter: blur(6px);
-    transform: scale(calc(var(--touch-size, 100) / 100));
-    /* Escala basada en preferencia del usuario */
+    /* Escala = tamaño BASE (config.js) × preferencia del jugador (Opciones) */
+    transform: scale(calc(var(--touch-size, 100) / 100 * var(--touch-base-scale, 1)));
     opacity: calc(var(--touch-opacity, 100) / 100);
     /* Opacidad basada en preferencia del usuario */
 }
+body.is-touch-device #touch-controls button {
+    transform: scale(calc(var(--touch-size, 100) / 100 * var(--touch-base-scale-mobile, 1))) !important;
+}
 
-/* Posición del botón izquierdo */
+/* Posición del botón izquierdo — origen (x=0,y=0) definido en config.js,
+   el slider "BOTONES LATERALES" de Opciones suma/resta a partir de ahí. */
 #touch-left {
     background-image: url('assets/ui_buttons/btn_move_left.png');
-    left: calc(14px + env(safe-area-inset-left) + var(--touch-side, 50) * 0.32vw);
-    bottom: calc(20px + env(safe-area-inset-bottom));
+    left: calc(var(--touch-left-base-x, 14px) + env(safe-area-inset-left) + (var(--touch-side, 50) - 50) * 0.32vw);
+    bottom: calc(var(--touch-left-base-y, 20px) + env(safe-area-inset-bottom));
+}
+body.is-touch-device #touch-left {
+    left: calc(var(--touch-left-base-x-mobile, 14px) + env(safe-area-inset-left) + (var(--touch-side, 50) - 50) * 0.32vw) !important;
+    bottom: calc(var(--touch-left-base-y-mobile, 20px) + env(safe-area-inset-bottom)) !important;
 }
 
 /* Posición del botón derecho */
 #touch-right {
     background-image: url('assets/ui_buttons/btn_move_right.png');
-    left: calc(86px + env(safe-area-inset-left) + var(--touch-side, 50) * 0.32vw);
-    bottom: calc(20px + env(safe-area-inset-bottom));
+    left: calc(var(--touch-right-base-x, 86px) + env(safe-area-inset-left) + (var(--touch-side, 50) - 50) * 0.32vw);
+    bottom: calc(var(--touch-right-base-y, 20px) + env(safe-area-inset-bottom));
+}
+body.is-touch-device #touch-right {
+    left: calc(var(--touch-right-base-x-mobile, 86px) + env(safe-area-inset-left) + (var(--touch-side, 50) - 50) * 0.32vw) !important;
+    bottom: calc(var(--touch-right-base-y-mobile, 20px) + env(safe-area-inset-bottom)) !important;
 }
 
 /* Posición del botón de gravedad */
 #touch-gravity {
-    right: calc(18px + env(safe-area-inset-right) + var(--touch-gravity, 50) * 0.32vw);
-    bottom: calc(20px + env(safe-area-inset-bottom));
+    right: calc(var(--touch-gravity-base-x, 18px) + env(safe-area-inset-right) + (var(--touch-gravity, 50) - 50) * 0.32vw);
+    bottom: calc(var(--touch-gravity-base-y, 20px) + env(safe-area-inset-bottom));
+}
+body.is-touch-device #touch-gravity {
+    right: calc(var(--touch-gravity-base-x-mobile, 18px) + env(safe-area-inset-right) + (var(--touch-gravity, 50) - 50) * 0.32vw) !important;
+    bottom: calc(var(--touch-gravity-base-y-mobile, 20px) + env(safe-area-inset-bottom)) !important;
 }
 
 /* Mostrar controles táctiles solo en dispositivos táctiles durante el juego */
@@ -224,6 +240,59 @@ body.is-touch-device.is-playing-touch #touch-controls {
     max-width: var(--menu-profile-maxwidth, 420px);
     z-index: 3;
     padding: var(--menu-profile-padding, 18px 28px 0);
+}
+
+/* ── Botón "Clasificación" (Sala de Reyes) — tamaño y posición propios,
+     configurables en config.js (GEM_CONFIG.menu.reyes). Se ubica pegado
+     al lado izquierdo del banner de perfil, con un espacio (gap) entre
+     ambos, del mismo lado (arriba a la derecha). ── */
+.menu-clasificacion-wrap-positioned {
+    position: absolute;
+    top: var(--menu-profile-top, 0);
+    right: calc(var(--menu-profile-right, 0) + var(--menu-profile-width, 50%) + var(--menu-reyes-gap, 14px));
+    width: var(--menu-reyes-width, 34%);
+    max-width: var(--menu-reyes-maxwidth, 220px);
+    z-index: 3;
+    padding: var(--menu-profile-padding, 18px 28px 0);
+}
+
+.menu-clasificacion-banner {
+    position: relative;
+    height: var(--menu-reyes-height, 82px);
+    border-radius: var(--menu-reyes-radius, 10px);
+    padding: var(--menu-reyes-padding, 10px);
+    border: 1px solid rgba(255, 215, 0, 0.45);
+    background:
+        linear-gradient(135deg, rgba(255, 215, 0, 0.16), rgba(255, 160, 0, 0.08)),
+        url('assets/Imagenes/Clasif Reyes Imagenes/Fondo_Clasificacion.png');
+    background-size: cover;
+    background-position: center;
+    overflow: hidden;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    /* Deja libre el lado derecho del botón para poner ahí la corona */
+    justify-content: flex-start;
+    transition: border-color 0.18s ease, box-shadow 0.18s ease;
+}
+
+.menu-clasificacion-banner:hover {
+    border-color: rgba(255, 215, 0, 0.8);
+    box-shadow: 0 0 18px rgba(255, 215, 0, 0.28);
+}
+
+.menu-clasificacion-label {
+    position: relative;
+    z-index: 1;
+    max-width: 55%;
+    color: #ffd700;
+    font-family: var(--menu-reyes-font-family, var(--font-secundaria));
+    font-weight: 800;
+    font-size: var(--menu-reyes-font, 11px);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    text-shadow: 0 0 10px rgba(255, 215, 0, 0.55);
+    white-space: nowrap;
 }
 
 .menu-profile-banner {
@@ -1003,6 +1072,22 @@ body.is-touch-device #menu-profile-wrap {
     padding: 0 !important;
 }
 
+body.is-touch-device #menu-clasificacion-wrap {
+    width: var(--menu-reyes-width-mobile, 24%) !important;
+    right: calc(var(--menu-profile-right-mobile, 24px) + var(--menu-profile-width-mobile, 42%) + var(--menu-reyes-gap-mobile, 8px) + env(safe-area-inset-right)) !important;
+    top: calc(var(--menu-profile-top-mobile, 12px) + env(safe-area-inset-top)) !important;
+    padding: 0 !important;
+}
+
+body.is-touch-device .lb-card {
+    width: 100%;
+    max-height: calc(100dvh - 40px);
+}
+
+body.is-touch-device .lb-overlay {
+    padding: 16px;
+}
+
 body.is-touch-device #overlay-panel {
     transform: none !important;
     width: var(--menu-panel-width-mobile, 42%) !important;
@@ -1776,28 +1861,258 @@ body.is-touch-device .active-emote-bubble {
     width: min(520px, calc(100vw - 32px));
 }
 
-.option-settings,
-.option-mobile {
-    display: grid;
-    gap: 12px;
-    margin-top: 16px;
+/* ===== Rediseño panel de Opciones ===== */
+/* FIX: .opt-panel pone display:flex y por orden en la hoja le gana a
+   .panel-popup (display:none), dejando el panel abierto al cargar.
+   Esta regla por ID tiene más especificidad y siempre gana, pero el
+   inline style que pone ui.js (openOptionsPanel/closePanels) sigue
+   mandando por encima de esto para abrir/cerrar normalmente. */
+#optionsPanel {
+    display: none;
 }
 
-.option-row,
-.option-mobile label {
+.opt-panel {
+    display: flex;
+    flex-direction: column;
+    max-height: calc(100dvh - 28px);
+    padding: 28px 28px 20px;
+    gap: 0;
+}
+
+.opt-title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 18px;
+    flex-shrink: 0;
+}
+
+.opt-title-icon {
+    display: inline-flex;
+    color: var(--color-cian);
+    animation: opt-spin-slow 6s linear infinite;
+}
+
+@keyframes opt-spin-slow {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+.opt-scroll {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(0, 255, 231, 0.35) transparent;
+    padding-right: 6px;
+    margin-right: -6px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.opt-scroll::-webkit-scrollbar { width: 6px; }
+.opt-scroll::-webkit-scrollbar-track { background: transparent; }
+.opt-scroll::-webkit-scrollbar-thumb {
+    background: rgba(0, 255, 231, 0.3);
+    border-radius: 4px;
+}
+
+.opt-section {
+    background: rgba(255, 255, 255, 0.035);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 14px;
+    padding: 16px 16px 14px;
+}
+
+.opt-section-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--color-cian);
+    font-family: var(--font-secundaria);
+    font-size: 11px;
+    font-weight: 900;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    margin-bottom: 12px;
+    text-shadow: 0 0 10px rgba(0, 255, 231, 0.4);
+}
+
+.opt-keys-grid {
+    display: grid;
+    grid-template-columns: 34px 34px 1fr;
+    gap: 6px 10px;
+    align-items: center;
+    margin-bottom: 14px;
+}
+
+.opt-key {
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 6px;
+    font-family: var(--font-secundaria);
+    font-weight: 800;
+    font-size: 13px;
+    color: #fff;
+}
+
+.opt-key-empty { width: 30px; }
+
+.opt-key-label {
+    color: rgba(255, 255, 255, 0.6);
+    font-family: var(--font-secundaria);
+    font-size: 12px;
+    letter-spacing: 1px;
+}
+
+.opt-toggle-btn {
+    width: 100%;
+    height: 42px;
+    border-radius: 10px;
+    border: 1px solid rgba(0, 255, 231, 0.35);
+    background: linear-gradient(135deg, rgba(0, 255, 231, 0.18), rgba(0, 255, 231, 0.05));
+    color: var(--color-cian);
+    font-family: var(--font-secundaria);
+    font-weight: 800;
+    letter-spacing: 2px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.opt-toggle-btn:hover {
+    background: linear-gradient(135deg, rgba(0, 255, 231, 0.3), rgba(0, 255, 231, 0.1));
+    box-shadow: 0 0 18px rgba(0, 255, 231, 0.25);
+}
+
+.opt-mode-text {
+    margin-top: 8px;
+    text-align: center;
+    color: rgba(255, 255, 255, 0.4);
+    font-family: var(--font-secundaria);
+    font-size: 11px;
+    letter-spacing: 1px;
+}
+
+.opt-slider-row {
     display: grid;
     grid-template-columns: 130px 1fr;
     align-items: center;
     gap: 12px;
     color: rgba(255, 255, 255, 0.72);
     font-family: var(--font-secundaria);
-    font-size: 12px;
+    font-size: 11px;
     letter-spacing: 2px;
+    margin-bottom: 12px;
 }
 
-.option-row input,
-.option-mobile input {
+.opt-slider-row:last-of-type { margin-bottom: 0; }
+
+/* Slider custom (reemplaza el input[type=range] azul por defecto del navegador) */
+.opt-slider {
+    -webkit-appearance: none;
+    appearance: none;
     width: 100%;
+    height: 4px;
+    border-radius: 4px;
+    background: linear-gradient(90deg, var(--color-cian) 0%, var(--color-cian) var(--val, 50%), rgba(255, 255, 255, 0.12) var(--val, 50%), rgba(255, 255, 255, 0.12) 100%);
+    outline: none;
+    cursor: pointer;
+}
+
+.opt-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: #fff;
+    border: 2px solid var(--color-cian);
+    box-shadow: 0 0 8px rgba(0, 255, 231, 0.7);
+    cursor: pointer;
+    transition: transform 0.15s ease;
+}
+
+.opt-slider::-webkit-slider-thumb:hover { transform: scale(1.15); }
+
+.opt-slider::-moz-range-track {
+    height: 4px;
+    border-radius: 4px;
+    background: rgba(255, 255, 255, 0.12);
+}
+
+.opt-slider::-moz-range-progress {
+    height: 4px;
+    border-radius: 4px;
+    background: var(--color-cian);
+}
+
+.opt-slider::-moz-range-thumb {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: #fff;
+    border: 2px solid var(--color-cian);
+    box-shadow: 0 0 8px rgba(0, 255, 231, 0.7);
+    cursor: pointer;
+}
+
+.opt-action-full {
+    width: 100%;
+}
+
+.opt-section-mobile {
+    border-color: rgba(255, 165, 0, 0.18);
+}
+
+.opt-section-mobile .opt-section-title {
+    color: #ffa500;
+    text-shadow: 0 0 10px rgba(255, 165, 0, 0.4);
+}
+
+.opt-section-mobile .opt-slider {
+    background: linear-gradient(90deg, #ffa500 0%, #ffa500 var(--val, 50%), rgba(255, 255, 255, 0.12) var(--val, 50%), rgba(255, 255, 255, 0.12) 100%);
+}
+
+.opt-section-mobile .opt-slider::-webkit-slider-thumb {
+    border-color: #ffa500;
+    box-shadow: 0 0 8px rgba(255, 165, 0, 0.7);
+}
+
+.opt-section-mobile .opt-slider::-moz-range-progress { background: #ffa500; }
+.opt-section-mobile .opt-slider::-moz-range-thumb { border-color: #ffa500; box-shadow: 0 0 8px rgba(255, 165, 0, 0.7); }
+
+.opt-section-mobile .option-action {
+    border-color: rgba(255, 165, 0, 0.3);
+    background: rgba(255, 165, 0, 0.08);
+    color: #ffa500;
+}
+
+.opt-section-dev {
+    border-color: rgba(255, 77, 109, 0.25);
+    background: rgba(255, 77, 109, 0.04);
+}
+
+.opt-section-title-dev {
+    color: var(--color-rosa) !important;
+    text-shadow: 0 0 10px rgba(255, 77, 109, 0.4) !important;
+}
+
+.opt-section-dev .option-action {
+    border-color: rgba(255, 77, 109, 0.3);
+    background: rgba(255, 77, 109, 0.08);
+    color: var(--color-rosa);
+}
+
+.opt-panel .popup-close {
+    flex-shrink: 0;
+    margin-top: 16px;
+    position: static;
 }
 
 .option-action {
@@ -1809,20 +2124,6 @@ body.is-touch-device .active-emote-bubble {
     font-family: var(--font-secundaria);
     letter-spacing: 2px;
     cursor: pointer;
-}
-
-.option-mobile {
-    padding: 12px;
-    border-radius: 8px;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    background: rgba(255, 255, 255, 0.04);
-}
-
-.option-mobile-title {
-    color: rgba(255, 77, 109, 0.78);
-    font-family: var(--font-secundaria);
-    font-size: 11px;
-    letter-spacing: 3px;
 }
 
 .profile-kicker {
@@ -7216,24 +7517,6 @@ body.is-touch-device .ruby-pass-dev {
     }
 }
 
-.keybind-section {
-    background: rgba(255, 255, 255, 0.03);
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    border-radius: 12px;
-    padding: 16px;
-    margin-bottom: 16px;
-}
-
-.keybind-title {
-    color: #4bc0eb;
-    font-family: var(--font-principal);
-    font-size: 12px;
-    font-weight: 900;
-    letter-spacing: 2px;
-    margin-bottom: 12px;
-    text-transform: uppercase;
-}
-
 .keybind-row {
     display: flex;
     justify-content: space-between;
@@ -7463,6 +7746,357 @@ body.is-touch-device .ruby-pass-dev {
     color: #fff;
     font-family: var(--font-secundaria);
     font-size: 14px;
+}
+
+/* =====================================================
+   LEADERBOARD — SALA DE REYES
+   (antes no existía nada de esto, por eso el panel no
+   se veía aunque el JS lo "abriera")
+===================================================== */
+
+.lb-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 37000;
+    align-items: center;
+    justify-content: center;
+    padding: 28px;
+    background: rgba(0, 0, 0, 0.85);
+    backdrop-filter: blur(12px);
+}
+
+.lb-overlay.entering .lb-card {
+    animation: fadeInScale 0.25s ease forwards;
+}
+
+.lb-overlay.leaving .lb-card {
+    animation: lbFadeOut 0.22s ease forwards;
+}
+
+@keyframes lbFadeOut {
+    from {
+        transform: scale(1);
+        opacity: 1;
+    }
+
+    to {
+        transform: scale(0.97);
+        opacity: 0;
+    }
+}
+
+.lb-card {
+    position: relative;
+    width: min(480px, 100%);
+    max-height: calc(100dvh - 56px);
+    display: flex;
+    flex-direction: column;
+    background:
+        linear-gradient(160deg, rgba(28, 22, 8, 0.97), rgba(8, 8, 12, 0.98));
+    border: 1px solid rgba(255, 215, 0, 0.35);
+    border-radius: 20px;
+    box-shadow: 0 0 60px rgba(255, 215, 0, 0.12), 0 20px 60px rgba(0, 0, 0, 0.6);
+    overflow: hidden;
+}
+
+.lb-bg-deco {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    overflow: hidden;
+    pointer-events: none;
+    opacity: 0.08;
+}
+
+.lb-bg-crown {
+    position: absolute;
+    top: -40px;
+    right: -30px;
+    font-size: 220px;
+    transform: rotate(15deg);
+}
+
+.lb-header {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 24px 24px 18px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    flex-shrink: 0;
+}
+
+.lb-header-crown {
+    font-size: 32px;
+    flex-shrink: 0;
+    filter: drop-shadow(0 0 10px rgba(255, 215, 0, 0.5));
+}
+
+.lb-title {
+    margin: 0;
+    color: #ffd700;
+    font-family: var(--font-secundaria);
+    font-size: 18px;
+    font-weight: 800;
+    letter-spacing: 2px;
+    text-shadow: 0 0 14px rgba(255, 215, 0, 0.4);
+}
+
+.lb-subtitle {
+    margin: 2px 0 0;
+    color: rgba(255, 255, 255, 0.4);
+    font-family: monospace;
+    font-size: 11px;
+    letter-spacing: 1px;
+}
+
+.lb-close-btn {
+    margin-left: auto;
+    width: 34px;
+    height: 34px;
+    flex-shrink: 0;
+    border-radius: 10px;
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    background: rgba(255, 255, 255, 0.06);
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 16px;
+    cursor: pointer;
+    transition: background 0.15s ease, color 0.15s ease;
+}
+
+.lb-close-btn:hover {
+    background: rgba(255, 255, 255, 0.12);
+    color: #fff;
+}
+
+.lb-podium-wrap {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    gap: 10px;
+    padding: 24px 20px 8px;
+    flex-shrink: 0;
+    min-height: 140px;
+}
+
+.lb-podium-slot {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex: 1;
+    max-width: 130px;
+    gap: 4px;
+}
+
+.lb-podium-empty {
+    visibility: hidden;
+}
+
+.lb-podium-medal {
+    font-size: 20px;
+}
+
+.lb-podium-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 255, 255, 0.06);
+    overflow: hidden;
+}
+
+.lb-podium-first .lb-podium-avatar {
+    width: 52px;
+    height: 52px;
+}
+
+.lb-podium-name {
+    color: #fff;
+    font-family: monospace;
+    font-size: 11px;
+    font-weight: 700;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.lb-podium-rank {
+    font-family: monospace;
+    font-size: 10px;
+    letter-spacing: 0.5px;
+}
+
+.lb-podium-xp {
+    color: rgba(255, 255, 255, 0.45);
+    font-family: monospace;
+    font-size: 9px;
+}
+
+.lb-podium-base {
+    width: 100%;
+    margin-top: 4px;
+    border-radius: 8px 8px 0 0;
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.02));
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    padding-top: 6px;
+}
+
+.lb-podium-pos {
+    color: rgba(255, 255, 255, 0.5);
+    font-family: monospace;
+    font-weight: 800;
+    font-size: 13px;
+}
+
+.lb-divider {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 4px 24px 10px;
+    flex-shrink: 0;
+}
+
+.lb-divider span {
+    color: rgba(255, 215, 0, 0.5);
+    font-family: monospace;
+    font-size: 10px;
+    letter-spacing: 3px;
+}
+
+.lb-list-wrap {
+    position: relative;
+    z-index: 1;
+    flex: 1;
+    min-height: 60px;
+    overflow-y: auto;
+    padding: 0 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255, 215, 0, 0.3) transparent;
+}
+
+.lb-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 12px;
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.lb-row-me {
+    background: rgba(0, 255, 231, 0.08);
+    border-color: rgba(0, 255, 231, 0.35);
+}
+
+.lb-row-pos {
+    width: 22px;
+    text-align: center;
+    color: rgba(255, 255, 255, 0.4);
+    font-family: monospace;
+    font-size: 11px;
+    flex-shrink: 0;
+}
+
+.lb-row-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.06);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    flex-shrink: 0;
+}
+
+.lb-row-info {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+}
+
+.lb-row-name {
+    color: #fff;
+    font-family: monospace;
+    font-size: 12px;
+    font-weight: 700;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.lb-you-tag {
+    display: inline-block;
+    color: #00ffe7;
+    font-size: 9px;
+    letter-spacing: 1px;
+    border: 1px solid rgba(0, 255, 231, 0.4);
+    border-radius: 4px;
+    padding: 1px 4px;
+    margin-left: 4px;
+}
+
+.lb-row-rank {
+    font-family: monospace;
+    font-size: 10px;
+}
+
+.lb-row-xp {
+    color: rgba(255, 255, 255, 0.5);
+    font-family: monospace;
+    font-size: 11px;
+    flex-shrink: 0;
+}
+
+.lb-empty,
+.lb-error {
+    width: 100%;
+    text-align: center;
+    padding: 24px 12px;
+    color: rgba(255, 255, 255, 0.4);
+    font-family: monospace;
+    font-size: 12px;
+    line-height: 1.6;
+}
+
+.lb-error {
+    color: #ff6b6b;
+}
+
+.lb-btn-close-bottom {
+    flex-shrink: 0;
+    margin: 16px 20px 20px;
+    padding: 12px;
+    border-radius: 10px;
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    background: rgba(255, 255, 255, 0.05);
+    color: rgba(255, 255, 255, 0.7);
+    font-family: monospace;
+    letter-spacing: 2px;
+    font-size: 11px;
+    cursor: pointer;
+    transition: background 0.15s ease;
+}
+
+.lb-btn-close-bottom:hover {
+    background: rgba(255, 255, 255, 0.1);
 }
 
 .starter-pack-notification {
@@ -8083,18 +8717,24 @@ h1 {
    PANTALLA DE RANGOS — Mapa de progresión
    ===================================================== */
 
-/* Header */
+/* Header — ahora en columna: fila 1 (perfil/título/volver) + fila 2 (barra de progreso) */
 .rs-header {
     position: relative;
     z-index: 2;
     display: flex;
-    align-items: center;
-    gap: 20px;
-    padding: 20px 28px 16px;
+    flex-direction: column;
+    padding: 20px 28px 14px;
     border-bottom: 1px solid rgba(255, 255, 255, 0.07);
     background: rgba(0, 0, 0, 0.4);
     backdrop-filter: blur(10px);
     flex-shrink: 0;
+}
+
+.rs-header-row {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    width: 100%;
 }
 
 .rs-back-btn {

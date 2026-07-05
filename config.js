@@ -310,6 +310,34 @@ const GEM_CONFIG = {
 
         },
 
+        // --------------------------------------------------------
+        //  BOTÓN "CLASIFICACIÓN" / SALA DE REYES (menú principal)
+        //  Va pegado al lado del banner de perfil (arriba a la
+        //  derecha), con un espacio (gap) configurable entre los dos.
+        // --------------------------------------------------------
+        reyes: {
+            // Posición: se calcula a partir del banner de perfil (menu.perfil)
+            // más este espacio. "width" es el ancho propio del botón reyes
+            // (independiente del ancho del perfil, para que no se desborde).
+            posicion: {
+                mobile: { width: '24%', gap: '8px' },
+                desktop: { width: '34%', maxWidth: '220px', gap: '14px' },
+            },
+            // Tamaño del cuadro (alto, bordes redondeados, espacio interno)
+            tamano: {
+                mobile: { height: '82px', borderRadius: '10px', padding: '10px' },
+                desktop: { height: '82px', borderRadius: '10px', padding: '10px' },
+            },
+            // Texto "CLASIFICACIÓN" dentro del botón
+            fuente: {
+                tipo: "var(--font-secundaria)", // tipo/familia de letra (ej: monospace, 'Geom', etc.)
+                size: {
+                    mobile: '9px',
+                    desktop: '11px',
+                },
+            },
+        },
+
     },
 
     // --------------------------------------------------------
@@ -478,22 +506,6 @@ const GEM_CONFIG = {
             valueFont: {     // número grande (ej: "0")
                 mobile: '22px',
                 desktop: '22px',
-            },
-        },
-
-        // ── Botón REYES (abre la Sala de Reyes / leaderboard) ──
-        botonReyes: {
-            // icono: 'emoji' usa el texto de abajo (👑). 'imagen' usa coronaImagen (PNG).
-            icono: 'emoji',
-            emoji: '👑',
-            imagen: '', // ej: 'assets/Imagenes/Iconos/corona.png'
-            iconSize: {     // tamaño del emoji/imagen dentro del botón
-                mobile: '14px',
-                desktop: '14px',
-            },
-            fontSize: {     // tamaño del texto "REYES"
-                mobile: '12px',
-                desktop: '12px',
             },
         },
 
@@ -702,6 +714,7 @@ function applyConfig() {
     const m = GEM_CONFIG.menu;
     const mp = m.perfil;
     const mm = mp.monetizacion;
+    const mr = m.reyes;
     const sb = GEM_CONFIG.tiendaSidebar;
     const ls = GEM_CONFIG.levelSelect;
     const tema = GEM_CONFIG.tema;
@@ -769,18 +782,6 @@ function applyConfig() {
     const editBtnEl = document.querySelector('.profile-preview-edit-btn');
     aplicarIcono(editBtnEl, pp.editAvatarBtn, '--pp-edit-btn-icon-size');
 
-    // ── Corona "👑" del botón REYES (dentro del modal de perfil) ──
-    const reyesBtnEl = document.getElementById('btn-reyes-perfil');
-    if (reyesBtnEl) {
-        let iconSpan = reyesBtnEl.querySelector('.pp-reyes-icon');
-        if (!iconSpan) {
-            const textoReyes = reyesBtnEl.textContent.replace(/^[^\wÁÉÍÓÚÑáéíóúñ]+/, '').trim();
-            reyesBtnEl.innerHTML = '<span class="pp-reyes-icon"></span> <span class="pp-reyes-text">' + textoReyes + '</span>';
-            iconSpan = reyesBtnEl.querySelector('.pp-reyes-icon');
-        }
-        aplicarIcono(iconSpan, pp.botonReyes, '--pp-reyes-icon-size');
-    }
-
     // ── APLICAR AMBOS SETS: mobile y desktop ──
     // El CSS usa body.is-touch-device para móvil, NO media queries de ancho.
     // Si solo escribimos el set del dispositivo actual, las variables "-mobile"
@@ -837,8 +838,6 @@ function applyConfig() {
         root.style.setProperty('--pp-statcard-padding' + s, pp.statCard.padding[d]);
         root.style.setProperty('--pp-statcard-title-font' + s, pp.statCard.titleFont[d]);
         root.style.setProperty('--pp-statcard-value-font' + s, pp.statCard.valueFont[d]);
-        root.style.setProperty('--pp-reyes-icon-size' + s, pp.botonReyes.iconSize[d]);
-        root.style.setProperty('--pp-reyes-font' + s, pp.botonReyes.fontSize[d]);
 
         // ── Menú principal — panel de botones ──
         // Las variables "-mobile" son las que usa el CSS cuando body.is-touch-device
@@ -872,6 +871,18 @@ function applyConfig() {
         root.style.setProperty('--menu-avatar-size' + s, mp.avatar[d].size);
         root.style.setProperty('--menu-profile-name-font' + s, mp.nombreFont[d].size);
         root.style.setProperty('--menu-profile-level-font' + s, mp.rangoFont[d].size);
+
+        // ── Menú principal — botón REYES (Clasificación), pegado al perfil ──
+        root.style.setProperty('--menu-reyes-width' + s, mr.posicion[d].width);
+        root.style.setProperty('--menu-reyes-gap' + s, mr.posicion[d].gap);
+        if (d === 'desktop') {
+            root.style.setProperty('--menu-reyes-maxwidth', mr.posicion.desktop.maxWidth);
+        }
+        root.style.setProperty('--menu-reyes-height' + s, mr.tamano[d].height);
+        root.style.setProperty('--menu-reyes-radius' + s, mr.tamano[d].borderRadius);
+        root.style.setProperty('--menu-reyes-padding' + s, mr.tamano[d].padding);
+        root.style.setProperty('--menu-reyes-font' + s, mr.fuente.size[d]);
+        root.style.setProperty('--menu-reyes-font-family', mr.fuente.tipo);
 
         // ── Sidebar tienda ──
         root.style.setProperty('--shop-sidebar-width' + s, sb.width[d]);
@@ -1164,19 +1175,8 @@ RANK_MAP_CONFIG.nodeRewards = [
 // Exponer globalmente para que rank-system.js lo lea
 window.RANK_MAP_CONFIG = RANK_MAP_CONFIG;
 
-// ============================================================
-//  BARRA DE PROGRESO POR NODOS (mini-camino arriba del mapa)
-//  Muestra: ícono del rango actual → puntos → gema del siguiente rango
-// ============================================================
-window.NODE_BAR_CFG = {
-    maxWidth: null,       // px del ancho total de la barra ("largo"). null = 100% (ancho actual, sin cambios)
-    trackWrapHeight: 28,  // alto del área donde se dibujan los puntos (px)
-    trackHeight: 4,       // grosor de la línea del camino (px)
-    dotSize: 12,          // diámetro de los nodos "paso" intermedios (px)
-    dotSizeCurrent: 20,   // diámetro del nodo donde está el jugador ahora (px)
-    endDotSize: 32,       // diámetro del nodo final (gema del siguiente rango) (px)
-    rankIconSize: 24,     // diámetro del ícono del rango actual, arriba a la izquierda (px)
-};
+// (La config de la barra de progreso por nodos ahora vive en
+//  RANK_HEADER_CONFIG.barraNodos, más abajo, junto con el resto del header)
 
 // =================================================================
 //  HEADER DEL CAMINO DE RANGOS — decoración temática por mapa
@@ -1189,34 +1189,57 @@ const RANK_HEADER_CONFIG = {
     // Si lo poines en false, el header queda neutro (sin hielo/fuego/dorado).
     activado: true,
 
-    // ── Tamaño/posición general del header (válido para los 3 temas) ──
+    // ── Tamaño/posición general del header (fila de perfil/título/volver) ──
     header: {
-        padding: '20px 28px 16px',
-        gap: '20px',
+        desktop: { padding: '20px 28px 16px', gap: '20px' },
+        mobile: { padding: '14px 14px 10px', gap: '10px' },
     },
 
     // ── Bloque "EXPERIENCIA" (antes "TU XP") ──
     bloqueXP: {
-        padding: '8px 18px',
-        radius: '10px',
-        labelFont: '8px',
-        labelSpacing: '4px',
-        valueFont: '22px',
-        unitFont: '9px',
+        desktop: { padding: '8px 18px', radius: '10px', labelFont: '8px', labelSpacing: '4px', valueFont: '22px', unitFont: '9px' },
+        mobile: { padding: '6px 12px', radius: '8px', labelFont: '7px', labelSpacing: '2px', valueFont: '16px', unitFont: '8px' },
         // Cantidad de partículas (copos/brasas/destellos) flotando dentro del bloque de XP
         cantidadParticulas: 6,
     },
 
     // ── Título "CAMINO DE RANGOS" ──
     titulo: {
-        font: '19px',
-        spacing: '3px',
+        desktop: { font: '19px', spacing: '3px' },
+        mobile: { font: '13px', spacing: '1px' },
     },
 
     // ── Línea de brillo animada bajo el header ──
     glow: {
-        altura: '2px',
-        velocidad: '2.4s', // más alto = más lento
+        desktop: { altura: '2px' },
+        mobile: { altura: '2px' },
+        velocidad: '2.4s', // más alto = más lento (no depende de mobile/desktop)
+    },
+
+    // ── Barra de progreso por nodos (integrada dentro del mismo banner) ──
+    barraNodos: {
+        desktop: {
+            maxWidth: null,        // ancho máx del contenedor completo en px. null = 100%
+            sidePadding: '20px',   // margen izq/der para que no quede pegada a los bordes
+            trackWrapHeight: 24,   // alto del área donde se dibujan los puntos (px)
+            trackHeight: 3,        // grosor de la línea del camino (px)
+            dotSize: 8,            // diámetro de los nodos "paso" intermedios (px)
+            dotSizeCurrent: 12,    // diámetro del nodo donde está el jugador ahora (px) — solo un poco más grande
+            startDotSize: 22,      // diámetro de la gema del rango actual (nodo inicial) (px)
+            endDotSize: 22,        // diámetro de la gema del rango siguiente (nodo final) (px)
+            labelFont: '11px',     // tamaño de los nombres de rango a los extremos
+        },
+        mobile: {
+            maxWidth: null,
+            sidePadding: '10px',
+            trackWrapHeight: 18,
+            trackHeight: 2,
+            dotSize: 6,
+            dotSizeCurrent: 9,
+            startDotSize: 16,
+            endDotSize: 16,
+            labelFont: '9px',
+        },
     },
 
     // ── Velocidad del shimmer dorado (Mapa 3) ──
@@ -1233,27 +1256,40 @@ const RANK_HEADER_CONFIG = {
     temaPorMapa: ['hielo', 'fuego', 'dorado'],
 };
 window.RANK_HEADER_CONFIG = RANK_HEADER_CONFIG;
+// Acceso directo para rank-system.js (elige .desktop / .mobile según body.is-touch-device)
+window.NODE_BAR_CFG = RANK_HEADER_CONFIG.barraNodos;
 
 function aplicarRankHeaderConfig() {
     const root = document.documentElement;
     const rh = RANK_HEADER_CONFIG;
 
-    root.style.setProperty('--rh-header-padding', rh.header.padding);
-    root.style.setProperty('--rh-header-gap', rh.header.gap);
+    // Igual que applyConfig(): escribimos AMBOS sets (mobile y desktop) siempre.
+    // El CSS decide cuál usar según la clase body.is-touch-device — así no
+    // depende de en qué momento se agregue esa clase al <body>.
+    ['mobile', 'desktop'].forEach(function (d) {
+        const s = d === 'mobile' ? '-mobile' : '';
 
-    root.style.setProperty('--rh-xp-padding', rh.bloqueXP.padding);
-    root.style.setProperty('--rh-xp-radius', rh.bloqueXP.radius);
-    root.style.setProperty('--rh-xp-label-font', rh.bloqueXP.labelFont);
-    root.style.setProperty('--rh-xp-label-spacing', rh.bloqueXP.labelSpacing);
-    root.style.setProperty('--rh-xp-value-font', rh.bloqueXP.valueFont);
-    root.style.setProperty('--rh-xp-unit-font', rh.bloqueXP.unitFont);
+        root.style.setProperty('--rh-header-padding' + s, rh.header[d].padding);
+        root.style.setProperty('--rh-header-gap' + s, rh.header[d].gap);
 
-    root.style.setProperty('--rh-title-font', rh.titulo.font);
-    root.style.setProperty('--rh-title-spacing', rh.titulo.spacing);
+        root.style.setProperty('--rh-xp-padding' + s, rh.bloqueXP[d].padding);
+        root.style.setProperty('--rh-xp-radius' + s, rh.bloqueXP[d].radius);
+        root.style.setProperty('--rh-xp-label-font' + s, rh.bloqueXP[d].labelFont);
+        root.style.setProperty('--rh-xp-label-spacing' + s, rh.bloqueXP[d].labelSpacing);
+        root.style.setProperty('--rh-xp-value-font' + s, rh.bloqueXP[d].valueFont);
+        root.style.setProperty('--rh-xp-unit-font' + s, rh.bloqueXP[d].unitFont);
 
-    root.style.setProperty('--rh-glow-height', rh.glow.altura);
+        root.style.setProperty('--rh-title-font' + s, rh.titulo[d].font);
+        root.style.setProperty('--rh-title-spacing' + s, rh.titulo[d].spacing);
+
+        root.style.setProperty('--rh-glow-height' + s, rh.glow[d].altura);
+
+        root.style.setProperty('--rh-bar-side-padding' + s, rh.barraNodos[d].sidePadding);
+        root.style.setProperty('--rh-bar-wrap-height' + s, rh.barraNodos[d].trackWrapHeight + 'px');
+        root.style.setProperty('--rh-bar-label-font' + s, rh.barraNodos[d].labelFont);
+    });
+
     root.style.setProperty('--rh-glow-speed', rh.glow.velocidad);
-
     root.style.setProperty('--rh-shimmer-speed', rh.shimmerVelocidad);
 }
 
@@ -1363,4 +1399,54 @@ window.aplicarTemaHeaderRangos = function (mapIdx) {
 };
 
 aplicarRankHeaderConfig();
+
+// =================================================================
+//  BOTONES TÁCTILES DEL GAMEPLAY (izquierda / derecha / gravedad)
+//  Esto define la posición y tamaño BASE = el "origen" (x=0, y=0).
+//  Los sliders de "Opciones → CONTROLES CELULAR" (BOTONES LATERALES,
+//  TAMAÑO BOTONES, BOTON GRAVEDAD) se SUMAN o RESTAN a partir de este
+//  punto — cuando el jugador deja esos sliders en su valor central (50),
+//  los botones quedan exactamente en la posición/tamaño que pongas aquí.
+// =================================================================
+const TOUCH_CONTROLS_CONFIG = {
+    izquierda: {
+        // x = distancia desde el borde IZQUIERDO de la pantalla (px)
+        // y = distancia desde el borde INFERIOR de la pantalla (px)
+        desktop: { x: 14, y: 20 },
+        mobile: { x: 14, y: 20 },
+    },
+    derecha: {
+        desktop: { x: 86, y: 20 },
+        mobile: { x: 86, y: 20 },
+    },
+    gravedad: {
+        // x = distancia desde el borde DERECHO de la pantalla (px)
+        desktop: { x: 18, y: 20 },
+        mobile: { x: 18, y: 20 },
+    },
+    // Escala BASE de los 3 botones (1 = tamaño normal, 0.8 = 20% más chico, 1.2 = 20% más grande).
+    // El slider "TAMAÑO BOTONES" del jugador multiplica ADEMÁS sobre este valor.
+    tamano: {
+        desktop: 1,
+        mobile: 1,
+    },
+};
+window.TOUCH_CONTROLS_CONFIG = TOUCH_CONTROLS_CONFIG;
+
+function aplicarTouchControlsConfig() {
+    const root = document.documentElement;
+    const tc = TOUCH_CONTROLS_CONFIG;
+
+    ['mobile', 'desktop'].forEach(function (d) {
+        const s = d === 'mobile' ? '-mobile' : '';
+        root.style.setProperty('--touch-left-base-x' + s, tc.izquierda[d].x + 'px');
+        root.style.setProperty('--touch-left-base-y' + s, tc.izquierda[d].y + 'px');
+        root.style.setProperty('--touch-right-base-x' + s, tc.derecha[d].x + 'px');
+        root.style.setProperty('--touch-right-base-y' + s, tc.derecha[d].y + 'px');
+        root.style.setProperty('--touch-gravity-base-x' + s, tc.gravedad[d].x + 'px');
+        root.style.setProperty('--touch-gravity-base-y' + s, tc.gravedad[d].y + 'px');
+        root.style.setProperty('--touch-base-scale' + s, tc.tamano[d]);
+    });
+}
+aplicarTouchControlsConfig();
 

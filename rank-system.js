@@ -12,13 +12,14 @@ try {
     // esos valores tienen prioridad y estos quedan como fallback.
     // ─────────────────────────────────────────────
     window.NODE_BAR_CFG = Object.assign({
-        maxWidth: null,        // px del ancho total de la barra ("largo"). null = 100%
-        trackWrapHeight: 28,   // alto del área donde se dibujan los puntos (px)
-        trackHeight: 4,        // grosor de la línea (px)
-        dotSize: 12,           // diámetro de los nodos "paso" intermedios (px)
-        dotSizeCurrent: 20,    // diámetro del nodo donde está el jugador (px)
-        endDotSize: 32,        // diámetro del nodo final (gema del siguiente rango) (px)
-        rankIconSize: 24,      // diámetro del ícono del rango actual (px)
+        desktop: {
+            maxWidth: null, sidePadding: '20px', trackWrapHeight: 24, trackHeight: 3,
+            dotSize: 8, dotSizeCurrent: 12, startDotSize: 22, endDotSize: 22, labelFont: '11px',
+        },
+        mobile: {
+            maxWidth: null, sidePadding: '10px', trackWrapHeight: 18, trackHeight: 2,
+            dotSize: 6, dotSizeCurrent: 9, startDotSize: 16, endDotSize: 16, labelFont: '9px',
+        },
     }, window.NODE_BAR_CFG || {});
 
     // ─────────────────────────────────────────────
@@ -615,6 +616,17 @@ function _getNodesPct(mapIdx) {
     return _defaultNodes[mapIdx] || [];
 }
 
+// nodeRewards es UN SOLO arreglo con los nodos de TODOS los mapas concatenados.
+// Este offset da el índice GLOBAL donde empieza el mapa `mapIdx` dentro de ese arreglo,
+// sumando la cantidad de nodos de todos los mapas anteriores.
+function _getMapNodeOffset(mapIdx) {
+    let offset = 0;
+    for (let m = 0; m < mapIdx; m++) {
+        offset += _getNodesPct(m).length;
+    }
+    return offset;
+}
+
 let _activeMap = 0;
 let _mapRafId = null;
 
@@ -782,16 +794,17 @@ window._renderRankMap = function (mapIdx, currentXP, currentRank, allRanks) {
     svg.appendChild(pathNeon);
     container.appendChild(svg);
 
-    // ── Renderizar los 12 nodos desde RANK_MAP_CONFIG.nodeRewards ──
+    // ── Renderizar los nodos desde RANK_MAP_CONFIG.nodeRewards (offset por mapa) ──
     const allNodeRewards = (window.RANK_MAP_CONFIG || {}).nodeRewards || [];
     const allRanksGlobal = window.RANKS || ranksSource;
+    const mapNodeOffset = _getMapNodeOffset(mapIdx);
 
-    // Posición proporcional del avatar
+    // Posición proporcional del avatar (ya en escala LOCAL a este mapa)
     const playerPos = window._getPlayerNodePosition ? window._getPlayerNodePosition(currentXP, mapIdx) : { floatPos: 0 };
     const floatPos = playerPos.floatPos || 0;
 
     absNodes.forEach((pos, i) => {
-        const reward = allNodeRewards[i];
+        const reward = allNodeRewards[mapNodeOffset + i];
         if (!reward) return;
 
         const isRankNode = reward.rankId !== null;
@@ -1089,16 +1102,11 @@ window._getNodeBarSegment = function (currentXP, currentRank) {
     const allRanks = window.RANKS || [];
     if (!rewards.length) return null;
 
-    let mapIdx = 0;
-    for (let m = MAP_DEFS.length - 1; m >= 0; m--) {
-        if (MAP_DEFS[m].rankIds.includes(currentRank.id)) { mapIdx = m; break; }
-    }
-    const mapDef = MAP_DEFS[mapIdx];
-    if (!mapDef) return null;
-
+    // Lista GLOBAL de nodos-de-rango (de TODOS los mapas, en orden), para que el
+    // tramo pueda cruzar de un mapa a otro (ej: Oro → Ámbar, que están en mapas distintos).
     const rankNodes = rewards
         .map((r, i) => ({ ...r, nodeIdx: i }))
-        .filter(r => r.rankId !== null && mapDef.rankIds.includes(r.rankId));
+        .filter(r => r.rankId !== null);
     if (!rankNodes.length) return null;
 
     // Caso especial: Principiante (id 0) no tiene nodo propio en el mapa.
@@ -1167,24 +1175,27 @@ window._setRankGemIcon = function (container, rank, sizePx) {
 window._renderNodeProgressBar = function (currentRank, nextRank, currentXP) {
     const cardEl = document.getElementById('rs-current-banner');
     const wrap = document.getElementById('rs-nodebar-track-wrap');
-    const iconEl = document.getElementById('rs-nodebar-rank-icon');
-    const nameEl = document.getElementById('rs-nodebar-rank-name');
+    const startLabelEl = document.getElementById('rs-nodebar-start-label');
     const endLabelEl = document.getElementById('rs-nodebar-end-label');
     if (!wrap) return;
 
-    const cfg = window.NODE_BAR_CFG || {};
-    const dotSize = cfg.dotSize || 12;
-    const dotSizeCurrent = cfg.dotSizeCurrent || 20;
-    const endDotSize = cfg.endDotSize || 32;
-    const trackHeight = cfg.trackHeight || 4;
-    const trackWrapHeight = cfg.trackWrapHeight || 28;
-    const rankIconSize = cfg.rankIconSize || 24;
+    // Config responsiva: desktop/mobile, elegida según la clase que ya usa
+    // el resto del juego para detectar dispositivos táctiles.
+    const isMobile = document.body.classList.contains('is-touch-device');
+    const barCfg = window.NODE_BAR_CFG || {};
+    const cfg = barCfg[isMobile ? 'mobile' : 'desktop'] || barCfg.desktop || barCfg;
+
+    const dotSize = cfg.dotSize || 8;
+    const dotSizeCurrent = cfg.dotSizeCurrent || 12;
+    const startDotSize = cfg.startDotSize || cfg.endDotSize || 22;
+    const endDotSize = cfg.endDotSize || 22;
+    const trackHeight = cfg.trackHeight || 3;
+    const trackWrapHeight = cfg.trackWrapHeight || 24;
 
     if (cardEl) cardEl.style.maxWidth = cfg.maxWidth ? cfg.maxWidth + 'px' : '';
     wrap.style.height = trackWrapHeight + 'px';
 
-    if (iconEl) window._setRankGemIcon(iconEl, currentRank, rankIconSize);
-    if (nameEl) { nameEl.textContent = currentRank.name; nameEl.style.color = currentRank.color; }
+    if (startLabelEl) { startLabelEl.textContent = currentRank.name; startLabelEl.style.color = currentRank.color; }
     if (endLabelEl) {
         endLabelEl.textContent = nextRank ? nextRank.name : '¡MÁXIMO!';
         endLabelEl.style.color = nextRank ? nextRank.color : '#ffd700';
@@ -1216,6 +1227,7 @@ window._renderNodeProgressBar = function (currentRank, nextRank, currentXP) {
 
     seg.nodes.forEach((node, i) => {
         const posPct = total > 1 ? (i / (total - 1)) * 100 : 100;
+        const isStart = i === 0;
         const isEnd = i === total - 1;
         const isPassed = i <= Math.floor(floatPos + 0.001);
         const isCurrent = !isEnd && !seg.maxed && i === Math.floor(floatPos);
@@ -1227,7 +1239,11 @@ window._renderNodeProgressBar = function (currentRank, nextRank, currentXP) {
         dot.style.left = posPct + '%';
         dot.style.transform = 'translate(-50%,-50%)';
 
-        if (isEnd) {
+        if (isStart) {
+            // Nodo inicial = gema PNG real del rango actual
+            window._setRankGemIcon(dot, currentRank, startDotSize);
+            if (isCurrent) dot.style.filter = `drop-shadow(0 0 8px ${currentRank.color})`;
+        } else if (isEnd) {
             // Nodo final = gema PNG real del siguiente rango (o corona si ya es el máximo)
             const gemRank = nextRank || { id: currentRank.id, name: '¡MÁXIMO!', color: '#ffd700', emoji: '👑' };
             window._setRankGemIcon(dot, gemRank, endDotSize);
@@ -1278,6 +1294,14 @@ window._getPlayerNodePosition = function (currentXP, mapIdx) {
 
     if (!rankNodes.length) return { nodeIdx: 0, progress: 0 };
 
+    // Si el jugador aún no alcanza ni el primer rango de ESTE mapa
+    // (ej: viendo el mapa 2 con XP de Oro, que es del mapa 1), lo dejamos
+    // anclado al inicio de este mapa en vez de dar una posición negativa.
+    const firstRankOfMap = allRanks.find(r => r.id === rankNodes[0].rankId);
+    if (firstRankOfMap && currentXP < firstRankOfMap.threshold) {
+        return { nodeIdx: 0, floatPos: 0, progress: 0 };
+    }
+
     // ¿En qué par de rangos está el jugador?
     let currentRankNode = rankNodes[0];
     let nextRankNode = rankNodes[1] || null;
@@ -1290,6 +1314,8 @@ window._getPlayerNodePosition = function (currentXP, mapIdx) {
         }
     }
 
+    const mapNodeOffset = _getMapNodeOffset(mapIdx);
+
     // Si no hay siguiente rango en este mapa, está en el último nodo (fin de mapa)
     if (!nextRankNode) {
         const nodesPct = _getNodesPct(mapIdx);
@@ -1299,22 +1325,22 @@ window._getPlayerNodePosition = function (currentXP, mapIdx) {
     // Calcular % de progreso entre el rango actual y el siguiente
     const currentRank = allRanks.find(r => r.id === currentRankNode.rankId);
     const nextRank = allRanks.find(r => r.id === nextRankNode.rankId);
-    if (!currentRank || !nextRank) return { nodeIdx: currentRankNode.nodeIdx, progress: 0 };
+    if (!currentRank || !nextRank) return { nodeIdx: currentRankNode.nodeIdx - mapNodeOffset, progress: 0 };
 
     const xpInSegment = currentXP - currentRank.threshold;
     const xpNeeded = nextRank.threshold - currentRank.threshold;
-    const pct = Math.min(1, xpInSegment / xpNeeded); // 0.0 → 1.0
+    const pct = Math.max(0, Math.min(1, xpInSegment / xpNeeded)); // 0.0 → 1.0
 
-    // Interpolar: ¿qué nodo intermedio le toca?
-    const startNode = currentRankNode.nodeIdx;
-    const endNode = nextRankNode.nodeIdx;
+    // Interpolar: ¿qué nodo intermedio le toca? (convertido a índice LOCAL de este mapa)
+    const startNode = currentRankNode.nodeIdx - mapNodeOffset;
+    const endNode = nextRankNode.nodeIdx - mapNodeOffset;
     const totalNodes = endNode - startNode;
     const floatPos = startNode + pct * totalNodes;
 
     return {
-        nodeIdx: Math.floor(floatPos),       // nodo donde está parado
+        nodeIdx: Math.floor(floatPos),       // nodo donde está parado (local a este mapa)
         progress: floatPos % 1,              // % entre ese nodo y el siguiente
-        floatPos                              // posición continua
+        floatPos                              // posición continua (local a este mapa)
     };
 };
 
@@ -1508,32 +1534,23 @@ window._switchMap = function (mi) {
             from { transform: scale(0.85); opacity: 0; }
             to   { transform: scale(1);    opacity: 1; }
         }
-        /* Barra de progreso por nodos */
-        .rs-nodebar {
-            margin: 10px 20px 6px !important;
-            padding: 12px 18px 10px !important;
-            background: rgba(8,12,22,0.55) !important;
-            border: 1px solid rgba(255,255,255,0.08) !important;
-            border-radius: 14px !important;
+        /* Barra de progreso por nodos — integrada en el mismo banner del header */
+        .rs-header-progress-row {
+            width: 100%;
+            padding: 8px var(--rh-bar-side-padding, 20px) 0;
+            position: relative;
+            z-index: 1;
         }
-        .rs-nodebar-header {
-            display: flex; align-items: center; gap: 8px;
-            margin-bottom: 16px;
-        }
-        .rs-nodebar-rank-icon {
-            width: 24px; height: 24px; border-radius: 50%;
-            border: 2px solid currentColor;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 12px; background: rgba(255,255,255,0.05);
-            flex-shrink: 0;
-        }
-        .rs-nodebar-rank-name {
-            font-weight: 700; font-size: 13px; letter-spacing: .3px;
+        body.is-touch-device .rs-header-progress-row {
+            padding: 6px var(--rh-bar-side-padding-mobile, 10px) 0;
         }
         .rs-nodebar-track-wrap {
             position: relative;
-            height: 28px;
+            height: var(--rh-bar-wrap-height, 24px);
             margin: 0 4px;
+        }
+        body.is-touch-device .rs-nodebar-track-wrap {
+            height: var(--rh-bar-wrap-height-mobile, 18px);
         }
         .rs-nodebar-line {
             position: absolute; left: 0; right: 0; top: 50%;
@@ -1559,14 +1576,16 @@ window._switchMap = function (mi) {
             transition: width .5s, height .5s, background .5s, box-shadow .5s;
         }
         .rs-nodebar-dot.filled { box-shadow: 0 0 6px currentColor; }
-        .rs-nodebar-dot.current { box-shadow: 0 0 14px 2px currentColor; z-index: 2; }
-        .rs-nodebar-dot.end { font-weight: 700; }
+        .rs-nodebar-dot.current { box-shadow: 0 0 12px 2px currentColor; z-index: 2; }
         .rs-nodebar-footer {
             display: flex; justify-content: space-between;
-            margin-top: 6px; font-size: 11px;
+            margin-top: 4px;
+            font-size: var(--rh-bar-label-font, 11px);
+            font-weight: 700; letter-spacing: .3px;
         }
-        .rs-nodebar-start-label { color: rgba(255,255,255,0.4); }
-        .rs-nodebar-end-label { font-weight: 700; }
+        body.is-touch-device .rs-nodebar-footer {
+            font-size: var(--rh-bar-label-font-mobile, 9px);
+        }
         @keyframes rsm-skin-spin {
             from { transform: rotate(0deg); }
             to   { transform: rotate(360deg); }

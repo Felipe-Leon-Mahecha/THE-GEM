@@ -402,15 +402,6 @@ body.is-touch-device #grid-achievements-help {
     font-size: var(--pp-statcard-value-font, 22px) !important;
 }
 
-/* ── Botón REYES (dentro del modal de perfil) ── */
-#btn-reyes-perfil {
-    font-size: var(--pp-reyes-font, 12px) !important;
-}
-
-#btn-reyes-perfil .pp-reyes-icon {
-    font-size: var(--pp-reyes-icon-size, 14px) !important;
-}
-
 /* ── Variante MÓVIL: el body recibe la clase is-touch-device en
    celulares/tablets. Estos valores leen el set "mobile" de config.js. ── */
 body.is-touch-device .profile-card {
@@ -491,14 +482,6 @@ body.is-touch-device .profile-stat-card .stat-value {
     font-size: var(--pp-statcard-value-font-mobile, 22px) !important;
 }
 
-body.is-touch-device #btn-reyes-perfil {
-    font-size: var(--pp-reyes-font-mobile, 12px) !important;
-}
-
-body.is-touch-device #btn-reyes-perfil .pp-reyes-icon {
-    font-size: var(--pp-reyes-icon-size-mobile, 14px) !important;
-}
-
 /* ── PNG de moneda/gema en el menú ── */
 .menu-currency-icon {
     width: var(--menu-currency-icon-size, 14px) !important;
@@ -549,9 +532,18 @@ body.is-touch-device #btn-reyes-perfil .pp-reyes-icon {
 /* ── Tamaño/posición del header y sus bloques (válido para los 3 temas) ── */
 .rs-header {
     padding: var(--rh-header-padding, 20px 28px 16px) !important;
-    gap: var(--rh-header-gap, 20px) !important;
     position: relative;
     overflow: hidden;
+}
+body.is-touch-device .rs-header {
+    padding: var(--rh-header-padding-mobile, 14px 14px 10px) !important;
+}
+
+.rs-header-row {
+    gap: var(--rh-header-gap, 20px) !important;
+}
+body.is-touch-device .rs-header-row {
+    gap: var(--rh-header-gap-mobile, 10px) !important;
 }
 
 .rs-header-deco {
@@ -588,6 +580,10 @@ body.is-touch-device #btn-reyes-perfil .pp-reyes-icon {
     border-radius: var(--rh-xp-radius, 10px) !important;
     clip-path: polygon(8px 0, 100% 0, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%, 0 8px);
 }
+body.is-touch-device .rs-xp-block {
+    padding: var(--rh-xp-padding-mobile, 6px 12px) !important;
+    border-radius: var(--rh-xp-radius-mobile, 8px) !important;
+}
 
 .rs-xp-block-particles {
     position: absolute;
@@ -602,6 +598,10 @@ body.is-touch-device #btn-reyes-perfil .pp-reyes-icon {
     text-align: center;
     text-transform: uppercase;
 }
+body.is-touch-device .rs-xp-label {
+    font-size: var(--rh-xp-label-font-mobile, 7px) !important;
+    letter-spacing: var(--rh-xp-label-spacing-mobile, 2px) !important;
+}
 
 .rs-xp-value-row {
     display: flex;
@@ -614,9 +614,15 @@ body.is-touch-device #btn-reyes-perfil .pp-reyes-icon {
     font-size: var(--rh-xp-value-font, 22px) !important;
     font-weight: 900;
 }
+body.is-touch-device .rs-xp-value {
+    font-size: var(--rh-xp-value-font-mobile, 16px) !important;
+}
 
 .rs-xp-unit {
     font-size: var(--rh-xp-unit-font, 9px) !important;
+}
+body.is-touch-device .rs-xp-unit {
+    font-size: var(--rh-xp-unit-font-mobile, 8px) !important;
 }
 
 .rs-title {
@@ -626,6 +632,10 @@ body.is-touch-device #btn-reyes-perfil .pp-reyes-icon {
     position: relative;
     z-index: 1;
 }
+body.is-touch-device .rs-title {
+    font-size: var(--rh-title-font-mobile, 13px) !important;
+    letter-spacing: var(--rh-title-spacing-mobile, 1px) !important;
+}
 
 /* ── Línea de glow animada bajo el header ── */
 .rs-header-glow-line {
@@ -633,6 +643,9 @@ body.is-touch-device #btn-reyes-perfil .pp-reyes-icon {
     height: var(--rh-glow-height, 2px);
     overflow: hidden;
     flex-shrink: 0;
+}
+body.is-touch-device .rs-header-glow-line {
+    height: var(--rh-glow-height-mobile, 2px);
 }
 
 .rs-header-glow-line span {

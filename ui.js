@@ -92,7 +92,7 @@ if (inventoryBtn) inventoryBtn.onclick = () => { window.playSfx?.('menuSelect');
 
 window.openOptionsPanel = function () {
     syncOptionsPanel();
-    document.getElementById("optionsPanel").style.display = "block";
+    document.getElementById("optionsPanel").style.display = "flex";
 };
 
 // =====================================================
@@ -520,6 +520,29 @@ function getKeybind(action) {
 
 loadKeybinds();
 
+// Relleno visual (cian/naranja) de los sliders custom del panel de Opciones.
+// Los sliders nativos no saben pintar "lo ya recorrido"; usamos una variable
+// CSS (--val) que el input actualiza en cada movimiento.
+function _updateOptSliderFill(el) {
+    if (!el) return;
+    const min = parseFloat(el.min) || 0;
+    const max = parseFloat(el.max) || 100;
+    const val = parseFloat(el.value) || 0;
+    const pct = ((val - min) / (max - min)) * 100;
+    el.style.setProperty('--val', pct + '%');
+}
+
+function _refreshAllOptSliders() {
+    document.querySelectorAll('.opt-slider').forEach(_updateOptSliderFill);
+}
+
+function _bindOptSliderFills() {
+    document.querySelectorAll('.opt-slider').forEach(el => {
+        _updateOptSliderFill(el);
+        el.addEventListener('input', () => _updateOptSliderFill(el));
+    });
+}
+
 function syncOptionsPanel() {
     const music = document.getElementById('music-volume');
     const sfx = document.getElementById('sfx-volume');
@@ -527,16 +550,13 @@ function syncOptionsPanel() {
     const gravity = document.getElementById('touch-gravity-offset');
     const size = document.getElementById('touch-size');
     const opacity = document.getElementById('touch-opacity');
-    const powerupX = document.getElementById('powerup-offset-x');
-    const powerupY = document.getElementById('powerup-offset-y');
     if (music) music.value = Math.round((parseFloat(localStorage.getItem('musicVolume') || '0.45')) * 100);
     if (sfx) sfx.value = Math.round((parseFloat(localStorage.getItem('sfxVolume') || '0.75')) * 100);
     if (side) side.value = localStorage.getItem('touchSideOffset') || '50';
     if (gravity) gravity.value = localStorage.getItem('touchGravityOffset') || '50';
     if (size) size.value = localStorage.getItem('touchSize') || '100';
     if (opacity) opacity.value = localStorage.getItem('touchOpacity') || '100';
-    if (powerupX) powerupX.value = localStorage.getItem('powerupOffsetX') || '0';
-    if (powerupY) powerupY.value = localStorage.getItem('powerupOffsetY') || '0';
+    _refreshAllOptSliders();
     updateMotionText();
 }
 
@@ -575,14 +595,10 @@ function saveTouchLayout() {
     const gravity = document.getElementById('touch-gravity-offset');
     const size = document.getElementById('touch-size');
     const opacity = document.getElementById('touch-opacity');
-    const powerupX = document.getElementById('powerup-offset-x');
-    const powerupY = document.getElementById('powerup-offset-y');
     if (side) localStorage.setItem('touchSideOffset', side.value);
     if (gravity) localStorage.setItem('touchGravityOffset', gravity.value);
     if (size) localStorage.setItem('touchSize', size.value);
     if (opacity) localStorage.setItem('touchOpacity', opacity.value);
-    if (powerupX) localStorage.setItem('powerupOffsetX', powerupX.value);
-    if (powerupY) localStorage.setItem('powerupOffsetY', powerupY.value);
     applyTouchLayout();
     window.playSfx?.('avatarBanner', 0.6);
 }
@@ -621,6 +637,7 @@ function bindTouchControls() {
 }
 
 bindOptionSliders();
+_bindOptSliderFills();
 bindTouchControls();
 applyTouchLayout();
 document.body.classList.toggle('reduced-motion', localStorage.getItem('reducedMotion') === 'true');
