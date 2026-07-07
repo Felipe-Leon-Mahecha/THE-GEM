@@ -215,19 +215,6 @@ function getCollectionScore() {
     return total;
 }
 
-function getUnlockedLevelsCount() {
-    const levels = window.levels || [];
-    if (levels.length > 0) {
-        const unlocked = levels.filter((level, index) => {
-            if (level.unlocked) return true;
-            return localStorage.getItem(`level${index}Unlocked`) === 'true';
-        }).length;
-        return `${unlocked} / ${levels.length}`;
-    }
-
-    return '0 / 0';
-}
-
 function updateProfilePanelStats() {
     const stats = typeof window.getStats === 'function' ? window.getStats() : {};
     const wins = parseInt(localStorage.getItem('gamesWon') || '0', 10) || 0;
@@ -251,8 +238,8 @@ function updateProfilePanelStats() {
         'menu-profile-rank': rankName,  // se oculta visualmente si XP=0 (ver bloque rankObj)
         'profileStat-total-xp': totalXP.toLocaleString(),
         'profileStat-xp-to-next': nextRank
-            ? xpToNext.toLocaleString() + ' XP'
-            : '¡Máximo!',
+            ? xpToNext.toLocaleString() + ' ' + (window.GEM_CONFIG?.textos?.rangos?.sufijoXP || 'XP')
+            : (window.GEM_CONFIG?.textos?.rangos?.xpMaximo || '¡Máximo!'),
         'menu-profile-name': playerName,
         'menu-profile-gems': gemsValue,
         'menu-profile-coins': coinsValue,
@@ -325,8 +312,6 @@ window.openProfileMenu = function () {
     refreshProfilePreview();
     updateProfilePanelStats();
     if (panel) panel.classList.add("showing");
-    // Render rank path visible by default when opening profile
-    setTimeout(() => window.renderRankPathOnOpen?.(), 50);
 };
 
 window.closeProfileMenu = function () {
@@ -422,11 +407,12 @@ function toggleControlsMode() {
 
 function updateControlsText() {
 
+    const c = window.GEM_CONFIG?.textos?.opciones?.controles;
     document.getElementById(
         "controls-mode-text"
     ).innerText = window.adaptiveControls
-            ? "Controles adaptativos"
-            : "Controles fijos";
+            ? (c?.textoAdaptativo ?? "Controles adaptativos")
+            : (c?.textoFijo ?? "Controles fijos");
 }
 
 // Inicializar texto al cargar
@@ -585,9 +571,10 @@ function toggleReducedMotion() {
 
 function updateMotionText() {
     const el = document.getElementById('motion-mode-text');
+    const v = window.GEM_CONFIG?.textos?.opciones?.visual;
     if (el) el.textContent = localStorage.getItem('reducedMotion') === 'true'
-        ? 'Rendimiento alto'
-        : 'Visuales completos';
+        ? (v?.textoRendimientoAlto ?? 'Rendimiento alto')
+        : (v?.textoVisualesCompletos ?? 'Visuales completos');
 }
 
 function saveTouchLayout() {
@@ -841,13 +828,20 @@ window.getKeybind = getKeybind;
 
 window.infiniteCoinsMode = localStorage.getItem('infiniteCoinsMode') === 'true';
 
+// Arma el texto del botón/label de monedas infinitas leyendo el prefijo desde
+// config.js, para no tener el string repetido en 3 lugares distintos.
+function getInfiniteCoinsLabel() {
+    const prefix = window.GEM_CONFIG?.textos?.opciones?.modoPruebasDev?.monedasInfinitasPrefix ?? 'MONEDAS INFINITAS';
+    return `${prefix}: ${window.infiniteCoinsMode ? 'ON' : 'OFF'}`;
+}
+
 function toggleInfiniteCoins() {
     window.infiniteCoinsMode = !window.infiniteCoinsMode;
     localStorage.setItem('infiniteCoinsMode', window.infiniteCoinsMode ? 'true' : 'false');
 
     const btn = document.getElementById('infinite-coins-btn');
     if (btn) {
-        btn.textContent = `MONEDAS INFINITAS: ${window.infiniteCoinsMode ? 'ON' : 'OFF'}`;
+        btn.textContent = getInfiniteCoinsLabel();
         btn.style.background = window.infiniteCoinsMode ? 'rgba(0,255,100,0.2)' : '';
         btn.style.borderColor = window.infiniteCoinsMode ? 'rgba(0,255,100,0.5)' : '';
     }
@@ -862,7 +856,7 @@ function toggleInfiniteCoins() {
     // Actualizar botón del menú principal
     const menuBtn = document.getElementById('infinite-coins-menu-text');
     if (menuBtn) {
-        menuBtn.textContent = `MONEDAS INFINITAS: ${window.infiniteCoinsMode ? 'ON' : 'OFF'}`;
+        menuBtn.textContent = getInfiniteCoinsLabel();
         menuBtn.style.color = window.infiniteCoinsMode ? '#00ff64' : '#ff4444';
     }
 
@@ -876,7 +870,7 @@ window.toggleInfiniteCoins = toggleInfiniteCoins;
 
 // Inicializar estado del botón
 if (document.getElementById('infinite-coins-btn')) {
-    document.getElementById('infinite-coins-btn').textContent = `MONEDAS INFINITAS: ${window.infiniteCoinsMode ? 'ON' : 'OFF'}`;
+    document.getElementById('infinite-coins-btn').textContent = getInfiniteCoinsLabel();
     if (window.infiniteCoinsMode) {
         document.getElementById('infinite-coins-btn').style.background = 'rgba(0,255,100,0.2)';
         document.getElementById('infinite-coins-btn').style.borderColor = 'rgba(0,255,100,0.5)';
@@ -893,7 +887,7 @@ if (document.getElementById('infinite-coins-float-btn')) {
 
 // Inicializar botón del menú principal
 if (document.getElementById('infinite-coins-menu-text')) {
-    document.getElementById('infinite-coins-menu-text').textContent = `MONEDAS INFINITAS: ${window.infiniteCoinsMode ? 'ON' : 'OFF'}`;
+    document.getElementById('infinite-coins-menu-text').textContent = getInfiniteCoinsLabel();
     document.getElementById('infinite-coins-menu-text').style.color = window.infiniteCoinsMode ? '#00ff64' : '#ff4444';
 }
 
@@ -952,6 +946,7 @@ function unlockTrophyAchievement(goal) {
 // Se llama desde rank-system.js → _onRankUp
 // Cuando tengas las PNGs ponlas en: assets/UI/Rangos/rango_<id>.png
 window.showRankUpNotification = function (rankObj, imgPath) {
+    const tituloRango = window.GEM_CONFIG?.textos?.logros?.notificacion?.tituloRango || '¡NUEVO RANGO!';
     const notification = document.createElement('div');
     notification.className = 'achievement-notification rank-up-notification';
     notification.style.cssText = `
@@ -975,7 +970,7 @@ window.showRankUpNotification = function (rankObj, imgPath) {
     const info = document.createElement('div');
     info.className = 'achievement-info';
     info.innerHTML = `
-        <strong style="color:${rankObj.color};letter-spacing:2px;">¡NUEVO RANGO!</strong>
+        <strong id="txt-rankup-notif-titulo" style="color:${rankObj.color};letter-spacing:2px;">${tituloRango}</strong>
         <span style="color:#fff;font-size:13px;">${rankObj.emoji} ${rankObj.name}</span>
     `;
 
@@ -983,6 +978,9 @@ window.showRankUpNotification = function (rankObj, imgPath) {
     notification.appendChild(info);
     document.body.appendChild(notification);
     notification.classList.add('showing');
+    // Re-aplica color/fuente/degradado del config si 'txt-rankup-notif-titulo'
+    // está descomentado en estilosTexto (si no, se queda con el color del rango)
+    window.aplicarEstilosTexto?.();
     setTimeout(() => {
         notification.classList.remove('showing');
         setTimeout(() => notification.remove(), 300);
@@ -990,17 +988,24 @@ window.showRankUpNotification = function (rankObj, imgPath) {
 };
 
 function showAchievementNotification(achievement) {
+    const tituloLogro = window.GEM_CONFIG?.textos?.logros?.notificacion?.tituloLogro || '¡LOGRO DESBLOQUEADO!';
+    // Antes esto SIEMPRE leía achievement.img (que los logros normales no tienen,
+    // solo lo pasan los trofeos de comida) — por eso salía <img src="undefined">
+    // roto en logros normales. Ahora usa img si existe, si no cae a icon (emoji).
+    const iconValor = achievement.img || achievement.icon;
     const notification = document.createElement('div');
     notification.className = 'achievement-notification';
     notification.innerHTML = `
-            <img src="${achievement.img}" class="achievement-icon" style="width:50px; height:50px;">
+            ${window.renderIcon(iconValor, { clase: 'achievement-icon', tamano: 50 })}
             <div class="achievement-info">
-                <strong>¡LOGRO DESBLOQUEADO!</strong>
+                <strong id="txt-achievement-notif-titulo">${tituloLogro}</strong>
                 <span>${achievement.name}</span>
             </div>
         `;
     document.body.appendChild(notification);
     notification.classList.add('showing');
+    // Re-aplica color/fuente/degradado del config (elemento recién creado)
+    window.aplicarEstilosTexto?.();
     setTimeout(() => {
         notification.classList.remove('showing');
         setTimeout(() => notification.remove(), 300);
@@ -1015,14 +1020,18 @@ function showAchievementsPanel() {
     const unlockedCount = ACHIEVEMENTS_DATA.filter(a => a.unlocked).length;
     const totalCount = ACHIEVEMENTS_DATA.length;
 
+    const textoDesbloqueados = (window.GEM_CONFIG?.textos?.logros?.desbloqueadosTemplate || 'Desbloqueados: {actual}/{total}')
+        .replace('{actual}', unlockedCount)
+        .replace('{total}', totalCount);
+
     body.innerHTML = `
             <div class="achievements-stats">
-                <span>Desbloqueados: ${unlockedCount}/${totalCount}</span>
+                <span>${textoDesbloqueados}</span>
             </div>
             <div class="achievements-grid">
                 ${ACHIEVEMENTS_DATA.map(achievement => `
                     <div class="achievement-item ${achievement.unlocked ? 'unlocked' : 'locked'}">
-                        <span class="achievement-icon">${achievement.icon}</span>
+                        ${window.renderIcon(achievement.icon, { clase: 'achievement-icon' })}
                         <div class="achievement-info">
                             <strong>${achievement.name}</strong>
                             <p>${achievement.description}</p>

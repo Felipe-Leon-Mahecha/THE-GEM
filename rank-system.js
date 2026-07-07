@@ -46,6 +46,18 @@ try {
         { id: 17, name: "The Gem", threshold: 35000, color: "#ffffff", emoji: "⚡" },
     ];
 
+    // Si config.js define GEM_CONFIG.rangos.nombres/colores, esos valores
+    // pisan el nombre/color por defecto de arriba (por id de rango).
+    // El emoji y el threshold NUNCA se leen de config — son datos del juego.
+    (function applyRankTextOverrides() {
+        const cfg = (window.GEM_CONFIG && window.GEM_CONFIG.rangos) || null;
+        if (!cfg) return;
+        RANKS.forEach(r => {
+            if (cfg.nombres && cfg.nombres[r.id] != null) r.name = cfg.nombres[r.id];
+            if (cfg.colores && cfg.colores[r.id] != null) r.color = cfg.colores[r.id];
+        });
+    })();
+
     // ─────────────────────────────────────────────
     // 2. NÚCLEO DEL SISTEMA
     // ─────────────────────────────────────────────
@@ -237,9 +249,19 @@ try {
                 }
 
                 // profilePanel
+                // Ojo: layoutconfig.js arma esto una vez como <span class="pp-rank-icon">✦</span>
+                // <span class="pp-rank-name">...</span> para poder controlar el tamaño del ícono
+                // por separado (mobile/desktop). Si reemplazamos todo el innerHTML acá, se pierde
+                // esa estructura y el ícono deja de responder al tamaño configurado. Por eso solo
+                // tocamos el texto del nombre si esa estructura ya existe.
                 const heroRankEl = document.getElementById('profileHeroRank');
                 if (heroRankEl) {
-                    heroRankEl.textContent = `${rank.emoji} ${rank.name}`;
+                    const nameSpan = heroRankEl.querySelector('.pp-rank-name');
+                    if (nameSpan) {
+                        nameSpan.textContent = rank.name;
+                    } else {
+                        heroRankEl.innerHTML = `${window.renderIcon(rank.emoji, { tamano: 16 })} ${rank.name}`;
+                    }
                     heroRankEl.style.color = rank.color;
                 }
 
@@ -247,20 +269,10 @@ try {
                 const xpEl = document.getElementById('profileStat-total-xp');
                 if (xpEl) xpEl.textContent = xp.toLocaleString();
 
-                const xpNextEl = document.getElementById('profileStat-xp-to-next');
-                if (xpNextEl) xpNextEl.textContent = next
-                    ? this.getXPToNextRank().toLocaleString() + ' XP para ' + next.name
-                    : '¡Rango máximo!';
-
                 const progressBar = document.getElementById('rank-progress-bar-fill');
                 if (progressBar) progressBar.style.width = (progress * 100).toFixed(1) + '%';
 
-                // Camino de rangos si está abierto
-                if (typeof window.renderRankPath === 'function') {
-                    window.renderRankPath();
-                }
-
-                // Actualizar updateProfilePanelStats si existe
+                // Actualizar updateProfilePanelStats si existe (única fuente de verdad para el texto "XP para siguiente")
                 if (typeof window.updateProfilePanelStats === 'function') {
                     window.updateProfilePanelStats();
                 }
@@ -298,50 +310,7 @@ try {
     })();
 
     // ─────────────────────────────────────────────
-    // 4. CAMINO DE RANGOS — renderizado HTML
-    // ─────────────────────────────────────────────
-    window.renderRankPath = function () {
-        try {
-            const container = document.getElementById('rank-path-container');
-            if (!container) return;
-            const currentRank = rankSystem.getCurrentRank();
-            const xp = rankSystem.getXP();
-
-            container.innerHTML = RANKS.map((rank, i) => {
-                const unlocked = xp >= rank.threshold;
-                const isCurrent = rank.id === currentRank.id;
-                const isLast = i === RANKS.length - 1;
-                const progress = isCurrent ? rankSystem.getRankProgress() : (unlocked ? 1 : 0);
-
-                return `
-                    <div class="rank-path-node ${unlocked ? 'unlocked' : 'locked'} ${isCurrent ? 'current' : ''}">
-                        <div class="rank-node-connector ${unlocked && !isLast ? 'filled' : ''}">
-                            ${!isLast ? `<div class="rank-connector-fill" style="height:${unlocked && !isCurrent ? 100 : isCurrent ? progress * 100 : 0}%"></div>` : ''}
-                        </div>
-                        <div class="rank-node-circle" style="--rank-color:${rank.color}">
-                            <span class="rank-node-emoji">${rank.emoji}</span>
-                        </div>
-                        <div class="rank-node-info">
-                            <span class="rank-node-name" style="color:${isCurrent || unlocked ? rank.color : '#666'}">${rank.name}</span>
-                            <span class="rank-node-xp">${rank.threshold.toLocaleString()} XP</span>
-                        </div>
-                        ${isCurrent ? `<div class="rank-node-badge">▶ ACTUAL</div>` : ''}
-                    </div>
-                `;
-            }).join('');
-
-            // Scroll automático al rango actual
-            const currentNode = container.querySelector('.rank-path-node.current');
-            if (currentNode) {
-                setTimeout(() => currentNode.scrollIntoView({ behavior: 'smooth', block: 'center' }), 80);
-            }
-        } catch (e) {
-            console.warn('[RankSystem] Error en renderRankPath:', e);
-        }
-    };
-
-    // ─────────────────────────────────────────────
-    // 5. EXPONER GLOBALMENTE
+    // 4. EXPONER GLOBALMENTE
     // ─────────────────────────────────────────────
     window.rankSystem = rankSystem;
     window.RANKS = RANKS;
@@ -349,14 +318,11 @@ try {
     // Escuchar el evento rankChanged para refrescar UI automáticamente
     window.addEventListener('rankChanged', function (e) {
         try {
-            console.log('[RankSystem] Rango cambiado:', e.detail.prevRank.name, '→', e.detail.newRank.name);
             rankSystem._refreshUI();
         } catch (err) {
             console.warn('[RankSystem] Error en listener rankChanged:', err);
         }
     });
-
-    console.log('[RankSystem] Iniciado. XP:', rankSystem.getXP(), '| Rango:', rankSystem.getCurrentRank().name);
 
 } catch (fatalErr) {
     // Si todo falla, el juego sigue funcionando
@@ -376,38 +342,6 @@ try {
     window.RANKS = [];
 }
 
-// ─────────────────────────────────────────────
-// 6. TOGGLE del Camino de Rangos (llamado desde index.html)
-// ─────────────────────────────────────────────
-window.toggleRankPath = function () {
-    try {
-        const panel = document.getElementById('rank-path-panel');
-        if (!panel) return;
-        // Panel is open by default (no display:none on it now)
-        const isOpen = panel.style.display !== 'none';
-        panel.style.display = isOpen ? 'none' : 'block';
-        if (!isOpen) {
-            window.renderRankPath?.();
-        }
-        const btn = document.querySelector('.rank-path-toggle-btn');
-        if (btn) btn.textContent = isOpen ? '◉ VER RANGOS' : '◉ OCULTAR RANGOS';
-    } catch (e) {
-        console.warn('[RankSystem] Error en toggleRankPath:', e);
-    }
-};
-
-// Render rank path when profile opens (ranks visible by default)
-window.renderRankPathOnOpen = function () {
-    try {
-        const panel = document.getElementById('rank-path-panel');
-        if (panel) {
-            panel.style.display = 'block';
-            window.renderRankPath?.();
-        }
-        const btn = document.querySelector('.rank-path-toggle-btn');
-        if (btn) btn.textContent = '◉ CAMINO DE LEYENDAS ◉';
-    } catch (e) { }
-};
 // =====================================================
 // PANTALLA DE RANGOS COMPLETA
 // =====================================================
@@ -554,23 +488,37 @@ window.closeRanksScreen = function () {
 
 // Iconos especiales para nodo inicio y fin de cada mapa
 // Aumentan en grandiosidad mapa a mapa
+// Cada start/end referencia un rango real por su id (rankId) — ícono y nombre
+// se leen de RANKS automáticamente. Solo el nodo "ORIGEN" (inicio del Mapa 1)
+// es decorativo y no corresponde a ningún rango, por eso usa icon/label propios.
 const MAP_SPECIAL_NODES = [
     // Mapa 1 — La Forja Cósmica
     {
         start: { icon: '◎', label: 'ORIGEN', size: 38, glow: 0.6, ring: 1 },
-        end: { icon: '⬡', label: 'ORO', size: 54, glow: 1.2, ring: 2 }
+        end: { rankId: 4, size: 54, glow: 1.2, ring: 2 } // Oro
     },
-    // Mapa 2 — El Núcleo Ardiente (inicio = igual al fin del mapa 1)
+    // Mapa 2 — El Núcleo Ardiente (inicio = mismo rango que el fin del mapa 1: Oro)
     {
-        start: { icon: '⬡', label: 'ORO', size: 54, glow: 1.2, ring: 2 },
-        end: { icon: '◈', label: 'OBSIDIANA', size: 62, glow: 1.6, ring: 3 }
+        start: { rankId: 4, size: 54, glow: 1.2, ring: 2 }, // Oro
+        end: { rankId: 9, size: 62, glow: 1.6, ring: 3 } // Obsidiana
     },
-    // Mapa 3 — El Palacio de Cristal (inicio = igual al fin del mapa 2)
+    // Mapa 3 — El Palacio de Cristal (inicio = mismo rango que el fin del mapa 2: Obsidiana)
     {
-        start: { icon: '◈', label: 'ZAFIRO', size: 62, glow: 1.6, ring: 3 },
-        end: { icon: '⚡', label: 'THE GEM', size: 72, glow: 2.5, ring: 4 }
+        start: { rankId: 9, size: 62, glow: 1.6, ring: 3 }, // Obsidiana
+        end: { rankId: 17, size: 72, glow: 2.5, ring: 4 } // The Gem
     }
 ];
+
+// Resuelve ícono y label de un nodo especial: si tiene rankId, los toma de RANKS
+// (así quedan siempre sincronizados); si no, usa los valores propios (caso ORIGEN).
+function _resolveSpecialNodeVisual(def) {
+    if (!def) return null;
+    if (def.rankId != null) {
+        const rank = RANKS.find(r => r.id === def.rankId);
+        if (rank) return { icon: rank.emoji, label: rank.name.toUpperCase() };
+    }
+    return { icon: def.icon, label: def.label };
+}
 
 const MAP_DEFS = [
     {
@@ -668,7 +616,7 @@ window.buildRanksScreen = function () {
         if (xpEl) xpEl.textContent = currentXP.toLocaleString();
 
         const nameEl = document.getElementById('rs-current-name');
-        if (nameEl) { nameEl.textContent = `${currentRank.emoji} ${currentRank.name}`; nameEl.style.color = currentRank.color; }
+        if (nameEl) { nameEl.innerHTML = `${window.renderIcon(currentRank.emoji, { tamano: 16 })} ${currentRank.name}`; nameEl.style.color = currentRank.color; }
 
         window._renderNodeProgressBar(currentRank, nextRank, currentXP);
 
@@ -826,6 +774,7 @@ window._renderRankMap = function (mapIdx, currentXP, currentRank, allRanks) {
         const isFirstNode = i === 0;
         const isLastNode = i === absNodes.length - 1;
         const specialDef = isFirstNode ? specialNodes.start : isLastNode ? specialNodes.end : null;
+        const specialVisual = _resolveSpecialNodeVisual(specialDef);
         const sz = specialDef ? specialDef.size : isRankNode ? (ncfg.sizePx || 42) : 28;
 
         const wrap = document.createElement('div');
@@ -851,13 +800,13 @@ window._renderRankMap = function (mapIdx, currentXP, currentRank, allRanks) {
             }
         }
         // Ícono: especial para inicio/fin, emoji de rango para nodos de rango, punto para decorativos
-        circle.textContent = specialDef ? specialDef.icon :
-            (isRankNode && rank ? rank.emoji : '·');
+        const iconValor = specialVisual ? specialVisual.icon : (isRankNode && rank ? rank.emoji : '·');
+        circle.innerHTML = window.renderIcon(iconValor, { tamano: fontSize });
 
         // Etiqueta para nodos especiales (inicio y fin de mapa)
-        if (specialDef) {
+        if (specialVisual) {
             const label = document.createElement('div');
-            label.innerHTML = `<div style="font-size:9px;font-weight:600;color:${isReached ? '#fff' : 'rgba(255,255,255,0.3)'};text-align:center;letter-spacing:2px;text-shadow:0 1px 6px #000;white-space:nowrap;margin-top:6px;">${specialDef.label}</div>`;
+            label.innerHTML = `<div style="font-size:9px;font-weight:600;color:${isReached ? '#fff' : 'rgba(255,255,255,0.3)'};text-align:center;letter-spacing:2px;text-shadow:0 1px 6px #000;white-space:nowrap;margin-top:6px;">${specialVisual.label}</div>`;
             wrap.appendChild(label);
         }
 
@@ -868,7 +817,7 @@ window._renderRankMap = function (mapIdx, currentXP, currentRank, allRanks) {
             const badgeColor = isRankNode ? rank.color : map.pathColor;
             const badge = document.createElement('div');
             badge.style.cssText = `position:absolute;top:-22px;left:50%;transform:translateX(-50%);background:${badgeColor};color:#000;font-size:9px;font-weight:700;padding:2px 8px;border-radius:10px;white-space:nowrap;letter-spacing:1px;`;
-            badge.textContent = 'ACTUAL';
+            badge.textContent = window.GEM_CONFIG?.textos?.rangos?.badgeActual || 'ACTUAL';
             wrap.appendChild(badge);
         }
 
@@ -1013,7 +962,7 @@ window._renderRankMap = function (mapIdx, currentXP, currentRank, allRanks) {
         arrowNext.innerHTML = `
             <div style="font-size:10px;letter-spacing:2px;color:${map.pathColor};text-transform:uppercase;text-shadow:0 0 8px ${map.pathColor}88;">${nextMap.name}</div>
             <div style="width:52px;height:52px;border-radius:50%;border:2px solid ${map.pathColor};background:radial-gradient(circle,${map.pathColor}33,transparent);display:flex;align-items:center;justify-content:center;font-size:26px;box-shadow:0 0 24px ${map.pathColor}99;${isMapComplete ? 'animation:rsm-bounce-h .9s ease-in-out infinite alternate;' : ''}">›</div>
-            ${isMapComplete ? `<div style="font-size:9px;color:${map.pathColor};letter-spacing:1px;text-shadow:0 0 6px ${map.pathColor};">¡MAPA COMPLETO!</div>` : ''}
+            ${isMapComplete ? `<div style="font-size:9px;color:${map.pathColor};letter-spacing:1px;text-shadow:0 0 6px ${map.pathColor};">${window.GEM_CONFIG?.textos?.rangos?.mapaCompleto || '¡MAPA COMPLETO!'}</div>` : ''}
         `;
         arrowNext.onclick = () => window._switchMap(mapIdx + 1);
         container.appendChild(arrowNext);
@@ -1379,7 +1328,10 @@ window._showNodeRewardPopup = function (reward, onClaim) {
             : null;
     const icon = isSkin ? '🏆' : !currencyImg ? '⭐' : null;
     const color = isRank ? '#ffd700' : isGems ? '#00ffe7' : '#f4c842';
-    const title = isRank ? '¡RANGO DESBLOQUEADO!' : '¡RECOMPENSA DEL CAMINO!';
+    const rt = window.GEM_CONFIG?.textos?.rangos?.recompensa || {};
+    const title = isRank ? (rt.tituloRango || '¡RANGO DESBLOQUEADO!') : (rt.tituloNodo || '¡RECOMPENSA DEL CAMINO!');
+    const subtitle = isRank ? (rt.subtituloRango || 'Has alcanzado un nuevo rango') : (rt.subtituloNodo || 'Nodo del camino desbloqueado');
+    const claimLabel = isSkin ? (rt.botonReclamarSkin || 'RECLAMAR SKIN') : (rt.botonReclamar || 'RECLAMAR');
     const iconHTML = currencyImg
         ? `<img src="${currencyImg}" alt="${reward.type}" style="width:72px;height:72px;object-fit:contain;margin:8px auto;display:block;filter:drop-shadow(0 0 10px ${color}88);">`
         : `<div style="font-size:52px;margin:8px 0;">${icon}</div>`;
@@ -1389,9 +1341,9 @@ window._showNodeRewardPopup = function (reward, onClaim) {
             <div style="font-size:11px;letter-spacing:4px;color:${color};margin-bottom:12px;text-transform:uppercase;">${title}</div>
             ${iconHTML}
             <div style="font-size:22px;font-weight:700;color:#fff;margin:12px 0 4px;">${reward.label}</div>
-            ${isRank ? `<div style="font-size:12px;color:rgba(255,255,255,0.5);margin-bottom:20px;">Has alcanzado un nuevo rango</div>` : `<div style="font-size:12px;color:rgba(255,255,255,0.5);margin-bottom:20px;">Nodo del camino desbloqueado</div>`}
+            <div style="font-size:12px;color:rgba(255,255,255,0.5);margin-bottom:20px;">${subtitle}</div>
             <button id="rsm-claim-btn" style="background:linear-gradient(135deg,${color},${color}88);color:#000;font-weight:700;font-size:14px;letter-spacing:2px;padding:12px 32px;border:none;border-radius:12px;cursor:pointer;width:100%;text-transform:uppercase;">
-                ${isSkin ? 'RECLAMAR SKIN' : 'RECLAMAR'}
+                ${claimLabel}
             </button>
         </div>
     `;

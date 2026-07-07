@@ -56,6 +56,7 @@
                     if (result && result.user) {
                         window._firebaseUID = result.user.uid;
                         await window.bajarDatosFirebase(result.user.uid);
+                        await window.subirDatosFirebase(result.user.uid);
                         window.actualizarBtnLogin(result.user);
                         return;
                     }
@@ -65,6 +66,7 @@
                     const result = await window.fbAuth.signInWithPopup(window.fbProvider);
                     window._firebaseUID = result.user.uid;
                     await window.bajarDatosFirebase(result.user.uid);
+                    await window.subirDatosFirebase(result.user.uid);
                     window.actualizarBtnLogin(result.user);
                 }
             } catch (e) {
@@ -124,8 +126,7 @@
                     Object.entries(snap.data().datos).forEach(([k, v]) => {
                         if (v !== null && v !== undefined) localStorage.setItem(k, v);
                     });
-                    if (window.updateProfileUI) window.updateProfileUI();
-                    if (window.updateHUD) window.updateHUD();
+                    if (typeof window.updateProfilePanelStats === 'function') window.updateProfilePanelStats();
                     console.log('✅ Datos cargados desde Firebase');
                 }
             } catch (e) { console.error('Error bajando datos:', e); }
@@ -148,6 +149,7 @@
             if (user) {
                 window._firebaseUID = user.uid;
                 window.actualizarBtnLogin(user);
+                window.subirDatosFirebase(user.uid);
             }
         });
         // Capturar resultado de redirect al iniciar
@@ -155,7 +157,9 @@
             window.fbAuth.getRedirectResult().then(function (result) {
                 if (result && result.user) {
                     window._firebaseUID = result.user.uid;
-                    window.bajarDatosFirebase(result.user.uid);
+                    window.bajarDatosFirebase(result.user.uid).then(function () {
+                        window.subirDatosFirebase(result.user.uid);
+                    });
                     window.actualizarBtnLogin(result.user);
                 }
             }).catch(function (e) {
@@ -167,7 +171,7 @@
         const _origSet = localStorage.setItem.bind(localStorage);
         localStorage.setItem = function (key, value) {
             _origSet(key, value);
-            if (window._firebaseUID && ['deadCoins', 'gems', 'totalXP', 'gamesWon'].includes(key)) {
+            if (window._firebaseUID && ['deadCoins', 'gems', 'totalXP', 'gamesWon', 'playerName', 'playerAvatar'].includes(key)) {
                 window.subirDatosFirebase(window._firebaseUID);
             }
         };
@@ -374,7 +378,7 @@
                 ontouchend="event.preventDefault();window.showLeaderboard();" role="button" tabindex="0"
                 aria-label="Ver clasificación">
                 <div class="shop-profile-banner-overlay"></div>
-                <span class="menu-clasificacion-label">CLASIFICACIÓN</span>
+                <span class="menu-clasificacion-label" id="txt-menu-clasificacion">CLASIFICACIÓN</span>
             </div>
         </div>
 
@@ -384,7 +388,7 @@
             <!-- JUGAR — ancho completo -->
             <div id="wrap-play" class="menu-btn-wrap menu-btn-play-size">
                 <button id="play-btn" class="menu-png-btn">
-                    <img src="assets/Imagenes/Botones menu/JUGAR.png"
+                    <img id="img-btn-play" src="assets/Imagenes/Botones menu/JUGAR.png"
                         style="width:100%; height:auto; display:block; pointer-events:none;">
                 </button>
             </div>
@@ -393,13 +397,13 @@
             <div id="grid-shop-inventory" class="menu-btn-pair-grid">
                 <div id="wrap-shop" class="menu-btn-wrap">
                     <button id="shop-btn" class="menu-png-btn">
-                        <img src="assets/Imagenes/Botones menu/TIENDA.png"
+                        <img id="img-btn-shop" src="assets/Imagenes/Botones menu/TIENDA.png"
                             style="width:100%; height:auto; display:block; pointer-events:none;">
                     </button>
                 </div>
                 <div id="wrap-inventory" class="menu-btn-wrap">
                     <button id="inventory-btn" class="menu-png-btn">
-                        <img src="assets/Imagenes/Botones menu/INVENTARIO.png"
+                        <img id="img-btn-inventory" src="assets/Imagenes/Botones menu/INVENTARIO.png"
                             style="width:100%; height:auto; display:block; pointer-events:none;">
                     </button>
                 </div>
@@ -409,13 +413,13 @@
             <div id="grid-achievements-help" class="menu-btn-pair-grid">
                 <div id="wrap-achievements" class="menu-btn-wrap">
                     <button id="achievements-btn" class="menu-png-btn" onclick="showAchievementsPanel()">
-                        <img src="assets/Imagenes/Botones menu/LOGROS.png"
+                        <img id="img-btn-achievements" src="assets/Imagenes/Botones menu/LOGROS.png"
                             style="width:100%; height:auto; display:block; pointer-events:none;">
                     </button>
                 </div>
                 <div id="wrap-help" class="menu-btn-wrap">
                     <button id="help-btn" class="menu-png-btn" onclick="showPowerupHelpPanel()">
-                        <img src="assets/Imagenes/Botones menu/AYUDA.png"
+                        <img id="img-btn-help" src="assets/Imagenes/Botones menu/AYUDA.png"
                             style="width:100%; height:auto; display:block; pointer-events:none;">
                     </button>
                 </div>
@@ -446,7 +450,7 @@
     <div id="gameOver" style="display:none;">
         <div class="go-card">
             <div class="go-mark">!</div>
-            <div class="go-kicker">ESFERA COLAPSADA</div>
+            <div class="go-kicker" id="txt-go-kicker">ESFERA COLAPSADA</div>
             <h1 id="go-title">NIVEL 0</h1>
             <p id="go-sub">INTENTALO DE NUEVO</p>
             <div class="go-actions">
@@ -487,14 +491,14 @@
 
             <!-- Header de la tienda -->
             <div class="shop-sidebar-header">
-                <div class="shop-sidebar-title">
+                <div class="shop-sidebar-title" id="txt-shop-titulo">
                     TIENDA</div>
-                <button onclick="closeShop()" class="shop-sidebar-back">← VOLVER</button>
+                <button onclick="closeShop()" class="shop-sidebar-back" id="txt-shop-btn-volver">← VOLVER</button>
             </div>
 
             <!-- Banner de perfil en tienda -->
             <div class="shop-sidebar-profile-section">
-                <div class="shop-sidebar-label">ESTANDARTE</div>
+                <div class="shop-sidebar-label" id="txt-shop-label-estandarte">ESTANDARTE</div>
                 <div id="shop-profile-banner" class="shop-profile-banner">
                     <div class="shop-profile-banner-overlay"></div>
                     <div class="shop-profile-banner-top">
@@ -514,14 +518,14 @@
                     <div class="shop-currency-row">
                         <div class="shop-currency-label">
                             <img src="assets/Imagenes/Monetizacion/Rubies.png" class="shop-currency-icon">
-                            <span>RUBIES</span>
+                            <span id="txt-shop-label-rubies">RUBIES</span>
                         </div>
                         <span id="shop-gems" class="shop-currency-value">0</span>
                     </div>
                     <div class="shop-currency-row">
                         <div class="shop-currency-label">
                             <img src="assets/Imagenes/Monetizacion/DEAD_COIN.png" class="shop-currency-icon">
-                            <span>COINS</span>
+                            <span id="txt-shop-label-coins">COINS</span>
                         </div>
                         <span id="shop-coins" class="shop-currency-value">0</span>
                     </div>
@@ -531,15 +535,15 @@
             <!-- Botón de misiones -->
             <button onclick="openMissionsPanel()" class="shop-missions-entry" type="button">
                 <span>
-                    <b>MISIONES</b>
-                    <small>Diarias y racha</small>
+                    <b id="txt-shop-misiones-titulo">MISIONES</b>
+                    <small id="txt-shop-misiones-subtitulo">Diarias y racha</small>
                 </span>
                 <strong id="shop-missions-ready">0</strong>
             </button>
 
             <!-- Skin equipado -->
             <div class="shop-sidebar-equipped">
-                <div class="shop-sidebar-label">EQUIPADO</div>
+                <div class="shop-sidebar-label" id="txt-shop-label-equipado">EQUIPADO</div>
                 <div class="shop-equipped-row">
                     <div id="sidebar-skin-preview" class="shop-equipped-preview">
                         <div class="shop-equipped-dot"></div>
@@ -582,7 +586,7 @@
         style="display:none; position:fixed; inset:0; z-index:35000; place-items:center; padding:28px; background:rgba(0,0,0,0.85); backdrop-filter:blur(12px);">
         <div class="powerup-help-content">
             <div class="powerup-help-header">
-                <h2>GUÍA DE POTENCIADORES</h2>
+                <h2 id="txt-help-titulo">GUÍA DE POTENCIADORES</h2>
                 <button class="powerup-help-close" onclick="closePowerupHelpPanel()">×</button>
             </div>
             <div class="powerup-help-body" id="powerupHelpBody"></div>
@@ -594,7 +598,7 @@
         style="display:none; position:fixed; inset:0; z-index:36000; place-items:center; padding:28px; background:rgba(0,0,0,0.85); backdrop-filter:blur(12px);">
         <div class="achievements-content">
             <div class="achievements-header">
-                <h2>LOGROS</h2>
+                <h2 id="txt-achievements-titulo">LOGROS</h2>
                 <button class="achievements-close" onclick="closeAchievementsPanel()">×</button>
             </div>
             <div class="achievements-body" id="achievementsBody"></div>
@@ -708,101 +712,101 @@
     <!-- Panel de opciones -->
     <div class="panel-popup options-card opt-panel" id="optionsPanel">
 
-        <div class="popup-title opt-title"><span class="opt-title-icon">⚙</span> OPCIONES</div>
+        <div class="popup-title opt-title"><span class="opt-title-icon">⚙</span> <span id="txt-opt-titulo">OPCIONES</span></div>
 
         <div class="opt-scroll">
 
             <!-- Controles del juego -->
             <div class="opt-section">
-                <div class="opt-section-title"><span>&#9698;</span> CONTROLES</div>
+                <div class="opt-section-title"><span>&#9698;</span> <span id="txt-opt-controles-titulo">CONTROLES</span></div>
                 <div class="opt-keys-grid">
-                    <span class="opt-key">A</span><span class="opt-key">D</span><span class="opt-key-label">Mover</span>
-                    <span class="opt-key">S</span><span class="opt-key-empty"></span><span class="opt-key-label">Invertir gravedad</span>
-                    <span class="opt-key">W</span><span class="opt-key-empty"></span><span class="opt-key-label">Potenciador slot 1</span>
-                    <span class="opt-key">E</span><span class="opt-key-empty"></span><span class="opt-key-label">Potenciador slot 2</span>
+                    <span class="opt-key">A</span><span class="opt-key">D</span><span class="opt-key-label" id="txt-opt-key-mover">Mover</span>
+                    <span class="opt-key">S</span><span class="opt-key-empty"></span><span class="opt-key-label" id="txt-opt-key-gravedad">Invertir gravedad</span>
+                    <span class="opt-key">W</span><span class="opt-key-empty"></span><span class="opt-key-label" id="txt-opt-key-power1">Potenciador slot 1</span>
+                    <span class="opt-key">E</span><span class="opt-key-empty"></span><span class="opt-key-label" id="txt-opt-key-power2">Potenciador slot 2</span>
                 </div>
 
-                <button class="opt-toggle-btn" onclick="toggleControlsMode()">CAMBIAR CONTROLES</button>
+                <button class="opt-toggle-btn" id="txt-opt-btn-cambiar-controles" onclick="toggleControlsMode()">CAMBIAR CONTROLES</button>
                 <p class="opt-mode-text" id="controls-mode-text">Adaptive Controls</p>
             </div>
 
             <!-- Reasignación de teclas -->
             <div class="opt-section">
-                <div class="opt-section-title"><span>&#9000;</span> REASIGNAR TECLAS</div>
+                <div class="opt-section-title"><span>&#9000;</span> <span id="txt-opt-reasignar-titulo">REASIGNAR TECLAS</span></div>
                 <div class="keybind-row">
-                    <span>Mover Izquierda</span>
+                    <span id="txt-opt-keybind-izquierda">Mover Izquierda</span>
                     <button class="keybind-btn" data-action="left" onclick="startKeybind(this)">A</button>
                 </div>
                 <div class="keybind-row">
-                    <span>Mover Derecha</span>
+                    <span id="txt-opt-keybind-derecha">Mover Derecha</span>
                     <button class="keybind-btn" data-action="right" onclick="startKeybind(this)">D</button>
                 </div>
                 <div class="keybind-row">
-                    <span>Invertir Gravedad</span>
+                    <span id="txt-opt-keybind-gravedad">Invertir Gravedad</span>
                     <button class="keybind-btn" data-action="gravity" onclick="startKeybind(this)">S</button>
                 </div>
                 <div class="keybind-row">
-                    <span>Potenciador 1</span>
+                    <span id="txt-opt-keybind-power1">Potenciador 1</span>
                     <button class="keybind-btn" data-action="powerW" onclick="startKeybind(this)">W</button>
                 </div>
                 <div class="keybind-row">
-                    <span>Potenciador 2</span>
+                    <span id="txt-opt-keybind-power2">Potenciador 2</span>
                     <button class="keybind-btn" data-action="powerE" onclick="startKeybind(this)">E</button>
                 </div>
-                <button class="option-action opt-action-full" onclick="resetKeybinds()">RESTAURAR POR DEFECTO</button>
+                <button class="option-action opt-action-full" id="txt-opt-btn-restaurar" onclick="resetKeybinds()">RESTAURAR POR DEFECTO</button>
             </div>
 
             <!-- Audio -->
             <div class="opt-section">
-                <div class="opt-section-title"><span>&#9834;</span> AUDIO</div>
+                <div class="opt-section-title"><span>&#9834;</span> <span id="txt-opt-audio-titulo">AUDIO</span></div>
                 <label class="opt-slider-row">
-                    <span>MÚSICA</span>
+                    <span id="txt-opt-audio-musica">MÚSICA</span>
                     <input id="music-volume" class="opt-slider" type="range" min="0" max="100" value="45">
                 </label>
                 <label class="opt-slider-row">
-                    <span>EFECTOS</span>
+                    <span id="txt-opt-audio-efectos">EFECTOS</span>
                     <input id="sfx-volume" class="opt-slider" type="range" min="0" max="100" value="75">
                 </label>
             </div>
 
             <!-- Visual -->
             <div class="opt-section">
-                <div class="opt-section-title"><span>&#9788;</span> VISUAL</div>
-                <button class="option-action opt-action-full" onclick="toggleReducedMotion()">MODO RENDIMIENTO</button>
+                <div class="opt-section-title"><span>&#9788;</span> <span id="txt-opt-visual-titulo">VISUAL</span></div>
+                <button class="option-action opt-action-full" id="txt-opt-btn-rendimiento" onclick="toggleReducedMotion()">MODO RENDIMIENTO</button>
                 <p class="opt-mode-text" id="motion-mode-text">Animaciones normales</p>
             </div>
 
             <!-- Controles móviles -->
             <div class="opt-section opt-section-mobile">
-                <div class="opt-section-title"><span>&#9737;</span> CONTROLES CELULAR</div>
+                <div class="opt-section-title"><span>&#9737;</span> <span id="txt-opt-mobile-titulo">CONTROLES CELULAR</span></div>
                 <label class="opt-slider-row">
-                    <span>BOTONES LATERALES</span>
+                    <span id="txt-opt-mobile-lateral">BOTONES LATERALES</span>
                     <input id="touch-side-offset" class="opt-slider" type="range" min="0" max="100" value="50">
                 </label>
                 <label class="opt-slider-row">
-                    <span>TAMAÑO BOTONES</span>
+                    <span id="txt-opt-mobile-tamano">TAMAÑO BOTONES</span>
                     <input id="touch-size" class="opt-slider" type="range" min="50" max="150" value="100">
                 </label>
                 <label class="opt-slider-row">
-                    <span>TRANSPARENCIA</span>
+                    <span id="txt-opt-mobile-transparencia">TRANSPARENCIA</span>
                     <input id="touch-opacity" class="opt-slider" type="range" min="20" max="100" value="100">
                 </label>
                 <label class="opt-slider-row">
-                    <span>BOTÓN GRAVEDAD</span>
+                    <span id="txt-opt-mobile-boton-gravedad">BOTÓN GRAVEDAD</span>
                     <input id="touch-gravity-offset" class="opt-slider" type="range" min="0" max="100" value="50">
                 </label>
-                <button class="option-action opt-action-full" onclick="saveTouchLayout()">GUARDAR CONFIGURACIÓN</button>
+                <button class="option-action opt-action-full" id="txt-opt-btn-guardar-touch" onclick="saveTouchLayout()">GUARDAR CONFIGURACIÓN</button>
             </div>
 
             <!-- Modo pruebas -->
             <div class="opt-section opt-section-dev">
-                <div class="opt-section-title opt-section-title-dev"><span>&#9888;</span> MODO PRUEBAS (DEV)</div>
+                <div class="opt-section-title opt-section-title-dev"><span>&#9888;</span> <span id="txt-opt-dev-titulo">MODO PRUEBAS (DEV)</span></div>
                 <button class="option-action opt-action-full" id="infinite-coins-btn" onclick="toggleInfiniteCoins()">MONEDAS INFINITAS: OFF</button>
             </div>
 
         </div>
 
-        <button class="popup-close" onclick="closePanels()">CERRAR</button>
+        <button class="popup-close" id="txt-opt-btn-cerrar" onclick="closePanels()">CERRAR</button>
 
     </div>
 
@@ -820,7 +824,7 @@
                         <div id="rank-progress-bar-fill" class="rank-progress-bar-fill" style="width:0%"></div>
                     </div>
                     <div class="rank-xp-labels">
-                        <span id="profileStat-total-xp">0</span> XP
+                        <span id="profileStat-total-xp">0</span> <span id="txt-rangos-hero-xp-sufijo">XP</span>
                         · <span id="profileStat-xp-to-next">— XP para siguiente</span>
                     </div>
                 </div>
@@ -861,46 +865,46 @@
                 </button>
 
             </div>
-            <div class="profile-section-title">ESTADÍSTICAS DEL JUGADOR</div>
+            <div class="profile-section-title" id="txt-profile-stats-title">ESTADÍSTICAS DEL JUGADOR</div>
             <div class="profile-stat-row">
-                <div class="profile-stat-row-item"><span>Top Combo</span><span class="value"
+                <div class="profile-stat-row-item"><span id="txt-stat-label-combo">Top Combo</span><span class="value"
                         id="profileStat-longest-combo">0</span></div>
-                <div class="profile-stat-row-item"><span>Victorias</span><span class="value"
+                <div class="profile-stat-row-item"><span id="txt-stat-label-wins">Victorias</span><span class="value"
                         id="profileStat-game-wins">0</span></div>
-                <div class="profile-stat-row-item"><span>Derrotas</span><span class="value"
+                <div class="profile-stat-row-item"><span id="txt-stat-label-losses">Derrotas</span><span class="value"
                         id="profileStat-game-losses">0</span></div>
             </div>
             <div class="profile-stats-grid">
                 <div class="profile-stat-card">
-                    <div class="stat-title">Juegos jugados</div>
+                    <div class="stat-title" id="txt-stat-title-games">Juegos jugados</div>
                     <div class="stat-value" id="profileStat-games-played">0</div>
                 </div>
                 <div class="profile-stat-card">
-                    <div class="stat-title">Días jugados</div>
+                    <div class="stat-title" id="txt-stat-title-days">Días jugados</div>
                     <div class="stat-value" id="profileStat-days-played">0</div>
                 </div>
                 <div class="profile-stat-card">
-                    <div class="stat-title">Monedas actuales</div>
+                    <div class="stat-title" id="txt-stat-title-coins">Monedas actuales</div>
                     <div class="stat-value" id="profileStat-current-coins">0</div>
                 </div>
                 <div class="profile-stat-card">
-                    <div class="stat-title">Rubies actuales</div>
+                    <div class="stat-title" id="txt-stat-title-gems">Rubies actuales</div>
                     <div class="stat-value" id="profileStat-current-gems">0</div>
                 </div>
                 <div class="profile-stat-card">
-                    <div class="stat-title">Colección</div>
+                    <div class="stat-title" id="txt-stat-title-collection">Colección</div>
                     <div class="stat-value" id="profileStat-collection-score">0</div>
                 </div>
                 <div class="profile-stat-card">
-                    <div class="stat-title">Supervivencia mejor</div>
+                    <div class="stat-title" id="txt-stat-title-survival">Supervivencia mejor</div>
                     <div class="stat-value" id="profileStat-best-survival">N/A</div>
                 </div>
                 <div class="profile-stat-card">
-                    <div class="stat-title">Último acceso</div>
+                    <div class="stat-title" id="txt-stat-title-lastseen">Último acceso</div>
                     <div class="stat-value" id="profileStat-last-seen">-</div>
                 </div>
                 <div class="profile-stat-card">
-                    <div class="stat-title">Mejor racha</div>
+                    <div class="stat-title" id="txt-stat-title-streak">Mejor racha</div>
                     <div class="stat-value" id="profileStat-best-streak">0</div>
                 </div>
             </div>
@@ -924,20 +928,20 @@
         <div class="profile-dim" onclick="closeProfileEditModal()"></div>
         <div class="profile-edit-card">
             <button class="profile-close" type="button" onclick="closeProfileEditModal()">×</button>
-            <div class="profile-edit-title">EDITAR PERFIL</div>
+            <div class="profile-edit-title" id="txt-profileedit-title">EDITAR PERFIL</div>
 
-            <label class="profile-edit-label" for="profileEditNameInput">Nombre de jugador</label>
+            <label class="profile-edit-label" for="profileEditNameInput" id="txt-profileedit-label-name">Nombre de jugador</label>
             <input id="profileEditNameInput" class="profile-edit-name-input" type="text" maxlength="16"
                 placeholder="Jugador" autocomplete="off">
 
-            <div class="profile-edit-label">Elegir avatar</div>
+            <div class="profile-edit-label" id="txt-profileedit-label-avatar">Elegir avatar</div>
             <div id="profileEditAvatarGrid" class="profile-edit-avatar-grid"></div>
 
             <div id="profileEditError" class="profile-edit-error"></div>
 
             <div class="profile-edit-actions">
-                <button type="button" class="profile-edit-cancel" onclick="closeProfileEditModal()">Cancelar</button>
-                <button type="button" class="profile-edit-save" onclick="savePlayerProfileEdit()">Guardar</button>
+                <button type="button" class="profile-edit-cancel" id="profileEditCancelBtn" onclick="closeProfileEditModal()">Cancelar</button>
+                <button type="button" class="profile-edit-save" id="profileEditSaveBtn" onclick="savePlayerProfileEdit()">Guardar</button>
             </div>
         </div>
     </div>
@@ -982,10 +986,10 @@
                 </div>
                 <div class="rs-xp-block" id="rs-xp-block">
                     <div class="rs-xp-block-particles" id="rs-xp-block-particles"></div>
-                    <div class="rs-xp-label">EXPERIENCIA</div>
+                    <div class="rs-xp-label" id="txt-rangos-label-experiencia">EXPERIENCIA</div>
                     <div class="rs-xp-value-row">
                         <span class="rs-xp-value" id="rs-player-xp">0</span>
-                        <span class="rs-xp-unit">XP</span>
+                        <span class="rs-xp-unit" id="txt-rangos-xp-unidad">XP</span>
                     </div>
                 </div>
 
@@ -996,7 +1000,7 @@
                 <div class="rs-title-block" style="text-align:right;">
                     <div class="rs-title" id="rs-title">CAMINO DE RANGOS</div>
                 </div>
-                <button class="rs-back-btn" onclick="closeRanksScreen()">&#8592; VOLVER</button>
+                <button class="rs-back-btn" id="txt-rangos-boton-volver" onclick="closeRanksScreen()">&#8592; VOLVER</button>
             </div>
 
             <!-- FILA 2: barra de progreso por nodos, integrada en el mismo banner -->
@@ -1105,7 +1109,8 @@
     </div>
 
     <!-- Scripts del juego -->
-    <script src="config.js"></script>
+    <script src="textgemconfig.js"></script>
+    <script src="layoutconfig.js"></script>
     <script src="levels.config.js"></script>
     <script src="survival-level.js"></script>
     <script src="combo-system.js"></script>

@@ -23,6 +23,37 @@ SHOP_CANDY_PARTICLE_IMAGE.src = 'assets/UI/Efectos de trails/Particulas/particul
 const TROPHY_IDS = ['skin_chocolate_trofeo_cobre', 'skin_sandia_trofeo_plata', 'skin_hamburguesa_trofeo_oro'];
 
 // =====================================================
+// TEXTOS DE LA TIENDA NORMAL (GEM_CONFIG.textos.tienda)
+// Ver checklist_textos_config.md bloque 4. No incluye VIP,
+// Pase Ruby, Regalo diario ni Cofres (tienen su propio bloque).
+// =====================================================
+
+// Devuelve GEM_CONFIG.textos.tienda.<seccion>, con {} de respaldo
+// para que la tienda nunca truene si falta algo en config.js.
+function shopTextos(seccion) {
+    return window.GEM_CONFIG?.textos?.tienda?.[seccion] || {};
+}
+
+// Nombre legible de la moneda ('gems' -> "rubies", cualquier otra cosa -> "monedas")
+function shopMonedaLabel(currency) {
+    const c = shopTextos('comun');
+    return currency === 'gems' ? (c.monedaRubies ?? 'rubies') : (c.monedaMonedas ?? 'monedas');
+}
+
+// Pregunta estándar de confirmación de compra ("¿Seguro que quieres comprar por X rubies?")
+function shopPreguntaCompra(amount, currency) {
+    const template = shopTextos('modal').preguntaCompraTemplate ?? '¿Seguro que quieres comprar por {monto} {moneda}?';
+    return template.replace('{monto}', amount).replace('{moneda}', shopMonedaLabel(currency));
+}
+
+// Botón "← VOLVER" compartido por las páginas internas de la tienda normal
+// (antes decía "VOLVER" en algunas páginas y "← VOLVER" en otras — unificado)
+function shopBotonVolverHtml(onclick = "showShopSection('home')") {
+    const label = shopTextos('comun').botonVolver ?? '← VOLVER';
+    return `<button onclick="${onclick}" style="padding:8px 16px; background:none; border:1px solid rgba(255,255,255,0.12); border-radius:8px; color:rgba(255,255,255,0.5); font-family:monospace; font-size:11px; letter-spacing:2px; cursor:pointer;">${label}</button>`;
+}
+
+// =====================================================
 // VARIABLES GLOBALES
 // =====================================================
 
@@ -1674,7 +1705,7 @@ function showShopSection(section) {
     else if (section === 'daily') renderDailyGiftPage(content);
     else if (section === 'conversion') renderConversionPage(content);
     else {
-        content.innerHTML = `<div style="display:flex; align-items:center; gap:16px; margin-bottom:24px;"><button onclick="showShopSection('home')" style="padding:8px 16px; background:none; border:1px solid rgba(255,255,255,0.12); border-radius:8px; color:rgba(255,255,255,0.5); font-family:monospace; font-size:11px; letter-spacing:2px; cursor:pointer;">← VOLVER</button></div><div style="color:rgba(255,255,255,0.2); font-family:monospace; font-size:14px; letter-spacing:4px; height:300px; display:grid; place-items:center;">PRÓXIMAMENTE</div>`;
+        content.innerHTML = `<div style="display:flex; align-items:center; gap:16px; margin-bottom:24px;">${shopBotonVolverHtml()}</div><div style="color:rgba(255,255,255,0.2); font-family:monospace; font-size:14px; letter-spacing:4px; height:300px; display:grid; place-items:center;">${shopTextos('comun').proximamente ?? 'PRÓXIMAMENTE'}</div>`;
     }
     optimizeShopMedia(content);
 }
@@ -1686,8 +1717,8 @@ function renderSkinsPage(container) {
     const skins = getAllShopSkins();
     container.innerHTML = `
         <div style="display:flex; align-items:center; gap:16px; margin-bottom:24px;">
-            <button onclick="showShopSection('home')" style="padding:8px 16px; background:none; border:1px solid rgba(255,255,255,0.12); border-radius:8px; color:rgba(255,255,255,0.5); font-family:monospace; font-size:11px; letter-spacing:2px; cursor:pointer;">← VOLVER</button>
-            <div style="color:rgba(255,255,255,0.4); font-family:monospace; font-size:11px; letter-spacing:4px;">SKINS</div>
+            ${shopBotonVolverHtml()}
+            <div style="color:rgba(255,255,255,0.4); font-family:monospace; font-size:11px; letter-spacing:4px;">${shopTextos('skins').titulo ?? 'SKINS'}</div>
         </div>
         <div style="display:grid; grid-template-columns:repeat(5,1fr); gap:14px;">
             ${skins.map(s => renderSkinCard(s, equipped)).join('')}
@@ -1772,21 +1803,20 @@ function renderSkinCard(s, equipped) {
     const altIcon = s.altType ? CURRENCY_ICONS[s.altType] : null;
     const previewImage = s.image || s.imageRight || s.imageLeft;
 
-    // ... (mantén el bloque de 'action' tal cual está)
+    const st = shopTextos('skins');
+
     let action;
     if (owned || isUnlocked) {
-        action = `<button onclick="equipSkin('${s.id}')" style="width:100%; padding:6px 0; border-radius:8px; border:1px solid ${isEquipped ? rarityColor + '66' : 'rgba(255,255,255,0.12)'}; background:${isEquipped ? rarityColor + '15' : 'none'}; color:${isEquipped ? rarityColor : 'rgba(255,255,255,0.4)'}; font-family:Geom, monospace; font-size:9px; cursor:pointer; letter-spacing:1px;">${isEquipped ? '✔ EQUIPADA' : 'EQUIPAR'}</button>`;
+        action = `<button onclick="equipSkin('${s.id}')" style="width:100%; padding:6px 0; border-radius:8px; border:1px solid ${isEquipped ? rarityColor + '66' : 'rgba(255,255,255,0.12)'}; background:${isEquipped ? rarityColor + '15' : 'none'}; color:${isEquipped ? rarityColor : 'rgba(255,255,255,0.4)'}; font-family:Geom, monospace; font-size:9px; cursor:pointer; letter-spacing:1px;">${isEquipped ? (st.botonEquipada ?? '✔ EQUIPADA') : (st.botonEquipar ?? 'EQUIPAR')}</button>`;
     } else if (isFragmentItem) {
-        action = window.renderFragmentProgressBar?.(s.id) || '<div style="color:rgba(255,255,255,0.3); font-family:monospace; font-size:9px;">FRAGMENTOS</div>';
+        action = window.renderFragmentProgressBar?.(s.id) || `<div style="color:rgba(255,255,255,0.3); font-family:monospace; font-size:9px;">${st.labelFragmentos ?? 'FRAGMENTOS'}</div>`;
     } else if (s.vipOnly) {
-        action = `<button onclick="openVIP('${s.id}')" style="width:100%; padding:6px 0; border-radius:8px; border:1px solid rgba(255, 215, 0, 0.4); background:rgba(255, 215, 0, 0.05); color:#FFD700; font-family:Geom, monospace; font-size:8px; cursor:pointer; letter-spacing:0.5px; transition: 0.2s;" onmouseover="this.style.background='rgba(255, 215, 0, 0.15)'" onmouseout="this.style.background='rgba(255, 215, 0, 0.05)'">DIRIGIR A TIENDA VIP</button>`;
+        action = `<button onclick="openVIP('${s.id}')" style="width:100%; padding:6px 0; border-radius:8px; border:1px solid rgba(255, 215, 0, 0.4); background:rgba(255, 215, 0, 0.05); color:#FFD700; font-family:Geom, monospace; font-size:8px; cursor:pointer; letter-spacing:0.5px; transition: 0.2s;" onmouseover="this.style.background='rgba(255, 215, 0, 0.15)'" onmouseout="this.style.background='rgba(255, 215, 0, 0.05)'">${st.botonDirigirVIP ?? 'DIRIGIR A TIENDA VIP'}</button>`;
     } else {
         action = `<button onclick="buySkin('${s.id}')" ${!canBuy ? 'disabled' : ''} style="width:100%; padding:6px 0; border-radius:8px; border:1px solid ${canBuy ? 'rgba(255,238,0,0.4)' : 'rgba(255,255,255,0.08)'}; background:none; color:${canBuy ? '#ffee00' : 'rgba(255,255,255,0.2)'}; font-family:Geom, monospace; font-size:9px; cursor:${canBuy ? 'pointer' : 'default'}; letter-spacing:1px; display:flex; align-items:center; justify-content:center; gap:5px; flex-wrap:wrap;"><img src="${mainIcon}" style="width:14px;height:14px;object-fit:contain;"> ${s.price}${s.altPrice ? ` <span style="opacity:.45;">/</span> <img src="${altIcon}" style="width:14px;height:14px;object-fit:contain;"> ${s.altPrice}` : ''}</button>`;
     }
 
-    // AQUI ESTA EL CAMBIO EN EL RETURN:
     const cardBackground = isTrophy ? 'linear-gradient(135deg, #2e003e, #1a0026) !important' : 'rgba(255,255,255,0.03)';
-    const labelText = isTrophy ? 'TROFEO ESPECIAL' : 'SOLO EN TIENDA VIP';
 
     return `
     <div style="background:${cardBackground}; border:1px solid ${isEquipped ? rarityColor + '66' : (isTrophy ? '#8a2be2' : 'rgba(255,255,255,0.08)')}; border-radius:14px; padding:20px 12px; display:flex; flex-direction:column; align-items:center; gap:10px; transition:0.2s; ${isEquipped ? 'box-shadow:0 0 20px ' + rarityColor + '22' : ''}">
@@ -1794,8 +1824,8 @@ function renderSkinCard(s, equipped) {
             ${previewImage ? `<img src="${previewImage}" alt="" draggable="false">` : (s.emoji ? s.emoji : `<div style="width:24px;height:24px;border-radius:50%;background:${s.color};box-shadow:0 0 10px ${s.color}88;"></div>`)}
         </div>
         <div style="color:white; font-family:monospace; font-size:11px; letter-spacing:1px;">${s.name}</div>
-        <div style="color:${rarityColor}; font-family:monospace; font-size:9px; letter-spacing:2px;">${isTrophy ? 'LEGENDARIO' : s.rarity}</div>
-        ${isTrophy ? `<div style="color:#cc99ff; font-family:monospace; font-size:9px; letter-spacing:1px;">TROFEO</div>` : (s.vipOnly && !owned ? `<div style="color:#ffee00; font-family:monospace; font-size:9px; letter-spacing:1px;">SOLO EN TIENDA VIP</div>` : (s.fragments ? `<div style="color:rgba(255,255,255,0.22); font-family:monospace; font-size:9px;">${s.fragments} FRAGMENTOS</div>` : ''))}
+        <div style="color:${rarityColor}; font-family:monospace; font-size:9px; letter-spacing:2px;">${isTrophy ? (st.labelLegendario ?? 'LEGENDARIO') : s.rarity}</div>
+        ${isTrophy ? `<div style="color:#cc99ff; font-family:monospace; font-size:9px; letter-spacing:1px;">${st.labelTrofeo ?? 'TROFEO'}</div>` : (s.vipOnly && !owned ? `<div style="color:#ffee00; font-family:monospace; font-size:9px; letter-spacing:1px;">${st.labelSoloVIP ?? 'SOLO EN TIENDA VIP'}</div>` : (s.fragments ? `<div style="color:rgba(255,255,255,0.22); font-family:monospace; font-size:9px;">${s.fragments} ${st.sufijoFragmentos ?? 'FRAGMENTOS'}</div>` : ''))}
         ${action}
     </div>`;
 }
@@ -1825,14 +1855,15 @@ function buySkin(id) {
 
     const chosenCurrency = canPayAlt && !canPayMain ? skin.altType : skin.priceType;
     const chosenAmount = canPayAlt && !canPayMain ? skin.altPrice : skin.price;
+    const sm = shopTextos('modal');
     showShopModal({
-        kicker: 'CONFIRMAR COMPRA',
+        kicker: sm.kickerConfirmarCompra ?? 'CONFIRMAR COMPRA',
         title: skin.name,
         image: skin.imageRight || skin.imageLeft || SHOP_PLACEHOLDER_IMAGE,
         fallback: skin.emoji || skin.name?.charAt(0) || 'S',
-        body: `Seguro comprar por ${chosenAmount} ${chosenCurrency === 'gems' ? 'rubies' : 'monedas'}?`,
-        confirmText: 'SI',
-        cancelText: 'NO',
+        body: shopPreguntaCompra(chosenAmount, chosenCurrency),
+        confirmText: sm.botonSi ?? 'SI',
+        cancelText: sm.botonNo ?? 'NO',
         onConfirm: () => completeSkinPurchase(id)
     });
 }
@@ -1881,8 +1912,8 @@ function renderBannersPage(container) {
     const equipped = localStorage.getItem('equippedBanner') || 'Banner_Deafult';
     container.innerHTML = `
         <div style="display:flex; align-items:center; gap:16px; margin-bottom:24px;">
-            <button onclick="showShopSection('home')" style="padding:8px 16px; background:none; border:1px solid rgba(255,255,255,0.12); border-radius:8px; color:rgba(255,255,255,0.5); font-family:monospace; font-size:11px; letter-spacing:2px; cursor:pointer;">VOLVER</button>
-            <div style="color:rgba(255,255,255,0.4); font-family:monospace; font-size:11px; letter-spacing:4px;">BANNERS</div>
+            ${shopBotonVolverHtml()}
+            <div style="color:rgba(255,255,255,0.4); font-family:monospace; font-size:11px; letter-spacing:4px;">${shopTextos('banners').titulo ?? 'BANNERS'}</div>
         </div>
         <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:16px;">
             ${BANNERS_DATA.map(b => renderBannerCard(b, equipped)).join('')}
@@ -1922,20 +1953,22 @@ function renderBannerCard(b, equipped) {
         boxShadow = 'none';
     }
 
+    const bt = shopTextos('banners');
+
     return `
         <div style="background:${isVIP && isEquipped ? 'rgb(18,18,24)' : 'rgba(255,255,255,0.03)'}; border:${borderStyle}; border-radius:14px; padding:14px; display:flex; flex-direction:column; gap:12px; box-shadow:${boxShadow}; ${extraStyle}">
             <div style="height:104px; border-radius:10px; border:1px solid rgba(0,0,0,0.45); background:${bannerBg}; background-size:cover; background-position:center; display:flex; align-items:center; justify-content:center; color:rgba(255,255,255,0.48); font-family:monospace; font-size:10px; letter-spacing:3px;">
-                ${b.cover ? '' : 'PORTADA'}
+                ${b.cover ? '' : (bt.labelPortada ?? 'PORTADA')}
             </div>
             <div style="display:flex; justify-content:space-between; gap:10px; align-items:center;">
                 <div>
                     <div style="color:white; font-family:monospace; font-size:12px; letter-spacing:1px;">${b.name}</div>
-                    <div style="color:${BANNER_RARITY_COLORS[b.rarity] || 'rgba(255,255,255,0.35)'}; font-family:monospace; font-size:9px; margin-top:4px;">${b.rarity === 'VIP' ? 'VIP / PASE RUBY' : (b.rarity || 'NORMAL')}</div>
+                    <div style="color:${BANNER_RARITY_COLORS[b.rarity] || 'rgba(255,255,255,0.35)'}; font-family:monospace; font-size:9px; margin-top:4px;">${b.rarity === 'VIP' ? (bt.labelVipPaseRuby ?? 'VIP / PASE RUBY') : (b.rarity || (bt.labelNormal ?? 'NORMAL'))}</div>
                 </div>
                 ${owned
-            ? `<button onclick="equipBanner('${b.id}')" style="padding:8px 12px; border-radius:8px; border:1px solid ${isEquipped ? (isVIP ? 'rgba(255,204,0,0.6)' : 'rgba(0,255,231,0.6)') : 'rgba(255,255,255,0.12)'}; background:${isEquipped ? (isVIP ? 'rgba(255,204,0,0.12)' : 'rgba(0,255,231,0.12)') : 'none'}; color:${isEquipped ? (isVIP ? '#ffd700' : '#00ffe7') : 'rgba(255,255,255,0.5)'}; font-family:monospace; font-size:9px; cursor:pointer;">${isEquipped ? 'EQUIPADO' : 'EQUIPAR'}</button>`
+            ? `<button onclick="equipBanner('${b.id}')" style="padding:8px 12px; border-radius:8px; border:1px solid ${isEquipped ? (isVIP ? 'rgba(255,204,0,0.6)' : 'rgba(0,255,231,0.6)') : 'rgba(255,255,255,0.12)'}; background:${isEquipped ? (isVIP ? 'rgba(255,204,0,0.12)' : 'rgba(0,255,231,0.12)') : 'none'}; color:${isEquipped ? (isVIP ? '#ffd700' : '#00ffe7') : 'rgba(255,255,255,0.5)'}; font-family:monospace; font-size:9px; cursor:pointer;">${isEquipped ? (bt.botonEquipado ?? 'EQUIPADO') : (bt.botonEquipar ?? 'EQUIPAR')}</button>`
             : vipOnly
-                ? `<button onclick="openVIP(); setTimeout(() => renderVIPPromoDetail('vip_specials'), 40)" style="padding:8px 12px; border-radius:8px; border:1px solid rgba(255,238,0,0.36); background:rgba(255,238,0,0.08); color:#ffee00; font-family:monospace; font-size:9px; cursor:pointer;">SOLO EN TIENDA VIP</button>`
+                ? `<button onclick="openVIP(); setTimeout(() => renderVIPPromoDetail('vip_specials'), 40)" style="padding:8px 12px; border-radius:8px; border:1px solid rgba(255,238,0,0.36); background:rgba(255,238,0,0.08); color:#ffee00; font-family:monospace; font-size:9px; cursor:pointer;">${bt.botonSoloVIP ?? 'SOLO EN TIENDA VIP'}</button>`
                 : `<button onclick="buyBanner('${b.id}')" ${!canBuy ? 'disabled' : ''} style="padding:8px 12px; border-radius:8px; border:1px solid ${canBuy ? 'rgba(255,238,0,0.45)' : 'rgba(255,255,255,0.08)'}; background:none; color:${canBuy ? '#ffee00' : 'rgba(255,255,255,0.22)'}; font-family:monospace; font-size:9px; cursor:${canBuy ? 'pointer' : 'default'};">${b.price}</button>`
         }
             </div>
@@ -1959,28 +1992,11 @@ function buyBanner(id) {
     renderBannersPage(document.getElementById('shopContent'));
 }
 
-function equipBanner(id) {
-    localStorage.setItem('equippedBanner', id);
-    updateMenuHUD();
-
-    const picker = document.getElementById('banner-picker');
-    if (picker && picker.style.display !== 'none') {
-        // Forzar re-render del picker con el nuevo equipped
-        picker.style.display = 'none';
-        toggleBannerPicker();
-    }
-
-    const navBanners = document.getElementById('nav-banners');
-    if (navBanners && navBanners.style.color === '#ff4d6d') {
-        renderBannersPage(document.getElementById('shopContent'));
-    }
-}
-
 function renderEmotesPage(container) {
     container.innerHTML = `
         <div style="display:flex; align-items:center; gap:16px; margin-bottom:24px;">
-            <button onclick="showShopSection('home')" style="padding:8px 16px; background:none; border:1px solid rgba(255,255,255,0.12); border-radius:8px; color:rgba(255,255,255,0.5); font-family:monospace; font-size:11px; letter-spacing:2px; cursor:pointer;">VOLVER</button>
-            <div style="color:rgba(255,255,255,0.4); font-family:monospace; font-size:11px; letter-spacing:4px;">EMOTES</div>
+            ${shopBotonVolverHtml()}
+            <div style="color:rgba(255,255,255,0.4); font-family:monospace; font-size:11px; letter-spacing:4px;">${shopTextos('emotes').titulo ?? 'EMOTES'}</div>
         </div>
         <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(170px,1fr)); gap:16px;">
             ${EMOTES_DATA.map(renderEmoteSlot).join('')}
@@ -2001,13 +2017,15 @@ function renderEmoteSlot(emote) {
 
     const canBuy = !owned && !emote.passOnly && canAfford(emote.price || EMOTE_STANDARD_PRICE_COINS, emote.priceType || 'coins');
 
+    const et = shopTextos('emotes');
+
     let action;
     if (owned || isUnlocked) {
-        action = `<button onclick="equipEmote('${emote.id}')" type="button">${equipped ? 'ACTIVO' : 'USAR'}</button>`;
+        action = `<button onclick="equipEmote('${emote.id}')" type="button">${equipped ? (et.botonActivo ?? 'ACTIVO') : (et.botonUsar ?? 'USAR')}</button>`;
     } else if (isFragmentItem) {
-        action = window.renderFragmentProgressBar?.(emote.id) || '<div style="color:rgba(255,255,255,0.3); font-family:monospace; font-size:9px;">FRAGMENTOS</div>';
+        action = window.renderFragmentProgressBar?.(emote.id) || `<div style="color:rgba(255,255,255,0.3); font-family:monospace; font-size:9px;">${et.labelFragmentos ?? 'FRAGMENTOS'}</div>`;
     } else if (emote.passOnly) {
-        action = `<button class="is-pass-only" type="button" disabled>EN EL PASE</button>`;
+        action = `<button class="is-pass-only" type="button" disabled>${et.botonEnElPase ?? 'EN EL PASE'}</button>`;
     } else {
         action = `<button onclick="buyEmote('${emote.id}')" type="button" ${canBuy ? '' : 'disabled'}>${renderPrice(emote.price || EMOTE_STANDARD_PRICE_COINS, emote.priceType || 'coins')}</button>`;
     }
@@ -2015,11 +2033,11 @@ function renderEmoteSlot(emote) {
     return `
         <div class="emote-card" data-emote-id="${emote.id}">
             <div data-asset-slot="${emote.slot}" style="width:96px; height:96px; border-radius:50%; border:1px dashed ${color}88; background:${color}12; display:grid; place-items:center; overflow:hidden; color:rgba(255,255,255,0.35); font-family:monospace; font-size:10px; letter-spacing:2px;">
-                ${emote.image ? `<img src="${emote.image}" style="width:100%;height:100%;object-fit:contain;">` : 'PNG'}
+                ${emote.image ? `<img src="${emote.image}" style="width:100%;height:100%;object-fit:contain;">` : (et.placeholderSinImagen ?? 'PNG')}
             </div>
             <div style="color:white; font-family:monospace; font-size:12px; letter-spacing:1px;">${emote.name}</div>
-            ${emote.passOnly ? `<div style="color:${color}; font-family:monospace; font-size:9px; letter-spacing:2px;">EN EL PASE</div>` : `<div style="color:${color}; font-family:monospace; font-size:9px; letter-spacing:2px;">${emote.rarity}</div>`}
-            ${isFragmentItem && !isUnlocked ? `<div style="color:#FFD700; font-family:monospace; font-size:9px; letter-spacing:1px;">🧩 FRAGMENTOS</div>` : ''}
+            ${emote.passOnly ? `<div style="color:${color}; font-family:monospace; font-size:9px; letter-spacing:2px;">${et.botonEnElPase ?? 'EN EL PASE'}</div>` : `<div style="color:${color}; font-family:monospace; font-size:9px; letter-spacing:2px;">${emote.rarity}</div>`}
+            ${isFragmentItem && !isUnlocked ? `<div style="color:#FFD700; font-family:monospace; font-size:9px; letter-spacing:1px;">🧩 ${et.labelFragmentos ?? 'FRAGMENTOS'}</div>` : ''}
             ${action}
         </div>
     `;
@@ -2047,15 +2065,17 @@ function buyEmote(id) {
     if (!emote || emote.passOnly || isEmoteOwned(emote)) return;
     const price = emote.price || EMOTE_STANDARD_PRICE_COINS;
     const currency = emote.priceType || 'coins';
+    const et = shopTextos('emotes');
+    const sm = shopTextos('modal');
     showShopModal({
-        kicker: 'CONFIRMAR EMOTE',
+        kicker: et.kickerConfirmarCompra ?? 'CONFIRMAR EMOTE',
         title: emote.name,
         image: emote.image,
-        body: `Seguro comprar por ${price} ${currency === 'gems' ? 'rubies' : 'monedas'}?`,
-        confirmText: 'SI',
-        cancelText: 'NO',
+        body: shopPreguntaCompra(price, currency),
+        confirmText: sm.botonSi ?? 'SI',
+        cancelText: sm.botonNo ?? 'NO',
         onConfirm: () => {
-            if (!canAfford(price, currency)) return alert(currency === 'gems' ? 'No tienes suficientes rubies.' : 'No tienes suficientes monedas.');
+            if (!canAfford(price, currency)) return alert(currency === 'gems' ? (et.alertaSinRubies ?? 'No tienes suficientes rubies.') : (et.alertaSinMonedas ?? 'No tienes suficientes monedas.'));
             spendCurrency(price, currency);
             localStorage.setItem('emote_' + emote.id, 'true');
             localStorage.setItem('equippedEmote', emote.id);
@@ -2203,19 +2223,20 @@ function showShopModal(options = {}) {
         modal.id = 'shop-modal';
         document.body.appendChild(modal);
     }
+    const sm = shopTextos('modal');
     const imageHTML = options.mediaHTML || (options.image
         ? `<img src="${options.image}" alt="" draggable="false">`
-        : `<span>${options.fallback || 'PNG'}</span>`);
+        : `<span>${options.fallback || (sm.fallbackImagen ?? 'PNG')}</span>`);
     modal.innerHTML = `
         <div class="shop-modal-dim" onclick="closeShopModal()"></div>
         <div class="shop-modal-card ${options.cardClass || ''}" style="${options.background ? `background-image:linear-gradient(180deg, rgba(8,8,14,0.88), rgba(8,8,14,0.96)), url('${options.background}'); background-size:cover; background-position:center;` : ''}">
-            <button class="shop-modal-x" onclick="closeShopModal()" type="button">X</button>
-            <div class="shop-modal-kicker">${options.kicker || 'THE GEM'}</div>
+            <button class="shop-modal-x" onclick="closeShopModal()" type="button">${sm.botonCerrarX ?? 'X'}</button>
+            <div class="shop-modal-kicker">${options.kicker || (sm.kickerDefault ?? 'THE GEM')}</div>
             <div class="shop-modal-title">${options.title || ''}</div>
             <div class="shop-modal-media ${options.mediaClass || ''}">${imageHTML}</div>
             <div class="shop-modal-body">${options.body || ''}</div>
             <div class="shop-modal-actions">
-                ${options.cancelText === null ? '' : `<button class="shop-modal-btn secondary" id="shop-modal-cancel" type="button">${options.cancelText || 'CERRAR'}</button>`}
+                ${options.cancelText === null ? '' : `<button class="shop-modal-btn secondary" id="shop-modal-cancel" type="button">${options.cancelText || (sm.botonCerrarDefault ?? 'CERRAR')}</button>`}
                 ${options.confirmText ? `<button class="shop-modal-btn primary" id="shop-modal-confirm" type="button">${options.confirmText}</button>` : ''}
             </div>
         </div>
@@ -3892,6 +3913,8 @@ function renderTrailsPage(container) {
         font-family: monospace; overflow: visible;
     `;
 
+    const tt = shopTextos('trails');
+
     overlay.innerHTML = `
         <!-- HUD superior -->
         <div style="display:flex; justify-content:space-between; align-items:center; padding:14px 24px 0; flex-shrink:0; position:relative; z-index:5;">
@@ -3899,10 +3922,10 @@ function renderTrailsPage(container) {
                 padding:8px 18px; background:rgba(255,255,255,0.06);
                 border:1px solid rgba(255,255,255,0.18); border-radius:10px;
                 color:rgba(255,255,255,0.7); font-family:monospace; font-size:11px;
-                letter-spacing:2px; cursor:pointer; font-weight:bold;">← VOLVER</button>
+                letter-spacing:2px; cursor:pointer; font-weight:bold;">${tt.botonVolver ?? '← VOLVER'}</button>
 
             <div style="text-align:center; color:#00ffe7; font-size:20px; font-weight:900; letter-spacing:6px; text-shadow:0 0 18px #00ffe788;">
-                TRAILS
+                ${tt.titulo ?? 'TRAILS'}
             </div>
 
             <div style="
@@ -3911,10 +3934,10 @@ function renderTrailsPage(container) {
                 background-size: contain; position:relative;">
                 <div style="position:absolute; top:18px; right:28px; text-align:right; line-height:1.5;">
                     <div style="font-size:11px; color:#00ffe7; font-weight:bold; letter-spacing:1px;">
-                        COINS: <span id="trail-hud-coins" style="color:white;">${coins.toLocaleString()}</span>
+                        ${tt.labelCoins ?? 'COINS'}: <span id="trail-hud-coins" style="color:white;">${coins.toLocaleString()}</span>
                     </div>
                     <div style="font-size:11px; color:#00ffe7; font-weight:bold; letter-spacing:1px;">
-                        GEMS: <span id="trail-hud-gems" style="color:white;">${gems.toLocaleString()}</span>
+                        ${tt.labelGems ?? 'GEMS'}: <span id="trail-hud-gems" style="color:white;">${gems.toLocaleString()}</span>
                     </div>
                 </div>
             </div>
@@ -4019,7 +4042,7 @@ function renderTrailCardNew(t, index) {
                 <div style="color:#888; font-size:8px; letter-spacing:2px; font-weight:bold;">BASICA</div>
             </div>
             <div style="width:100%; display:flex; justify-content:center;">
-                <div style="color:#00ff88; font-size:9px; font-weight:bold; letter-spacing:1px;">✔ GRATIS</div>
+                <div style="color:#00ff88; font-size:9px; font-weight:bold; letter-spacing:1px;">${shopTextos('trails').labelGratis ?? '✔ GRATIS'}</div>
             </div>
         </div>`;
     }
@@ -4069,7 +4092,7 @@ function renderTrailCardNew(t, index) {
         </div>
         <div style="width:100%; display:flex; justify-content:center; align-items:center;">
             ${isOwned
-                ? `<div style="color:#00ff88; font-size:9px; font-weight:bold; letter-spacing:1px;">✔ TIENES</div>`
+                ? `<div style="color:#00ff88; font-size:9px; font-weight:bold; letter-spacing:1px;">${shopTextos('trails').labelTienes ?? '✔ TIENES'}</div>`
                 : `<div style="display:flex; align-items:center; gap:4px; background:rgba(255,255,255,0.04); padding:4px 8px; border-radius:6px; border:1px solid rgba(255,255,255,0.08);">
                     <img src="${priceIcon}" style="width:11px;height:11px;object-fit:contain;">
                     <span style="color:#ffffff; font-size:9px; font-weight:bold;">${t.price}</span>
@@ -4665,7 +4688,7 @@ function buySpecificTrail(trailId) {
         : parseInt(localStorage.getItem('deadCoins') || '0') >= trail.price;
     
     if (!canAfford) {
-        alert('No tienes suficientes monedas/gemas');
+        alert(shopTextos('trails').alertaSinFondos ?? 'No tienes suficientes monedas/gemas');
         return;
     }
     
@@ -4735,14 +4758,15 @@ function showTrailBuyPanel() {
 
         const owned = localStorage.getItem(`trail_${selectedTrailEffect}_cyan`) === 'true';
         const equipped = localStorage.getItem('equippedTrail') === selectedTrailEffect;
-        
+        const tt1 = shopTextos('trails');
+
         panel.style.display = 'block';
         panel.innerHTML = `
         <div style="display:flex; align-items:center; justify-content:space-between; height:100%; width:100%; box-sizing:border-box; font-family:monospace;">
             <div style="display:flex; flex-direction:column; justify-content:center;">
                 <div style="color:${trail.rarityColor}; font-size:8px; letter-spacing:3px; margin-bottom:2px; font-weight:bold;">${trail.rarity}</div>
                 <div style="color:#fff; font-size:18px; font-weight:bold;">${trail.name}</div>
-                <div style="color:rgba(255,255,255,0.5); font-size:10px; margin-top:4px;">Trail exclusivo</div>
+                <div style="color:rgba(255,255,255,0.5); font-size:10px; margin-top:4px;">${tt1.labelTrailExclusivo ?? 'Trail exclusivo'}</div>
             </div>
             ${owned 
                 ? `<button onclick="equipSpecificTrail('${selectedTrailEffect}')" type="button" style="
@@ -4750,7 +4774,7 @@ function showTrailBuyPanel() {
                     color:${equipped ? '#000' : '#000'};
                     border:2px solid ${equipped ? '#ffd700' : '#00ff88'};
                     padding:12px 24px; border-radius:8px; font-weight:bold; cursor:pointer;
-                ">${equipped ? '✔ EQUIPADO' : 'EQUIPAR'}</button>`
+                ">${equipped ? (tt1.botonEquipado ?? '✔ EQUIPADO') : (tt1.botonEquipar ?? 'EQUIPAR')}</button>`
                 : `<button onclick="buySpecificTrail('${selectedTrailEffect}')" type="button" style="
                     background:rgba(255,255,255,0.1);
                     color:#fff;
@@ -4777,12 +4801,14 @@ function showTrailBuyPanel() {
         ? `<span style="font-size:13px;margin-right:3px;vertical-align:middle;">🌈</span>`
         : `<span style="display:inline-block;width:11px;height:11px;border-radius:50%;background:${color.color};vertical-align:middle;margin-right:5px;box-shadow: 0 0 6px ${color.color}cc;"></span>`;
 
+    const tt2 = shopTextos('trails');
+
     panel.style.display = 'block';
     panel.innerHTML = `
         <div style="display: flex; align-items: center; justify-content: space-between; height: 100%; width: 100%; box-sizing: border-box; font-family: monospace;">
             <!-- Left Side: Title, Details -->
             <div style="display: flex; flex-direction: column; justify-content: center; text-align: left;">
-                <div style="color:rgba(255,255,255,0.36); font-size:8px; letter-spacing:3px; margin-bottom:2px; font-weight:bold;">SELECCIONADO</div>
+                <div style="color:rgba(255,255,255,0.36); font-size:8px; letter-spacing:3px; margin-bottom:2px; font-weight:bold;">${tt2.labelSeleccionado ?? 'SELECCIONADO'}</div>
                 <div style="color:white; font-size:12px; font-weight:bold; letter-spacing:1px; margin-bottom:2px; font-family:'Geom',monospace;">
                     ${dot}${trail.name.toUpperCase()}
                 </div>
@@ -4796,8 +4822,8 @@ function showTrailBuyPanel() {
                 ${owned
                     ? `<div style="display:flex; gap:6px; align-items:center;">
                         ${equipped
-                            ? `<span style="color:#00ffe7; font-size:11px; letter-spacing:2px; font-weight:bold; text-shadow: 0 0 8px rgba(0,255,231,0.5);">✔ EQUIPADO</span>`
-                            : `<button onclick="confirmBuyTrailNew()" style="padding:6px 14px; background:rgba(0,255,231,0.12); border:1px solid #00ffe7; border-radius:8px; color:#00ffe7; font-family:'Geom',monospace; font-size:10px; letter-spacing:2px; cursor:pointer; font-weight:bold; box-shadow: 0 0 10px rgba(0,255,231,0.15); transition: 0.2s;" onmouseover="this.style.background='rgba(0,255,231,0.2)'" onmouseout="this.style.background='rgba(0,255,231,0.12)'">EQUIPAR</button>`
+                            ? `<span style="color:#00ffe7; font-size:11px; letter-spacing:2px; font-weight:bold; text-shadow: 0 0 8px rgba(0,255,231,0.5);">${tt2.botonEquipado ?? '✔ EQUIPADO'}</span>`
+                            : `<button onclick="confirmBuyTrailNew()" style="padding:6px 14px; background:rgba(0,255,231,0.12); border:1px solid #00ffe7; border-radius:8px; color:#00ffe7; font-family:'Geom',monospace; font-size:10px; letter-spacing:2px; cursor:pointer; font-weight:bold; box-shadow: 0 0 10px rgba(0,255,231,0.15); transition: 0.2s;" onmouseover="this.style.background='rgba(0,255,231,0.2)'" onmouseout="this.style.background='rgba(0,255,231,0.12)'">${tt2.botonEquipar ?? 'EQUIPAR'}</button>`
                         }
                        </div>`
                     : `<div style="display:flex; gap:8px; align-items:center;">
@@ -4805,7 +4831,7 @@ function showTrailBuyPanel() {
                             <img src="${pIcon}" style="width:13px; height:13px; object-fit:contain;">
                             <span style="color:white; font-size:11px; font-weight:bold;">${purchase.amount}</span>
                         </div>
-                        <button onclick="confirmBuyTrailNew()" style="padding:6px 14px; background:rgba(255,238,0,0.15); border:1px solid #ffee00; border-radius:8px; color:#ffee00; font-family:'Geom',monospace; font-size:10px; letter-spacing:2px; cursor:pointer; font-weight:bold; box-shadow: 0 0 10px rgba(255,238,0,0.15); transition: 0.2s;" onmouseover="this.style.background='rgba(255,238,0,0.25)'" onmouseout="this.style.background='rgba(255,238,0,0.15)'">COMPRAR</button>
+                        <button onclick="confirmBuyTrailNew()" style="padding:6px 14px; background:rgba(255,238,0,0.15); border:1px solid #ffee00; border-radius:8px; color:#ffee00; font-family:'Geom',monospace; font-size:10px; letter-spacing:2px; cursor:pointer; font-weight:bold; box-shadow: 0 0 10px rgba(255,238,0,0.15); transition: 0.2s;" onmouseover="this.style.background='rgba(255,238,0,0.25)'" onmouseout="this.style.background='rgba(255,238,0,0.15)'">${tt2.botonComprar ?? 'COMPRAR'}</button>
                        </div>`
                 }
             </div>
@@ -4866,13 +4892,15 @@ function confirmBuyTrail() {
         return;
     }
 
+    const tt3 = shopTextos('trails');
+    const sm3 = shopTextos('modal');
     showShopModal({
-        kicker: 'CONFIRMAR TRAIL',
+        kicker: tt3.kickerConfirmarCompra ?? 'CONFIRMAR TRAIL',
         title: `${trail.name} ${selectedTrailColor.toUpperCase()}`,
-        fallback: 'TRAIL',
-        body: `Seguro comprar por ${purchase.amount} ${purchase.currency === 'gems' ? 'rubies' : 'monedas'}?`,
-        confirmText: 'SI',
-        cancelText: 'NO',
+        fallback: tt3.fallbackImagen ?? 'TRAIL',
+        body: shopPreguntaCompra(purchase.amount, purchase.currency),
+        confirmText: sm3.botonSi ?? 'SI',
+        cancelText: sm3.botonNo ?? 'NO',
         onConfirm: completeTrailPurchase
     });
 }
@@ -4882,17 +4910,18 @@ function completeTrailPurchase() {
     const trail = TRAILS_DATA.find(t => t.id === selectedTrailEffect);
     const color = TRAIL_COLOR_LIST.find(c => c.id === selectedTrailColor);
     const purchase = getTrailPurchaseInfo(trail, color);
+    const tt4 = shopTextos('trails');
 
     // Comprar
     if (purchase.currency === 'gems') {
         let gems = parseInt(localStorage.getItem('gems') || '0');
-        if (gems < purchase.amount) { alert('¡No tienes suficientes gemas!'); return; }
+        if (gems < purchase.amount) { alert(tt4.alertaSinGemas ?? '¡No tienes suficientes gemas!'); return; }
         gems -= purchase.amount;
         localStorage.setItem('gems', gems);
         document.getElementById('shop-gems').textContent = gems;
     } else {
         let coins = parseInt(localStorage.getItem('deadCoins') || '0');
-        if (coins < purchase.amount) { alert('¡No tienes suficientes Dead Coins!'); return; }
+        if (coins < purchase.amount) { alert(tt4.alertaSinCoins ?? '¡No tienes suficientes Dead Coins!'); return; }
         coins -= purchase.amount;
         localStorage.setItem('deadCoins', coins);
         playerData.deadCoins = coins;
@@ -5332,20 +5361,21 @@ function renderRewardIcon(reward, lane, level) {
 function renderConversionPage(container) {
     const coins = parseInt(localStorage.getItem('deadCoins') || '0');
     const gems = parseInt(localStorage.getItem('gems') || '0');
+    const ct = shopTextos('conversion');
 
     container.innerHTML = `
         <div style="display:flex; align-items:center; gap:16px; margin-bottom:24px;">
-            <button onclick="showShopSection('home')" style="padding:8px 16px; background:none; border:1px solid rgba(255,255,255,0.12); border-radius:8px; color:rgba(255,255,255,0.5); font-family:monospace; font-size:11px; letter-spacing:2px; cursor:pointer;">← VOLVER</button>
-            <div style="color:rgba(255,255,255,0.4); font-family:monospace; font-size:11px; letter-spacing:4px;">CONVERSIÓN</div>
+            ${shopBotonVolverHtml()}
+            <div style="color:rgba(255,255,255,0.4); font-family:monospace; font-size:11px; letter-spacing:4px;">${ct.titulo ?? 'CONVERSIÓN'}</div>
         </div>
 
         <div style="max-width:480px; margin:0 auto; display:flex; flex-direction:column; gap:20px;">
 
             <div style="background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.08); border-radius:14px; padding:20px; text-align:center;">
-                <div style="color:rgba(255,255,255,0.4); font-family:monospace; font-size:11px; letter-spacing:3px; margin-bottom:12px;">TASA DE CAMBIO</div>
+                <div style="color:rgba(255,255,255,0.4); font-family:monospace; font-size:11px; letter-spacing:3px; margin-bottom:12px;">${ct.labelTasaCambio ?? 'TASA DE CAMBIO'}</div>
                 <div style="display:flex; align-items:center; justify-content:center; gap:8px;">
                     <img src="assets/Imagenes/Monetizacion/DEAD_COIN.png" style="width:20px;height:20px;object-fit:contain;">
-                    <span style="color:white; font-family:monospace; font-size:18px; letter-spacing:2px;">100 = 1 / 1 = 30</span>
+                    <span style="color:white; font-family:monospace; font-size:18px; letter-spacing:2px;">${ct.textoTasa ?? '100 = 1 / 1 = 30'}</span>
                     <img src="assets/Imagenes/Monetizacion/Rubies.png" style="width:20px;height:20px;object-fit:contain;">
                 </div>
             </div>
@@ -5354,35 +5384,35 @@ function renderConversionPage(container) {
                 <div style="background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.08); border-radius:12px; padding:16px; text-align:center;">
                     <div style="display:flex; align-items:center; justify-content:center; gap:6px; margin-bottom:8px;">
                         <img src="assets/Imagenes/Monetizacion/DEAD_COIN.png" style="width:16px;height:16px;object-fit:contain;">
-                        <span style="color:rgba(255,255,255,0.4); font-family:monospace; font-size:10px; letter-spacing:2px;">DEAD COINS</span>
+                        <span style="color:rgba(255,255,255,0.4); font-family:monospace; font-size:10px; letter-spacing:2px;">${ct.labelDeadCoins ?? 'DEAD COINS'}</span>
                     </div>
                     <div id="conv-coins" style="color:white; font-family:monospace; font-size:22px; font-weight:bold;">${coins}</div>
                 </div>
                 <div style="background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.08); border-radius:12px; padding:16px; text-align:center;">
                     <div style="display:flex; align-items:center; justify-content:center; gap:6px; margin-bottom:8px;">
                         <img src="assets/Imagenes/Monetizacion/Rubies.png" style="width:16px;height:16px;object-fit:contain;">
-                        <span style="color:rgba(255,255,255,0.4); font-family:monospace; font-size:10px; letter-spacing:2px;">GEMAS</span>
+                        <span style="color:rgba(255,255,255,0.4); font-family:monospace; font-size:10px; letter-spacing:2px;">${ct.labelGemas ?? 'GEMAS'}</span>
                     </div>
                     <div id="conv-gems" style="color:#ffee00; font-family:monospace; font-size:22px; font-weight:bold;">${gems}</div>
                 </div>
             </div>
 
             <div style="background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.08); border-radius:14px; padding:20px;">
-                <div style="color:rgba(255,255,255,0.4); font-family:monospace; font-size:11px; letter-spacing:3px; margin-bottom:14px;">CONVERTIR COINS → GEMAS</div>
+                <div style="color:rgba(255,255,255,0.4); font-family:monospace; font-size:11px; letter-spacing:3px; margin-bottom:14px;">${ct.tituloConvertirCoins ?? 'CONVERTIR COINS → GEMAS'}</div>
                 <div style="display:flex; gap:10px; align-items:center;">
-                    <input id="conv-input" type="number" min="100" step="100" placeholder="ej: 100"
+                    <input id="conv-input" type="number" min="100" step="100" placeholder="${ct.placeholderCoins ?? 'ej: 100'}"
                         style="flex:1; padding:10px 14px; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.15); border-radius:8px; color:white; font-family:monospace; font-size:14px; outline:none;">
-                    <button onclick="convertCoins()" style="padding:10px 20px; border:1px solid #ffee00; background:rgba(255,238,0,0.1); color:#ffee00; font-family:monospace; font-size:12px; border-radius:8px; cursor:pointer; letter-spacing:2px;">CONVERTIR</button>
+                    <button onclick="convertCoins()" style="padding:10px 20px; border:1px solid #ffee00; background:rgba(255,238,0,0.1); color:#ffee00; font-family:monospace; font-size:12px; border-radius:8px; cursor:pointer; letter-spacing:2px;">${ct.botonConvertir ?? 'CONVERTIR'}</button>
                 </div>
                 <div id="conv-result" style="color:rgba(255,255,255,0.3); font-family:monospace; font-size:11px; margin-top:10px;"></div>
             </div>
 
             <div style="background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.08); border-radius:14px; padding:20px;">
-                <div style="color:rgba(255,255,255,0.4); font-family:monospace; font-size:11px; letter-spacing:3px; margin-bottom:14px;">CONVERTIR RUBIES A MONEDAS</div>
+                <div style="color:rgba(255,255,255,0.4); font-family:monospace; font-size:11px; letter-spacing:3px; margin-bottom:14px;">${ct.tituloConvertirGemas ?? 'CONVERTIR RUBIES A MONEDAS'}</div>
                 <div style="display:flex; gap:10px; align-items:center;">
-                    <input id="conv-gem-input" type="number" min="1" step="1" placeholder="ej: 3"
+                    <input id="conv-gem-input" type="number" min="1" step="1" placeholder="${ct.placeholderGemas ?? 'ej: 3'}"
                         style="flex:1; padding:10px 14px; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.15); border-radius:8px; color:white; font-family:monospace; font-size:14px; outline:none;">
-                    <button onclick="convertGems()" style="padding:10px 20px; border:1px solid #ff4d6d; background:rgba(255,77,109,0.1); color:#ff4d6d; font-family:monospace; font-size:12px; border-radius:8px; cursor:pointer; letter-spacing:2px;">CONVERTIR</button>
+                    <button onclick="convertGems()" style="padding:10px 20px; border:1px solid #ff4d6d; background:rgba(255,77,109,0.1); color:#ff4d6d; font-family:monospace; font-size:12px; border-radius:8px; cursor:pointer; letter-spacing:2px;">${ct.botonConvertir ?? 'CONVERTIR'}</button>
                 </div>
                 <div id="conv-gem-result" style="color:rgba(255,255,255,0.3); font-family:monospace; font-size:11px; margin-top:10px;"></div>
             </div>
@@ -5591,19 +5621,24 @@ function openMissionsPanel() {
         });
         document.body.appendChild(modal);
     }
+    const mt = shopTextos('misiones');
+    const rachaTexto = (mt.rachaTemplate ?? 'Racha {n} dia{plural}')
+        .replace('{n}', streak.count)
+        .replace('{plural}', streak.count === 1 ? '' : 's');
+
     modal.innerHTML = `
         <section class="missions-panel">
             <button class="missions-close" onclick="closeMissionsPanel()" type="button">X</button>
             <div class="missions-header">
-                <span>MISIONES DIARIAS</span>
-                <strong>Racha ${streak.count} dia${streak.count === 1 ? '' : 's'}</strong>
+                <span>${mt.tituloPanel ?? 'MISIONES DIARIAS'}</span>
+                <strong>${rachaTexto}</strong>
             </div>
             <div class="missions-grid">
                 ${DAILY_MISSIONS.map(mission => renderMissionCard(mission, state)).join('')}
             </div>
             <div class="missions-streak">
                 <div>
-                    <span>RACHA DE SESION</span>
+                    <span>${mt.rachaSesion ?? 'RACHA DE SESION'}</span>
                     <strong>${streak.count}/7</strong>
                 </div>
                 <div class="missions-streak-track">
@@ -5634,7 +5669,7 @@ function renderMissionCard(mission, state) {
             <div class="mission-progress"><i style="width:${pct}%"></i></div>
             <div class="mission-card-bottom">
                 <small>${renderMissionReward(mission.reward)}</small>
-                <button onclick="claimMissionReward('${mission.id}')" ${ready ? '' : 'disabled'} type="button">${claimed ? 'OK' : 'RECLAMAR'}</button>
+                <button onclick="claimMissionReward('${mission.id}')" ${ready ? '' : 'disabled'} type="button">${claimed ? (shopTextos('misiones').botonReclamado ?? 'OK') : (shopTextos('misiones').botonReclamar ?? 'RECLAMAR')}</button>
             </div>
         </article>
     `;
@@ -5697,16 +5732,17 @@ window.updateMissionBadge = updateMissionBadge;
 function convertCoins() {
     const input = parseInt(document.getElementById('conv-input').value || '0');
     const result = document.getElementById('conv-result');
+    const ct = shopTextos('conversion');
 
     if (input < 100 || input % 100 !== 0) {
-        result.textContent = 'Ingresa un multiplo de 100 (minimo 100)';
+        result.textContent = ct.errorMultiploCoins ?? 'Ingresa un multiplo de 100 (minimo 100)';
         result.style.color = '#ff4444';
         return;
     }
 
     let coins = parseInt(localStorage.getItem('deadCoins') || '0');
     if (coins < input) {
-        result.textContent = '¡No tienes suficientes Dead Coins!';
+        result.textContent = ct.errorSinCoins ?? '¡No tienes suficientes Dead Coins!';
         result.style.color = '#ff4444';
         return;
     }
@@ -5726,23 +5762,25 @@ function convertCoins() {
     document.getElementById('shop-gems').textContent = gems;
     updateMenuHUD();
 
-    result.textContent = `✔ Convertiste ${input} coins en ${gemsGained} gemas`;
+    result.textContent = (ct.exitoCoinsAGemas ?? '✔ Convertiste {input} coins en {ganado} gemas')
+        .replace('{input}', input).replace('{ganado}', gemsGained);
     result.style.color = '#00ff88';
 }
 
 function convertGems() {
     const input = parseInt(document.getElementById('conv-gem-input').value || '0');
     const result = document.getElementById('conv-gem-result');
+    const ct = shopTextos('conversion');
 
     if (input < 1) {
-        result.textContent = 'Ingresa al menos 1 ruby';
+        result.textContent = ct.errorMinimoGemas ?? 'Ingresa al menos 1 ruby';
         result.style.color = '#ff4444';
         return;
     }
 
     let gems = parseInt(localStorage.getItem('gems') || '0');
     if (gems < input) {
-        result.textContent = 'No tienes suficientes rubies';
+        result.textContent = ct.errorSinRubies ?? 'No tienes suficientes rubies';
         result.style.color = '#ff4444';
         return;
     }
@@ -5761,7 +5799,8 @@ function convertGems() {
     document.getElementById('shop-gems').textContent = gems;
     updateMenuHUD();
 
-    result.textContent = `Convertiste ${input} rubies en ${coinsGained} monedas`;
+    result.textContent = (ct.exitoGemasACoins ?? 'Convertiste {input} rubies en {ganado} monedas')
+        .replace('{input}', input).replace('{ganado}', coinsGained);
     result.style.color = '#00ff88';
 }
 

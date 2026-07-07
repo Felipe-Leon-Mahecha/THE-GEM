@@ -1979,6 +1979,9 @@ function showPowerupHelpPanel() {
 
     const stats = getPowerupStats();
     const mostUsed = getMostUsedPowerup();
+    const ayudaTextos = window.GEM_CONFIG?.textos?.ayuda || {};
+    const nivelTpl = ayudaTextos.nivelTemplate || 'Nivel {n}: {texto}';
+    const usosTpl = ayudaTextos.usosTemplate || 'Usos: {n}';
 
     body.innerHTML = POWERUPS_DATA.map(powerup => {
         const usageCount = stats[powerup.id] || 0;
@@ -1991,10 +1994,10 @@ function showPowerupHelpPanel() {
                 <strong>${powerup.name} ${isMostUsed ? '⭐' : ''}</strong>
                 <p>${powerup.base}</p>
                 <div class="powerup-help-levels">
-                    ${powerup.levels.map((level, idx) => `<span>Nivel ${idx + 1}: ${level}</span>`).join('')}
+                    ${powerup.levels.map((level, idx) => `<span>${nivelTpl.replace('{n}', idx + 1).replace('{texto}', level)}</span>`).join('')}
                 </div>
                 <div class="powerup-help-stats">
-                    <span>Usos: ${usageCount}</span>
+                    <span>${usosTpl.replace('{n}', usageCount)}</span>
                 </div>
             </div>
         </div>

@@ -1805,8 +1805,9 @@ window.showGameOverWithRevive = function () {
     window.recordPlayDate?.();
 
     const go = document.getElementById('gameOver');
-    document.getElementById('go-title').textContent = 'NIVEL ' + window.level;
-    document.getElementById('go-sub').textContent = 'INTENTALO DE NUEVO';
+    const goTexts = window.GEM_CONFIG?.textos?.gameOver;
+    document.getElementById('go-title').textContent = (goTexts?.nivelPrefix ?? 'NIVEL ') + window.level;
+    document.getElementById('go-sub').textContent = goTexts?.intentaloDeNuevo ?? 'INTENTALO DE NUEVO';
     renderReviveOffer();
     go.style.display = 'flex';
     void go.offsetHeight;
@@ -1989,43 +1990,6 @@ function winGame() {
     window.updateWinStreak?.(true);
 }
 // NOTA: updateRank(wins) se elimina — lo maneja rank-system.js automáticamente
-
-function maybeAwardLevelChest() {
-    const roll = Math.random();
-    const table = [
-        ['vip', 0.01],
-        ['demon', 0.03],
-        ['epic', 0.07],
-        ['special', 0.16],
-        ['basic', 0.28]
-    ];
-    let acc = 0;
-    let chestId = null;
-    for (const [id, chance] of table) {
-        acc += chance;
-        if (roll < acc) { chestId = id; break; }
-    }
-    if (!chestId) chestId = 'basic';
-    const chest = window.CHESTS_DATA?.find(c => c.id === chestId);
-    if (!chest) return;
-    window.pendingWinChest = chest;
-    const panel = document.getElementById('gameWin');
-    let box = document.getElementById('win-chest-box');
-    if (!box) {
-        box = document.createElement('div');
-        box.id = 'win-chest-box';
-        panel.insertBefore(box, document.getElementById('gw-menu'));
-    }
-    box.innerHTML = `
-        <div class="win-chest-card">
-            <img src="${chest.image}" alt="">
-            <div>GANASTE ${chest.name.toUpperCase()}</div>
-            <button onclick="openWonChest()">ABRIR</button>
-            <button onclick="storeWonChest()">CERRAR</button>
-        </div>
-    `;
-    window.playSfx?.('reward', 0.9);
-}
 
 window.openWonChest = function () {
     if (!window.pendingWinChest || typeof window.showChestResult !== 'function') return;

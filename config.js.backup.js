@@ -30,6 +30,294 @@ const GEM_CONFIG = {
     },
 
     // --------------------------------------------------------
+    //  TEXTOS — Menú principal y Panel de estadísticas
+    //  Cambia cualquier string acá y se actualiza en el juego.
+    //  (Parte 1 de la auditoría de textos editables)
+    // --------------------------------------------------------
+    textos: {
+
+        menu: {
+            clasificacion: 'CLASIFICACIÓN',
+        },
+
+        gameOver: {
+            esferaColapsada: 'ESFERA COLAPSADA',   // "kicker" chico arriba del título
+            nivelPrefix: 'NIVEL ',                  // prefijo antes del número de nivel (el número lo pone main.js)
+            intentaloDeNuevo: 'INTENTALO DE NUEVO', // subtítulo debajo del título
+            reintentar: 'REINTENTAR',
+            niveles: 'NIVELES',
+            menu: 'MENU',
+        },
+
+        gameWin: {
+            menu: '⌂ MENÚ',
+            niveles: 'NIVELES',
+            jugarDeNuevo: '↺ JUGAR DE NUEVO',
+        },
+
+        estadisticas: {
+            tituloSeccion: 'ESTADÍSTICAS DEL JUGADOR',
+            topCombo: 'Top Combo',
+            victorias: 'Victorias',
+            derrotas: 'Derrotas',
+            juegosJugados: 'Juegos jugados',
+            diasJugados: 'Días jugados',
+            monedasActuales: 'Monedas actuales',
+            rubiesActuales: 'Rubies actuales',
+            coleccion: 'Colección',
+            supervivenciaMejor: 'Supervivencia mejor',
+            ultimoAcceso: 'Último acceso',
+            mejorRacha: 'Mejor racha',
+        },
+
+        editarPerfil: {
+            titulo: 'EDITAR PERFIL',
+            labelNombre: 'Nombre de jugador',
+            labelAvatar: 'Elegir avatar',
+            botonCancelar: 'Cancelar',
+            botonGuardar: 'Guardar',
+        },
+
+        opciones: {
+            titulo: 'OPCIONES',
+            botonCerrar: 'CERRAR',
+
+            controles: {
+                titulo: 'CONTROLES',
+                mover: 'Mover',
+                invertirGravedad: 'Invertir gravedad',
+                potenciador1: 'Potenciador slot 1',
+                potenciador2: 'Potenciador slot 2',
+                botonCambiar: 'CAMBIAR CONTROLES',
+                // Textos dinámicos que pinta ui.js según el modo activo:
+                textoAdaptativo: 'Controles adaptativos',
+                textoFijo: 'Controles fijos',
+            },
+
+            reasignarTeclas: {
+                titulo: 'REASIGNAR TECLAS',
+                moverIzquierda: 'Mover Izquierda',
+                moverDerecha: 'Mover Derecha',
+                invertirGravedad: 'Invertir Gravedad',
+                potenciador1: 'Potenciador 1',
+                potenciador2: 'Potenciador 2',
+                botonRestaurar: 'RESTAURAR POR DEFECTO',
+            },
+
+            audio: {
+                titulo: 'AUDIO',
+                musica: 'MÚSICA',
+                efectos: 'EFECTOS',
+            },
+
+            visual: {
+                titulo: 'VISUAL',
+                botonModoRendimiento: 'MODO RENDIMIENTO',
+                // Textos dinámicos que pinta ui.js según el modo activo:
+                textoRendimientoAlto: 'Rendimiento alto',
+                textoVisualesCompletos: 'Visuales completos',
+            },
+
+            controlesCelular: {
+                titulo: 'CONTROLES CELULAR',
+                botonesLaterales: 'BOTONES LATERALES',
+                tamanoBotones: 'TAMAÑO BOTONES',
+                transparencia: 'TRANSPARENCIA',
+                botonGravedad: 'BOTÓN GRAVEDAD',
+                botonGuardar: 'GUARDAR CONFIGURACIÓN',
+            },
+
+            modoPruebasDev: {
+                titulo: 'MODO PRUEBAS (DEV)',
+                // Prefijo del botón de monedas infinitas (ui.js le agrega ": ON"/": OFF")
+                monedasInfinitasPrefix: 'MONEDAS INFINITAS',
+            },
+        },
+
+        rangos: {
+            tituloPantalla: 'CAMINO DE RANGOS',
+            botonVolver: '← VOLVER',
+            labelExperiencia: 'EXPERIENCIA',
+            sufijoXP: 'XP',                  // se usa junto al número de XP en varios lugares
+            xpMaximo: '¡Máximo!',            // se muestra cuando ya no hay siguiente rango
+            badgeActual: 'ACTUAL',           // etiqueta sobre el nodo donde está el jugador
+            mapaCompleto: '¡MAPA COMPLETO!', // aparece en la flecha para pasar al siguiente mapa
+
+            // Popup que aparece al reclamar una recompensa del camino
+            recompensa: {
+                tituloRango: '¡RANGO DESBLOQUEADO!',
+                tituloNodo: '¡RECOMPENSA DEL CAMINO!',
+                subtituloRango: 'Has alcanzado un nuevo rango',
+                subtituloNodo: 'Nodo del camino desbloqueado',
+                botonReclamarSkin: 'RECLAMAR SKIN',
+                botonReclamar: 'RECLAMAR',
+            },
+        },
+
+        // ── TIENDA NORMAL (Parte 4 de la auditoría) ──
+        // No incluye: Tienda VIP, Pase Ruby, Regalo diario ni Cofres
+        // (esas tienen o tendrán su propio bloque en el checklist).
+        // Los nombres/rarezas/textos de cada skin, banner, trail, emote
+        // o misión individual siguen viviendo en sus arreglos de datos
+        // (SKINS_DATA, BANNERS_DATA, etc. en shop.js) — son catálogo del
+        // juego, no "textos de UI", así que no se movieron acá.
+        tienda: {
+
+            // Sidebar izquierdo (fijo en index.html)
+            sidebar: {
+                titulo: 'TIENDA',
+                botonVolver: '← VOLVER',
+                labelEstandarte: 'ESTANDARTE',
+                labelRubies: 'RUBIES',
+                labelCoins: 'COINS',
+                misionesTitulo: 'MISIONES',
+                misionesSubtitulo: 'Diarias y racha',
+                labelEquipado: 'EQUIPADO',
+            },
+
+            // Textos compartidos por varias páginas de la tienda
+            comun: {
+                botonVolver: '← VOLVER',       // header de cada sub-página (skins/banners/emotes/conversión)
+                proximamente: 'PRÓXIMAMENTE',  // sección aún sin implementar
+                monedaRubies: 'rubies',        // usado en frases tipo "por 50 rubies"
+                monedaMonedas: 'monedas',      // usado en frases tipo "por 50 monedas"
+            },
+
+            // Modal genérico de compra/confirmación (showShopModal)
+            modal: {
+                kickerDefault: 'THE GEM',      // texto pequeño de arriba si no se especifica otro
+                fallbackImagen: 'PNG',         // texto que se muestra si el item no tiene imagen
+                botonCerrarX: 'X',
+                botonCerrarDefault: 'CERRAR',
+                botonSi: 'SI',
+                botonNo: 'NO',
+                // {monto} y {moneda} se reemplazan por el precio y "rubies"/"monedas"
+                preguntaCompraTemplate: '¿Seguro que quieres comprar por {monto} {moneda}?',
+                kickerConfirmarCompra: 'CONFIRMAR COMPRA',
+            },
+
+            // Página de Skins
+            skins: {
+                titulo: 'SKINS',
+                botonEquipar: 'EQUIPAR',
+                botonEquipada: '✔ EQUIPADA',
+                botonDirigirVIP: 'DIRIGIR A TIENDA VIP',
+                labelSoloVIP: 'SOLO EN TIENDA VIP',
+                labelTrofeo: 'TROFEO',
+                labelLegendario: 'LEGENDARIO',
+                labelFragmentos: 'FRAGMENTOS',        // fallback cuando no hay barra de fragmentos
+                sufijoFragmentos: 'FRAGMENTOS',        // "{n} FRAGMENTOS" bajo la carta
+            },
+
+            // Página de Banners
+            banners: {
+                titulo: 'BANNERS',
+                botonEquipar: 'EQUIPAR',
+                botonEquipado: 'EQUIPADO',
+                botonSoloVIP: 'SOLO EN TIENDA VIP',
+                labelPortada: 'PORTADA',              // placeholder cuando el banner no tiene imagen
+                labelVipPaseRuby: 'VIP / PASE RUBY',
+                labelNormal: 'NORMAL',
+            },
+
+            // Página de Emotes
+            emotes: {
+                titulo: 'EMOTES',
+                botonUsar: 'USAR',
+                botonActivo: 'ACTIVO',
+                botonEnElPase: 'EN EL PASE',
+                labelFragmentos: 'FRAGMENTOS',
+                placeholderSinImagen: 'PNG',
+                kickerConfirmarCompra: 'CONFIRMAR EMOTE',
+                alertaSinRubies: 'No tienes suficientes rubies.',
+                alertaSinMonedas: 'No tienes suficientes monedas.',
+            },
+
+            // Página de Trails (carrusel pantalla completa)
+            trails: {
+                titulo: 'TRAILS',
+                botonVolver: '← VOLVER',
+                labelCoins: 'COINS',
+                labelGems: 'GEMS',
+                labelSeleccionado: 'SELECCIONADO',
+                labelTrailExclusivo: 'Trail exclusivo',
+                botonEquipar: 'EQUIPAR',
+                botonEquipado: '✔ EQUIPADO',
+                botonComprar: 'COMPRAR',
+                labelTienes: '✔ TIENES',
+                labelGratis: '✔ GRATIS',
+                kickerConfirmarCompra: 'CONFIRMAR TRAIL',
+                fallbackImagen: 'TRAIL',
+                alertaSinFondos: 'No tienes suficientes monedas/gemas',
+                alertaSinGemas: '¡No tienes suficientes gemas!',
+                alertaSinCoins: '¡No tienes suficientes Dead Coins!',
+            },
+
+            // Página de Conversión de monedas
+            conversion: {
+                titulo: 'CONVERSIÓN',
+                labelTasaCambio: 'TASA DE CAMBIO',
+                textoTasa: '100 = 1 / 1 = 30',
+                labelDeadCoins: 'DEAD COINS',
+                labelGemas: 'GEMAS',
+                tituloConvertirCoins: 'CONVERTIR COINS → GEMAS',
+                placeholderCoins: 'ej: 100',
+                tituloConvertirGemas: 'CONVERTIR RUBIES A MONEDAS',
+                placeholderGemas: 'ej: 3',
+                botonConvertir: 'CONVERTIR',
+                // Mensajes de resultado/error de la conversión
+                errorMultiploCoins: 'Ingresa un multiplo de 100 (minimo 100)',
+                errorSinCoins: '¡No tienes suficientes Dead Coins!',
+                exitoCoinsAGemas: '✔ Convertiste {input} coins en {ganado} gemas',
+                errorMinimoGemas: 'Ingresa al menos 1 ruby',
+                errorSinRubies: 'No tienes suficientes rubies',
+                exitoGemasACoins: 'Convertiste {input} rubies en {ganado} monedas',
+            },
+
+            // Panel de Misiones (se abre desde el botón del sidebar)
+            misiones: {
+                tituloPanel: 'MISIONES DIARIAS',
+                // {n} = número de días, {plural} = '' o 's'
+                rachaTemplate: 'Racha {n} dia{plural}',
+                rachaSesion: 'RACHA DE SESION',
+                botonReclamar: 'RECLAMAR',
+                botonReclamado: 'OK',
+            },
+        },
+
+    },
+
+    // --------------------------------------------------------
+    //  RANGOS — Nombre y color de cada uno de los 17 rangos
+    //  El emoji, la imagen y el XP necesario NO van aquí (son
+    //  balance/datos del juego) — se manejan en rank-system.js.
+    //  Solo pon aquí los rangos que quieras renombrar o
+    //  recolorear; si un id no aparece, se usa el valor original.
+    // --------------------------------------------------------
+    rangos: {
+        nombres: {
+            // 0: 'Principiante', 1: 'Cobre', 2: 'Hierro', ... 17: 'The Gem'
+        },
+        colores: {
+            // 0: '#7a7a7a', 1: '#b87333', ...
+        },
+    },
+
+    // --------------------------------------------------------
+    //  IMÁGENES DE BOTONES — Menú principal
+    //  Cambia la ruta acá para usar otro PNG sin tocar el HTML
+    // --------------------------------------------------------
+    imagenesBotones: {
+        menu: {
+            jugar: 'assets/Imagenes/Botones menu/JUGAR.png',
+            tienda: 'assets/Imagenes/Botones menu/TIENDA.png',
+            inventario: 'assets/Imagenes/Botones menu/INVENTARIO.png',
+            logros: 'assets/Imagenes/Botones menu/LOGROS.png',
+            ayuda: 'assets/Imagenes/Botones menu/AYUDA.png',
+        },
+    },
+
+    // --------------------------------------------------------
     //  SIDEBAR DE LA TIENDA — Columna izquierda
     // --------------------------------------------------------
     tiendaSidebar: {
@@ -953,12 +1241,142 @@ function applyRankMapConfig() {
 }
 applyRankMapConfig();
 
+// ── Aplicar textos (Menú + Estadísticas) ──
+function applyTextos() {
+    const t = GEM_CONFIG.textos;
+    if (!t) return;
+
+    // Helper: setea textContent solo si el elemento existe y el valor viene definido
+    const set = (id, txt) => {
+        const el = document.getElementById(id);
+        if (el && txt !== undefined) el.textContent = txt;
+    };
+
+    // Menú principal
+    set('txt-menu-clasificacion', t.menu.clasificacion);
+
+    // Pantalla de Game Over
+    set('txt-go-kicker', t.gameOver.esferaColapsada);
+    set('go-retry', t.gameOver.reintentar);
+    set('go-levels', t.gameOver.niveles);
+    set('go-menu', t.gameOver.menu);
+
+    // Pantalla de victoria (Game Win)
+    set('gw-menu', t.gameWin.menu);
+    set('gw-levels', t.gameWin.niveles);
+    set('gw-retry', t.gameWin.jugarDeNuevo);
+
+    // Panel de estadísticas del jugador
+    set('txt-profile-stats-title', t.estadisticas.tituloSeccion);
+    set('txt-stat-label-combo', t.estadisticas.topCombo);
+    set('txt-stat-label-wins', t.estadisticas.victorias);
+    set('txt-stat-label-losses', t.estadisticas.derrotas);
+    set('txt-stat-title-games', t.estadisticas.juegosJugados);
+    set('txt-stat-title-days', t.estadisticas.diasJugados);
+    set('txt-stat-title-coins', t.estadisticas.monedasActuales);
+    set('txt-stat-title-gems', t.estadisticas.rubiesActuales);
+    set('txt-stat-title-collection', t.estadisticas.coleccion);
+    set('txt-stat-title-survival', t.estadisticas.supervivenciaMejor);
+    set('txt-stat-title-lastseen', t.estadisticas.ultimoAcceso);
+    set('txt-stat-title-streak', t.estadisticas.mejorRacha);
+
+    // Modal de editar perfil
+    set('txt-profileedit-title', t.editarPerfil.titulo);
+    set('txt-profileedit-label-name', t.editarPerfil.labelNombre);
+    set('txt-profileedit-label-avatar', t.editarPerfil.labelAvatar);
+    set('profileEditCancelBtn', t.editarPerfil.botonCancelar);
+    set('profileEditSaveBtn', t.editarPerfil.botonGuardar);
+
+    // Panel de Opciones — textos estáticos (los dinámicos como modo controles,
+    // modo rendimiento y monedas infinitas los pinta ui.js leyendo del mismo config)
+    const o = t.opciones;
+    if (o) {
+        set('txt-opt-titulo', o.titulo);
+        set('txt-opt-btn-cerrar', o.botonCerrar);
+
+        set('txt-opt-controles-titulo', o.controles.titulo);
+        set('txt-opt-key-mover', o.controles.mover);
+        set('txt-opt-key-gravedad', o.controles.invertirGravedad);
+        set('txt-opt-key-power1', o.controles.potenciador1);
+        set('txt-opt-key-power2', o.controles.potenciador2);
+        set('txt-opt-btn-cambiar-controles', o.controles.botonCambiar);
+
+        set('txt-opt-reasignar-titulo', o.reasignarTeclas.titulo);
+        set('txt-opt-keybind-izquierda', o.reasignarTeclas.moverIzquierda);
+        set('txt-opt-keybind-derecha', o.reasignarTeclas.moverDerecha);
+        set('txt-opt-keybind-gravedad', o.reasignarTeclas.invertirGravedad);
+        set('txt-opt-keybind-power1', o.reasignarTeclas.potenciador1);
+        set('txt-opt-keybind-power2', o.reasignarTeclas.potenciador2);
+        set('txt-opt-btn-restaurar', o.reasignarTeclas.botonRestaurar);
+
+        set('txt-opt-audio-titulo', o.audio.titulo);
+        set('txt-opt-audio-musica', o.audio.musica);
+        set('txt-opt-audio-efectos', o.audio.efectos);
+
+        set('txt-opt-visual-titulo', o.visual.titulo);
+        set('txt-opt-btn-rendimiento', o.visual.botonModoRendimiento);
+
+        set('txt-opt-mobile-titulo', o.controlesCelular.titulo);
+        set('txt-opt-mobile-lateral', o.controlesCelular.botonesLaterales);
+        set('txt-opt-mobile-tamano', o.controlesCelular.tamanoBotones);
+        set('txt-opt-mobile-transparencia', o.controlesCelular.transparencia);
+        set('txt-opt-mobile-boton-gravedad', o.controlesCelular.botonGravedad);
+        set('txt-opt-btn-guardar-touch', o.controlesCelular.botonGuardar);
+
+        set('txt-opt-dev-titulo', o.modoPruebasDev.titulo);
+    }
+
+    // Sidebar de la tienda normal — textos estáticos del HTML
+    // (los textos dinámicos de cada página de la tienda los pinta shop.js
+    // leyendo del mismo config, ver GEM_CONFIG.textos.tienda)
+    const ts = t.tienda?.sidebar;
+    if (ts) {
+        set('txt-shop-titulo', ts.titulo);
+        set('txt-shop-btn-volver', ts.botonVolver);
+        set('txt-shop-label-estandarte', ts.labelEstandarte);
+        set('txt-shop-label-rubies', ts.labelRubies);
+        set('txt-shop-label-coins', ts.labelCoins);
+        set('txt-shop-misiones-titulo', ts.misionesTitulo);
+        set('txt-shop-misiones-subtitulo', ts.misionesSubtitulo);
+        set('txt-shop-label-equipado', ts.labelEquipado);
+    }
+
+    // Camino de Rangos — textos estáticos del HTML
+    // (los dinámicos como "ACTUAL", "¡MAPA COMPLETO!" y el popup de recompensa
+    // los pinta rank-system.js leyendo del mismo config, ver GEM_CONFIG.textos.rangos)
+    const r = t.rangos;
+    if (r) {
+        set('rs-title', r.tituloPantalla);
+        set('txt-rangos-boton-volver', r.botonVolver);
+        set('txt-rangos-label-experiencia', r.labelExperiencia);
+        set('txt-rangos-xp-unidad', r.sufijoXP);
+        set('txt-rangos-hero-xp-sufijo', r.sufijoXP);
+    }
+
+    // Imágenes de los botones del menú principal
+    const img = GEM_CONFIG.imagenesBotones?.menu;
+    const setSrc = (id, src) => {
+        const el = document.getElementById(id);
+        if (el && src !== undefined) el.src = src;
+    };
+    if (img) {
+        setSrc('img-btn-play', img.jugar);
+        setSrc('img-btn-shop', img.tienda);
+        setSrc('img-btn-inventory', img.inventario);
+        setSrc('img-btn-achievements', img.logros);
+        setSrc('img-btn-help', img.ayuda);
+    }
+}
+
 // Exponer globalmente para que otros scripts puedan re-aplicar si necesitan
+window.GEM_CONFIG = GEM_CONFIG;
 window.applyGemConfig = applyConfig;
 window.applyRankMapConfig = applyRankMapConfig;
+window.applyTextos = applyTextos;
 
 // Aplicar al cargar
 applyConfig();
+applyTextos();
 
 // Re-aplicar si rota la pantalla o cambia el tamaño de ventana
 window.matchMedia('(max-width: 600px)').addEventListener('change', applyConfig);

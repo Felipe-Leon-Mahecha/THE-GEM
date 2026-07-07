@@ -80,8 +80,12 @@
     }
 
     // ── Render de la lista (4º en adelante) ────────
-    function renderList(rest, myUID) {
-        if (!rest.length) return `<p class="lb-empty">Solo hay 3 guerreros por ahora. ¡Sé el 4to!</p>`;
+    function renderList(rest, myUID, totalPlayers) {
+        if (!rest.length) {
+            const n = totalPlayers || 0;
+            const plural = n === 1 ? 'guerrero registrado' : 'guerreros registrados';
+            return `<p class="lb-empty">Solo hay ${n} ${plural} por ahora. ¡Sé el siguiente!</p>`;
+        }
         return rest.map((p, i) => {
             const rank = getRankFromXP(p.xp);
             const isMe = p.uid === myUID;
@@ -165,7 +169,7 @@
             const rest = players.slice(3);
 
             podiumEl.innerHTML = renderPodium(top3);
-            listEl.innerHTML = renderList(rest, myUID);
+            listEl.innerHTML = renderList(rest, myUID, players.length);
 
             // Scroll suave a la fila del jugador actual
             if (myUID) {

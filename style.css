@@ -9415,6 +9415,99 @@ h1 {
     font-size: var(--shop-equipped-rarity-font, 10px);
 }
 
+/* =====================================================
+   SHOP SIDEBAR — overrides para celular (leen las variables
+   -mobile que arma layoutconfig.js). Antes de este bloque, estas
+   variables se calculaban bien pero NUNCA se leían en ningún lado,
+   así que el sidebar de la tienda usaba siempre el valor de
+   escritorio, sin importar lo que configuraras para mobile.
+   ===================================================== */
+body.is-touch-device .shop-sidebar {
+    width: var(--shop-sidebar-width-mobile, 100%);
+}
+
+body.is-touch-device .shop-sidebar-header {
+    padding: var(--shop-header-padding-mobile, 14px 14px 10px);
+}
+
+body.is-touch-device .shop-sidebar-title {
+    font-size: var(--shop-title-font-mobile, 14px);
+}
+
+body.is-touch-device .shop-sidebar-back {
+    padding: var(--shop-back-padding-mobile, 8px);
+    font-size: var(--shop-back-font-mobile, 9px);
+}
+
+body.is-touch-device .shop-sidebar-profile-section {
+    padding: var(--shop-profile-padding-mobile, 12px 12px 14px);
+}
+
+body.is-touch-device .shop-sidebar-label {
+    font-size: var(--shop-label-font-mobile, 8px);
+}
+
+body.is-touch-device .shop-profile-banner {
+    height: var(--shop-banner-height-mobile, 74px);
+    border-radius: var(--shop-banner-radius-mobile, 10px);
+    padding: var(--shop-banner-padding-mobile, 8px);
+}
+
+body.is-touch-device .shop-profile-avatar {
+    width: var(--shop-avatar-size-mobile, 28px);
+    height: var(--shop-avatar-size-mobile, 28px);
+}
+
+body.is-touch-device .shop-profile-name {
+    font-size: var(--shop-profile-name-font-mobile, 10px);
+}
+
+body.is-touch-device .shop-profile-level {
+    font-size: var(--shop-profile-level-font-mobile, 8px);
+}
+
+body.is-touch-device .shop-profile-banner-name {
+    font-size: var(--shop-banner-name-font-mobile, 7px);
+}
+
+body.is-touch-device .shop-sidebar-currency {
+    gap: var(--shop-currency-gap-mobile, 6px);
+}
+
+body.is-touch-device .shop-currency-row {
+    padding: var(--shop-currency-padding-mobile, 7px 10px);
+}
+
+body.is-touch-device .shop-currency-label {
+    font-size: var(--shop-currency-label-font-mobile, 9px);
+}
+
+body.is-touch-device .shop-currency-icon {
+    width: var(--shop-currency-icon-size-mobile, 14px);
+    height: var(--shop-currency-icon-size-mobile, 14px);
+}
+
+body.is-touch-device .shop-currency-value {
+    font-size: var(--shop-currency-value-font-mobile, 12px);
+}
+
+body.is-touch-device .shop-sidebar-equipped {
+    padding: var(--shop-equipped-padding-mobile, 16px 18px);
+}
+
+body.is-touch-device .shop-equipped-preview {
+    width: var(--shop-equipped-size-mobile, 30px);
+    height: var(--shop-equipped-size-mobile, 30px);
+}
+
+body.is-touch-device .shop-equipped-name {
+    font-size: var(--shop-equipped-name-font-mobile, 11px);
+}
+
+body.is-touch-device .shop-equipped-rarity {
+    font-size: var(--shop-equipped-rarity-font-mobile, 9px);
+}
+
 
 /* Panel especial para trofeos */
 .shop-card.trophy-skin {
