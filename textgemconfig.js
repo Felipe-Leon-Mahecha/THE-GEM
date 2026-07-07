@@ -147,6 +147,47 @@ const GEM_CONFIG = {
         // ── Panel de Logros ──
         // 'txt-achievements-titulo': { color: null, fuente: null },
 
+        // ── Inventario — Topnav (Config Parte 1) ──
+        // tamano acepta cualquier valor CSS de font-size ('14px', '1.2rem', etc.)
+        // 'inv-brand-title': { color: null, fuente: null, tamano: null },
+        // 'inv-brand-sub': { color: null, fuente: null, tamano: null },
+        // 'inv-back-btn-icon': { color: null, fuente: null, tamano: null },
+        // 'inv-nav-skins': { color: null, fuente: null, tamano: null },
+        // 'inv-nav-trails': { color: null, fuente: null, tamano: null },
+        // 'inv-nav-banners': { color: null, fuente: null, tamano: null },
+        // 'inv-nav-emotes': { color: null, fuente: null, tamano: null },
+        // 'inv-nav-powerups': { color: null, fuente: null, tamano: null },
+        // 'inv-nav-cofres': { color: null, fuente: null, tamano: null },
+
+        // ── Inventario — Hero (Config Parte 2) ──
+        // 'inv-equip-label': { color: null, fuente: null, tamano: null },
+        // 'inv-equip-rarity': { color: null, fuente: null, tamano: null },
+        // 'inv-p-lbl-skins': { color: null, fuente: null, tamano: null },
+        // 'inv-p-num-skins': { color: null, fuente: null, tamano: null },
+        // 'inv-p-lbl-trails': { color: null, fuente: null, tamano: null },
+        // 'inv-p-num-trails': { color: null, fuente: null, tamano: null },
+        // 'inv-p-lbl-total': { color: null, fuente: null, tamano: null },
+        // 'inv-p-num-total': { color: null, fuente: null, tamano: null },
+
+        // ── Inventario — Título de sección (Config Parte 3) ──
+        // 'inv-section-title': { color: null, fuente: null, tamano: null },
+
+        // ── Inventario — Emotes (Config Parte 4) ──
+        // 'inv-empty-emotes': { color: null, fuente: null, tamano: null },
+
+        // ── Inventario — Trails (Config Parte 5) ──
+        // 'inv-empty-trails': { color: null, fuente: null, tamano: null },
+
+        // ── Inventario — Banners (Config Parte 6) ──
+        // 'inv-profile-banner-kicker': { color: null, fuente: null, tamano: null },
+
+        // ── Inventario — Potenciadores (Config Parte 8) ──
+        // 'inv-powerups-unavailable': { color: null, fuente: null, tamano: null },
+        // 'inv-empty-powerups': { color: null, fuente: null, tamano: null },
+
+        // ── Inventario — Cofres (Config Parte 9) ──
+        // 'inv-empty-cofres': { color: null, fuente: null, tamano: null },
+
         // ── Panel de Ayuda (Guía de Potenciadores) ──
         // 'txt-help-titulo': { color: null, fuente: null },
 
@@ -430,6 +471,87 @@ const GEM_CONFIG = {
                 exitoGemasACoins: 'Convertiste {input} rubies en {ganado} monedas',
             },
 
+            // ── INVENTARIO (Config — Parte 1: Topnav) ──
+            // Los nombres/rarezas de cada skin/trail/banner/emote individual
+            // siguen en sus arreglos de datos (igual que en la tienda normal).
+            // Esto es solo el texto de la barra superior del panel.
+            inventario: {
+                topnav: {
+                    brandTitle: 'INVENTARIO',
+                    brandSub: 'THE GEM',
+                    pillSkins: 'SKINS',
+                    pillTrails: 'TRAILS',
+                    pillBanners: 'BANNERS',
+                    pillEmotes: 'EMOTES',
+                    pillPowerups: 'POTENCIADORES',
+                    pillCofres: 'COFRES',
+                },
+                // Barra hero (skin equipada + progreso SKINS/TRAILS/TOTAL)
+                hero: {
+                    labelEquipada: 'SKIN EQUIPADA',
+                    labelLegendario: 'LEGENDARIO',
+                    labelSkins: 'SKINS',
+                    labelTrails: 'TRAILS',
+                    labelTotal: 'TOTAL',
+                },
+                // Chips de filtro por rareza/categoría (Config Parte 3)
+                filtros: {
+                    chipTodas: 'TODAS',       // chip para quitar el filtro
+                    chipInicial: 'INICIAL',   // rareza DEFAULT de banners
+                    chipBasico: 'BÁSICO',     // rareza BASICO de banners
+                },
+                // Título de cada sección, arriba de los filtros (Config Parte 3)
+                // {n} se reemplaza por la cantidad de items obtenidos/guardados
+                titulos: {
+                    skinsTemplate: 'SKINS OBTENIDAS — {n}',
+                    trailsTemplate: 'TRAILS OBTENIDOS — {n} EFECTOS',
+                    bannersTemplate: 'BANNERS OBTENIDOS — {n}',
+                    emotesTemplate: 'EMOTES OBTENIDOS — {n}',
+                    powerupsTemplate: 'POTENCIADORES OBTENIDOS — {n}',
+                    cofresTemplate: 'COFRES GUARDADOS — {n}',
+                },
+                // Cards de SKINS (Config Parte 4)
+                skins: {
+                    tooltipEquipada: 'Equipada',           // title="" cuando ya está equipada
+                    tooltipClickEquipar: 'Click para equipar', // title="" cuando no está equipada
+                },
+                // Cards de EMOTES (Config Parte 4 — combinada con Skins por ser casi idénticas)
+                emotes: {
+                    tooltipEquipado: 'Equipado',
+                    tooltipClickEquipar: 'Click para equipar',
+                    // {br} se reemplaza por un salto de línea
+                    emptyState: 'NO TIENES EMOTES{br}EN ESTA CATEGORÍA',
+                },
+                // Cards de TRAILS + carrusel (Config Parte 5)
+                trails: {
+                    emptyState: 'NO TIENES TRAILS{br}EN ESTA CATEGORÍA',
+                    labelCompleto: '★ COMPLETO',      // cuando ya tienes todos los colores de un trail
+                    labelEquipadoPrefix: '✔ EQUIPADO · ', // seguido del nombre del color equipado
+                },
+                // Cards de BANNERS + preview de perfil (Config Parte 6)
+                banners: {
+                    tooltipEquipado: 'Equipado',
+                    tooltipClickEquipar: 'Click para equipar',
+                    labelBannerEquipado: 'BANNER EQUIPADO', // kicker sobre el preview de perfil
+                    fallbackNombreJugador: 'Jugador',        // si no hay nombre guardado
+                    fallbackNombreBanner: 'Banner',          // si el banner no tiene nombre
+                },
+                // Cards de POTENCIADORES (Config Parte 8)
+                powerups: {
+                    // {br} se reemplaza por un salto de línea
+                    unavailable: 'POTENCIADORES{br}NO DISPONIBLES', // si powerups.js no cargó
+                    emptyState: 'NO TIENES POTENCIADORES{br}EN ESTA CATEGORÍA',
+                    // {n} se reemplaza por el número de nivel
+                    labelNivel: 'NIVEL {n}',
+                    labelBloqueado: 'BLOQUEADO',
+                },
+                // Cards de COFRES (Config Parte 9)
+                cofres: {
+                    emptyState: 'NO TIENES COFRES{br}GUARDADOS',
+                    botonAbrir: 'ABRIR',
+                },
+            },
+
             // Panel de Misiones (se abre desde el botón del sidebar)
             misiones: {
                 tituloPanel: 'MISIONES DIARIAS',
@@ -484,7 +606,7 @@ const GEM_CONFIG = {
 
 };
 
-// ── Aplicar textos (Menú + Estadísticas + Opciones + Tienda sidebar + Rangos + imágenes de botones) ──
+// ── Aplicar textos (Menú + Estadísticas + Opciones + Tienda sidebar + Inventario topnav + Rangos + imágenes de botones) ──
 // ── Aplicar textos (Menú + Estadísticas) ──
 function applyTextos() {
     const t = GEM_CONFIG.textos;
@@ -585,6 +707,22 @@ function applyTextos() {
         set('txt-shop-label-equipado', ts.labelEquipado);
     }
 
+    // Inventario — topnav (Config Parte 1)
+    // (los textos dinámicos de cada sección — título "SKINS OBTENIDAS — N",
+    // rarezas, nombres de items, etc. — los sigue pintando shop.js;
+    // esto es solo la barra superior fija)
+    const invTop = t.tienda?.inventario?.topnav;
+    if (invTop) {
+        set('inv-brand-title', invTop.brandTitle);
+        set('inv-brand-sub', invTop.brandSub);
+        set('inv-nav-skins', invTop.pillSkins);
+        set('inv-nav-trails', invTop.pillTrails);
+        set('inv-nav-banners', invTop.pillBanners);
+        set('inv-nav-emotes', invTop.pillEmotes);
+        set('inv-nav-powerups', invTop.pillPowerups);
+        set('inv-nav-cofres', invTop.pillCofres);
+    }
+
     // Camino de Rangos — textos estáticos del HTML
     // (los dinámicos como "ACTUAL", "¡MAPA COMPLETO!" y el popup de recompensa
     // los pinta rank-system.js leyendo del mismo config, ver GEM_CONFIG.textos.rangos)
@@ -654,6 +792,9 @@ function aplicarEstilosTexto() {
             el.style.color = color;
         }
         el.style.fontFamily = cfg.fuente || '';
+        // tamano (opcional): cualquier valor CSS de font-size ('14px', '1.2rem', etc.)
+        // Si no se define (o queda null), el texto conserva su tamaño normal del CSS.
+        el.style.fontSize = cfg.tamano || '';
     });
 }
 

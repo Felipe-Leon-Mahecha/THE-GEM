@@ -755,6 +755,16 @@ const CHESTS_DATA = [
 ];
 window.CHESTS_DATA = CHESTS_DATA;
 
+// Colores por cofre (no tienen campo rarity propio, se reusan los colores de RARITY_COLORS por tier)
+const CHEST_RARITY_COLORS = {
+    basic: RARITY_COLORS.BASICA,
+    special: RARITY_COLORS.ESPECIAL,
+    epic: RARITY_COLORS.EPICA,
+    demon: RARITY_COLORS.DEMON,
+    vip: RARITY_COLORS.VIP,
+    luck: '#ffd700'
+};
+
 // Assets del pase de rubies (Ruby Pass)
 // RUBY_PASS_ASSET_SLOT: reemplaza las rutas null con tus archivos PNG finales
 const RUBY_PASS_ASSETS = {
@@ -3557,6 +3567,7 @@ function openInventory() {
         }
     }, 450);
 
+    invActiveRarityFilter = { skins: 'TODAS', trails: 'TODAS', banners: 'TODAS', emotes: 'TODAS', powerups: 'TODAS' };
     showInventorySection('skins');
 }
 
@@ -3586,30 +3597,220 @@ function closeInventory() {
     }, 400);
 }
 
+// Orden y color de rareza para los chips de filtro del inventario
+const INV_RARITY_ORDER = ['BASICA', 'ESPECIAL', 'EPICA', 'DEMON', 'VIP'];
+
+let invActiveRarityFilter = { skins: 'TODAS', trails: 'TODAS', banners: 'TODAS', emotes: 'TODAS', powerups: 'TODAS' };
+const INV_BANNER_RARITY_ORDER = ['DEFAULT', 'BASICO', 'ESPECIAL', 'EPICA', 'DEMON', 'VIP'];
+
+function invGetSkinsProgress() {
+    const owned = getAllShopSkins().filter(s => isSkinOwned(s) && !s.soon);
+    const total = getAllShopSkins().filter(s => !s.soon);
+    return { owned: owned.length, total: total.length };
+}
+
+function invGetTrailsProgress() {
+    let owned = 0;
+    const total = TRAILS_DATA.length * TRAIL_COLOR_LIST.length;
+    TRAILS_DATA.forEach(t => {
+        TRAIL_COLOR_LIST.forEach(c => {
+            if (localStorage.getItem(`trail_${t.id}_${c.id}`) === 'true') owned++;
+        });
+    });
+    return { owned, total };
+}
+
+function invGetBannersProgress() {
+    const all = [...BANNERS_DATA, ...VIP_BANNER_PLACEHOLDERS].filter((b, i, list) => list.findIndex(c => c.id === b.id) === i);
+    const owned = all.filter(b => b.id === 'Banner_Deafult' || localStorage.getItem('banner_' + b.id) === 'true' || b.owned === true);
+    return { owned: owned.length, total: all.length };
+}
+
+function invGetEmotesProgress() {
+    const owned = EMOTES_DATA.filter(isEmoteOwned);
+    return { owned: owned.length, total: EMOTES_DATA.length };
+}
+
+function renderInventoryHero(section) {
+    const equippedId = localStorage.getItem('equippedSkin') || 'cyan';
+    const equippedSkin = getAllShopSkins().find(s => s.id === equippedId) || getAllShopSkins()[0];
+    const isTrophy = TROPHY_IDS.includes(equippedSkin.id);
+    const rarityColor = isTrophy ? '#8a2be2' : (RARITY_COLORS[equippedSkin.rarity] || '#aaa');
+    const previewImage = equippedSkin.image || equippedSkin.imageRight || equippedSkin.imageLeft;
+
+    const skinsP = invGetSkinsProgress();
+    const trailsP = invGetTrailsProgress();
+    const bannersP = invGetBannersProgress();
+    const emotesP = invGetEmotesProgress();
+
+    const totalOwned = skinsP.owned + trailsP.owned + bannersP.owned + emotesP.owned;
+    const totalAll = skinsP.total + trailsP.total + bannersP.total + emotesP.total;
+    const totalPct = totalAll ? Math.round((totalOwned / totalAll) * 100) : 0;
+    const skinsPct = skinsP.total ? Math.round((skinsP.owned / skinsP.total) * 100) : 0;
+    const trailsPct = trailsP.total ? Math.round((trailsP.owned / trailsP.total) * 100) : 0;
+
+    const h = shopTextos('inventario').hero || {};
+
+    return `
+        <div class="inv-equip-stage" style="--inv-rarity-color:${rarityColor};">
+            <div class="inv-ring"></div>
+            <div class="inv-ring inv-r2"></div>
+            <div class="inv-equip-core">
+                ${previewImage ? `<img src="${previewImage}" alt="">` : (equippedSkin.emoji || '⬤')}
+            </div>
+        </div>
+        <div class="inv-equip-info">
+            <div class="inv-equip-label" id="inv-equip-label">${h.labelEquipada ?? 'SKIN EQUIPADA'}</div>
+            <div class="inv-equip-name">${equippedSkin.name}</div>
+            <div class="inv-equip-rarity" id="inv-equip-rarity" style="--inv-rarity-color:${rarityColor};">★ ${isTrophy ? (h.labelLegendario ?? 'LEGENDARIO') : equippedSkin.rarity}</div>
+        </div>
+        <div class="inv-hero-progress">
+            <div class="inv-p-item">
+                <div class="inv-p-num" id="inv-p-num-skins">${skinsP.owned}/${skinsP.total}</div><div class="inv-p-lbl" id="inv-p-lbl-skins">${h.labelSkins ?? 'SKINS'}</div>
+                <div class="inv-p-bar-track"><div class="inv-p-bar-fill" style="width:${skinsPct}%; background:linear-gradient(90deg,#0891b2,#22d3ee);"></div></div>
+            </div>
+            <div class="inv-p-item">
+                <div class="inv-p-num" id="inv-p-num-trails">${trailsP.owned}/${trailsP.total}</div><div class="inv-p-lbl" id="inv-p-lbl-trails">${h.labelTrails ?? 'TRAILS'}</div>
+                <div class="inv-p-bar-track"><div class="inv-p-bar-fill" style="width:${trailsPct}%; background:linear-gradient(90deg,#a16207,#eab308);"></div></div>
+            </div>
+            <div class="inv-p-item">
+                <div class="inv-p-num" id="inv-p-num-total">${totalPct}%</div><div class="inv-p-lbl" id="inv-p-lbl-total">${h.labelTotal ?? 'TOTAL'}</div>
+                <div class="inv-p-bar-track"><div class="inv-p-bar-fill" style="width:${totalPct}%; background:linear-gradient(90deg,#6d28d9,#a78bfa);"></div></div>
+            </div>
+        </div>
+    `;
+}
+
+function renderInventorySkinCard(s, equipped) {
+    const isEquipped = equipped === s.id;
+    const isTrophy = TROPHY_IDS.includes(s.id);
+    const rarityColor = isTrophy ? '#8a2be2' : (RARITY_COLORS[s.rarity] || '#aaa');
+    const previewImage = s.image || s.imageRight || s.imageLeft;
+    const inv = shopTextos('inventario');
+    const sk = inv.skins || {};
+    const tooltip = isEquipped ? (sk.tooltipEquipada ?? 'Equipada') : (sk.tooltipClickEquipar ?? 'Click para equipar');
+    const legendario = inv.hero?.labelLegendario ?? 'LEGENDARIO';
+    return `
+        <div class="inv-item-card ${isEquipped ? 'inv-equipped' : ''}" style="--inv-card-color:${rarityColor};" onclick="equipSkin('${s.id}')" title="${tooltip}">
+            ${isEquipped ? `<div class="inv-item-check">✓</div>` : ''}
+            <div class="inv-item-icon">
+                ${previewImage ? `<img src="${previewImage}" alt="" draggable="false">` : (s.emoji || `<div style="width:22px;height:22px;border-radius:50%;background:${s.color};"></div>`)}
+            </div>
+            <div class="inv-item-name">${s.name}</div>
+            <div class="inv-item-rarity">${isTrophy ? legendario : s.rarity}</div>
+        </div>
+    `;
+}
+
+function renderInventoryBannerCard(b, equipped) {
+    const isEquipped = equipped === b.id;
+    const isVIP = b.rarity === 'VIP';
+    const rarityColor = BANNER_RARITY_COLORS[b.rarity] || 'rgba(255,255,255,0.4)';
+    const cover = b.cover ? `url('${b.cover}')` : 'linear-gradient(135deg, rgba(0,255,231,0.18), rgba(255,77,109,0.14))';
+    const bn = shopTextos('inventario').banners || {};
+    const f = shopTextos('inventario').filtros || {};
+    const tooltip = isEquipped ? (bn.tooltipEquipado ?? 'Equipado') : (bn.tooltipClickEquipar ?? 'Click para equipar');
+    const vipLabel = shopTextos('banners').labelVipPaseRuby ?? 'VIP / PASE RUBY';
+    const rarityLabel = b.rarity === 'VIP' ? vipLabel : (b.rarity === 'DEFAULT' ? (f.chipInicial ?? 'INICIAL') : (b.rarity === 'BASICO' ? (f.chipBasico ?? 'BÁSICO') : b.rarity));
+    return `
+        <div class="inv-banner-card ${isEquipped ? 'inv-equipped' : ''}" style="--inv-card-color:${rarityColor};" onclick="equipBanner('${b.id}'); showInventorySection('banners');" title="${tooltip}">
+            ${isEquipped ? `<div class="inv-item-check">✓</div>` : ''}
+            <div class="inv-banner-cover" style="background-image:${cover};"></div>
+            <div class="inv-banner-name">${b.name}</div>
+            <div class="inv-item-rarity">${rarityLabel}</div>
+        </div>
+    `;
+}
+
+function renderInventoryEmoteCard(e, equipped) {
+    const isEquipped = equipped === e.id;
+    const rarityColor = RARITY_COLORS[e.rarity] || '#aaa';
+    const em = shopTextos('inventario').emotes || {};
+    const tooltip = isEquipped ? (em.tooltipEquipado ?? 'Equipado') : (em.tooltipClickEquipar ?? 'Click para equipar');
+    return `
+        <div class="inv-item-card ${isEquipped ? 'inv-equipped' : ''}" style="--inv-card-color:${rarityColor};" onclick="equipEmote('${e.id}'); showInventorySection('emotes');" title="${tooltip}">
+            ${isEquipped ? `<div class="inv-item-check">✓</div>` : ''}
+            <div class="inv-item-icon">
+                ${e.image ? `<img src="${e.image}" alt="" draggable="false">` : '😀'}
+            </div>
+            <div class="inv-item-name">${e.name}</div>
+            <div class="inv-item-rarity">${e.rarity}</div>
+        </div>
+    `;
+}
+
+// Colores por categoría de potenciador (no tienen rareza, se agrupan por tipo)
+const POWERUP_CATEGORY_COLORS = {
+    defensivo: '#4bc0eb',
+    control: '#ff9a17',
+    utilidad: '#eab308',
+    riesgo: '#cf0000'
+};
+
+function invRenderPowerupFilters(types) {
+    const filtersEl = document.getElementById('inv-filters');
+    if (!filtersEl) return;
+    const f = shopTextos('inventario').filtros || {};
+    const chips = ['TODAS', ...types];
+    filtersEl.innerHTML = chips.map(t => {
+        const color = t === 'TODAS' ? '#22d3ee' : (POWERUP_CATEGORY_COLORS[t] || '#22d3ee');
+        const active = invActiveRarityFilter.powerups === t;
+        const label = t === 'TODAS' ? (f.chipTodas ?? 'TODAS') : (POWERUP_CATEGORY_LABELS[t] || t).toUpperCase();
+        return `<div class="inv-chip ${active ? 'active' : ''}" style="--inv-chip-color:${color};" onclick="invSetRarityFilter('powerups','${t}')">${label}</div>`;
+    }).join('');
+}
+
+function invRenderRarityFilters(section, rarities, colorMap = RARITY_COLORS) {
+    const filtersEl = document.getElementById('inv-filters');
+    if (!filtersEl) return;
+    const f = shopTextos('inventario').filtros || {};
+    const chips = ['TODAS', ...rarities];
+    filtersEl.innerHTML = chips.map(r => {
+        const color = r === 'TODAS' ? '#22d3ee' : (colorMap[r] || '#22d3ee');
+        const active = invActiveRarityFilter[section] === r;
+        const label = r === 'TODAS' ? (f.chipTodas ?? 'TODAS') : r === 'DEFAULT' ? (f.chipInicial ?? 'INICIAL') : r === 'BASICO' ? (f.chipBasico ?? 'BÁSICO') : r;
+        return `<div class="inv-chip ${active ? 'active' : ''}" style="--inv-chip-color:${color};" onclick="invSetRarityFilter('${section}','${r}')">${label}</div>`;
+    }).join('');
+}
+
+function invSetRarityFilter(section, rarity) {
+    invActiveRarityFilter[section] = rarity;
+    showInventorySection(section);
+}
+
 function showInventorySection(section) {
     ['skins', 'trails', 'banners', 'emotes', 'powerups', 'cofres'].forEach(s => {
         const el = document.getElementById('inv-nav-' + s);
         if (!el) return;
-        if (s === section) {
-            el.style.background = 'rgba(0,255,231,0.1)';
-            el.style.border = '1px solid rgba(0,255,231,0.2)';
-            el.style.color = '#00ffe7';
-        } else {
-            el.style.background = 'none';
-            el.style.border = '1px solid transparent';
-            el.style.color = 'rgba(255,255,255,0.5)';
-        }
+        el.classList.toggle('active', s === section);
     });
+
+    const gemsEl = document.getElementById('inv-gems-value');
+    if (gemsEl) gemsEl.textContent = parseInt(localStorage.getItem('gems') || '0');
+
+    const heroEl = document.getElementById('inv-hero');
+    if (heroEl) heroEl.innerHTML = renderInventoryHero(section);
+    // El hero se regenera cada vez (nuevo HTML => nuevos ids), así que hay que
+    // volver a aplicar color/tamaño de GEM_CONFIG.estilosTexto sobre los ids nuevos.
+    if (window.aplicarEstilosTexto) window.aplicarEstilosTexto();
+
+    const titleEl = document.getElementById('inv-section-title');
+    const filtersEl = document.getElementById('inv-filters');
 
     const content = document.getElementById('inventoryContent');
 
     if (section === 'skins') {
         const equipped = localStorage.getItem('equippedSkin') || 'cyan';
-        const owned = getAllShopSkins().filter(s => isSkinOwned(s) && !s.soon);
+        let owned = getAllShopSkins().filter(s => isSkinOwned(s) && !s.soon);
+        const availableRarities = INV_RARITY_ORDER.filter(r => owned.some(s => s.rarity === r));
+        invRenderRarityFilters('skins', availableRarities);
+        if (invActiveRarityFilter.skins !== 'TODAS') {
+            owned = owned.filter(s => s.rarity === invActiveRarityFilter.skins);
+        }
+        if (titleEl) titleEl.textContent = (shopTextos('inventario').titulos?.skinsTemplate ?? 'SKINS OBTENIDAS — {n}').replace('{n}', owned.length);
         content.innerHTML = `
-            <div style="color:rgba(255,255,255,0.4); font-family:monospace; font-size:11px; letter-spacing:4px; margin-bottom:20px;">SKINS OBTENIDAS — ${owned.length}</div>
-            <div style="display:grid; grid-template-columns:repeat(5,1fr); gap:14px;">
-                ${owned.map(s => renderSkinCard(s, equipped)).join('')}
+            <div class="inv-grid">
+                ${owned.map(s => renderInventorySkinCard(s, equipped)).join('')}
             </div>
         `;
     } else if (section === 'trails') {
@@ -3626,50 +3827,58 @@ function showInventorySection(section) {
             });
         });
 
-        const groups = Object.values(ownedByEffect);
+        let groups = Object.values(ownedByEffect);
+
+        const availableRarities = INV_RARITY_ORDER.filter(r => groups.some(g => g.trail.rarity === r));
+        invRenderRarityFilters('trails', availableRarities);
+        if (invActiveRarityFilter.trails !== 'TODAS') {
+            groups = groups.filter(g => g.trail.rarity === invActiveRarityFilter.trails);
+        }
+
+        if (titleEl) titleEl.textContent = (shopTextos('inventario').titulos?.trailsTemplate ?? 'TRAILS OBTENIDOS — {n} EFECTOS').replace('{n}', groups.length);
+
+        const tr = shopTextos('inventario').trails || {};
 
         if (groups.length === 0) {
-            content.innerHTML = `<div style="display:flex;align-items:center;justify-content:center;height:300px;color:rgba(255,255,255,0.2);font-family:monospace;font-size:14px;letter-spacing:4px;">NO TIENES TRAILS AÚN</div>`;
+            const emptyMsg = tr.emptyState ?? 'NO TIENES TRAILS{br}EN ESTA CATEGORÍA';
+            content.innerHTML = `<div class="inv-empty-state" id="inv-empty-trails">${emptyMsg.replace('{br}', '<br>')}</div>`;
+            if (window.aplicarEstilosTexto) window.aplicarEstilosTexto();
             return;
         }
 
         content.innerHTML = `
-            <div style="color:rgba(255,255,255,0.4);font-family:monospace;font-size:11px;letter-spacing:4px;margin-bottom:20px;">TRAILS — ${groups.length} EFECTOS</div>
-            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:16px;">
+            <div class="inv-grid inv-trail-grid">
                 ${groups.map(({ trail: t, colors }) => {
             const allOwned = TRAIL_COLOR_LIST.every(c => localStorage.getItem(`trail_${t.id}_${c.id}`) === 'true');
             const equippedColor = colors.find(c => equippedTrail === `${t.id}_${c.id}`);
-            const displayColor = equippedColor || colors[0];
             return `
-                    <div style="position:relative;">
-                        <div id="inv-trail-card-${t.id}"
-                            onclick="toggleInvTrailExpand('${t.id}')"
-                            style="background:rgba(255,255,255,0.03);border:1px solid ${equippedColor ? t.rarityColor + '66' : 'rgba(255,255,255,0.1)'};border-radius:14px;padding:14px;cursor:pointer;transition:0.2s;${equippedColor ? 'box-shadow:0 0 16px ' + t.rarityColor + '22;' : ''}">
-                            <canvas id="inv-trail-canvas-${t.id}" width="200" height="60" style="border-radius:8px;background:rgba(0,0,0,0.35);display:block;width:100%;"></canvas>
-                            <div style="display:flex;justify-content:space-between;align-items:center;margin-top:10px;">
+                    <div class="inv-trail-wrap">
+                        <div id="inv-trail-card-${t.id}" class="inv-trail-card ${equippedColor ? 'inv-equipped' : ''}"
+                            style="--inv-card-color:${t.rarityColor};"
+                            onclick="toggleInvTrailExpand('${t.id}')">
+                            <canvas id="inv-trail-canvas-${t.id}" class="inv-trail-canvas" width="200" height="60"></canvas>
+                            <div class="inv-trail-head">
                                 <div>
-                                    <div style="color:white;font-family:monospace;font-size:12px;letter-spacing:1px;">${t.name}</div>
-                                    <div style="color:${t.rarityColor};font-family:monospace;font-size:9px;letter-spacing:2px;">${t.rarity}</div>
+                                    <div class="inv-trail-name">${t.name}</div>
+                                    <div class="inv-trail-rarity" style="color:${t.rarityColor};">${t.rarity}</div>
                                 </div>
-                                <div style="display:flex;align-items:center;gap:6px;">
-                                    ${allOwned ? `<div style="color:#00ff88;font-family:monospace;font-size:9px;">★ COMPLETO</div>` : `<div style="color:rgba(255,255,255,0.3);font-family:monospace;font-size:9px;">${colors.length}/${TRAIL_COLOR_LIST.length}</div>`}
-                                    <div style="color:rgba(255,255,255,0.4);font-size:10px;transition:0.2s;" id="inv-trail-arrow-${t.id}">▼</div>
+                                <div class="inv-trail-status">
+                                    ${allOwned ? `<span class="inv-trail-complete">${tr.labelCompleto ?? '★ COMPLETO'}</span>` : `<span class="inv-trail-count">${colors.length}/${TRAIL_COLOR_LIST.length}</span>`}
+                                    <span class="inv-trail-arrow" id="inv-trail-arrow-${t.id}">▼</span>
                                 </div>
                             </div>
-                            ${equippedColor ? `<div style="margin-top:8px;font-family:monospace;font-size:9px;color:#ffd700;">✔ EQUIPADO · ${equippedColor.id.toUpperCase()}</div>` : ''}
+                            ${equippedColor ? `<div class="inv-trail-equipped-tag">${tr.labelEquipadoPrefix ?? '✔ EQUIPADO · '}${equippedColor.id.toUpperCase()}</div>` : ''}
                         </div>
-                        <div id="inv-trail-expand-${t.id}" style="display:none;background:rgba(0,0,0,0.3);border:1px solid rgba(255,255,255,0.08);border-top:none;border-radius:0 0 14px 14px;padding:12px 14px;">
-                            <div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:center;">
+                        <div id="inv-trail-expand-${t.id}" class="inv-trail-expand">
+                            <div class="inv-trail-swatches">
                                 ${TRAIL_COLOR_LIST.map(c => {
                 const has = localStorage.getItem(`trail_${t.id}_${c.id}`) === 'true';
                 const isEq = equippedTrail === `${t.id}_${c.id}`;
-                return `<div onclick="${has ? `invEquipTrailColor('${t.id}','${c.id}')` : ''}"
-                                        style="width:28px;height:28px;border-radius:50%;background:${c.color};
-                                        border:2px solid ${isEq ? '#ffd700' : has ? '#00ff88' : 'rgba(255,255,255,0.1)'};
-                                        cursor:${has ? 'pointer' : 'default'};opacity:${has ? '1' : '0.25'};
-                                        position:relative;transition:0.15s;"
+                return `<div class="inv-trail-swatch ${isEq ? 'inv-eq' : has ? 'inv-has' : 'inv-locked'}"
+                                        onclick="${has ? `event.stopPropagation();invEquipTrailColor('${t.id}','${c.id}')` : 'event.stopPropagation();'}"
+                                        style="background:${c.color};"
                                         title="${c.id}${isEq ? ' (equipado)' : !has ? ' (no tienes)' : ''}">
-                                        ${isEq ? `<div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);color:#000;font-size:9px;font-weight:bold;">✔</div>` : ''}
+                                        ${isEq ? `<span>✔</span>` : ''}
                                     </div>`;
             }).join('')}
                             </div>
@@ -3690,79 +3899,147 @@ function showInventorySection(section) {
 
     } else if (section === 'banners') {
         const equipped = localStorage.getItem('equippedBanner') || 'static_core';
-        const owned = [...BANNERS_DATA, ...VIP_BANNER_PLACEHOLDERS].filter((b, index, list) =>
+        let owned = [...BANNERS_DATA, ...VIP_BANNER_PLACEHOLDERS].filter((b, index, list) =>
             list.findIndex(candidate => candidate.id === b.id) === index && (
                 b.id === 'Banner_Deafult' ||
                 localStorage.getItem('banner_' + b.id) === 'true' ||
                 b.owned === true
             )
         );
+
+        const availableRarities = INV_BANNER_RARITY_ORDER.filter(r => owned.some(b => b.rarity === r));
+        invRenderRarityFilters('banners', availableRarities, BANNER_RARITY_COLORS);
+        if (invActiveRarityFilter.banners !== 'TODAS') {
+            owned = owned.filter(b => b.rarity === invActiveRarityFilter.banners);
+        }
+
+        if (titleEl) titleEl.textContent = (shopTextos('inventario').titulos?.bannersTemplate ?? 'BANNERS OBTENIDOS — {n}').replace('{n}', owned.length);
+
         content.innerHTML = `
             ${renderInventoryProfileBanner(equipped)}
-            <div style="color:rgba(255,255,255,0.4); font-family:monospace; font-size:11px; letter-spacing:4px; margin-bottom:20px;">BANNERS OBTENIDOS - ${owned.length}</div>
-            <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:14px;">
-                ${owned.map(b => renderBannerCard(b, equipped)).join('')}
+            <div class="inv-grid inv-banner-grid">
+                ${owned.map(b => renderInventoryBannerCard(b, equipped)).join('')}
             </div>
         `;
+        if (window.aplicarEstilosTexto) window.aplicarEstilosTexto();
     } else if (section === 'emotes') {
-        const owned = EMOTES_DATA.filter(isEmoteOwned);
+        const equipped = localStorage.getItem('equippedEmote');
+        let owned = EMOTES_DATA.filter(isEmoteOwned);
+
+        const availableRarities = INV_RARITY_ORDER.filter(r => owned.some(e => e.rarity === r));
+        invRenderRarityFilters('emotes', availableRarities);
+        if (invActiveRarityFilter.emotes !== 'TODAS') {
+            owned = owned.filter(e => e.rarity === invActiveRarityFilter.emotes);
+        }
+
+        if (titleEl) titleEl.textContent = (shopTextos('inventario').titulos?.emotesTemplate ?? 'EMOTES OBTENIDOS — {n}').replace('{n}', owned.length);
+
+        if (owned.length === 0) {
+            const emptyMsg = shopTextos('inventario').emotes?.emptyState ?? 'NO TIENES EMOTES{br}EN ESTA CATEGORÍA';
+            content.innerHTML = `<div class="inv-empty-state" id="inv-empty-emotes">${emptyMsg.replace('{br}', '<br>')}</div>`;
+            if (window.aplicarEstilosTexto) window.aplicarEstilosTexto();
+            return;
+        }
+
         content.innerHTML = `
-            <div style="color:rgba(255,255,255,0.4); font-family:monospace; font-size:11px; letter-spacing:4px; margin-bottom:20px;">EMOTES - ${owned.length}</div>
-            <div class="inventory-emote-grid">
-                ${owned.map(renderEmoteSlot).join('')}
+            <div class="inv-grid">
+                ${owned.map(e => renderInventoryEmoteCard(e, equipped)).join('')}
             </div>
         `;
     } else if (section === 'powerups') {
-        content.innerHTML = renderInventoryPowerups();
+        const pw = shopTextos('inventario').powerups || {};
+        if (!window.POWERUPS_DATA || !window.readPowerups) {
+            if (titleEl) titleEl.textContent = '';
+            if (filtersEl) filtersEl.innerHTML = '';
+            const unavailMsg = pw.unavailable ?? 'POTENCIADORES{br}NO DISPONIBLES';
+            content.innerHTML = `<div class="inv-empty-state" id="inv-powerups-unavailable">${unavailMsg.replace('{br}', '<br>')}</div>`;
+            if (window.aplicarEstilosTexto) window.aplicarEstilosTexto();
+            return;
+        }
+        const inventory = window.readPowerups();
+        const equippedSlots = window.getEquippedPowerups?.() || [null, null];
+        let owned = window.POWERUPS_DATA.filter(p => inventory[p.id]?.desbloqueado || inventory[p.id]?.usos > 0);
+
+        const availableTypes = ['defensivo', 'control', 'utilidad', 'riesgo'].filter(t => owned.some(p => (p.type || 'utilidad') === t));
+        invRenderPowerupFilters(availableTypes);
+        if (invActiveRarityFilter.powerups !== 'TODAS') {
+            owned = owned.filter(p => (p.type || 'utilidad') === invActiveRarityFilter.powerups);
+        }
+
+        if (titleEl) titleEl.textContent = (shopTextos('inventario').titulos?.powerupsTemplate ?? 'POTENCIADORES OBTENIDOS — {n}').replace('{n}', owned.length);
+
+        if (owned.length === 0) {
+            const emptyMsg = pw.emptyState ?? 'NO TIENES POTENCIADORES{br}EN ESTA CATEGORÍA';
+            content.innerHTML = `<div class="inv-empty-state" id="inv-empty-powerups">${emptyMsg.replace('{br}', '<br>')}</div>`;
+            if (window.aplicarEstilosTexto) window.aplicarEstilosTexto();
+            return;
+        }
+
+        content.innerHTML = `
+            <div class="inventory-powerup-grid">
+                ${owned.map(p => renderInventoryPowerupCard(p, inventory, equippedSlots)).join('')}
+            </div>
+        `;
     } else if (section === 'cofres') {
+        const cf = shopTextos('inventario').cofres || {};
+        if (filtersEl) filtersEl.innerHTML = '';
         const stored = CHESTS_DATA.filter(c => !c.upgradeable).map(chest => ({
             ...chest,
             count: parseInt(localStorage.getItem('invChest_' + chest.id) || '0')
         })).filter(chest => chest.count > 0);
-        content.innerHTML = stored.length ? `
-            <div style="color:rgba(255,255,255,0.4); font-family:monospace; font-size:11px; letter-spacing:4px; margin-bottom:20px;">COFRES GUARDADOS</div>
-            <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(210px,1fr)); gap:14px;">
-                ${stored.map(chest => `
-                    <div style="background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.09); border-radius:14px; padding:16px; display:grid; gap:10px;">
-                        <img src="${chest.image}" style="width:100%;height:130px;object-fit:contain;">
-                        <div style="color:white;font-family:monospace;font-size:13px;letter-spacing:2px;">${chest.name} x${chest.count}</div>
-                        <button onclick="openInventoryChest('${chest.id}')" style="height:36px;border-radius:8px;border:1px solid rgba(255,238,0,.4);background:rgba(255,238,0,.08);color:#ffee00;font-family:monospace;cursor:pointer;">ABRIR</button>
-                    </div>
-                `).join('')}
+
+        if (titleEl) titleEl.textContent = (shopTextos('inventario').titulos?.cofresTemplate ?? 'COFRES GUARDADOS — {n}').replace('{n}', stored.length);
+
+        if (stored.length === 0) {
+            const emptyMsg = cf.emptyState ?? 'NO TIENES COFRES{br}GUARDADOS';
+            content.innerHTML = `<div class="inv-empty-state" id="inv-empty-cofres">${emptyMsg.replace('{br}', '<br>')}</div>`;
+            if (window.aplicarEstilosTexto) window.aplicarEstilosTexto();
+            return;
+        }
+
+        content.innerHTML = `
+            <div class="inv-grid inv-chest-grid">
+                ${stored.map(renderInventoryChestCard).join('')}
             </div>
-        ` : `<div style="display:grid;place-items:center;height:300px;color:rgba(255,255,255,.25);font-family:monospace;letter-spacing:4px;">NO TIENES COFRES GUARDADOS</div>`;
+        `;
     }
 }
 
-function renderInventoryPowerups() {
-    if (!window.POWERUPS_DATA || !window.readPowerups) {
-        return `<div style="display:grid;place-items:center;height:300px;color:rgba(255,255,255,.25);font-family:monospace;letter-spacing:4px;">POTENCIADORES NO DISPONIBLES</div>`;
-    }
-    const inventory = window.readPowerups();
-    const owned = window.POWERUPS_DATA.filter(powerup => inventory[powerup.id]?.desbloqueado || inventory[powerup.id]?.usos > 0);
-    if (!owned.length) {
-        return `<div style="display:grid;place-items:center;height:300px;color:rgba(255,255,255,.25);font-family:monospace;letter-spacing:4px;">NO TIENES POTENCIADORES</div>`;
-    }
+
+function renderInventoryPowerupCard(powerup, inventory, equippedSlots) {
+    const state = inventory[powerup.id] || {};
+    const isVipShape = !window.NORMAL_SHOP_POWERUP_IDS?.includes(powerup.id);
+    const slotIndex = equippedSlots.indexOf(powerup.id);
+    const isEquipped = slotIndex !== -1;
+    const pw = shopTextos('inventario').powerups || {};
+    const nivelLabel = (pw.labelNivel ?? 'NIVEL {n}').replace('{n}', Math.max(1, state.nivel || 1));
+    const bloqueadoLabel = pw.labelBloqueado ?? 'BLOQUEADO';
     return `
-        <div style="color:rgba(255,255,255,0.4); font-family:monospace; font-size:11px; letter-spacing:4px; margin-bottom:20px;">POTENCIADORES - ${owned.length}</div>
-        <div class="inventory-powerup-grid">
-            ${owned.map(powerup => {
-        const state = inventory[powerup.id] || {};
-        const isVipShape = !window.NORMAL_SHOP_POWERUP_IDS?.includes(powerup.id);
-        return `
-                    <button class="inventory-powerup-card ${isVipShape ? 'hex' : 'rect'}" style="--powerup-color:${powerup.color}" onclick="openPowerupDetail('${powerup.id}','${isVipShape ? 'vip' : 'normal'}')" type="button">
-                        <img src="assets/powerups/icons/${powerup.id}.png" alt="">
-                        <strong>${powerup.name}</strong>
-                        <span>x${state.usos || 0}</span>
-                    </button>
-                `;
-    }).join('')}
+        <button class="inventory-powerup-card ${isVipShape ? 'hex' : 'rect'} ${isEquipped ? 'inv-equipped' : ''}" style="--powerup-color:${powerup.color}" onclick="openPowerupDetail('${powerup.id}','${isVipShape ? 'vip' : 'normal'}')" type="button">
+            ${isEquipped ? `<div class="inv-powerup-slot-tag">${slotIndex === 0 ? 'W' : 'E'}</div>` : ''}
+            <img src="assets/powerups/icons/${powerup.id}.png" alt="">
+            <strong>${powerup.name}</strong>
+            <span>${state.desbloqueado ? nivelLabel : bloqueadoLabel} · x${state.usos || 0}</span>
+        </button>
+    `;
+}
+
+function renderInventoryChestCard(chest) {
+    const color = CHEST_RARITY_COLORS[chest.id] || '#ffee00';
+    const botonAbrir = shopTextos('inventario').cofres?.botonAbrir ?? 'ABRIR';
+    return `
+        <div class="inv-chest-card" style="--inv-card-color:${color};">
+            <div class="inv-chest-count">x${chest.count}</div>
+            <div class="inv-chest-icon"><img src="${chest.image}" alt=""></div>
+            <div class="inv-chest-name">${chest.name}</div>
+            <button class="inv-chest-open-btn" onclick="openInventoryChest('${chest.id}')" type="button">${botonAbrir}</button>
         </div>
     `;
 }
 
 function renderInventoryProfileBanner(equipped) {
-    const name = localStorage.getItem('playerName') || 'Jugador';
+    const bn = shopTextos('inventario').banners || {};
+    const name = localStorage.getItem('playerName') || (bn.fallbackNombreJugador ?? 'Jugador');
     const avatar = localStorage.getItem('playerAvatar') || 'assets/Imagenes/Avatares/Avatar_Default.png';
     const banner = BANNERS_DATA.find(b => b.id === equipped) || BANNERS_DATA[0];
     const bg = banner.cover
@@ -3772,9 +4049,9 @@ function renderInventoryProfileBanner(equipped) {
         <section class="inventory-profile-banner" style="background-image:${bg};">
             <div class="inventory-profile-avatar" style="background-image:url('${avatar}')"></div>
             <div>
-                <div class="inventory-profile-kicker">BANNER EQUIPADO</div>
+                <div class="inventory-profile-kicker" id="inv-profile-banner-kicker">${bn.labelBannerEquipado ?? 'BANNER EQUIPADO'}</div>
                 <div class="inventory-profile-name">${name}</div>
-                <div class="inventory-profile-banner-name">${banner.name || 'Banner'}</div>
+                <div class="inventory-profile-banner-name">${banner.name || (bn.fallbackNombreBanner ?? 'Banner')}</div>
             </div>
         </section>
     `;
