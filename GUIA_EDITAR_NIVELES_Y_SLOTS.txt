@@ -86,7 +86,7 @@ assets/Imagenes/Trails/Placeholders/
 Datos en TRAILS_DATA dentro de shop.js.
 
 Banners:
-assets/Imagenes/Banners/Placeholders/
+assets/Imagenes/Banners/tienda_normal/
 Datos en BANNERS_DATA dentro de shop.js.
 
 Emotes:

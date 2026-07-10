@@ -47,9 +47,26 @@ window.sfxVolume = parseFloat(localStorage.getItem('sfxVolume') || '0.75');
 window.musicVolume = parseFloat(localStorage.getItem('musicVolume') || '0.45');
 window.sfxCache = {};
 const SFX_POOL_SIZE = 4;
+window.audioUnlocked = false;
+
+window.safePlayAudio = function (audio) {
+    if (!audio || window.isMuted) return Promise.resolve(false);
+    if (!window.audioUnlocked) return Promise.resolve(false);
+    return audio.play().then(() => true).catch(() => false);
+};
+
+window.unlockGameAudio = function () {
+    if (window.audioUnlocked) return;
+    window.audioUnlocked = true;
+    window.ensureMenuMusic?.();
+};
+
+['pointerdown', 'keydown', 'touchstart'].forEach(eventName => {
+    window.addEventListener(eventName, window.unlockGameAudio, { once: true, passive: true });
+});
 
 window.playSfx = function (name, volume = 1) {
-    if (window.isMuted) return;
+    if (window.isMuted || !window.audioUnlocked) return;
     const src = window.SFX?.[name];
     if (!src) return;
     let entry = window.sfxCache[name];
@@ -68,7 +85,7 @@ window.playSfx = function (name, volume = 1) {
     sound.pause();
     sound.currentTime = 0;
     sound.volume = Math.max(0, Math.min(1, window.sfxVolume * volume));
-    sound.play().catch(() => { });
+    window.safePlayAudio(sound);
 };
 
 window.applyAudioSettings = function () {
@@ -79,7 +96,7 @@ window.applyAudioSettings = function () {
 };
 
 const heartImg = new Image();
-heartImg.src = "assets/Imagenes/Icono/Corazon_Vida.png";
+heartImg.src = "assets/UI/Common/Icons/Corazon_Vida.png";
 
 const canvas = document.getElementById("gameCanvas");
 const ctx = canvas.getContext("2d", { alpha: false });
@@ -137,17 +154,17 @@ function reproducirAleatoria() {
 
     player.currentTime = 0;
 
-    player.play().catch(() => { });
+    window.safePlayAudio(player);
 }
 
 // cuando termina → otra
 window.ensureMenuMusic = function () {
     if (!window.menuMusic || window.isMuted || window.running) return;
     if (!window.menuMusic.src || window.menuMusic.ended) reproducirAleatoria();
-    else if (window.menuMusic.paused) window.menuMusic.play().catch(() => { });
+    else if (window.menuMusic.paused) window.safePlayAudio(window.menuMusic);
 };
 
-reproducirAleatoria();
+window.menuMusic.src = cancionesMenu[0];
 
 // =====================================================
 // OFFSCREEN CANVAS
@@ -479,7 +496,7 @@ window.playerData = playerData; // Exponer globalmente para rank-system.js
 
 window.player = {
     name: localStorage.getItem("playerName") || "Jugador",
-    avatar: localStorage.getItem("playerAvatar") || "assets/Imagenes/Avatares/Avatar_Default.png"
+    avatar: localStorage.getItem("playerAvatar") || "assets/UI/Common/Avatars/Avatar_Default.png"
 };
 
 if ((window.player.name || "").toUpperCase() === "LEX") {
@@ -500,17 +517,17 @@ const skins = {
 
 const DIRECTIONAL_SKINS = {
     daxor: {
-        side: "assets/UI/Store/Skins/Normal/DAXOR Skin DEMON/DAXOR_Skin_lado.png",
+        side: "assets/UI/Store/Skins/Normal/DaxorDemon/DAXOR_Skin_lado.png",
         glow: "#ff2448"
     },
     brifon: {
         // Aquí le damos las dos rutas específicas
-        side: "assets/UI/Store/Skins/Normal/BRIFON Skin EPICO/BRIFON_Skin_lado_derecho.png",
-        sideLeft: "assets/UI/Store/Skins/Normal/BRIFON Skin EPICO/BRIFON_Skin_lado_izquierdo.png",
+        side: "assets/UI/Store/Skins/Normal/BrifonEpic/BRIFON_Skin_lado_derecho.png",
+        sideLeft: "assets/UI/Store/Skins/Normal/BrifonEpic/BRIFON_Skin_lado_izquierdo.png",
         glow: "#b86cff"
     },
     kenji: {
-        side: "assets/UI/Store/Skins/Normal/KENJI Skin EPICO/Kenji_Skin_lado.png",
+        side: "assets/UI/Store/Skins/Normal/KenjiEpic/Kenji_Skin_lado.png",
         glow: "#845cff"
     }
 };
@@ -642,9 +659,9 @@ window.rubySpawnTimer = 0;
 
 // ── Ruta actualizada ──────────────────────────────────
 const skullCoinImg = new Image();
-skullCoinImg.src = "assets/Imagenes/Monetizacion/DEAD_COIN.png";
+skullCoinImg.src = "assets/UI/Common/Currency/DEAD_COIN.png";
 const rubyImg = new Image();
-rubyImg.src = "assets/Imagenes/Monetizacion/Rubies.png";
+rubyImg.src = "assets/UI/Common/Currency/Rubies.png";
 
 // =====================================================
 // UPDATE
@@ -1648,7 +1665,7 @@ window.startGame = function (levelIndex = 0, skipStartSound = false) {
     // Solo survival en bucle; niveles normales terminan cuando acaba la canción
     window.bgMusic.loop = !!levelConfig.isSurvival;
     window.bgMusic.currentTime = 0;
-    window.bgMusic.play();
+    window.safePlayAudio(window.bgMusic);
 
     // ── winTime dinámico: sincronizar con la duración real de la canción ──
     // El modo Survival tiene winTime = 999999 (infinito), nunca lo pisamos.
@@ -1724,7 +1741,7 @@ window.startGame = function (levelIndex = 0, skipStartSound = false) {
     // Inicializar imagen del botón de gravedad (al inicio gravity=1, jugador en núcleo → muestra "subir")
     const gravityImg = document.getElementById('gravity-img');
     if (gravityImg) {
-        gravityImg.src = 'assets/Imagenes/Botones HUD/Gravedad_arriba.png';
+        gravityImg.src = 'assets/UI/Common/HUD/Gravedad_arriba.png';
     }
 };
 
@@ -1887,7 +1904,7 @@ window.revivePlayer = function (currency) {
     window.invulnerable = true;
     window.invulnerableTimer = 150;
     window.running = true;
-    if (window.bgMusic && !window.isMuted) window.bgMusic.play();
+    if (window.bgMusic && !window.isMuted) window.safePlayAudio(window.bgMusic);
 };
 
 function drawAbilityIntro() {
@@ -2061,7 +2078,7 @@ window.pauseGame = function () {
 window.resumeGame = function () {
     window.paused = false;
     document.getElementById('pausePanel')?.classList.remove('showing');
-    if (!window.isMuted) window.bgMusic?.play().catch(() => { });
+    if (!window.isMuted) window.safePlayAudio(window.bgMusic);
 };
 
 // Botones dentro del panel de pausa
@@ -2120,8 +2137,8 @@ document.getElementById('pause-menu')?.addEventListener('click', () => {
         // Después del flip la gravedad ya cambió, mostramos la dirección opuesta disponible
         const currentGravity = window.gravity || 1;
         gravityImg.src = currentGravity === 1
-            ? 'assets/Imagenes/Botones HUD/Gravedad_abajo.png'
-            : 'assets/Imagenes/Botones HUD/Gravedad_arriba.png';
+            ? 'assets/UI/Common/HUD/Gravedad_abajo.png'
+            : 'assets/UI/Common/HUD/Gravedad_arriba.png';
     }
 
     window.updateGravityButtonImage = updateGravityButtonImage;
@@ -2156,10 +2173,10 @@ document.addEventListener('visibilitychange', () => {
         window.menuMusic?.pause();
     } else {
         if (window.running && !window.paused && !window.isMuted) {
-            window.bgMusic?.play();
+            window.safePlayAudio(window.bgMusic);
         }
         if (!window.running && !window.isMuted) {
-            window.menuMusic?.play().catch(() => { });
+            window.safePlayAudio(window.menuMusic);
         }
     }
 });

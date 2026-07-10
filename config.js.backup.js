@@ -552,34 +552,34 @@ const GEM_CONFIG = {
         perfil: {
             // Posición y ancho del cuadro completo
             posicion: {
-                mobile: { width: '24%', right: '24px', top: '12px' },
+                mobile: { width: '14%', right: '14px', top: '6px' },
                 desktop: { width: '50%', maxWidth: '320px' },
             },
             // Tamaño del cuadro (alto, bordes redondeados, espacio interno)
             tamano: {
-                mobile: { height: '82px', borderRadius: '10px', padding: '10px' },
+                mobile: { height: '42px', borderRadius: '10px', padding: '5px' },
                 desktop: { height: '82px', borderRadius: '10px', padding: '10px' },
             },
             // Avatar circular dentro del banner
             avatar: {
-                mobile: { size: '32px' },
+                mobile: { size: '25px' },
                 desktop: { size: '52px' },
             },
             // Texto del nombre del jugador (ej: "Jugador")
             nombreFont: {
-                mobile: { size: '11px' },
+                mobile: { size: '6px' },
                 desktop: { size: '17px' },
             },
             // Texto del rango/nivel (ej: "CHISPA")
             rangoFont: {
-                mobile: { size: '9px' },
+                mobile: { size: '4px' },
                 desktop: { size: '14px' },
             },
 
             // Control de tamaño de Gemas (Rubíes), Monedas y sus PNGs en el menú
             monetizacion: {
                 gap: {
-                    mobile: '4px',
+                    mobile: '3px',
                     desktop: '6px'
                 },
                 padding: {
@@ -587,11 +587,11 @@ const GEM_CONFIG = {
                     desktop: '4px 8px'
                 },
                 fontSize: {
-                    mobile: '10px',
+                    mobile: '6px',
                     desktop: '16px' // Tamaño del número de monedas/gemas
                 },
                 iconSize: {
-                    mobile: '12px',
+                    mobile: '6px',
                     desktop: '16px' // Tamaño de los PNG de las monedas y gemas
                 },
             },
@@ -685,7 +685,7 @@ const GEM_CONFIG = {
             // icono: 'emoji' usa el texto de abajo (✎). 'imagen' usa editIconImg (poné la ruta del PNG).
             icono: 'emoji',
             emoji: '✎',
-            imagen: '', // ej: 'assets/Imagenes/Iconos/lapiz.png'
+            imagen: '', // ej: 'assets/UI/Common/Icons/lapiz.png'
             size: {
                 mobile: '34px',
                 desktop: '34px',
@@ -724,7 +724,7 @@ const GEM_CONFIG = {
         rangoIcono: {
             icono: 'emoji', // 'emoji' = usa el texto de abajo. 'imagen' = usa rangoImagen (PNG).
             emoji: '✦',
-            imagen: '', // ej: 'assets/Imagenes/Iconos/estrella.png'
+            imagen: '', // ej: 'assets/UI/Common/Icons/estrella.png'
             imagenSize: {   // tamaño del ícono SOLO si icono:'imagen'
                 mobile: '14px',
                 desktop: '14px',

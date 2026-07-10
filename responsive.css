@@ -157,6 +157,50 @@
     right: var(--cfg-mute-right, 20px) !important;
 }
 
+/* ── BOTONES FLOTANTES (Sonido, Opciones, Monedas Infinitas) ── */
+#mute-btn,
+#options-float-btn,
+#infinite-coins-float-btn {
+    position: fixed !important;
+    z-index: 10000 !important;
+    border-radius: 10px !important;
+    border: 1px solid rgba(255, 255, 255, 0.14) !important;
+    background: rgba(0, 0, 0, 0.38) !important;
+    color: white !important;
+    cursor: pointer !important;
+    backdrop-filter: blur(3px) !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+}
+
+#mute-btn {
+    width: var(--bf-sonido-width, 52px) !important;
+    height: var(--bf-sonido-height, 52px) !important;
+    bottom: var(--bf-sonido-bottom, 20px) !important;
+    left: var(--bf-sonido-left, auto) !important;
+    right: var(--bf-sonido-right, 20px) !important;
+    transform: scale(var(--bf-sonido-scale-x, 1.0), var(--bf-sonido-scale-y, 1.0)) !important;
+}
+
+#options-float-btn {
+    width: var(--bf-opciones-width, 52px) !important;
+    height: var(--bf-opciones-height, 52px) !important;
+    bottom: var(--bf-opciones-bottom, 20px) !important;
+    left: var(--bf-opciones-left, auto) !important;
+    right: var(--bf-opciones-right, 85px) !important;
+    transform: scale(var(--bf-opciones-scale-x, 1.0), var(--bf-opciones-scale-y, 1.0)) !important;
+}
+
+#infinite-coins-float-btn {
+    width: var(--bf-monedas-width, 52px) !important;
+    height: var(--bf-monedas-height, 52px) !important;
+    bottom: var(--bf-monedas-bottom, 20px) !important;
+    left: var(--bf-monedas-left, auto) !important;
+    right: var(--bf-monedas-right, 150px) !important;
+    transform: scale(var(--bf-monedas-scale-x, 1.0), var(--bf-monedas-scale-y, 1.0)) !important;
+}
+
 
 /* ============================================================
    LEVEL SELECT — controlado desde config.js → levelSelect
@@ -173,12 +217,18 @@
     display: var(--ls-title-box-display, inline-flex);
     flex-direction: column;
     gap: 6px;
+    width: var(--ls-title-box-width, auto);
+    min-height: var(--ls-title-box-height, auto);
     padding: var(--ls-title-box-padding, 10px 20px);
     border-radius: var(--ls-title-box-radius, 14px);
     background: var(--ls-title-box-bg, rgba(0, 0, 0, 0.38));
     border: var(--ls-title-box-border, 1px solid rgba(0, 255, 231, 0.15));
     backdrop-filter: var(--ls-title-box-blur, blur(8px));
     -webkit-backdrop-filter: var(--ls-title-box-blur, blur(8px));
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    transform: translate(var(--ls-title-box-x, 0px), var(--ls-title-box-y, 0px));
 }
 
 /* ── Texto pequeño "THE GEM" ── */
@@ -189,6 +239,11 @@
 /* ── Texto grande "SELECCIONAR NIVEL" ── */
 .ls-title {
     font-size: var(--ls-font-large, 42px) !important;
+    color: var(--ls-title-color, #ffffff) !important;
+    font-family: var(--ls-title-font, var(--font-principal)) !important;
+    text-shadow:
+        0 0 var(--ls-title-glow-size-1, 18px) var(--ls-title-glow-color, rgba(0, 255, 231, .55)),
+        0 0 var(--ls-title-glow-size-2, 40px) var(--ls-title-glow-color, rgba(0, 255, 231, .55)) !important;
 }
 
 /* ── Botón VOLVER ── */
@@ -315,6 +370,19 @@ body.is-touch-device #grid-achievements-help {
     color: rgba(255, 255, 255, 0.8);
 }
 
+/* ── MENÚ PRINCIPAL: Banner de perfil y clasificación ── */
+.menu-profile-banner {
+    height: var(--menu-banner-height, 82px) !important;
+    border-radius: var(--menu-banner-radius, 10px) !important;
+    padding: var(--menu-banner-padding, 10px) !important;
+}
+
+.menu-clasificacion-banner {
+    height: var(--menu-reyes-height, 82px) !important;
+    border-radius: var(--menu-reyes-radius, 10px) !important;
+    padding: var(--menu-reyes-padding, 10px) !important;
+}
+
 /* ============================================================
    PERFIL DEL JUGADOR (MODAL) — controlado desde config.js → perfilModal
    La ventana grande de "ESTADÍSTICAS DEL JUGADOR" (NO el banner
@@ -331,24 +399,11 @@ body.is-touch-device #grid-achievements-help {
     gap: var(--pp-hero-gap, 22px) !important;
 }
 
-.profile-preview {
-    width: var(--pp-avatar-size, 110px) !important;
-    height: var(--pp-avatar-size, 110px) !important;
-    border-width: var(--pp-avatar-border-width, 3px) !important;
-}
-
 /* ── Botón × (cerrar el modal) ── */
 .profile-close {
     width: var(--pp-close-btn-size, 34px) !important;
     height: var(--pp-close-btn-size, 34px) !important;
     font-size: var(--pp-close-btn-font, 16px) !important;
-}
-
-/* ── Botón lápiz (editar avatar/nombre) flotante sobre el avatar grande ── */
-.profile-preview-edit-btn {
-    width: var(--pp-edit-btn-size, 34px) !important;
-    height: var(--pp-edit-btn-size, 34px) !important;
-    font-size: var(--pp-edit-btn-icon-size, 14px) !important;
 }
 
 .profile-hero-name {
@@ -841,3 +896,182 @@ body.is-touch-device .rs-header-glow-line {
 .rs-header.tema-dorado .rs-header-deco::before { left: 0; }
 .rs-header.tema-dorado .rs-header-deco::after { right: 0; }
 
+/* ============================================================
+   VIP / BANNERS VIP - responsive mobile
+   ============================================================ */
+
+.vip-legend-room {
+    min-height: var(--cfg-vip-legend-height, 280px) !important;
+    padding: var(--cfg-vip-legend-padding, 34px 36px) !important;
+}
+
+.vip-legend-core {
+    padding: var(--cfg-vip-legend-core-padding, 40px 34px) !important;
+}
+
+.vip-banner-row {
+    grid-template-columns: var(--cfg-vip-banner-row-cols, repeat(2, minmax(0, 1fr))) !important;
+    gap: var(--cfg-vip-banner-row-gap, 16px) !important;
+}
+
+.vip-banner-catalog-chamber {
+    gap: var(--cfg-vip-catalog-gap, 6px) !important;
+}
+
+.vip-banner-shelf.is-static .vip-banner-shelf-track {
+    grid-template-columns: repeat(var(--cfg-vip-season-cols, 3), minmax(0, 1fr)) !important;
+}
+
+.vip-banner-shelf-track {
+    gap: var(--cfg-vip-shelf-gap, 18px) !important;
+    padding: var(--cfg-vip-shelf-padding, 4px 4px 16px) !important;
+}
+
+.vip-banner-shelf.is-offset .vip-banner-shelf-track {
+    margin-left: var(--cfg-vip-shelf-offset, 64px) !important;
+}
+
+.vip-station-card {
+    flex-basis: var(--cfg-vip-card-width, 220px) !important;
+    min-height: var(--cfg-vip-card-height, 260px) !important;
+    padding: var(--cfg-vip-card-padding, 14px) !important;
+}
+
+.vip-station-card.is-temporada {
+    min-height: var(--cfg-vip-season-card-height, 300px) !important;
+}
+
+.vip-station-banner {
+    min-height: var(--cfg-vip-card-image-height, 120px) !important;
+}
+
+body.is-touch-device .vip-content {
+    padding: var(--cfg-vip-content-padding-touch, 14px) !important;
+}
+
+body.is-touch-device .vip-topbar {
+    gap: 10px !important;
+    align-items: flex-start !important;
+}
+
+body.is-touch-device .vip-balance {
+    flex-wrap: wrap !important;
+    justify-content: flex-end !important;
+}
+
+body.is-touch-device .vip-legend-room {
+    --cfg-vip-legend-height: auto;
+    --cfg-vip-legend-padding: 14px 0 18px;
+}
+
+body.is-touch-device .vip-legend-core {
+    --cfg-vip-legend-core-padding: 26px 16px;
+}
+
+body.is-touch-device .vip-legend-core h2 {
+    font-size: clamp(24px, 8vw, 34px) !important;
+    letter-spacing: 4px !important;
+    line-height: 1.05 !important;
+}
+
+body.is-touch-device .vip-legend-core p {
+    font-size: 11px !important;
+    line-height: 1.4 !important;
+}
+
+body.is-touch-device .vip-banner-row {
+    --cfg-vip-banner-row-cols: 1fr;
+    --cfg-vip-banner-row-gap: 12px;
+}
+
+body.is-touch-device .vip-promo-banner,
+body.is-touch-device .vip-powerup-promo-banner {
+    min-height: 150px !important;
+}
+
+body.is-touch-device .vip-banner-catalog-chamber {
+    --cfg-vip-catalog-gap: 2px;
+}
+
+body.is-touch-device .vip-banner-shelf {
+    margin-bottom: 18px !important;
+}
+
+body.is-touch-device .vip-banner-shelf-title {
+    margin-left: 2px !important;
+    font-size: 11px !important;
+    letter-spacing: 2px !important;
+}
+
+body.is-touch-device .vip-banner-shelf.is-static .vip-banner-shelf-track {
+    --cfg-vip-season-cols: 1;
+}
+
+body.is-touch-device .vip-banner-shelf-track {
+    --cfg-vip-shelf-gap: 12px;
+    --cfg-vip-shelf-padding: 3px 2px 12px;
+}
+
+body.is-touch-device .vip-banner-shelf.is-offset .vip-banner-shelf-track {
+    --cfg-vip-shelf-offset: 20px;
+}
+
+body.is-touch-device .vip-station-card {
+    --cfg-vip-card-width: min(76vw, 250px);
+    --cfg-vip-card-height: 228px;
+    --cfg-vip-card-padding: 12px;
+}
+
+body.is-touch-device .vip-station-card.is-temporada {
+    --cfg-vip-season-card-height: 220px;
+}
+
+body.is-touch-device .vip-station-banner {
+    --cfg-vip-card-image-height: 104px;
+}
+
+body.is-touch-device .vip-station-card h3 {
+    font-size: 11px !important;
+    letter-spacing: 1px !important;
+}
+
+body.is-touch-device .vip-shelf-arrow {
+    width: 34px !important;
+    height: 34px !important;
+}
+
+body.is-touch-device .vip-banner-rarity-filter {
+    align-items: flex-start !important;
+    flex-direction: column !important;
+    gap: 8px !important;
+    padding: 10px !important;
+    margin-bottom: 14px !important;
+}
+
+body.is-touch-device .vip-banner-rarity-filter div {
+    width: 100% !important;
+    flex-wrap: nowrap !important;
+    overflow-x: auto !important;
+    padding-bottom: 2px !important;
+    scrollbar-width: none !important;
+}
+
+body.is-touch-device .vip-banner-rarity-filter div::-webkit-scrollbar {
+    display: none !important;
+}
+
+body.is-touch-device .vip-banner-rarity-chip {
+    flex: none !important;
+    min-height: 30px !important;
+}
+
+@media (max-width: 420px) {
+    body.is-touch-device .vip-station-card {
+        --cfg-vip-card-width: min(82vw, 232px);
+    }
+
+    body.is-touch-device .vip-shelf-arrow {
+        width: 30px !important;
+        height: 30px !important;
+    }
+}

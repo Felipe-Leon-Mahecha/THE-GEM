@@ -32,6 +32,25 @@ const GEM_CONFIG = {
     },
 
     // --------------------------------------------------------
+    //  LEVEL SELECT — Texto principal "SELECCIONAR NIVEL"
+    //  texto/color/fuente/glow tienen version desktop y mobile.
+    //  La posicion y el tamano del cuadro viven en layoutconfig.js.
+    // --------------------------------------------------------
+    levelSelect: {
+        titulo: {
+            texto: 'SELECCIONAR NIVEL',
+            color: { mobile: '#ffffff', desktop: '#ffffff' },
+            fuente: { mobile: 'var(--font-principal)', desktop: 'var(--font-principal)' },
+            glowColor: {
+                mobile: 'rgba(0, 255, 231, 0.55)',
+                desktop: 'rgba(0, 255, 231, 0.55)',
+            },
+            // 0 apaga el glow, 1 es normal, 2 es muy fuerte.
+            glowIntensidad: { mobile: 1, desktop: 1 },
+        },
+    },
+
+    // --------------------------------------------------------
     //  ESTILOS DE TEXTO INDEPENDIENTES (bloque 3.1)
     //  Por defecto TODOS los textos usan el color y la fuente GLOBAL de
     //  arriba (tema.colores / tema.fuentes). Si quieres que UN texto
@@ -620,6 +639,7 @@ function applyTextos() {
 
     // Menú principal
     set('txt-menu-clasificacion', t.menu.clasificacion);
+    set('txt-levelselect-title', GEM_CONFIG.levelSelect?.titulo?.texto);
 
     // Pantalla de Game Over
     set('txt-go-kicker', t.gameOver.esferaColapsada);

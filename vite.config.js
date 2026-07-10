@@ -8,7 +8,7 @@ export default defineConfig({
       output: {
         assetFileNames: (assetInfo) => {
           if (assetInfo.name && assetInfo.name.match(/Botones HUD/)) {
-            return 'assets/Imagenes/Botones HUD/[name][extname]';
+            return 'assets/UI/Common/HUD/[name][extname]';
           }
           return 'assets/[name]-[hash][extname]';
         }

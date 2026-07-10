@@ -6,6 +6,9 @@ const root = dirname(dirname(fileURLToPath(import.meta.url)));
 const dist = join(root, "dist");
 
 const runtimeFiles = [
+  "assets.config.js",
+  "textgemconfig.js",
+  "layoutconfig.js",
   "levels.config.js",
   "powerups.js",
   "ui.js",
@@ -19,13 +22,13 @@ const runtimeFiles = [
   "fragment-system.js",
   "src/keybinds-integration.js",
   "style.css",
-  "config.js",
   "rank-system.js",
   "leaderboard.js",
   "skins-side.js",
   "survival-level.js",
   "prices.config.js",
-  "rubypass.config.js"
+  "rubypass.config.js",
+  "rarities.override.js"
 ];
 
 await mkdir(join(dist, "src"), { recursive: true });

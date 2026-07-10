@@ -9,7 +9,7 @@
         content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>THE GEM</title>
     <!-- Icono de favicon -->
-    <link rel="icon" type="image/png" href="assets/Imagenes/Icono/favicon.png">
+    <link rel="icon" type="image/png" href="assets/UI/Common/Icons/favicon.png">
 
     <!-- Preconexión a Google Fonts para mejor rendimiento -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -254,74 +254,27 @@
     <canvas id="gameCanvas"></canvas>
     <!-- Controles táctiles para móviles -->
     <div id="touch-controls">
-        <button id="touch-left" type="button"><img src="assets/Imagenes/Botones HUD/Direccion_izquierda.png"
+        <button id="touch-left" type="button"><img src="assets/UI/Common/HUD/Direccion_izquierda.png"
                 alt="Izquierda"></button>
-        <button id="touch-right" type="button"><img src="assets/Imagenes/Botones HUD/Direccion_derecha.png"
+        <button id="touch-right" type="button"><img src="assets/UI/Common/HUD/Direccion_derecha.png"
                 alt="Derecha"></button>
         <button id="touch-gravity" type="button"><img id="gravity-img"
-                src="assets/Imagenes/Botones HUD/Gravedad_abajo.png" alt="Gravedad"></button>
+                src="assets/UI/Common/HUD/Gravedad_abajo.png" alt="Gravedad"></button>
     </div>
 
     <!-- Botón de silenciar/activar sonido -->
-    <div id="mute-btn" onclick="toggleMute()" style="
-    position:fixed;
-    bottom:20px;
-    right:20px;
-    z-index:10000;
-    cursor:pointer;
-    width:52px;
-    height:52px;
-    background:rgba(0,0,0,0.35);
-    border:1px solid rgba(255,255,255,0.12);
-    border-radius:14px;
-    backdrop-filter:blur(6px);
-    display:flex;
-    align-items:center;
-    justify-content:center;
-">
-        <img id="mute-icon" src="assets/Imagenes/Icono/Music_On.png" style="width:100%;height:100%;">
+    <div id="mute-btn" onclick="toggleMute()">
+        <img id="mute-icon" src="assets/UI/Common/Icons/Music_On.png" style="width:100%;height:100%;">
     </div>
 
     <!-- Botón flotante de opciones -->
-    <div id="options-float-btn" onclick="openOptionsPanel()" style="
-    position:fixed;
-    bottom:20px;
-    right:85px;
-    z-index:10000;
-    cursor:pointer;
-    width:52px;
-    height:52px;
-    background:rgba(0,0,0,0.35);
-    border:1px solid rgba(255,255,255,0.12);
-    border-radius:14px;
-    backdrop-filter:blur(6px);
-    display:flex;
-    align-items:center;
-    justify-content:center;
-">
-        <img src="assets/Imagenes/Icono/Opciones.png" style="width:100%;height:100%;">
+    <div id="options-float-btn" onclick="openOptionsPanel()">
+        <img src="assets/UI/Common/Icons/Opciones.png" style="width:100%;height:100%;">
     </div>
     <!-- Botón REYES: integrado en el menú (ver #wrap-reyes en #overlay-panel) -->
 
     <!-- Botón flotante de monedas infinitas (DEV) -->
-    <div id="infinite-coins-float-btn" onclick="toggleInfiniteCoins()" style="
-    position:fixed;
-    bottom:20px;
-    right:150px;
-    z-index:10000;
-    cursor:pointer;
-    width:52px;
-    height:52px;
-    background:rgba(0,0,0,0.35);
-    border:1px solid rgba(255,255,255,0.12);
-    border-radius:14px;
-    backdrop-filter:blur(6px);
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    font-size:20px;
-    color:rgba(255,255,255,0.7);
-">
+    <div id="infinite-coins-float-btn" onclick="toggleInfiniteCoins()">
         <span id="infinite-coins-icon">∞</span>
     </div>
 
@@ -352,7 +305,6 @@
                 aria-label="Abrir perfil" style="cursor:pointer; margin-bottom:0;">
                 <div class="shop-profile-banner-overlay"></div>
                 <div class="shop-profile-banner-top">
-                    <div id="menu-profile-avatar" class="shop-profile-avatar" aria-hidden="true"></div>
                     <div class="shop-profile-info">
                         <div id="menu-profile-name" class="shop-profile-name">Jugador</div>
                         <div id="menu-profile-rank" class="shop-profile-level">CHISPA</div>
@@ -360,11 +312,11 @@
                     <div style="flex:1;"></div>
                     <div class="menu-profile-currency-container">
                         <span class="shop-currency-item">
-                            <img src="assets/Imagenes/Monetizacion/Rubies.png" class="menu-currency-icon">
+                            <img src="assets/UI/Common/Currency/Rubies.png" class="menu-currency-icon">
                             <span id="menu-profile-gems">0</span>
                         </span>
                         <span class="shop-currency-item">
-                            <img src="assets/Imagenes/Monetizacion/DEAD_COIN.png" class="menu-currency-icon">
+                            <img src="assets/UI/Common/Currency/DEAD_COIN.png" class="menu-currency-icon">
                             <span id="menu-profile-coins">0</span>
                         </span>
                     </div>
@@ -502,7 +454,6 @@
                 <div id="shop-profile-banner" class="shop-profile-banner">
                     <div class="shop-profile-banner-overlay"></div>
                     <div class="shop-profile-banner-top">
-                        <div id="shop-profile-avatar" class="shop-profile-avatar"></div>
                         <div class="shop-profile-info">
                             <div id="shop-profile-name" class="shop-profile-name">Jugador</div>
                             <div class="shop-profile-level">Nivel 1</div>
@@ -517,14 +468,14 @@
                 <div class="shop-sidebar-currency">
                     <div class="shop-currency-row">
                         <div class="shop-currency-label">
-                            <img src="assets/Imagenes/Monetizacion/Rubies.png" class="shop-currency-icon">
+                            <img src="assets/UI/Common/Currency/Rubies.png" class="shop-currency-icon">
                             <span id="txt-shop-label-rubies">RUBIES</span>
                         </div>
                         <span id="shop-gems" class="shop-currency-value">0</span>
                     </div>
                     <div class="shop-currency-row">
                         <div class="shop-currency-label">
-                            <img src="assets/Imagenes/Monetizacion/DEAD_COIN.png" class="shop-currency-icon">
+                            <img src="assets/UI/Common/Currency/DEAD_COIN.png" class="shop-currency-icon">
                             <span id="txt-shop-label-coins">COINS</span>
                         </div>
                         <span id="shop-coins" class="shop-currency-value">0</span>
@@ -664,7 +615,7 @@
                 </div>
             </div>
             <div class="inv-gem-counter">
-                <img src="assets/Imagenes/Monetizacion/Rubies.png" alt="">
+                <img src="assets/UI/Common/Currency/Rubies.png" alt="">
                 <span id="inv-gems-value">0</span>
             </div>
         </div>
@@ -789,7 +740,7 @@
         <div class="profile-dim" onclick="closeProfileMenu()"></div>
         <div class="profile-card">
             <button class="profile-close" type="button" onclick="closeProfileMenu()">×</button>
-            <!-- HERO: nombre/rango a la izquierda, avatar grande a la derecha -->
+            <!-- HERO: nombre/rango -->
             <div class="profile-hero">
                 <div class="profile-hero-info">
                     <div id="profileHeroName" class="profile-hero-name">Jugador</div>
@@ -801,11 +752,6 @@
                         <span id="profileStat-total-xp">0</span> <span id="txt-rangos-hero-xp-sufijo">XP</span>
                         · <span id="profileStat-xp-to-next">— XP para siguiente</span>
                     </div>
-                </div>
-                <div class="profile-preview-wrap">
-                    <div id="profilePreview" class="profile-preview" aria-label="Avatar de jugador"></div>
-                    <button type="button" class="profile-preview-edit-btn" onclick="openProfileEditModal()"
-                        aria-label="Editar avatar y nombre">✎</button>
                 </div>
             </div>
             <!-- Fila: Google -->
@@ -895,30 +841,6 @@
         </div>
     </div>
 
-    <!-- =====================================================
-         MODAL: Editar nombre y avatar del jugador
-         ===================================================== -->
-    <div id="profileEditModal">
-        <div class="profile-dim" onclick="closeProfileEditModal()"></div>
-        <div class="profile-edit-card">
-            <button class="profile-close" type="button" onclick="closeProfileEditModal()">×</button>
-            <div class="profile-edit-title" id="txt-profileedit-title">EDITAR PERFIL</div>
-
-            <label class="profile-edit-label" for="profileEditNameInput" id="txt-profileedit-label-name">Nombre de jugador</label>
-            <input id="profileEditNameInput" class="profile-edit-name-input" type="text" maxlength="16"
-                placeholder="Jugador" autocomplete="off">
-
-            <div class="profile-edit-label" id="txt-profileedit-label-avatar">Elegir avatar</div>
-            <div id="profileEditAvatarGrid" class="profile-edit-avatar-grid"></div>
-
-            <div id="profileEditError" class="profile-edit-error"></div>
-
-            <div class="profile-edit-actions">
-                <button type="button" class="profile-edit-cancel" id="profileEditCancelBtn" onclick="closeProfileEditModal()">Cancelar</button>
-                <button type="button" class="profile-edit-save" id="profileEditSaveBtn" onclick="savePlayerProfileEdit()">Guardar</button>
-            </div>
-        </div>
-    </div>
 
 
     <!-- =====================================================
@@ -942,18 +864,17 @@
                 <!-- IZQUIERDA: Mini perfil + XP -->
                 <div class="rs-compact-profile" id="rs-compact-profile">
                     <div class="rs-compact-profile-banner-bg" id="rs-compact-profile-banner-bg"></div>
-                    <div id="rs-profile-avatar" class="menu-profile-avatar" aria-hidden="true"></div>
                     <div class="menu-profile-text">
                         <span id="rs-profile-name" class="menu-profile-name">Jugador</span>
                         <span id="rs-current-name" class="menu-profile-rank">&#10022; Chispa</span>
                     </div>
                     <div class="menu-profile-currency">
                         <span class="menu-profile-chip">
-                            <img src="assets/Imagenes/Monetizacion/Rubies.png" class="menu-profile-chip-icon">
+                            <img src="assets/UI/Common/Currency/Rubies.png" class="menu-profile-chip-icon">
                             <span id="rs-display-gems">0</span>
                         </span>
                         <span class="menu-profile-chip">
-                            <img src="assets/Imagenes/Monetizacion/DEAD_COIN.png" class="menu-profile-chip-icon">
+                            <img src="assets/UI/Common/Currency/DEAD_COIN.png" class="menu-profile-chip-icon">
                             <span id="rs-display-coins">0</span>
                         </span>
                     </div>
@@ -1009,7 +930,7 @@
         <!-- HEADER -->
         <div class="ls-header" style="z-index:5;">
             <div class="ls-title-zone">
-                <div class="ls-title">SELECCIONAR NIVEL</div>
+                <div class="ls-title" id="txt-levelselect-title">SELECCIONAR NIVEL</div>
             </div>
             <button class="ls-back-btn" onclick="window.closeLevelSelect();">← VOLVER</button>
         </div>
@@ -1018,9 +939,9 @@
         <div class="ls-player-bar">
             <div class="avatar" id="playerAvatar"></div>
             <span id="playerName">Jugador</span>
-            <div class="stat"><img src="assets/Imagenes/Monetizacion/DEAD_COIN.png"><span id="playerCoins">0</span>
+            <div class="stat"><img src="assets/UI/Common/Currency/DEAD_COIN.png"><span id="playerCoins">0</span>
             </div>
-            <div class="stat"><img src="assets/Imagenes/Monetizacion/Rubies.png"><span id="playerGems">0</span></div>
+            <div class="stat"><img src="assets/UI/Common/Currency/Rubies.png"><span id="playerGems">0</span></div>
         </div>
 
         <!-- BODY CINEMATOGRÁFICO -->
@@ -1083,6 +1004,7 @@
     </div>
 
     <!-- Scripts del juego -->
+    <script src="assets.config.js"></script>
     <script src="textgemconfig.js"></script>
     <script src="layoutconfig.js"></script>
     <script src="levels.config.js"></script>
@@ -1094,6 +1016,8 @@
     <script src="levelselect.js"></script>
     <script src="prices.config.js"></script>
     <script src="rubypass.config.js"></script>
+    <script src="rarities.override.js"></script>
+    <script src="assets/Imagenes/Banners/banners.catalog.js"></script>
     <script src="shop.js"></script>
     <script src="skins-side.js"></script>
     <script src="src/main.js"></script>

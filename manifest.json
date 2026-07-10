@@ -9,12 +9,12 @@
   "theme_color": "#ff4d6d",
   "icons": [
     {
-      "src": "assets/Imagenes/Icono/favicon.png",
+      "src": "assets/UI/Common/Icons/favicon.png",
       "sizes": "192x192",
       "type": "image/png"
     },
     {
-      "src": "assets/Imagenes/Icono/favicon.png",
+      "src": "assets/UI/Common/Icons/favicon.png",
       "sizes": "512x512",
       "type": "image/png"
     }

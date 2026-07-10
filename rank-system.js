@@ -216,9 +216,9 @@ try {
                     detail: { prevRank, newRank, totalXP: this.getXP() }
                 }));
                 // Notificación visual de subida de rango
-                // Imagen: assets/UI/Rangos/rango_<id>.png (cuando existan)
+                // Imagen: assets/UI/Common/Ranks/rango_<id>.png (cuando existan)
                 // Fallback: emoji del rango
-                const rankImgPath = `assets/UI/Rangos/rango_${newRank.id}.png`;
+                const rankImgPath = `assets/UI/Common/Ranks/rango_${newRank.id}.png`;
                 if (typeof window.showRankUpNotification === 'function') {
                     window.showRankUpNotification(newRank, rankImgPath);
                 } else if (typeof window.showAchievementNotification === 'function') {
@@ -1091,7 +1091,7 @@ window._getNodeBarSegment = function (currentXP, currentRank) {
 };
 
 // Pone la gema PNG real del rango (la misma que usa la notificación "¡NUEVO RANGO!",
-// en assets/UI/Rangos/rango_<id>.png). Si no existe esa imagen, cae al emoji + círculo de color.
+// en assets/UI/Common/Ranks/rango_<id>.png). Si no existe esa imagen, cae al emoji + círculo de color.
 window._setRankGemIcon = function (container, rank, sizePx) {
     container.innerHTML = '';
     container.style.width = sizePx + 'px';
@@ -1104,7 +1104,7 @@ window._setRankGemIcon = function (container, rank, sizePx) {
     container.style.border = 'none';
     container.style.background = 'none';
     const img = document.createElement('img');
-    img.src = `assets/UI/Rangos/rango_${rank.id}.png`;
+    img.src = `assets/UI/Common/Ranks/rango_${rank.id}.png`;
     img.alt = rank.name;
     img.style.cssText = `width:100%;height:100%;object-fit:contain;filter:drop-shadow(0 0 6px ${rank.color}99);`;
     img.onerror = function () {
@@ -1322,9 +1322,9 @@ window._showNodeRewardPopup = function (reward, onClaim) {
     const isCoins = reward.type === 'coins';
 
     const currencyImg = isGems
-        ? 'assets/UI/Rewards/Currency/Gems/Monton_de_gemas_Mediano.png'
+        ? 'assets/UI/Common/Rewards/Currency/Gems/Monton_de_gemas_Mediano.png'
         : isCoins
-            ? 'assets/UI/Rewards/Currency/Coins/Monton_de_monedas_Mediano.png'
+            ? 'assets/UI/Common/Rewards/Currency/Coins/Monton_de_monedas_Mediano.png'
             : null;
     const icon = isSkin ? '🏆' : !currencyImg ? '⭐' : null;
     const color = isRank ? '#ffd700' : isGems ? '#00ffe7' : '#f4c842';

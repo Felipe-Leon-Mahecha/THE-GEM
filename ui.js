@@ -21,7 +21,7 @@ document.getElementById("play-btn").onclick = () => {
 
     if (window.menuMusic) {
         window.applyAudioSettings?.();
-        window.menuMusic.play().catch(() => { });
+        window.safePlayAudio?.(window.menuMusic);
     }
 
     const overlay = document.getElementById("overlay");
@@ -96,24 +96,8 @@ window.openOptionsPanel = function () {
 };
 
 // =====================================================
-// PROFILE / AVATAR
+// PROFILE
 // =====================================================
-
-const PROFILE_AVATARS = [
-    "assets/Imagenes/Avatares/Avatar_Default.png",
-    "assets/Imagenes/Avatares/DXZ_Avatar.png",
-    "assets/Imagenes/Avatares/FOX_Avatar.png",
-    "assets/Imagenes/Avatares/BRIFON_Avatar.png",
-    "assets/Imagenes/BUHE Avatar.png"
-];
-
-let selectedProfileAvatar =
-    localStorage.getItem("playerAvatar") || PROFILE_AVATARS[0];
-
-function refreshProfilePreview() {
-    const preview = document.getElementById("profilePreview");
-    if (preview) preview.style.backgroundImage = `url("${selectedProfileAvatar}")`;
-}
 
 function formatTime(seconds) {
     if (!Number.isFinite(seconds) || seconds <= 0) return '0:00';
@@ -229,7 +213,6 @@ function updateProfilePanelStats() {
     const nextRank = window.rankSystem ? window.rankSystem.getNextRank() : null;
     const rankProgress = window.rankSystem ? window.rankSystem.getRankProgress() : 0;
     const playerName = localStorage.getItem('playerName') || 'Jugador';
-    const avatarUrl = localStorage.getItem('playerAvatar') || PROFILE_AVATARS[0];
 
     const coinsValue = window.infiniteCoinsMode ? '∞' : (parseInt(localStorage.getItem('deadCoins') || '0', 10) || 0);
     const gemsValue = window.infiniteCoinsMode ? '∞' : (parseInt(localStorage.getItem('gems') || '0', 10) || 0);
@@ -281,35 +264,20 @@ function updateProfilePanelStats() {
     }
 
     const profileNameEl = document.getElementById('menu-profile-name');
-    const profileAvatarEl = document.getElementById('menu-profile-avatar');
     const heroNameEl = document.getElementById('profileHeroName');
     const heroRankEl = document.getElementById('profileHeroRank');
-    const profilePreviewEl = document.getElementById('profilePreview');
 
     if (profileNameEl) profileNameEl.textContent = playerName;
-    if (profileAvatarEl) {
-        profileAvatarEl.style.backgroundImage = `url("${avatarUrl}")`;
-        profileAvatarEl.style.backgroundSize = 'cover';
-        profileAvatarEl.style.backgroundPosition = 'center';
-    }
     if (heroNameEl) heroNameEl.textContent = playerName;
     // heroRankEl lo maneja el bloque rankObj de arriba (con emoji y color)
     // Solo aplicar fallback si rankObj no existe
     if (!rankObj && heroRankEl) heroRankEl.textContent = rankName;
-    if (profilePreviewEl) {
-        profilePreviewEl.style.backgroundImage = `url("${avatarUrl}")`;
-        profilePreviewEl.style.backgroundSize = 'cover';
-        profilePreviewEl.style.backgroundPosition = 'center';
-    }
 }
 
 window.openProfileMenu = function () {
     window.playSfx?.('avatarBanner', 0.55);
-    selectedProfileAvatar =
-        localStorage.getItem("playerAvatar") || PROFILE_AVATARS[0];
 
     const panel = document.getElementById("profilePanel");
-    refreshProfilePreview();
     updateProfilePanelStats();
     if (panel) panel.classList.add("showing");
 };
@@ -317,79 +285,6 @@ window.openProfileMenu = function () {
 window.closeProfileMenu = function () {
     const panel = document.getElementById("profilePanel");
     if (panel) panel.classList.remove("showing");
-};
-
-// =====================================================
-// PROFILE EDIT MODAL — cambiar nombre y avatar
-// =====================================================
-
-let pendingProfileAvatar = null;
-
-function renderProfileEditAvatarGrid() {
-    const grid = document.getElementById('profileEditAvatarGrid');
-    if (!grid) return;
-    grid.innerHTML = '';
-
-    PROFILE_AVATARS.forEach((url) => {
-        const btn = document.createElement('button');
-        btn.type = 'button';
-        btn.className = 'profile-edit-avatar-option';
-        btn.style.backgroundImage = `url("${url}")`;
-        btn.setAttribute('aria-label', 'Elegir este avatar');
-        if (url === pendingProfileAvatar) btn.classList.add('selected');
-        btn.onclick = () => {
-            pendingProfileAvatar = url;
-            grid.querySelectorAll('.profile-edit-avatar-option').forEach(el => el.classList.remove('selected'));
-            btn.classList.add('selected');
-        };
-        grid.appendChild(btn);
-    });
-}
-
-window.openProfileEditModal = function () {
-    const modal = document.getElementById('profileEditModal');
-    const nameInput = document.getElementById('profileEditNameInput');
-    const errorEl = document.getElementById('profileEditError');
-
-    pendingProfileAvatar = localStorage.getItem('playerAvatar') || PROFILE_AVATARS[0];
-    if (nameInput) nameInput.value = localStorage.getItem('playerName') || '';
-    if (errorEl) errorEl.textContent = '';
-
-    renderProfileEditAvatarGrid();
-
-    if (modal) modal.classList.add('showing');
-    window.playSfx?.('menuSelect', 0.5);
-};
-
-window.closeProfileEditModal = function () {
-    const modal = document.getElementById('profileEditModal');
-    if (modal) modal.classList.remove('showing');
-};
-
-window.savePlayerProfileEdit = function () {
-    const nameInput = document.getElementById('profileEditNameInput');
-    const errorEl = document.getElementById('profileEditError');
-    const rawName = nameInput ? nameInput.value.trim() : '';
-
-    if (!rawName) {
-        if (errorEl) errorEl.textContent = 'Escribe un nombre antes de guardar.';
-        return;
-    }
-    if (rawName.length > 16) {
-        if (errorEl) errorEl.textContent = 'El nombre no puede tener más de 16 caracteres.';
-        return;
-    }
-
-    localStorage.setItem('playerName', rawName);
-    localStorage.setItem('playerAvatar', pendingProfileAvatar || PROFILE_AVATARS[0]);
-
-    // Mantener selectedProfileAvatar sincronizado para refreshProfilePreview()
-    selectedProfileAvatar = pendingProfileAvatar || PROFILE_AVATARS[0];
-
-    refreshProfilePreview();
-    updateProfilePanelStats();
-    window.closeProfileEditModal();
-    window.playSfx?.('menuSelect', 0.6);
 };
 
 // =====================================================
@@ -655,7 +550,7 @@ document.body.addEventListener('click', () => {
                 !window.isMuted
             ) {
 
-                window.menuMusic.play();
+                window.safePlayAudio?.(window.menuMusic);
 
             }
 }, { once: true });
@@ -681,7 +576,7 @@ document.getElementById('go-menu').onclick = () => {
             !window.isMuted
         ) {
 
-            window.menuMusic.play();
+            window.safePlayAudio?.(window.menuMusic);
 
         }
 };
@@ -705,7 +600,7 @@ document.getElementById('gw-menu').onclick = () => {
             !window.isMuted
         ) {
 
-            window.menuMusic.play();
+            window.safePlayAudio?.(window.menuMusic);
 
         }
     document.getElementById('overlay').style.display = 'flex';
@@ -737,7 +632,7 @@ window.resumeGame = function () {
     if (!window.paused) return;
     window.paused = false;
     document.getElementById('pausePanel').classList.remove('showing');
-    if (window.bgMusic && !window.isMuted) window.bgMusic.play();
+    if (window.bgMusic && !window.isMuted) window.safePlayAudio?.(window.bgMusic);
 };
 
 const pauseContinueBtn = document.getElementById('pause-continue');
@@ -773,7 +668,7 @@ if (pauseMenuBtn) pauseMenuBtn.onclick = () => {
     }
     if (window.menuMusic) {
         window.menuMusic.currentTime = 0;
-        if (window.menuMusic.paused && !window.isMuted) window.menuMusic.play();
+        if (window.menuMusic.paused && !window.isMuted) window.safePlayAudio?.(window.menuMusic);
     }
 };
 
@@ -799,8 +694,8 @@ function applyMuteState() {
     if (!icon) return;
 
     icon.src = window.isMuted
-        ? "assets/Imagenes/Icono/Music_Off.png"
-        : "assets/Imagenes/Icono/Music_On.png";
+        ? "assets/UI/Common/Icons/Music_Off.png"
+        : "assets/UI/Common/Icons/Music_On.png";
 }
 
 function toggleMute() {
@@ -944,7 +839,7 @@ function unlockTrophyAchievement(goal) {
 
 // ── Notificación de subida de rango ──
 // Se llama desde rank-system.js → _onRankUp
-// Cuando tengas las PNGs ponlas en: assets/UI/Rangos/rango_<id>.png
+// Cuando tengas las PNGs ponlas en: assets/UI/Common/Ranks/rango_<id>.png
 window.showRankUpNotification = function (rankObj, imgPath) {
     const tituloRango = window.GEM_CONFIG?.textos?.logros?.notificacion?.tituloRango || '¡NUEVO RANGO!';
     const notification = document.createElement('div');

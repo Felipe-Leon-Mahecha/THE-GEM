@@ -188,28 +188,28 @@ const SKIN_FOLDER_REGISTRY = [
     // PELOTA BÁSICA (rolling — imagen frontal del catálogo)
     // No necesitan carpeta de lados: son esferas simétricas.
     // ══════════════════════════════════════════════════════
-    { id: 'cyan',   folder: 'assets/UI/Store/Skins/Normal/skin pelota', rolling: true, drawScale: 1.0 },
-    { id: 'red',    folder: 'assets/UI/Store/Skins/Normal/skin pelota', rolling: true, drawScale: 1.0 },
-    { id: 'blue',   folder: 'assets/UI/Store/Skins/Normal/skin pelota', rolling: true, drawScale: 1.0 },
-    { id: 'yellow', folder: 'assets/UI/Store/Skins/Normal/skin pelota', rolling: true, drawScale: 1.0 },
-    { id: 'orange', folder: 'assets/UI/Store/Skins/Normal/skin pelota', rolling: true, drawScale: 1.0 },
-    { id: 'green',  folder: 'assets/UI/Store/Skins/Normal/skin pelota', rolling: true, drawScale: 1.0 },
-    { id: 'purple', folder: 'assets/UI/Store/Skins/Normal/skin pelota', rolling: true, drawScale: 1.0 },
-    { id: 'white',  folder: 'assets/UI/Store/Skins/Normal/skin pelota', rolling: true, drawScale: 1.0 },
-    { id: 'black',  folder: 'assets/UI/Store/Skins/Normal/skin pelota', rolling: true, drawScale: 1.0 },
+    { id: 'cyan',   folder: 'assets/UI/Store/Skins/Normal/Balls', rolling: true, drawScale: 1.0 },
+    { id: 'red',    folder: 'assets/UI/Store/Skins/Normal/Balls', rolling: true, drawScale: 1.0 },
+    { id: 'blue',   folder: 'assets/UI/Store/Skins/Normal/Balls', rolling: true, drawScale: 1.0 },
+    { id: 'yellow', folder: 'assets/UI/Store/Skins/Normal/Balls', rolling: true, drawScale: 1.0 },
+    { id: 'orange', folder: 'assets/UI/Store/Skins/Normal/Balls', rolling: true, drawScale: 1.0 },
+    { id: 'green',  folder: 'assets/UI/Store/Skins/Normal/Balls', rolling: true, drawScale: 1.0 },
+    { id: 'purple', folder: 'assets/UI/Store/Skins/Normal/Balls', rolling: true, drawScale: 1.0 },
+    { id: 'white',  folder: 'assets/UI/Store/Skins/Normal/Balls', rolling: true, drawScale: 1.0 },
+    { id: 'black',  folder: 'assets/UI/Store/Skins/Normal/Balls', rolling: true, drawScale: 1.0 },
 
     // ══════════════════════════════════════════════════════
     // PELOTA DONA (rolling — aro de color)
     // ══════════════════════════════════════════════════════
-    { id: 'dona_cyan',   folder: 'assets/UI/Store/Skins/Normal/pelota dona', rolling: true, drawScale: 1.0 },
-    { id: 'dona_red',    folder: 'assets/UI/Store/Skins/Normal/pelota dona', rolling: true, drawScale: 1.0 },
-    { id: 'dona_blue',   folder: 'assets/UI/Store/Skins/Normal/pelota dona', rolling: true, drawScale: 1.0 },
-    { id: 'dona_yellow', folder: 'assets/UI/Store/Skins/Normal/pelota dona', rolling: true, drawScale: 1.0 },
-    { id: 'dona_orange', folder: 'assets/UI/Store/Skins/Normal/pelota dona', rolling: true, drawScale: 1.0 },
-    { id: 'dona_green',  folder: 'assets/UI/Store/Skins/Normal/pelota dona', rolling: true, drawScale: 1.0 },
-    { id: 'dona_purple', folder: 'assets/UI/Store/Skins/Normal/pelota dona', rolling: true, drawScale: 1.0 },
-    { id: 'dona_white',  folder: 'assets/UI/Store/Skins/Normal/pelota dona', rolling: true, drawScale: 1.0 },
-    { id: 'dona_black',  folder: 'assets/UI/Store/Skins/Normal/pelota dona', rolling: true, drawScale: 1.0 },
+    { id: 'dona_cyan',   folder: 'assets/UI/Store/Skins/Normal/Donuts', rolling: true, drawScale: 1.0 },
+    { id: 'dona_red',    folder: 'assets/UI/Store/Skins/Normal/Donuts', rolling: true, drawScale: 1.0 },
+    { id: 'dona_blue',   folder: 'assets/UI/Store/Skins/Normal/Donuts', rolling: true, drawScale: 1.0 },
+    { id: 'dona_yellow', folder: 'assets/UI/Store/Skins/Normal/Donuts', rolling: true, drawScale: 1.0 },
+    { id: 'dona_orange', folder: 'assets/UI/Store/Skins/Normal/Donuts', rolling: true, drawScale: 1.0 },
+    { id: 'dona_green',  folder: 'assets/UI/Store/Skins/Normal/Donuts', rolling: true, drawScale: 1.0 },
+    { id: 'dona_purple', folder: 'assets/UI/Store/Skins/Normal/Donuts', rolling: true, drawScale: 1.0 },
+    { id: 'dona_white',  folder: 'assets/UI/Store/Skins/Normal/Donuts', rolling: true, drawScale: 1.0 },
+    { id: 'dona_black',  folder: 'assets/UI/Store/Skins/Normal/Donuts', rolling: true, drawScale: 1.0 },
 
     // ══════════════════════════════════════════════════════
     // PICHOS (rolling — esfera con pinchos)

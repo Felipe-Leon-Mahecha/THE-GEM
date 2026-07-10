@@ -8,6 +8,8 @@
     "build": "vite build && node scripts/copy-runtime-assets.mjs",
     "check": "node --check powerups.js && node --check src/main.js && node --check shop.js && node --check trails.js && node --check levelselect.js && node scripts/check-runtime-assets.mjs",
     "asset-report": "node scripts/asset-report.mjs",
+    "phone": "node scripts/install-open-android.mjs",
+    "android:phone": "node scripts/install-open-android.mjs",
     "deploy": "sh deploy.sh"
   },
   "author": "",

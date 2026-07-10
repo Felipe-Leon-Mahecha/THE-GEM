@@ -279,7 +279,7 @@ function getHTMLContent() {
             log('Iniciando renderizado...');
             
             // 1. Generar Pelotas
-            const folderPelotas = 'assets/UI/Store/Skins/Normal/skin pelota';
+            const folderPelotas = 'assets/UI/Store/Skins/Normal/Balls';
             for (const [name, hex] of Object.entries(colors)) {
                 const dataUrl = drawPelota(hex);
                 const filename = 'pelota ' + name + '.png';
@@ -287,7 +287,7 @@ function getHTMLContent() {
             }
             
             // 2. Generar Pelotas Dona
-            const folderDonas = 'assets/UI/Store/Skins/Normal/pelota dona';
+            const folderDonas = 'assets/UI/Store/Skins/Normal/Donuts';
             for (const [name, hex] of Object.entries(colors)) {
                 const dataUrl = drawDona(hex);
                 const filename = 'pelota ' + name + '.png';

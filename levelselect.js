@@ -14,14 +14,14 @@ const BANNER_TRAIL_COLORS = {
 
 const LEVEL_SELECT_SKIN_IMAGES = {
     daxor: {
-        side: "assets/UI/Store/Skins/Normal/DAXOR Skin DEMON/DAXOR_Skin_lado.png"
+        side: "assets/UI/Store/Skins/Normal/DaxorDemon/DAXOR_Skin_lado.png"
     },
     brifon: {
-        side: "assets/UI/Store/Skins/Normal/BRIFON Skin EPICO/BRIFON_Skin_lado_derecho.png",
-        sideLeft: "assets/UI/Store/Skins/Normal/BRIFON Skin EPICO/BRIFON_Skin_lado_izquierdo.png"
+        side: "assets/UI/Store/Skins/Normal/BrifonEpic/BRIFON_Skin_lado_derecho.png",
+        sideLeft: "assets/UI/Store/Skins/Normal/BrifonEpic/BRIFON_Skin_lado_izquierdo.png"
     },
     kenji: {
-        side: "assets/UI/Store/Skins/Normal/KENJI Skin EPICO/Kenji_Skin_lado.png"
+        side: "assets/UI/Store/Skins/Normal/KenjiEpic/Kenji_Skin_lado.png"
     }
 };
 
@@ -120,6 +120,11 @@ function renderCinematicList() {
     const list = document.getElementById('lsc-list');
     if (!list) return;
     list.innerHTML = '';
+    const canvas = document.createElement('canvas');
+    canvas.id = 'carouselCanvas';
+    canvas.width = 1400;
+    canvas.height = 700;
+    list.appendChild(canvas);
     levels.forEach((lv, i) => {
         const item = document.createElement('div');
         item.className = 'lsc-item' + (i === selectedLevel ? ' active' : '') + (!lv.unlocked ? ' locked' : '');
@@ -267,6 +272,8 @@ function getDifficultyColor(d) {
 window.showLevelSelect = function () {
 
     selectVisible = true;
+    window.applyTextos?.();
+    window.applyGemConfig?.();
     selectedLevel = window.currentLevel || 0;
     window.selectedLevel = selectedLevel;
     carouselTarget = 0;
@@ -412,7 +419,9 @@ function drawCarousel(timestamp = 0) {
     carouselLastFrame = now;
 
     const container = document.getElementById("carouselCanvas");
+    if (!container) return;
     const ctx2 = container.getContext("2d");
+    if (!ctx2) return;
 
     const W = container.width;
     const H = container.height;

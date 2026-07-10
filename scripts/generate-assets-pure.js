@@ -329,14 +329,14 @@ function run() {
     console.log("=== INICIANDO GENERACIÓN PURA DE IMÁGENES ===");
     
     // 1. Generar Pelotas
-    const folderPelotas = 'assets/UI/Store/Skins/Normal/skin pelota';
+    const folderPelotas = 'assets/UI/Store/Skins/Normal/Balls';
     for (const [name, rgb] of Object.entries(COLORS)) {
         const png = generatePNG(128, 128, (x, y) => getPelotaPixel(x, y, rgb));
         saveAsset(folderPelotas, `pelota ${name}.png`, png);
     }
     
     // 2. Generar Pelotas Dona
-    const folderDonas = 'assets/UI/Store/Skins/Normal/pelota dona';
+    const folderDonas = 'assets/UI/Store/Skins/Normal/Donuts';
     for (const [name, rgb] of Object.entries(COLORS)) {
         const png = generatePNG(128, 128, (x, y) => getDonaPixel(x, y, rgb));
         saveAsset(folderDonas, `pelota ${name}.png`, png);

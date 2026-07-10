@@ -8,9 +8,9 @@ const FRAGMENT_STORAGE_KEY = 'fragmentCollection';
 const FRAGMENT_CONFIG = {
     // Skins que se pueden desbloquear por fragmentos
     skins: [
-        { id: 'daxor', name: 'DAXOR', type: 'skin', rarity: 'DEMON', image: 'assets/UI/Store/Skins/Normal/DAXOR Skin DEMON/DAXOR_Skin_lado.png' },
-        { id: 'kenji', name: 'KENJI', type: 'skin', rarity: 'EPICA', image: 'assets/UI/Store/Skins/Normal/KENJI Skin EPICO/Kenji_Skin_lado.png' },
-        { id: 'brifon', name: 'BRIFON', type: 'skin', rarity: 'EPICA', image: 'assets/UI/Store/Skins/Normal/BRIFON Skin EPICO/BRIFON_Skin_lado.png' },
+        { id: 'daxor', name: 'DAXOR', type: 'skin', rarity: 'DEMON', image: 'assets/UI/Store/Skins/Normal/DaxorDemon/DAXOR_Skin_lado.png' },
+        { id: 'kenji', name: 'KENJI', type: 'skin', rarity: 'EPICA', image: 'assets/UI/Store/Skins/Normal/KenjiEpic/Kenji_Skin_lado.png' },
+        { id: 'brifon', name: 'BRIFON', type: 'skin', rarity: 'EPICA', image: 'assets/UI/Store/Skins/Normal/BrifonEpic/BRIFON_Skin_lado.png' },
         { id: 'skin_caballero_dorado', name: 'Caballero Dorado', type: 'skin', rarity: 'VIP', image: 'assets/UI/Store/VIP/Bundles/Royal/skin_caballero_dorado.png' },
         { id: 'skin_reina', name: 'Reina', type: 'skin', rarity: 'VIP', image: 'assets/UI/Store/VIP/Bundles/Royal/skin_reina.png' },
         { id: 'skin_emperador_oscuro', name: 'Principe Oscuro', type: 'skin', rarity: 'VIP', image: 'assets/UI/Store/VIP/Bundles/Royal/skin_emperador_oscuro.png' },

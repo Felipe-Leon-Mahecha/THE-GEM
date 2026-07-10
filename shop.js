@@ -46,6 +46,101 @@ function shopPreguntaCompra(amount, currency) {
     return template.replace('{monto}', amount).replace('{moneda}', shopMonedaLabel(currency));
 }
 
+const GEM_ALLOWED_RARITIES = ['DEFAULT', 'BASICO', 'ESPECIAL', 'EPICA', 'DEMON', 'VIP', 'LEGENDARIO', 'EXCLUSIVO'];
+const GEM_EXCLUSIVE_RARITY_COLOR = '#ff4dff';
+
+const GEM_RARITY_COLORS = {
+    DEFAULT: 'rgba(255,255,255,0.35)',
+    BASICO: '#57b7dd',
+    ESPECIAL: '#ff9a17',
+    EPICA: '#cc44ff',
+    DEMON: '#cf0000',
+    VIP: '#ffee00',
+    LEGENDARIO: '#8a2be2',
+    EXCLUSIVO: GEM_EXCLUSIVE_RARITY_COLOR
+};
+
+function normalizeGemRarity(rarity, fallback = null) {
+    const value = String(rarity || fallback || '').trim().toUpperCase();
+    if (GEM_ALLOWED_RARITIES.includes(value)) return value;
+    return fallback;
+}
+
+function applyGemRarityColorOverrides() {
+    const colors = window.GEM_RARITY_OVERRIDES?.colors;
+    if (!colors) return;
+
+    Object.entries(colors).forEach(([rarity, color]) => {
+        const normalized = normalizeGemRarity(rarity);
+        if (!normalized || normalized === 'EXCLUSIVO' || !color) return;
+        GEM_RARITY_COLORS[normalized] = color;
+    });
+
+    GEM_RARITY_COLORS.EXCLUSIVO = GEM_EXCLUSIVE_RARITY_COLOR;
+}
+
+function syncGemRarityColorMaps() {
+    if (typeof RARITY_COLORS !== 'undefined') {
+        Object.assign(RARITY_COLORS, GEM_RARITY_COLORS);
+    }
+    if (typeof BANNER_RARITY_COLORS !== 'undefined') {
+        Object.assign(BANNER_RARITY_COLORS, GEM_RARITY_COLORS);
+    }
+}
+
+function gemRarityClass(rarity) {
+    return normalizeGemRarity(rarity) === 'EXCLUSIVO' ? ' gem-rarity-exclusive' : '';
+}
+
+function applyRarityToItem(item, rarity, options = {}) {
+    if (!item || !rarity) return;
+    const normalized = normalizeGemRarity(rarity, item.rarity);
+    if (!normalized) return;
+    item.rarity = normalized;
+    if ('rarityColor' in item || options.setColor) {
+        item.rarityColor = GEM_RARITY_COLORS[item.rarity] || GEM_RARITY_COLORS[normalized] || item.rarityColor;
+    }
+}
+
+function applyRarityOverridesToList(list, overrides, options = {}) {
+    if (!Array.isArray(list) || !overrides) return;
+    list.forEach(item => {
+        const aliasRarity = Array.isArray(item.aliases)
+            ? item.aliases.map(alias => overrides[alias]).find(Boolean)
+            : null;
+        applyRarityToItem(item, overrides[item.id] || aliasRarity || overrides[item.name], options);
+    });
+}
+
+function applyNestedRarityOverrides(items, overrides, options = {}) {
+    if (!Array.isArray(items) || !overrides) return;
+    items.forEach(item => {
+        applyRarityToItem(item, overrides[item.id], options);
+        applyNestedRarityOverrides(item.items, overrides, options);
+    });
+}
+
+function applyGemRarityOverrides(stage = 'normal') {
+    const overrides = window.GEM_RARITY_OVERRIDES;
+    if (!overrides) return;
+
+    applyGemRarityColorOverrides();
+    syncGemRarityColorMaps();
+
+    if (stage === 'normal') {
+        applyRarityOverridesToList(TRAILS_DATA, overrides.trails, { setColor: true });
+        applyRarityOverridesToList(SKINS_DATA, overrides.skins);
+        applyRarityOverridesToList(BANNERS_DATA, overrides.banners, { bannerBasic: true });
+        applyRarityOverridesToList(EMOTES_DATA, overrides.emotes);
+        applyRarityOverridesToList(VIP_BANNER_PLACEHOLDERS, overrides.banners, { bannerBasic: true });
+        return;
+    }
+
+    applyNestedRarityOverrides(VIP_CAROUSEL_DATA.flatMap(panel => panel.items || []), overrides.vipItems);
+    applyNestedRarityOverrides(VIP_PACKAGES_DATA.flatMap(pack => pack.items || []), overrides.vipItems);
+    applyRarityOverridesToList(VIP_GAMEPLAY_PLACEHOLDERS, overrides.vipGameplay);
+}
+
 // Botón "← VOLVER" compartido por las páginas internas de la tienda normal
 // (antes decía "VOLVER" en algunas páginas y "← VOLVER" en otras — unificado)
 function shopBotonVolverHtml(onclick = "showShopSection('home')") {
@@ -103,22 +198,22 @@ function vipTrail(folder, id, name, price = 320) {
 // =====================================================
 
 const TRAILS_DATA = [
-    { id: 'none', name: 'Ninguna', rarity: 'BASICA', rarityColor: '#888888', price: 0, priceType: 'coins', image: 'assets/UI/Store/Imagenes Trails/Trails portadas/Ninguna_trail.png' },
-    { id: 'basic', name: 'Basica', rarity: 'BASICA', rarityColor: '#57b7dd', price: 30, priceType: 'coins', image: 'assets/UI/Store/Imagenes Trails/Trails portadas/Basic_trail.png' },
-    { id: 'ghost', name: 'Ghost', rarity: 'EPICA', rarityColor: '#cc44ff', price: 800, priceType: 'coins', image: 'assets/UI/Store/Imagenes Trails/Trails portadas/Ghost_trail.png' },
-    { id: 'fractura', name: 'Fractura', rarity: 'EPICA', rarityColor: '#cc44ff', price: 1000, priceType: 'coins', image: 'assets/UI/Store/Imagenes Trails/Trails portadas/Fractura_trail.png' },
-    { id: 'hielo', name: 'Hielo', rarity: 'ESPECIAL', rarityColor: '#7fd8ff', price: 260, priceType: 'coins', image: 'assets/UI/Store/Imagenes Trails/Trails portadas/Hielo_trail.png' },
-    { id: 'toxico', name: 'Toxico', rarity: 'ESPECIAL', rarityColor: '#8dff5a', price: 320, priceType: 'coins', image: 'assets/UI/Store/Imagenes Trails/Trails portadas/Toxico_trail.png' },
-    { id: 'spark', name: 'Electricidad', rarity: 'EPICA', rarityColor: '#ffff00', price: 1200, priceType: 'coins', image: 'assets/UI/Store/Imagenes Trails/Trails portadas/Electricidad_trail.png' },
-    { id: 'trail_vampiro', name: 'Vampiro', rarity: 'VIP', rarityColor: '#ff4d6d', price: 0, priceType: 'gems', image: 'assets/UI/Store/Imagenes Trails/Trails portadas/Vampiro_trail.png' },
-    { id: 'trail_zombie', name: 'Zombie', rarity: 'VIP', rarityColor: '#78ff8f', price: 0, priceType: 'gems', image: 'assets/UI/Store/Imagenes Trails/Trails portadas/Zombie_trail.png' },
-    { id: 'trail_fire', name: 'Elemento Fuego', rarity: 'VIP', rarityColor: '#ff8a00', price: 0, priceType: 'gems', image: 'assets/UI/Store/Imagenes Trails/Trails portadas/Elemento_Fuego_trail.png' },
-    { id: 'trail_water', name: 'Elemento Agua', rarity: 'VIP', rarityColor: '#4488ff', price: 0, priceType: 'gems', image: 'assets/UI/Store/Imagenes Trails/Trails portadas/Elemento_Agua_trail.png' },
-    { id: 'trail_wind', name: 'Elemento Viento', rarity: 'VIP', rarityColor: '#00ffe7', price: 0, priceType: 'gems', image: 'assets/UI/Store/Imagenes Trails/Trails portadas/Elemento_Viento_trail.png' },
-    { id: 'trail_ice', name: 'Elemento Hielo', rarity: 'VIP', rarityColor: '#7fd8ff', price: 0, priceType: 'gems', image: 'assets/UI/Store/Imagenes Trails/Trails portadas/Elemento_Hielo_trail.png' },
-    { id: 'trail_lava', name: 'Elemento Lava', rarity: 'VIP', rarityColor: '#ff4444', price: 0, priceType: 'gems', image: 'assets/UI/Store/Imagenes Trails/Trails portadas/Elemento_Lava_trail.png' },
-    { id: 'trail_nature', name: 'Elemento Naturaleza', rarity: 'VIP', rarityColor: '#44ff88', price: 0, priceType: 'gems', image: 'assets/UI/Store/Imagenes Trails/Trails portadas/Elemento_Naturaleza_trail.png' },
-    { id: 'trail_custom_text', name: 'Texto Personalizado', rarity: 'VIP', rarityColor: '#ffda3a', price: 0, priceType: 'gems', image: 'assets/UI/Store/Imagenes Trails/Trails portadas/Texto_Personalizado_trail.png' },
+    { id: 'none', name: 'Ninguna', rarity: 'BASICO', rarityColor: '#888888', price: 0, priceType: 'coins', image: 'assets/UI/Store/Trails/Covers/Ninguna_trail.png' },
+    { id: 'basic', name: 'Basica', rarity: 'BASICO', rarityColor: '#57b7dd', price: 30, priceType: 'coins', image: 'assets/UI/Store/Trails/Covers/Basic_trail.png' },
+    { id: 'ghost', name: 'Ghost', rarity: 'EPICA', rarityColor: '#cc44ff', price: 800, priceType: 'coins', image: 'assets/UI/Store/Trails/Covers/Ghost_trail.png' },
+    { id: 'fractura', name: 'Fractura', rarity: 'EPICA', rarityColor: '#cc44ff', price: 1000, priceType: 'coins', image: 'assets/UI/Store/Trails/Covers/Fractura_trail.png' },
+    { id: 'hielo', name: 'Hielo', rarity: 'ESPECIAL', rarityColor: '#7fd8ff', price: 260, priceType: 'coins', image: 'assets/UI/Store/Trails/Covers/Hielo_trail.png' },
+    { id: 'toxico', name: 'Toxico', rarity: 'ESPECIAL', rarityColor: '#8dff5a', price: 320, priceType: 'coins', image: 'assets/UI/Store/Trails/Covers/Toxico_trail.png' },
+    { id: 'spark', name: 'Electricidad', rarity: 'EPICA', rarityColor: '#ffff00', price: 1200, priceType: 'coins', image: 'assets/UI/Store/Trails/Covers/Electricidad_trail.png' },
+    { id: 'trail_vampiro', name: 'Vampiro', rarity: 'VIP', rarityColor: '#ff4d6d', price: 0, priceType: 'gems', image: 'assets/UI/Store/Trails/Covers/Vampiro_trail.png' },
+    { id: 'trail_zombie', name: 'Zombie', rarity: 'VIP', rarityColor: '#78ff8f', price: 0, priceType: 'gems', image: 'assets/UI/Store/Trails/Covers/Zombie_trail.png' },
+    { id: 'trail_fire', name: 'Elemento Fuego', rarity: 'VIP', rarityColor: '#ff8a00', price: 0, priceType: 'gems', image: 'assets/UI/Store/Trails/Covers/Elemento_Fuego_trail.png' },
+    { id: 'trail_water', name: 'Elemento Agua', rarity: 'VIP', rarityColor: '#4488ff', price: 0, priceType: 'gems', image: 'assets/UI/Store/Trails/Covers/Elemento_Agua_trail.png' },
+    { id: 'trail_wind', name: 'Elemento Viento', rarity: 'VIP', rarityColor: '#00ffe7', price: 0, priceType: 'gems', image: 'assets/UI/Store/Trails/Covers/Elemento_Viento_trail.png' },
+    { id: 'trail_ice', name: 'Elemento Hielo', rarity: 'VIP', rarityColor: '#7fd8ff', price: 0, priceType: 'gems', image: 'assets/UI/Store/Trails/Covers/Elemento_Hielo_trail.png' },
+    { id: 'trail_lava', name: 'Elemento Lava', rarity: 'VIP', rarityColor: '#ff4444', price: 0, priceType: 'gems', image: 'assets/UI/Store/Trails/Covers/Elemento_Lava_trail.png' },
+    { id: 'trail_nature', name: 'Elemento Naturaleza', rarity: 'VIP', rarityColor: '#44ff88', price: 0, priceType: 'gems', image: 'assets/UI/Store/Trails/Covers/Elemento_Naturaleza_trail.png' },
+    { id: 'trail_custom_text', name: 'Texto Personalizado', rarity: 'VIP', rarityColor: '#ffda3a', price: 0, priceType: 'gems', image: 'assets/UI/Store/Trails/Covers/Texto_Personalizado_trail.png' },
 ];
 
 // =====================================================
@@ -325,9 +420,9 @@ function preloadShopImages() {
 
     // Precargar imágenes de banners
     BANNERS_DATA.forEach(banner => {
-        if (banner.image) {
+        if (banner.cover || banner.image) {
             const img = new Image();
-            img.src = banner.image;
+            img.src = banner.cover || banner.image;
             shopImages.push(img);
         }
     });
@@ -346,26 +441,26 @@ function preloadShopImages() {
 
 // Datos de skins disponibles en la tienda
 const SKINS_DATA = [
-    { id: 'cyan', name: 'Pelota Cian', color: '#00ffe7', rarity: 'BASICA', price: 0, priceType: 'coins', owned: true, image: 'assets/UI/Store/Skins/Normal/skin pelota/pelota cian.png' },
-    { id: 'red', name: 'Pelota Rojo', color: '#ff4444', rarity: 'BASICA', price: 50, priceType: 'coins', owned: false, image: 'assets/UI/Store/Skins/Normal/skin pelota/pelota rojo.png' },
-    { id: 'blue', name: 'Pelota Azul', color: '#5045eb', rarity: 'BASICA', price: 50, priceType: 'coins', owned: false, image: 'assets/UI/Store/Skins/Normal/skin pelota/pelota azul.png' },
-    { id: 'yellow', name: 'Pelota Amarillo', color: '#ffee00', rarity: 'BASICA', price: 50, priceType: 'coins', owned: false, image: 'assets/UI/Store/Skins/Normal/skin pelota/pelota amarillo.png' },
-    { id: 'orange', name: 'Pelota Naranja', color: '#ff8800', rarity: 'BASICA', price: 50, priceType: 'coins', owned: false, image: 'assets/UI/Store/Skins/Normal/skin pelota/pelota naranja.png' },
-    { id: 'green', name: 'Pelota Verde', color: '#3fe969', rarity: 'BASICA', price: 50, priceType: 'coins', owned: false, image: 'assets/UI/Store/Skins/Normal/skin pelota/pelota verde.png' },
-    { id: 'purple', name: 'Pelota Morado', color: '#cc44ff', rarity: 'BASICA', price: 50, priceType: 'coins', owned: false, image: 'assets/UI/Store/Skins/Normal/skin pelota/pelota morado.png' },
-    { id: 'white', name: 'Pelota Blanco', color: '#ffffff', rarity: 'BASICA', price: 50, priceType: 'coins', owned: false, image: 'assets/UI/Store/Skins/Normal/skin pelota/pelota blanco.png' },
-    { id: 'black', name: 'Pelota Negro', color: '#222222', rarity: 'BASICA', price: 50, priceType: 'coins', owned: false, image: 'assets/UI/Store/Skins/Normal/skin pelota/pelota negro.png' },
+    { id: 'cyan', name: 'Pelota Cian', color: '#00ffe7', rarity: 'BASICO', price: 0, priceType: 'coins', owned: true, image: 'assets/UI/Store/Skins/Normal/Balls/pelota cian.png' },
+    { id: 'red', name: 'Pelota Rojo', color: '#ff4444', rarity: 'BASICO', price: 50, priceType: 'coins', owned: false, image: 'assets/UI/Store/Skins/Normal/Balls/pelota rojo.png' },
+    { id: 'blue', name: 'Pelota Azul', color: '#5045eb', rarity: 'BASICO', price: 50, priceType: 'coins', owned: false, image: 'assets/UI/Store/Skins/Normal/Balls/pelota azul.png' },
+    { id: 'yellow', name: 'Pelota Amarillo', color: '#ffee00', rarity: 'BASICO', price: 50, priceType: 'coins', owned: false, image: 'assets/UI/Store/Skins/Normal/Balls/pelota amarillo.png' },
+    { id: 'orange', name: 'Pelota Naranja', color: '#ff8800', rarity: 'BASICO', price: 50, priceType: 'coins', owned: false, image: 'assets/UI/Store/Skins/Normal/Balls/pelota naranja.png' },
+    { id: 'green', name: 'Pelota Verde', color: '#3fe969', rarity: 'BASICO', price: 50, priceType: 'coins', owned: false, image: 'assets/UI/Store/Skins/Normal/Balls/pelota verde.png' },
+    { id: 'purple', name: 'Pelota Morado', color: '#cc44ff', rarity: 'BASICO', price: 50, priceType: 'coins', owned: false, image: 'assets/UI/Store/Skins/Normal/Balls/pelota morado.png' },
+    { id: 'white', name: 'Pelota Blanco', color: '#ffffff', rarity: 'BASICO', price: 50, priceType: 'coins', owned: false, image: 'assets/UI/Store/Skins/Normal/Balls/pelota blanco.png' },
+    { id: 'black', name: 'Pelota Negro', color: '#222222', rarity: 'BASICO', price: 50, priceType: 'coins', owned: false, image: 'assets/UI/Store/Skins/Normal/Balls/pelota negro.png' },
 
     // Serie Pelota Dona
-    { id: 'dona_cyan', name: 'Dona Cian', color: '#00ffe7', rarity: 'ESPECIAL', price: 150, priceType: 'coins', owned: false, image: 'assets/UI/Store/Skins/Normal/pelota dona/pelota cian.png' },
-    { id: 'dona_red', name: 'Dona Rojo', color: '#ff4444', rarity: 'ESPECIAL', price: 150, priceType: 'coins', owned: false, image: 'assets/UI/Store/Skins/Normal/pelota dona/pelota rojo.png' },
-    { id: 'dona_blue', name: 'Dona Azul', color: '#5045eb', rarity: 'ESPECIAL', price: 150, priceType: 'coins', owned: false, image: 'assets/UI/Store/Skins/Normal/pelota dona/pelota azul.png' },
-    { id: 'dona_yellow', name: 'Dona Amarillo', color: '#ffee00', rarity: 'ESPECIAL', price: 150, priceType: 'coins', owned: false, image: 'assets/UI/Store/Skins/Normal/pelota dona/pelota amarillo.png' },
-    { id: 'dona_orange', name: 'Dona Naranja', color: '#ff8800', rarity: 'ESPECIAL', price: 150, priceType: 'coins', owned: false, image: 'assets/UI/Store/Skins/Normal/pelota dona/pelota naranja.png' },
-    { id: 'dona_green', name: 'Dona Verde', color: '#3fe969', rarity: 'ESPECIAL', price: 150, priceType: 'coins', owned: false, image: 'assets/UI/Store/Skins/Normal/pelota dona/pelota verde.png' },
-    { id: 'dona_purple', name: 'Dona Morado', color: '#cc44ff', rarity: 'ESPECIAL', price: 150, priceType: 'coins', owned: false, image: 'assets/UI/Store/Skins/Normal/pelota dona/pelota morado.png' },
-    { id: 'dona_white', name: 'Dona Blanco', color: '#ffffff', rarity: 'ESPECIAL', price: 150, priceType: 'coins', owned: false, image: 'assets/UI/Store/Skins/Normal/pelota dona/pelota blanco.png' },
-    { id: 'dona_black', name: 'Dona Negro', color: '#222222', rarity: 'ESPECIAL', price: 150, priceType: 'coins', owned: false, image: 'assets/UI/Store/Skins/Normal/pelota dona/pelota negro.png' },
+    { id: 'dona_cyan', name: 'Dona Cian', color: '#00ffe7', rarity: 'ESPECIAL', price: 150, priceType: 'coins', owned: false, image: 'assets/UI/Store/Skins/Normal/Donuts/pelota cian.png' },
+    { id: 'dona_red', name: 'Dona Rojo', color: '#ff4444', rarity: 'ESPECIAL', price: 150, priceType: 'coins', owned: false, image: 'assets/UI/Store/Skins/Normal/Donuts/pelota rojo.png' },
+    { id: 'dona_blue', name: 'Dona Azul', color: '#5045eb', rarity: 'ESPECIAL', price: 150, priceType: 'coins', owned: false, image: 'assets/UI/Store/Skins/Normal/Donuts/pelota azul.png' },
+    { id: 'dona_yellow', name: 'Dona Amarillo', color: '#ffee00', rarity: 'ESPECIAL', price: 150, priceType: 'coins', owned: false, image: 'assets/UI/Store/Skins/Normal/Donuts/pelota amarillo.png' },
+    { id: 'dona_orange', name: 'Dona Naranja', color: '#ff8800', rarity: 'ESPECIAL', price: 150, priceType: 'coins', owned: false, image: 'assets/UI/Store/Skins/Normal/Donuts/pelota naranja.png' },
+    { id: 'dona_green', name: 'Dona Verde', color: '#3fe969', rarity: 'ESPECIAL', price: 150, priceType: 'coins', owned: false, image: 'assets/UI/Store/Skins/Normal/Donuts/pelota verde.png' },
+    { id: 'dona_purple', name: 'Dona Morado', color: '#cc44ff', rarity: 'ESPECIAL', price: 150, priceType: 'coins', owned: false, image: 'assets/UI/Store/Skins/Normal/Donuts/pelota morado.png' },
+    { id: 'dona_white', name: 'Dona Blanco', color: '#ffffff', rarity: 'ESPECIAL', price: 150, priceType: 'coins', owned: false, image: 'assets/UI/Store/Skins/Normal/Donuts/pelota blanco.png' },
+    { id: 'dona_black', name: 'Dona Negro', color: '#222222', rarity: 'ESPECIAL', price: 150, priceType: 'coins', owned: false, image: 'assets/UI/Store/Skins/Normal/Donuts/pelota negro.png' },
 
     // Serie Contornos y Especiales
     { id: 'cool', name: 'Contorno Verde', color: '#3fe969', rarity: 'ESPECIAL', price: 300, priceType: 'coins', altPrice: 10, altType: 'gems', owned: false },
@@ -380,10 +475,10 @@ const SKINS_DATA = [
     { id: 'pichos', name: 'Pichos', color: '#ffffff', rarity: 'ESPECIAL', price: 800, priceType: 'coins', imageRight: 'assets/UI/Store/Skins/skin_pichos.png' },
     { id: 'frank', name: 'Contorno Amarillo', color: '#ffee00', rarity: 'EPICA', price: 1200, priceType: 'coins', altPrice: 40, altType: 'gems', fragments: 3, owned: false },
     { id: 'shield', name: 'Contorno Azul', color: '#4488ff', rarity: 'EPICA', price: 1200, priceType: 'coins', altPrice: 40, altType: 'gems', fragments: 3, owned: false },
-    { id: 'kenji', name: 'KENJI', color: '#845cff', rarity: 'EPICA', price: 1500, priceType: 'coins', altPrice: 50, altType: 'gems', fragments: 3, owned: false, image: 'assets/UI/Store/Skins/Normal/KENJI Skin EPICO/Kenji_Skin.png', imageSide: 'assets/UI/Store/Skins/Normal/KENJI Skin EPICO/Kenji_Skin_lado.png' },
-    { id: 'brifon', name: 'BRIFON', color: '#b86cff', rarity: 'EPICA', price: 1600, priceType: 'coins', owned: false, image: 'assets/UI/Store/Skins/Normal/Brifon.png', imageSide: 'assets/UI/Store/Skins/Normal/BRIFON Skin EPICO/BRIFON_Skin_lado.png' },
+    { id: 'kenji', name: 'KENJI', color: '#845cff', rarity: 'EPICA', price: 1500, priceType: 'coins', altPrice: 50, altType: 'gems', fragments: 3, owned: false, image: 'assets/UI/Store/Skins/Normal/KenjiEpic/Kenji_Skin.png', imageSide: 'assets/UI/Store/Skins/Normal/KenjiEpic/Kenji_Skin_lado.png' },
+    { id: 'brifon', name: 'BRIFON', color: '#b86cff', rarity: 'EPICA', price: 1600, priceType: 'coins', owned: false, image: 'assets/UI/Store/Skins/Normal/BrifonEpic/Brifon.png', imageSide: 'assets/UI/Store/Skins/Normal/BrifonEpic/BRIFON_Skin_lado.png' },
     { id: 'demon_ember', name: 'Demon Ember', color: '#cf0000', rarity: 'DEMON', price: 4500, priceType: 'coins', altPrice: 150, altType: 'gems', fragments: 3, owned: false },
-    { id: 'daxor', name: 'DAXOR', color: '#ff2448', rarity: 'DEMON', price: 5200, priceType: 'coins', altPrice: 170, altType: 'gems', fragments: 3, owned: false, image: 'assets/UI/Store/Skins/Normal/DAXOR_Skin.png', imageSide: 'assets/UI/Store/Skins/Normal/DAXOR Skin DEMON/DAXOR_Skin_lado.png' }
+    { id: 'daxor', name: 'DAXOR', color: '#ff2448', rarity: 'DEMON', price: 5200, priceType: 'coins', altPrice: 170, altType: 'gems', fragments: 3, owned: false, image: 'assets/UI/Store/Skins/Normal/DaxorDemon/DAXOR_Skin.png', imageSide: 'assets/UI/Store/Skins/Normal/DaxorDemon/DAXOR_Skin_lado.png' }
 ];
 
 // Lista de skins desbloqueables con fragmentos
@@ -404,11 +499,14 @@ window.SKINS_DATA = SKINS_DATA;
 
 // Colores de rareza para items
 const RARITY_COLORS = {
-    BASICA: '#57b7dd',
+    DEFAULT: 'rgba(255,255,255,0.35)',
+    BASICO: '#57b7dd',
     ESPECIAL: '#ff9a17',
     EPICA: '#cc44ff',
     DEMON: '#cf0000',
     VIP: '#ffee00',
+    LEGENDARIO: '#8a2be2',
+    EXCLUSIVO: GEM_EXCLUSIVE_RARITY_COLOR,
 };
 // Colores de rareza para banners
 const BANNER_RARITY_COLORS = {
@@ -418,25 +516,27 @@ const BANNER_RARITY_COLORS = {
     EPICA: '#cc44ff',
     DEMON: '#cf0000',
     VIP: '#ffee00',
+    LEGENDARIO: '#8a2be2',
+    EXCLUSIVO: GEM_EXCLUSIVE_RARITY_COLOR,
 };
 
 const CURRENCY_ICONS = {
-    coins: 'assets/Imagenes/Monetizacion/DEAD_COIN.png',
-    gems: 'assets/Imagenes/Monetizacion/Rubies.png'
+    coins: 'assets/UI/Common/Currency/DEAD_COIN.png',
+    gems: 'assets/UI/Common/Currency/Rubies.png'
 };
 
 const REWARD_CURRENCY_ASSETS = {
     gems: {
-        large: 'assets/UI/Rewards/Currency/Gems/Monton_de_gemas_grande.png',
-        medium: 'assets/UI/Rewards/Currency/Gems/Monton_de_gemas_Mediano.png',
-        small: 'assets/UI/Rewards/Currency/Gems/Monton_de_gemas_Pequeno.png',
-        single: 'assets/UI/Rewards/Currency/Gems/Monojo_de_gemas.png'
+        large: 'assets/UI/Common/Rewards/Currency/Gems/Monton_de_gemas_grande.png',
+        medium: 'assets/UI/Common/Rewards/Currency/Gems/Monton_de_gemas_Mediano.png',
+        small: 'assets/UI/Common/Rewards/Currency/Gems/Monton_de_gemas_Pequeno.png',
+        single: 'assets/UI/Common/Rewards/Currency/Gems/Monojo_de_gemas.png'
     },
     coins: {
-        large: 'assets/UI/Rewards/Currency/Coins/Monton_de_monedas_grande.png',
-        medium: 'assets/UI/Rewards/Currency/Coins/Monton_de_monedas_Mediano.png',
-        small: 'assets/UI/Rewards/Currency/Coins/Monton_de_monedas_Pequeno.png',
-        single: 'assets/UI/Rewards/Currency/Coins/Monojo_de_monedas.png'
+        large: 'assets/UI/Common/Rewards/Currency/Coins/Monton_de_monedas_grande.png',
+        medium: 'assets/UI/Common/Rewards/Currency/Coins/Monton_de_monedas_Mediano.png',
+        small: 'assets/UI/Common/Rewards/Currency/Coins/Monton_de_monedas_Pequeno.png',
+        single: 'assets/UI/Common/Rewards/Currency/Coins/Monojo_de_monedas.png'
     }
 };
 
@@ -449,7 +549,7 @@ const BANNERS_DATA = [
         name: 'El inicio...',
         price: 0,
         exclusive: false,
-        cover: 'assets/Imagenes/Banners/Placeholders/Banner_Deafult.png',
+        cover: 'assets/Imagenes/Banners/tienda_normal/Banner_Deafult.png',
         rarity: 'DEFAULT'
     },
 
@@ -459,7 +559,7 @@ const BANNERS_DATA = [
         name: 'Speed Color Green',
         price: 150,
         exclusive: false,
-        cover: 'assets/Imagenes/Banners/Placeholders/Speed_Color_Green.png',
+        cover: 'assets/Imagenes/Banners/tienda_normal/Speed_Color_Green.png',
         rarity: 'BASICO'
     },
     {
@@ -467,7 +567,7 @@ const BANNERS_DATA = [
         name: 'Speed Color Gold',
         price: 150,
         exclusive: false,
-        cover: 'assets/Imagenes/Banners/Placeholders/Speed_Color_Gold.png',
+        cover: 'assets/Imagenes/Banners/tienda_normal/Speed_Color_Gold.png',
         rarity: 'BASICO'
     },
     {
@@ -475,7 +575,7 @@ const BANNERS_DATA = [
         name: 'Speed Color Gray',
         price: 150,
         exclusive: false,
-        cover: 'assets/Imagenes/Banners/Placeholders/Speed_Color_Gray.png',
+        cover: 'assets/Imagenes/Banners/tienda_normal/Speed_Color_Gray.png',
         rarity: 'BASICO'
     },
     {
@@ -483,7 +583,7 @@ const BANNERS_DATA = [
         name: 'Speed Color Blue',
         price: 150,
         exclusive: false,
-        cover: 'assets/Imagenes/Banners/Placeholders/Speed_Color_Blue.png',
+        cover: 'assets/Imagenes/Banners/tienda_normal/Speed_Color_Blue.png',
         rarity: 'BASICO'
     },
     {
@@ -491,7 +591,7 @@ const BANNERS_DATA = [
         name: 'Speed Color Oranje',
         price: 150,
         exclusive: false,
-        cover: 'assets/Imagenes/Banners/Placeholders/Speed_Color_Oranje.png',
+        cover: 'assets/Imagenes/Banners/tienda_normal/Speed_Color_Oranje.png',
         rarity: 'BASICO'
     },
     {
@@ -499,7 +599,7 @@ const BANNERS_DATA = [
         name: 'Speed Color Red',
         price: 150,
         exclusive: false,
-        cover: 'assets/Imagenes/Banners/Placeholders/Speed_Color_Red.png',
+        cover: 'assets/Imagenes/Banners/tienda_normal/Speed_Color_Red.png',
         rarity: 'BASICO'
     },
     {
@@ -507,7 +607,7 @@ const BANNERS_DATA = [
         name: 'Speed Color Rgb',
         price: 150,
         exclusive: false,
-        cover: 'assets/Imagenes/Banners/Placeholders/Speed_Color_Rgb.png',
+        cover: 'assets/Imagenes/Banners/tienda_normal/Speed_Color_Rgb.png',
         rarity: 'BASICO'
     },
     {
@@ -515,7 +615,7 @@ const BANNERS_DATA = [
         name: 'Speed Color Black',
         price: 150,
         exclusive: false,
-        cover: 'assets/Imagenes/Banners/Placeholders/Speed_Color_Black.png',
+        cover: 'assets/Imagenes/Banners/tienda_normal/Speed_Color_Black.png',
         rarity: 'BASICO'
     },
 
@@ -525,7 +625,7 @@ const BANNERS_DATA = [
         name: 'Speed Color Red Animado',
         price: 350,
         exclusive: false,
-        cover: 'assets/Imagenes/Banners/Placeholders/Speed_Color_Red_Animado.gif',
+        cover: 'assets/Imagenes/Banners/tienda_normal/Speed_Color_Red_Animado.gif',
         rarity: 'ESPECIAL'
     },
     {
@@ -533,7 +633,7 @@ const BANNERS_DATA = [
         name: 'Estas que ardes',
         price: 300,
         exclusive: false,
-        cover: 'assets/Imagenes/Banners/Placeholders/Abstracto_Fuego_Rojo.png',
+        cover: 'assets/Imagenes/Banners/tienda_normal/Abstracto_Fuego_Rojo.png',
         rarity: 'ESPECIAL'
     },
     {
@@ -541,7 +641,7 @@ const BANNERS_DATA = [
         name: 'Un toque sofisticado',
         price: 300,
         exclusive: false,
-        cover: 'assets/Imagenes/Banners/Placeholders/Abstracto_Lineas_Yellow.png',
+        cover: 'assets/Imagenes/Banners/tienda_normal/Abstracto_Lineas_Yellow.png',
         rarity: 'ESPECIAL'
     },
     {
@@ -549,7 +649,7 @@ const BANNERS_DATA = [
         name: 'Para alguien especial',
         price: 300,
         exclusive: false,
-        cover: 'assets/Imagenes/Banners/Placeholders/Abstracto_Rayos_Az_Rd.png',
+        cover: 'assets/Imagenes/Banners/tienda_normal/Abstracto_Rayos_Az_Rd.png',
         rarity: 'ESPECIAL'
     },
     {
@@ -557,7 +657,7 @@ const BANNERS_DATA = [
         name: 'Algo dark para alguien dark',
         price: 300,
         exclusive: false,
-        cover: 'assets/Imagenes/Banners/Placeholders/Abstracto_Rayos_Morados.png',
+        cover: 'assets/Imagenes/Banners/tienda_normal/Abstracto_Rayos_Morados.png',
         rarity: 'ESPECIAL'
     },
     {
@@ -565,7 +665,7 @@ const BANNERS_DATA = [
         name: 'Para alguien mas especial',
         price: 300,
         exclusive: false,
-        cover: 'assets/Imagenes/Banners/Placeholders/Abstracto_Rayos_Rojos.png',
+        cover: 'assets/Imagenes/Banners/tienda_normal/Abstracto_Rayos_Rojos.png',
         rarity: 'ESPECIAL'
     },
     {
@@ -573,7 +673,7 @@ const BANNERS_DATA = [
         name: 'Un tono relajante verdad?',
         price: 300,
         exclusive: false,
-        cover: 'assets/Imagenes/Banners/Placeholders/Dark_Lineas_Blue.png',
+        cover: 'assets/Imagenes/Banners/tienda_normal/Dark_Lineas_Blue.png',
         rarity: 'ESPECIAL'
     },
     {
@@ -581,7 +681,7 @@ const BANNERS_DATA = [
         name: 'Muchas ondas!!',
         price: 300,
         exclusive: false,
-        cover: 'assets/Imagenes/Banners/Placeholders/Dark_Ondas_Blue.png',
+        cover: 'assets/Imagenes/Banners/tienda_normal/Dark_Ondas_Blue.png',
         rarity: 'ESPECIAL'
     },
     {
@@ -589,7 +689,7 @@ const BANNERS_DATA = [
         name: 'Simple pero elegante',
         price: 300,
         exclusive: false,
-        cover: 'assets/Imagenes/Banners/Placeholders/Neon_Grid_Motion.png',
+        cover: 'assets/Imagenes/Banners/tienda_normal/Neon_Grid_Motion.png',
         rarity: 'ESPECIAL'
     },
     {
@@ -597,7 +697,7 @@ const BANNERS_DATA = [
         name: 'Un tono relajante v2',
         price: 300,
         exclusive: false,
-        cover: 'assets/Imagenes/Banners/Placeholders/Ondas_Blue.png',
+        cover: 'assets/Imagenes/Banners/tienda_normal/Ondas_Blue.png',
         rarity: 'ESPECIAL'
     },
 
@@ -607,7 +707,7 @@ const BANNERS_DATA = [
         name: 'Tienes calor?',
         price: 500,
         exclusive: false,
-        cover: 'assets/Imagenes/Banners/Placeholders/Dark_Lineas_Or_Bck.gif',
+        cover: 'assets/Imagenes/Banners/tienda_normal/Dark_Lineas_Or_Bck.gif',
         rarity: 'EPICA'
     },
     {
@@ -615,7 +715,7 @@ const BANNERS_DATA = [
         name: 'Siente el poder!',
         price: 500,
         exclusive: false,
-        cover: 'assets/Imagenes/Banners/Placeholders/Dark_Aurora_Blue.gif',
+        cover: 'assets/Imagenes/Banners/tienda_normal/Dark_Aurora_Blue.gif',
         rarity: 'EPICA'
     },
     {
@@ -623,7 +723,7 @@ const BANNERS_DATA = [
         name: 'Calma, que aun no inicia...',
         price: 500,
         exclusive: false,
-        cover: 'assets/Imagenes/Banners/Placeholders/Dark_Ondas_PrAz.gif',
+        cover: 'assets/Imagenes/Banners/tienda_normal/Dark_Ondas_PrAz.gif',
         rarity: 'EPICA'
     },
     {
@@ -631,7 +731,7 @@ const BANNERS_DATA = [
         name: 'Te vez cool con este',
         price: 500,
         exclusive: false,
-        cover: 'assets/Imagenes/Banners/Placeholders/Speed_Color_Yellow_Animado.gif',
+        cover: 'assets/Imagenes/Banners/tienda_normal/Speed_Color_Yellow_Animado.gif',
         rarity: 'EPICA'
     },
 
@@ -641,7 +741,7 @@ const BANNERS_DATA = [
         name: 'El Dragon Chino',
         price: 300,
         exclusive: false,
-        cover: 'assets/Imagenes/Banners/Placeholders/El_Dragon_Chino.png',
+        cover: 'assets/Imagenes/Banners/tienda_normal/El_Dragon_Chino.png',
         rarity: 'DEMON'
     },
     {
@@ -649,7 +749,7 @@ const BANNERS_DATA = [
         name: 'Un poco de nieve?',
         price: 300,
         exclusive: false,
-        cover: 'assets/Imagenes/Banners/Placeholders/Un_poco_de_nieve.png',
+        cover: 'assets/Imagenes/Banners/tienda_normal/Un_poco_de_nieve.png',
         rarity: 'DEMON'
     },
     {
@@ -657,7 +757,7 @@ const BANNERS_DATA = [
         name: 'Vacaciones en la playa',
         price: 300,
         exclusive: false,
-        cover: 'assets/Imagenes/Banners/Placeholders/Vacaciones_en_la playa.png',
+        cover: 'assets/Imagenes/Banners/tienda_normal/Vacaciones_en_la playa.png',
         rarity: 'DEMON'
     },
 
@@ -667,7 +767,7 @@ const BANNERS_DATA = [
         name: 'El Dracula',
         price: 300,
         exclusive: true,
-        cover: 'assets/Imagenes/Banners/Placeholders/Dracula_Edition.png',
+        cover: 'assets/Imagenes/Banners/tienda_vip/Dracula_Edition.png',
         rarity: 'VIP'
     },
     {
@@ -675,7 +775,7 @@ const BANNERS_DATA = [
         name: 'Jack o lantern',
         price: 300,
         exclusive: true,
-        cover: 'assets/Imagenes/Banners/Placeholders/Jack_o_lantern_monster.png',
+        cover: 'assets/Imagenes/Banners/tienda_vip/Jack_o_lantern_monster.png',
         rarity: 'VIP'
     },
     {
@@ -683,7 +783,7 @@ const BANNERS_DATA = [
         name: 'Los zombies estan aqui!',
         price: 300,
         exclusive: true,
-        cover: 'assets/Imagenes/Banners/Placeholders/Zombies_Edition.png',
+        cover: 'assets/Imagenes/Banners/tienda_vip/Zombies_Edition.png',
         rarity: 'VIP'
     },
     {
@@ -691,7 +791,7 @@ const BANNERS_DATA = [
         name: 'El Super Dragon Chino',
         price: 500,
         exclusive: false,
-        cover: 'assets/Imagenes/Banners/Placeholders/El_Dragon_Chino_VIP.png',
+        cover: 'assets/Imagenes/Banners/tienda_vip/El_Dragon_Chino_VIP.png',
         rarity: 'VIP'
     },
     {
@@ -699,7 +799,7 @@ const BANNERS_DATA = [
         name: 'Un poco de hielo',
         price: 500,
         exclusive: true,
-        cover: 'assets/Imagenes/Banners/Placeholders/Un_poco_de_hielo_VIP.png',
+        cover: 'assets/Imagenes/Banners/tienda_vip/Un_poco_de_hielo_VIP.png',
         rarity: 'VIP'
     },
     {
@@ -707,41 +807,260 @@ const BANNERS_DATA = [
         name: 'La playa es relajante',
         price: 500,
         exclusive: true,
-        cover: 'assets/Imagenes/Banners/Placeholders/Vacaciones_en_la playa_VIP.png',
+        cover: 'assets/Imagenes/Banners/tienda_vip/Vacaciones_en_la playa_VIP.png',
         rarity: 'VIP'
     },
 ];
 
 // Placeholders de banners VIP
 const VIP_BANNER_PLACEHOLDERS = [
-    { id: 'VIP_Placeholder_PNG_1', name: 'VIP Placeholder PNG 1', price: 420, cover: 'assets/Imagenes/Banners/Placeholders/VIP_Placeholder_PNG_1.png', rarity: 'VIP', exclusive: true },
-    { id: 'VIP_Placeholder_PNG_2', name: 'VIP Placeholder PNG 2', price: 420, cover: 'assets/Imagenes/Banners/Placeholders/VIP_Placeholder_PNG_2.png', rarity: 'VIP', exclusive: true },
-    { id: 'VIP_Placeholder_PNG_3', name: 'VIP Placeholder PNG 3', price: 420, cover: 'assets/Imagenes/Banners/Placeholders/VIP_Placeholder_PNG_3.png', rarity: 'VIP', exclusive: true },
-    { id: 'VIP_Placeholder_PNG_4', name: 'VIP Placeholder PNG 4', price: 420, cover: 'assets/Imagenes/Banners/Placeholders/VIP_Placeholder_PNG_4.png', rarity: 'VIP', exclusive: true },
-    { id: 'VIP_Placeholder_PNG_5', name: 'VIP Placeholder PNG 5', price: 420, cover: 'assets/Imagenes/Banners/Placeholders/VIP_Placeholder_PNG_5.png', rarity: 'VIP', exclusive: true },
-    { id: 'VIP_Placeholder_GIF_1', name: 'VIP Placeholder GIF 1', price: 560, cover: 'assets/Imagenes/Banners/Placeholders/VIP_Placeholder_GIF_1.gif', rarity: 'VIP', exclusive: true, animated: true },
-    { id: 'VIP_Placeholder_GIF_2', name: 'VIP Placeholder GIF 2', price: 560, cover: 'assets/Imagenes/Banners/Placeholders/VIP_Placeholder_GIF_2.gif', rarity: 'VIP', exclusive: true, animated: true },
-    { id: 'VIP_Placeholder_GIF_3', name: 'VIP Placeholder GIF 3', price: 560, cover: 'assets/Imagenes/Banners/Placeholders/VIP_Placeholder_GIF_3.gif', rarity: 'VIP', exclusive: true, animated: true },
-    { id: 'VIP_Placeholder_GIF_4', name: 'VIP Placeholder GIF 4', price: 560, cover: 'assets/Imagenes/Banners/Placeholders/VIP_Placeholder_GIF_4.gif', rarity: 'VIP', exclusive: true, animated: true },
-    { id: 'VIP_Placeholder_GIF_5', name: 'VIP Placeholder GIF 5', price: 560, cover: 'assets/Imagenes/Banners/Placeholders/VIP_Placeholder_GIF_5.gif', rarity: 'VIP', exclusive: true, animated: true }
+    { id: 'VIP_Placeholder_PNG_1', name: 'VIP Placeholder PNG 1', price: 420, cover: 'assets/Imagenes/Banners/tienda_vip/VIP_Placeholder_PNG_1.png', rarity: 'VIP', exclusive: true },
+    { id: 'VIP_Placeholder_PNG_2', name: 'VIP Placeholder PNG 2', price: 420, cover: 'assets/Imagenes/Banners/tienda_vip/VIP_Placeholder_PNG_2.png', rarity: 'VIP', exclusive: true },
+    { id: 'VIP_Placeholder_PNG_3', name: 'VIP Placeholder PNG 3', price: 420, cover: 'assets/Imagenes/Banners/tienda_vip/VIP_Placeholder_PNG_3.png', rarity: 'VIP', exclusive: true },
+    { id: 'VIP_Placeholder_PNG_4', name: 'VIP Placeholder PNG 4', price: 420, cover: 'assets/Imagenes/Banners/tienda_vip/VIP_Placeholder_PNG_4.png', rarity: 'VIP', exclusive: true },
+    { id: 'VIP_Placeholder_PNG_5', name: 'VIP Placeholder PNG 5', price: 420, cover: 'assets/Imagenes/Banners/tienda_vip/VIP_Placeholder_PNG_5.png', rarity: 'VIP', exclusive: true },
+    { id: 'VIP_Placeholder_GIF_1', name: 'VIP Placeholder GIF 1', price: 560, cover: 'assets/Imagenes/Banners/tienda_vip/VIP_Placeholder_GIF_1.gif', rarity: 'VIP', exclusive: true, animated: true },
+    { id: 'VIP_Placeholder_GIF_2', name: 'VIP Placeholder GIF 2', price: 560, cover: 'assets/Imagenes/Banners/tienda_vip/VIP_Placeholder_GIF_2.gif', rarity: 'VIP', exclusive: true, animated: true },
+    { id: 'VIP_Placeholder_GIF_3', name: 'VIP Placeholder GIF 3', price: 560, cover: 'assets/Imagenes/Banners/tienda_vip/VIP_Placeholder_GIF_3.gif', rarity: 'VIP', exclusive: true, animated: true },
+    { id: 'VIP_Placeholder_GIF_4', name: 'VIP Placeholder GIF 4', price: 560, cover: 'assets/Imagenes/Banners/tienda_vip/VIP_Placeholder_GIF_4.gif', rarity: 'VIP', exclusive: true, animated: true },
+    { id: 'VIP_Placeholder_GIF_5', name: 'VIP Placeholder GIF 5', price: 560, cover: 'assets/Imagenes/Banners/tienda_vip/VIP_Placeholder_GIF_5.gif', rarity: 'VIP', exclusive: true, animated: true }
 ];
+
+const BANNERS_CATALOG_CONFIG = window.GEM_BANNERS_CATALOG || null;
+const BANNER_CATALOG_RULES = BANNERS_CATALOG_CONFIG?.rules || {};
+const BANNER_CATALOG_PATHS = BANNERS_CATALOG_CONFIG?.paths || {};
+
+function parseBannerCatalogDate(value) {
+    if (!value) return null;
+    const date = new Date(`${value}T00:00:00`);
+    return Number.isNaN(date.getTime()) ? null : date;
+}
+
+function addBannerCatalogMonths(date, months) {
+    if (!(date instanceof Date)) return null;
+    const next = new Date(date.getTime());
+    next.setMonth(next.getMonth() + months);
+    return next;
+}
+
+function getBannerCatalogNow() {
+    return new Date();
+}
+
+function getBannerCatalogCover(item, activeCategory) {
+    const category = item.category === 'banners_temporada' || item.category === 'banners_nuevos'
+        ? item.category
+        : activeCategory;
+    const basePath = BANNER_CATALOG_PATHS[category] || BANNER_CATALOG_PATHS[activeCategory] || '';
+    return `${basePath}${item.file}`;
+}
+
+function slugifyBannerCatalogId(value) {
+    const slug = String(value || '')
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, '_')
+        .replace(/^_+|_+$/g, '');
+    return slug || 'banner';
+}
+
+function getBannerCatalogItemId(item) {
+    if (!item) return '';
+    if (item.autoIdFromName === true) {
+        const prefix = item.idPrefix ? `${slugifyBannerCatalogId(item.idPrefix)}_` : '';
+        return `${prefix}${slugifyBannerCatalogId(item.name || item.id)}`;
+    }
+    return item.id;
+}
+
+function getBannerCatalogAliases(item, resolvedId) {
+    return [item.id, ...(Array.isArray(item.legacyIds) ? item.legacyIds : [])]
+        .filter(Boolean)
+        .filter((id, index, list) => id !== resolvedId && list.indexOf(id) === index);
+}
+
+function getBannerActiveCategory(item, now = getBannerCatalogNow()) {
+    if (!item) return 'tienda_normal';
+
+    if (item.category === 'banners_temporada') {
+        const expiresAt = parseBannerCatalogDate(item.expiresAt);
+        return expiresAt && now >= expiresAt
+            ? (BANNER_CATALOG_RULES.expiredSeasonalCategory || 'tienda_vip')
+            : 'tienda_normal';
+    }
+
+    if (item.category === 'banners_nuevos') {
+        const movesAt = parseBannerCatalogDate(item.movesAt)
+            || addBannerCatalogMonths(parseBannerCatalogDate(item.addedAt), BANNER_CATALOG_RULES.newMovesAfterMonths || 2);
+        return movesAt && now >= movesAt
+            ? (item.finalCategory || 'tienda_normal')
+            : 'tienda_normal';
+    }
+
+    return item.category || 'tienda_normal';
+}
+
+function mapBannerCatalogItem(item) {
+    const activeCategory = getBannerActiveCategory(item);
+    const movedToVip = activeCategory === 'tienda_vip';
+    const pendingNewVip = item.category === 'banners_nuevos' && item.finalCategory === 'tienda_vip' && !movedToVip;
+    const id = getBannerCatalogItemId(item);
+    return {
+        id,
+        aliases: getBannerCatalogAliases(item, id),
+        name: item.name,
+        price: item.price ?? 0,
+        exclusive: movedToVip || (item.exclusive === true && !pendingNewVip),
+        cover: getBannerCatalogCover(item, activeCategory),
+        rarity: pendingNewVip ? (item.previewRarity || 'ESPECIAL') : (movedToVip ? 'VIP' : (item.rarity || 'BASICO')),
+        animated: item.animated === true || String(item.file || '').toLowerCase().endsWith('.gif'),
+        category: item.category,
+        activeCategory,
+        finalCategory: item.finalCategory || null,
+        startsAt: item.startsAt || null,
+        expiresAt: item.expiresAt || null,
+        addedAt: item.addedAt || null,
+        movesAt: item.movesAt || null,
+        isSeasonal: item.category === 'banners_temporada',
+        isNew: item.category === 'banners_nuevos'
+    };
+}
+
+function getAllBannerCatalog() {
+    if (!Array.isArray(BANNERS_CATALOG_CONFIG?.items)) {
+        return [...BANNERS_DATA, ...VIP_BANNER_PLACEHOLDERS]
+            .filter((banner, index, list) => banner?.id && list.findIndex(item => item.id === banner.id) === index);
+    }
+    return BANNERS_CATALOG_CONFIG.items.map(mapBannerCatalogItem);
+}
+
+function getNormalBannerCatalog() {
+    return getAllBannerCatalog().filter(banner => banner.activeCategory !== 'tienda_vip');
+}
+
+function getVipBannerCatalogFromConfig() {
+    return getAllBannerCatalog().filter(banner => banner.activeCategory === 'tienda_vip');
+}
+
+function findBannerById(id) {
+    return getAllBannerCatalog().find(banner => banner.id === id || banner.aliases?.includes(id));
+}
+
+function getBannerStorageIds(banner) {
+    if (!banner) return [];
+    return [banner.id, ...(Array.isArray(banner.aliases) ? banner.aliases : [])].filter(Boolean);
+}
+
+function ownsBanner(banner) {
+    return banner?.id === 'Banner_Deafult'
+        || getBannerStorageIds(banner).some(id => localStorage.getItem('banner_' + id) === 'true')
+        || banner?.owned === true;
+}
+
+function setBannerOwned(banner) {
+    if (!banner?.id) return;
+    localStorage.setItem('banner_' + banner.id, 'true');
+}
+
+function isBannerEquipped(banner, equippedId = localStorage.getItem('equippedBanner')) {
+    return getBannerStorageIds(banner).includes(equippedId);
+}
+
+if (Array.isArray(BANNERS_CATALOG_CONFIG?.items)) {
+    BANNERS_DATA.length = 0;
+    BANNERS_DATA.push(...getNormalBannerCatalog());
+    VIP_BANNER_PLACEHOLDERS.length = 0;
+    VIP_BANNER_PLACEHOLDERS.push(...getVipBannerCatalogFromConfig());
+}
 
 // Verificar si un banner es exclusivamente VIP
 // banner: Objeto del banner
 // Retorna true si es VIP
 function isVIPBannerOnly(banner) {
-    return banner?.rarity === 'VIP' || banner?.exclusive === true || String(banner?.cover || '').toLowerCase().endsWith('.gif');
+    return banner?.activeCategory === 'tienda_vip' || banner?.rarity === 'VIP' || banner?.exclusive === true;
 }
 
 // Obtener el catálogo de banners VIP
 // Retorna array de banners VIP
 function getVIPBannerCatalog() {
+    if (Array.isArray(BANNERS_CATALOG_CONFIG?.items)) {
+        return getVipBannerCatalogFromConfig();
+    }
     const byId = new Map();
     [...BANNERS_DATA, ...VIP_BANNER_PLACEHOLDERS].forEach(banner => {
         if (!banner?.id || !isVIPBannerOnly(banner) || byId.has(banner.id)) return;
         byId.set(banner.id, { ...banner, rarity: 'VIP', exclusive: true });
     });
     return [...byId.values()];
+}
+
+// --- Filas escalonadas (panal) de la Sala Legendaria ---------------------
+
+let vipBannerCollectionRarityFilter = 'ALL';
+
+function chunkArray(list, size) {
+    const out = [];
+    for (let i = 0; i < list.length; i += size) out.push(list.slice(i, i + size));
+    return out;
+}
+
+// A diferencia del flag "isNew" de mapBannerCatalogItem (que queda true para
+// siempre según la categoría original), esto revisa si TODAVIA no llegó movesAt.
+function isBannerStillNew(banner) {
+    if (!banner || banner.category !== 'banners_nuevos') return false;
+    const movesAt = parseBannerCatalogDate(banner.movesAt)
+        || addBannerCatalogMonths(parseBannerCatalogDate(banner.addedAt), BANNER_CATALOG_RULES.newMovesAfterMonths || 2);
+    return !movesAt || getBannerCatalogNow() < movesAt;
+}
+
+// Igual que arriba pero para temporada: revisa si TODAVIA no llegó expiresAt.
+function isBannerStillSeasonal(banner) {
+    if (!banner || banner.category !== 'banners_temporada') return false;
+    const expiresAt = parseBannerCatalogDate(banner.expiresAt);
+    return !expiresAt || getBannerCatalogNow() < expiresAt;
+}
+
+// Arma las filas que pinta la Sala Legendaria: Temporada (estática), Nuevos
+// (carrusel-loop) y Colección repartida en varias filas carrusel-loop.
+function getVIPBannerShelfRows() {
+    const all = typeof getAllBannerCatalog === 'function' ? getAllBannerCatalog() : [];
+    const temporada = all.filter(isBannerStillSeasonal);
+    const nuevos = all.filter(isBannerStillNew);
+    const coleccion = getVIPBannerCatalog().filter(banner => !isBannerStillNew(banner) && !isBannerStillSeasonal(banner));
+    const availableRarities = GEM_ALLOWED_RARITIES
+        .filter(rarity => rarity !== 'DEFAULT')
+        .filter(rarity => coleccion.some(banner => normalizeGemRarity(banner.rarity, banner.rarity) === rarity));
+    const activeFilter = availableRarities.includes(vipBannerCollectionRarityFilter)
+        ? vipBannerCollectionRarityFilter
+        : 'ALL';
+    if (activeFilter !== vipBannerCollectionRarityFilter) vipBannerCollectionRarityFilter = activeFilter;
+    const filteredColeccion = activeFilter === 'ALL'
+        ? coleccion
+        : coleccion.filter(banner => normalizeGemRarity(banner.rarity, banner.rarity) === activeFilter);
+    const coleccionRows = chunkArray(filteredColeccion, 6);
+    return { temporada, nuevos, coleccionRows, availableRarities, activeFilter };
+}
+
+function setVIPBannerCollectionRarityFilter(rarity) {
+    vipBannerCollectionRarityFilter = rarity === 'ALL' ? 'ALL' : (normalizeGemRarity(rarity) || 'ALL');
+    renderVIPPromoDetail('vip_specials');
+}
+
+function renderVIPBannerRarityFilter(rarities, activeFilter) {
+    if (!Array.isArray(rarities) || !rarities.length) return '';
+    const chips = ['ALL', ...rarities].map(rarity => {
+        const active = rarity === activeFilter;
+        const label = rarity === 'ALL' ? 'TODAS' : rarity;
+        const color = rarity === 'ALL' ? '#ffee00' : (BANNER_RARITY_COLORS[rarity] || '#57b7dd');
+        return `<button class="vip-banner-rarity-chip ${active ? 'active' : ''}" style="--vip-filter-color:${color};" onclick="setVIPBannerCollectionRarityFilter('${rarity}')" type="button">${label}</button>`;
+    }).join('');
+    return `
+        <div class="vip-banner-rarity-filter" aria-label="Filtrar coleccion por rareza">
+            <span>RAREZA</span>
+            <div>${chips}</div>
+        </div>
+    `;
 }
 
 // Datos de cofres disponibles en la tienda
@@ -757,7 +1076,7 @@ window.CHESTS_DATA = CHESTS_DATA;
 
 // Colores por cofre (no tienen campo rarity propio, se reusan los colores de RARITY_COLORS por tier)
 const CHEST_RARITY_COLORS = {
-    basic: RARITY_COLORS.BASICA,
+    basic: RARITY_COLORS.BASICO,
     special: RARITY_COLORS.ESPECIAL,
     epic: RARITY_COLORS.EPICA,
     demon: RARITY_COLORS.DEMON,
@@ -1016,12 +1335,12 @@ const RUBY_PASS_XP_PER_WIN = (window.RUBY_PASS_CONFIG && window.RUBY_PASS_CONFIG
 // Datos de emotes disponibles en la tienda
 // SHOP_EMOTE_ASSET_SLOT: agrega tus rutas PNG de emotes aquí
 const EMOTES_DATA = [
-    { id: 'emote_normal', name: 'Normal', image: 'assets/UI/Store/Emotes/emote_brifon_normal.png', rarity: 'BASICA', price: EMOTE_STANDARD_PRICE_COINS, priceType: 'coins', slot: 'SHOP_EMOTE_ASSET_SLOT_BASIC_NORMAL' },
-    { id: 'emote_saludo', name: 'Saludo', image: 'assets/UI/Store/Emotes/emote_brifon_saludo.png', rarity: 'BASICA', price: EMOTE_STANDARD_PRICE_COINS, priceType: 'coins', slot: 'SHOP_EMOTE_ASSET_SLOT_BASIC_SALUDO' },
-    { id: 'emote_enojado', name: 'Enojado', image: 'assets/UI/Store/Emotes/emote_brifon_enojado.png', rarity: 'BASICA', price: EMOTE_STANDARD_PRICE_COINS, priceType: 'coins', slot: 'SHOP_EMOTE_ASSET_SLOT_BASIC_ENOJADO' },
-    { id: 'emote_Llorando', name: 'Llorando', image: 'assets/UI/Store/Emotes/emote_brifon_llorando.png', rarity: 'BASICA', price: EMOTE_STANDARD_PRICE_COINS, priceType: 'coins', slot: 'SHOP_EMOTE_ASSET_SLOT_BASIC_LLORANDO' },
-    { id: 'emote_sorprendido', name: 'Sorprendido', image: 'assets/UI/Store/Emotes/emote_brifon_sorprendido.png', rarity: 'BASICA', price: EMOTE_STANDARD_PRICE_COINS, priceType: 'coins', slot: 'SHOP_EMOTE_ASSET_SLOT_BASIC_SORPRENDIDO' },
-    { id: 'emote_mudo', name: 'Mudo', image: 'assets/UI/Store/Emotes/emote_brifon_mudo.png', rarity: 'BASICA', price: EMOTE_STANDARD_PRICE_COINS, priceType: 'coins', slot: 'SHOP_EMOTE_ASSET_SLOT_BASIC_MUDO' },
+    { id: 'emote_normal', name: 'Normal', image: 'assets/UI/Store/Emotes/emote_brifon_normal.png', rarity: 'BASICO', price: EMOTE_STANDARD_PRICE_COINS, priceType: 'coins', slot: 'SHOP_EMOTE_ASSET_SLOT_BASIC_NORMAL' },
+    { id: 'emote_saludo', name: 'Saludo', image: 'assets/UI/Store/Emotes/emote_brifon_saludo.png', rarity: 'BASICO', price: EMOTE_STANDARD_PRICE_COINS, priceType: 'coins', slot: 'SHOP_EMOTE_ASSET_SLOT_BASIC_SALUDO' },
+    { id: 'emote_enojado', name: 'Enojado', image: 'assets/UI/Store/Emotes/emote_brifon_enojado.png', rarity: 'BASICO', price: EMOTE_STANDARD_PRICE_COINS, priceType: 'coins', slot: 'SHOP_EMOTE_ASSET_SLOT_BASIC_ENOJADO' },
+    { id: 'emote_Llorando', name: 'Llorando', image: 'assets/UI/Store/Emotes/emote_brifon_llorando.png', rarity: 'BASICO', price: EMOTE_STANDARD_PRICE_COINS, priceType: 'coins', slot: 'SHOP_EMOTE_ASSET_SLOT_BASIC_LLORANDO' },
+    { id: 'emote_sorprendido', name: 'Sorprendido', image: 'assets/UI/Store/Emotes/emote_brifon_sorprendido.png', rarity: 'BASICO', price: EMOTE_STANDARD_PRICE_COINS, priceType: 'coins', slot: 'SHOP_EMOTE_ASSET_SLOT_BASIC_SORPRENDIDO' },
+    { id: 'emote_mudo', name: 'Mudo', image: 'assets/UI/Store/Emotes/emote_brifon_mudo.png', rarity: 'BASICO', price: EMOTE_STANDARD_PRICE_COINS, priceType: 'coins', slot: 'SHOP_EMOTE_ASSET_SLOT_BASIC_MUDO' },
     { id: 'emote_ruby_pass_01', name: 'Ruby Pass', image: RUBY_PASS_ASSETS.premiumEmote01, rarity: 'VIP', vip: true, passOnly: true, rubyPassLane: 'premium', rubyPassLevel: 8, slot: 'SHOP_EMOTE_ASSET_SLOT_RUBY_PASS_01' },
     { id: 'emoji_fachero', name: 'Fachero', image: 'assets/UI/Store/VIP/Bundles/Emojis/emoji_fachero.png', rarity: 'VIP', vip: true, price: 200, priceType: 'gems', slot: 'SHOP_EMOTE_ASSET_SLOT_VIP_FACHERO' },
     { id: 'emoji_enamorado', name: 'Enamorado', image: 'assets/UI/Store/VIP/Bundles/Emojis/emoji_enamorado.png', rarity: 'VIP', vip: true, price: 200, priceType: 'gems', slot: 'SHOP_EMOTE_ASSET_SLOT_VIP_ENAMORADO' },
@@ -1041,6 +1360,8 @@ const EMOTES_DATA = [
     { id: 'emote_risa', name: 'Risa', image: 'assets/UI/Efectos de trails/Particulas/particula_risa.png', rarity: 'ESPECIAL', slot: 'SHOP_EMOTE_ASSET_SLOT_FRAGMENT_RISA' },
     { id: 'emote_risa_malvada', name: 'Risa Malvada', image: 'assets/UI/Efectos de trails/Particulas/particula_risa_malvada.png', rarity: 'EPICA', slot: 'SHOP_EMOTE_ASSET_SLOT_FRAGMENT_RISA_MALVADA' },
 ];
+
+applyGemRarityOverrides('normal');
 
 // Aplicar precios desde prices.config.js a todos los items de la tienda
 if (typeof window.applyShopPrices === 'function') {
@@ -1166,7 +1487,11 @@ const VIP_PROMO_BANNERS = [
         title: 'BANNERS VIP',
         subtitle: 'Banners premium, animados y coleccionables',
         cover: 'assets/UI/Store/VIP/Banners/banner_vip_specials.png',
-        detailBackground: 'assets/UI/Store/VIP/Banners/bg_vip_specials.png'
+        detailBackground: 'assets/UI/Store/VIP/Banners/bg_vip_specials.png',
+        // Fondo propio de la Sala Legendaria (VER BANNERS). Opcional: si no
+        // se define, renderVIPLegendRoom usa solo el gradiente morado/azul
+        // y NUNCA cae en "cover" ni en "detailBackground".
+        legendBackground: null // ej: 'assets/UI/Store/VIP/Banners/legend_room_banners_vip.png'
     }
 ];
 
@@ -1443,6 +1768,8 @@ const VIP_PACKAGES_DATA = [
     }
 ];
 
+applyGemRarityOverrides('vip');
+
 // Configuración de Logros de Colección de comida
 // (única fuente de verdad: usada por checkFoodCollectionProgress y por la notificación visual)
 const FOOD_COLLECTION_GOALS = [
@@ -1528,7 +1855,7 @@ function getVIPSkinCatalog() {
             id: gameplaySkin.id,
             name: gameplaySkin.name,
             color: '#ffee00',
-            rarity: 'VIP',
+            rarity: gameplaySkin.rarity || 'VIP',
             price: gameplaySkin.price || VIP_ITEM_PRICE,
             priceType: 'gems',
             image: gameplaySkin.image,
@@ -1618,8 +1945,7 @@ function openShop() {
     });
     // Actualizar estado de propiedad de banners
     BANNERS_DATA.forEach(b => {
-        b.owned = localStorage.getItem('banner_' + b.id) === 'true';
-        if (b.id === 'Banner_Deafult') b.owned = true;
+        b.owned = ownsBanner(b);
     });
     window.SKINS_DATA = getAllShopSkins();
     const panel = document.getElementById('shopPanel');
@@ -1834,7 +2160,7 @@ function renderSkinCard(s, equipped) {
             ${previewImage ? `<img src="${previewImage}" alt="" draggable="false">` : (s.emoji ? s.emoji : `<div style="width:24px;height:24px;border-radius:50%;background:${s.color};box-shadow:0 0 10px ${s.color}88;"></div>`)}
         </div>
         <div style="color:white; font-family:monospace; font-size:11px; letter-spacing:1px;">${s.name}</div>
-        <div style="color:${rarityColor}; font-family:monospace; font-size:9px; letter-spacing:2px;">${isTrophy ? (st.labelLegendario ?? 'LEGENDARIO') : s.rarity}</div>
+        <div class="${gemRarityClass(isTrophy ? 'LEGENDARIO' : s.rarity)}" style="color:${rarityColor}; font-family:monospace; font-size:9px; letter-spacing:2px;">${isTrophy ? (st.labelLegendario ?? 'LEGENDARIO') : s.rarity}</div>
         ${isTrophy ? `<div style="color:#cc99ff; font-family:monospace; font-size:9px; letter-spacing:1px;">${st.labelTrofeo ?? 'TROFEO'}</div>` : (s.vipOnly && !owned ? `<div style="color:#ffee00; font-family:monospace; font-size:9px; letter-spacing:1px;">${st.labelSoloVIP ?? 'SOLO EN TIENDA VIP'}</div>` : (s.fragments ? `<div style="color:rgba(255,255,255,0.22); font-family:monospace; font-size:9px;">${s.fragments} ${st.sufijoFragmentos ?? 'FRAGMENTOS'}</div>` : ''))}
         ${action}
     </div>`;
@@ -1932,8 +2258,8 @@ function renderBannersPage(container) {
 }
 
 function renderBannerCard(b, equipped) {
-    const owned = b.id === 'Banner_Deafult' || localStorage.getItem('banner_' + b.id) === 'true' || b.owned === true;
-    const isEquipped = equipped === b.id;
+    const owned = ownsBanner(b);
+    const isEquipped = isBannerEquipped(b, equipped);
     const isVIP = b.rarity === 'VIP';
     const vipOnly = isVIPBannerOnly(b);
     const canBuy = !vipOnly && parseInt(localStorage.getItem('deadCoins') || '0') >= b.price;
@@ -1973,7 +2299,7 @@ function renderBannerCard(b, equipped) {
             <div style="display:flex; justify-content:space-between; gap:10px; align-items:center;">
                 <div>
                     <div style="color:white; font-family:monospace; font-size:12px; letter-spacing:1px;">${b.name}</div>
-                    <div style="color:${BANNER_RARITY_COLORS[b.rarity] || 'rgba(255,255,255,0.35)'}; font-family:monospace; font-size:9px; margin-top:4px;">${b.rarity === 'VIP' ? (bt.labelVipPaseRuby ?? 'VIP / PASE RUBY') : (b.rarity || (bt.labelNormal ?? 'NORMAL'))}</div>
+                    <div class="${gemRarityClass(b.rarity)}" style="color:${BANNER_RARITY_COLORS[b.rarity] || 'rgba(255,255,255,0.35)'}; font-family:monospace; font-size:9px; margin-top:4px;">${b.rarity === 'VIP' ? (bt.labelVipPaseRuby ?? 'VIP / PASE RUBY') : (b.rarity || (bt.labelNormal ?? 'NORMAL'))}</div>
                 </div>
                 ${owned
             ? `<button onclick="equipBanner('${b.id}')" style="padding:8px 12px; border-radius:8px; border:1px solid ${isEquipped ? (isVIP ? 'rgba(255,204,0,0.6)' : 'rgba(0,255,231,0.6)') : 'rgba(255,255,255,0.12)'}; background:${isEquipped ? (isVIP ? 'rgba(255,204,0,0.12)' : 'rgba(0,255,231,0.12)') : 'none'}; color:${isEquipped ? (isVIP ? '#ffd700' : '#00ffe7') : 'rgba(255,255,255,0.5)'}; font-family:monospace; font-size:9px; cursor:pointer;">${isEquipped ? (bt.botonEquipado ?? 'EQUIPADO') : (bt.botonEquipar ?? 'EQUIPAR')}</button>`
@@ -1995,8 +2321,8 @@ function buyBanner(id) {
     if (coins < banner.price) return;
     coins -= banner.price;
     localStorage.setItem('deadCoins', coins);
-    localStorage.setItem('banner_' + id, 'true');
-    localStorage.setItem('equippedBanner', id);
+    setBannerOwned(banner);
+    localStorage.setItem('equippedBanner', banner.id);
     document.getElementById('shop-coins').textContent = coins;
     updateMenuHUD();
     renderBannersPage(document.getElementById('shopContent'));
@@ -2046,7 +2372,7 @@ function renderEmoteSlot(emote) {
                 ${emote.image ? `<img src="${emote.image}" style="width:100%;height:100%;object-fit:contain;">` : (et.placeholderSinImagen ?? 'PNG')}
             </div>
             <div style="color:white; font-family:monospace; font-size:12px; letter-spacing:1px;">${emote.name}</div>
-            ${emote.passOnly ? `<div style="color:${color}; font-family:monospace; font-size:9px; letter-spacing:2px;">${et.botonEnElPase ?? 'EN EL PASE'}</div>` : `<div style="color:${color}; font-family:monospace; font-size:9px; letter-spacing:2px;">${emote.rarity}</div>`}
+            ${emote.passOnly ? `<div style="color:${color}; font-family:monospace; font-size:9px; letter-spacing:2px;">${et.botonEnElPase ?? 'EN EL PASE'}</div>` : `<div class="${gemRarityClass(emote.rarity)}" style="color:${color}; font-family:monospace; font-size:9px; letter-spacing:2px;">${emote.rarity}</div>`}
             ${isFragmentItem && !isUnlocked ? `<div style="color:#FFD700; font-family:monospace; font-size:9px; letter-spacing:1px;">🧩 ${et.labelFragmentos ?? 'FRAGMENTOS'}</div>` : ''}
             ${action}
         </div>
@@ -2159,9 +2485,9 @@ function renderIngameProfileBanner() {
     const target = document.getElementById('ingame-profile-banner');
     if (!target) return;
     const name = localStorage.getItem('playerName') || 'Jugador';
-    const avatar = localStorage.getItem('playerAvatar') || 'assets/Imagenes/Avatares/Avatar_Default.png';
-    const bannerId = localStorage.getItem('equippedBanner') || 'static_core';
-    const banner = BANNERS_DATA.find(b => b.id === bannerId) || BANNERS_DATA[0];
+    const avatar = localStorage.getItem('playerAvatar') || 'assets/UI/Common/Avatars/Avatar_Default.png';
+    const bannerId = localStorage.getItem('equippedBanner') || 'Banner_Deafult';
+    const banner = findBannerById(bannerId) || BANNERS_DATA[0];
     target.style.backgroundImage = banner.cover
         ? `linear-gradient(90deg, rgba(5,6,12,0.88), rgba(5,6,12,0.32)), url("${banner.cover}")`
         : 'linear-gradient(135deg, rgba(0,255,231,0.2), rgba(255,77,109,0.16))';
@@ -2590,9 +2916,9 @@ function updateEquippedSkinPreview() {
 
 function updateShopProfileBanner() {
     const name = localStorage.getItem('playerName') || 'Jugador';
-    const avatar = localStorage.getItem('playerAvatar') || 'assets/Imagenes/Avatares/Avatar_Default.png';
-    const bannerId = localStorage.getItem('equippedBanner') || 'static_core';
-    const banner = BANNERS_DATA.find(b => b.id === bannerId) || BANNERS_DATA[0];
+    const avatar = localStorage.getItem('playerAvatar') || 'assets/UI/Common/Avatars/Avatar_Default.png';
+    const bannerId = localStorage.getItem('equippedBanner') || 'Banner_Deafult';
+    const banner = findBannerById(bannerId) || BANNERS_DATA[0];
     const card = document.getElementById('shop-profile-banner');
     const avatarEl = document.getElementById('shop-profile-avatar');
     const nameEl = document.getElementById('shop-profile-name');
@@ -2650,20 +2976,16 @@ function renderBannerPicker() {
     const picker = document.getElementById('banner-picker');
     if (!picker) return;
     const equipped = localStorage.getItem('equippedBanner') || 'Banner_Deafult';
-    const ownedBanners = BANNERS_DATA.filter(b =>
-        b.id === 'Banner_Deafult' ||
-        b.owned === true ||
-        localStorage.getItem('banner_' + b.id) === 'true'
-    );
+    const ownedBanners = getAllBannerCatalog().filter(ownsBanner);
     picker.innerHTML = ownedBanners.map(b => `
         <button onclick="equipBanner('${b.id}')" style="
             height:48px;
             border-radius:8px;
-            border:1px solid ${equipped === b.id ? (b.rarity === 'VIP' ? 'rgba(255,204,0,0.7)' : 'rgba(0,255,231,0.5)') : 'rgba(255,255,255,0.08)'};
+            border:1px solid ${isBannerEquipped(b, equipped) ? (b.rarity === 'VIP' ? 'rgba(255,204,0,0.7)' : 'rgba(0,255,231,0.5)') : 'rgba(255,255,255,0.08)'};
             background-image: linear-gradient(90deg, rgba(5,6,12,0.92) 0%, rgba(5,6,12,0.55) 40%, transparent 100%), url('${b.cover}');
             background-size: cover;
             background-position: center;
-            color: ${equipped === b.id ? (b.rarity === 'VIP' ? '#ffd700' : '#00ffe7') : 'rgba(255,255,255,0.75)'};
+            color: ${isBannerEquipped(b, equipped) ? (b.rarity === 'VIP' ? '#ffd700' : '#00ffe7') : 'rgba(255,255,255,0.75)'};
             font-family: monospace;
             font-size: 10px;
             letter-spacing: 1px;
@@ -2677,8 +2999,8 @@ function renderBannerPicker() {
 }
 
 function equipBanner(id) {
-    localStorage.setItem('equippedBanner', id);
-    const banner = BANNERS_DATA.find(b => b.id === id);
+    const banner = findBannerById(id);
+    localStorage.setItem('equippedBanner', banner?.id || id);
     if (banner) banner.owned = true;
     updateMenuHUD();
     updateShopProfileBanner();
@@ -2701,7 +3023,7 @@ function equipBanner(id) {
 function updateMenuHUD() {
     const coins = parseInt(localStorage.getItem('deadCoins') || '0');
     const gems = parseInt(localStorage.getItem('gems') || '0');
-    const avatar = localStorage.getItem('playerAvatar') || 'assets/Imagenes/Avatares/Avatar_Default.png';
+    const avatar = localStorage.getItem('playerAvatar') || 'assets/UI/Common/Avatars/Avatar_Default.png';
     const name = localStorage.getItem('playerName') || 'Jugador';
     const mc = document.getElementById('menu-coins');
     const mg = document.getElementById('menu-gems');
@@ -2825,8 +3147,8 @@ function renderVIPShell(panel) {
                     <div class="vip-title">TIENDA VIP</div>
                 </div>
                 <div class="vip-balance">
-                    <span><img src="assets/Imagenes/Monetizacion/Rubies.png" alt=""> <b id="vip-gems">0</b></span>
-                    <span><img src="assets/Imagenes/Monetizacion/DEAD_COIN.png" alt=""> <b id="vip-coins">0</b></span>
+                    <span><img src="assets/UI/Common/Currency/Rubies.png" alt=""> <b id="vip-gems">0</b></span>
+                    <span><img src="assets/UI/Common/Currency/DEAD_COIN.png" alt=""> <b id="vip-coins">0</b></span>
                     <button onclick="closeVIP()" type="button">VOLVER</button>
                 </div>
             </div>
@@ -2923,6 +3245,7 @@ function renderVIPPromoDetail(id) {
             : renderVIPGameplayLab(banner)}
     `;
     optimizeShopMedia(content);
+    if (isBannerShop) initVIPBannerShelfLoops(content);
 }
 
 function renderVIPGameplayPlaceholder(item) {
@@ -2965,38 +3288,163 @@ function renderVIPGameplayLab(banner) {
 }
 
 function renderVIPLegendRoom(banner) {
-    const catalog = getVIPBannerCatalog();
+    const { temporada, nuevos, coleccionRows, availableRarities, activeFilter } = getVIPBannerShelfRows();
+    // Fondo EXCLUSIVO de la Sala Legendaria: nunca debe repetir la imagen de
+    // portada (banner.cover) que ya se ve en la tarjeta de la tienda VIP.
+    // Mientras no exista arte final para este fondo, se usa solo el gradiente
+    // (nunca cae en banner.cover ni en banner.detailBackground).
+    const gradientBase = 'linear-gradient(150deg, rgba(88,28,135,0.5), rgba(10,8,24,0.82)), radial-gradient(ellipse 70% 70% at 12% 8%, rgba(147,51,234,0.4), transparent 60%), radial-gradient(ellipse 70% 70% at 88% 92%, rgba(37,99,235,0.4), transparent 60%)';
+    const legendCoreStyle = banner.legendBackground
+        ? `background-image:${gradientBase}, url('${banner.legendBackground}');`
+        : `background-image:${gradientBase};`;
+
+    let shelvesHtml = '';
+    if (temporada.length) {
+        shelvesHtml += renderVIPBannerShelf({
+            title: temporada[0]?.seasonName || 'TEMPORADA',
+            items: temporada,
+            variant: 'temporada'
+        });
+    }
+    if (nuevos.length) {
+        shelvesHtml += renderVIPBannerShelf({ title: 'NUEVOS', items: nuevos, variant: 'carousel' });
+    }
+    shelvesHtml += renderVIPBannerRarityFilter(availableRarities, activeFilter);
+    coleccionRows.forEach((rowItems, index) => {
+        shelvesHtml += renderVIPBannerShelf({
+            title: coleccionRows.length > 1 ? `COLECCION ${index + 1}` : 'COLECCION',
+            items: rowItems,
+            variant: 'carousel',
+            offset: index % 2 === 1
+        });
+    });
+
     return `
-        <section class="vip-legend-room">
-            <div class="vip-legend-core" style="background-image:linear-gradient(135deg, rgba(0,0,0,0.52), rgba(0,0,0,0.18)), url('${banner.detailBackground || banner.cover}');">
-                <div class="vip-core-rings"></div>
-                <div class="vip-kicker">SALA LEGENDARIA</div>
-                <h2>${banner.title}</h2>
-                <p>${banner.subtitle}</p>
-                <button class="vip-tech-button" onclick="document.querySelector('.vip-banner-catalog-chamber')?.scrollIntoView({behavior:'smooth', block:'start'})" type="button">VER BANNERS</button>
-            </div>
-            <div class="vip-floating-stations">
-                <button class="vip-station" onclick="renderVIPPromoDetail('vip_powerups')" type="button">POTENCIADORES</button>
-                <button class="vip-station active" type="button">BANNERS VIP</button>
-                <button class="vip-station" onclick="renderVIPHome()" type="button">COLECCIONES</button>
-                <button class="vip-station" onclick="renderVIPHome()" type="button">PAQUETES</button>
-            </div>
-        </section>
-        <section class="vip-banner-catalog-chamber">
-            ${catalog.map(renderVIPStationBanner).join('')}
-        </section>
+        <div class="vip-legend-view">
+            <section class="vip-legend-room">
+                <div class="vip-legend-stars" aria-hidden="true"></div>
+                <div class="vip-legend-core" style="${legendCoreStyle}">
+                    <div class="vip-kicker">SALA LEGENDARIA</div>
+                    <h2>${banner.title}</h2>
+                    <p>${banner.subtitle}</p>
+                    <button class="vip-tech-button" onclick="document.querySelector('.vip-banner-catalog-chamber')?.scrollIntoView({behavior:'smooth', block:'start'})" type="button">VER BANNERS</button>
+                </div>
+            </section>
+            <section class="vip-banner-catalog-chamber">
+                ${shelvesHtml || '<p class="vip-banner-empty">Aún no hay banners disponibles.</p>'}
+            </section>
+        </div>
     `;
 }
 
-function renderVIPStationBanner(banner) {
-    const owned = localStorage.getItem('banner_' + banner.id) === 'true';
-    const equipped = localStorage.getItem('equippedBanner') === banner.id;
+// Una fila del panal escalonado. variant: 'temporada' (estática, sin loop) o
+// 'carousel' (Nuevos / Colección: loop infinito duplicando el set de items).
+function renderVIPBannerShelf({ title, items, variant, offset = false }) {
+    const isCarousel = variant === 'carousel';
+    const shelfId = `vip-shelf-${slugifyBannerCatalogId(title)}-${Math.random().toString(36).slice(2, 7)}`;
+    const trackItems = isCarousel ? [...items, ...items, ...items] : items;
+    const cardsHtml = trackItems.map(b => renderVIPStationBanner(b, variant === 'temporada')).join('');
     return `
-        <article class="vip-station-card ${owned ? 'owned' : ''}">
+        <div class="vip-banner-shelf ${isCarousel ? 'is-carousel' : 'is-static'} ${offset ? 'is-offset' : ''}">
+            <div class="vip-banner-shelf-title">${title}</div>
+            <div class="vip-banner-shelf-track-wrap">
+                ${isCarousel ? `<button class="vip-shelf-arrow left" onclick="scrollVIPShelf('${shelfId}', -1)" type="button" aria-label="Anterior">&lt;</button>` : ''}
+                <div class="vip-banner-shelf-track" id="${shelfId}" ${isCarousel ? `data-vip-shelf-loop="true" data-vip-shelf-count="${items.length}"` : ''}>
+                    ${cardsHtml}
+                </div>
+                ${isCarousel ? `<button class="vip-shelf-arrow right" onclick="scrollVIPShelf('${shelfId}', 1)" type="button" aria-label="Siguiente">&gt;</button>` : ''}
+            </div>
+        </div>
+    `;
+}
+
+// Desplaza una fila-carrusel de banners hacia la izquierda/derecha.
+function scrollVIPShelf(id, direction) {
+    const track = document.getElementById(id);
+    if (!track) return;
+    normalizeVIPShelfLoop(track);
+    const card = track.querySelector('.vip-station-card');
+    const step = ((card?.offsetWidth || 220) + 18) * 3;
+    track.classList.add('is-smooth-scrolling');
+    clearTimeout(track.vipSmoothTimer);
+    track.vipSmoothTimer = setTimeout(() => {
+        track.classList.remove('is-smooth-scrolling');
+        normalizeVIPShelfLoop(track);
+    }, 520);
+    track.scrollBy({ left: direction * step, behavior: 'smooth' });
+}
+
+function getVIPShelfLoopWidth(track) {
+    if (!track) return 0;
+    const count = parseInt(track.dataset.vipShelfCount || '0', 10);
+    const cards = track.querySelectorAll('.vip-station-card');
+    if (count && cards.length > count) {
+        return cards[count].offsetLeft - cards[0].offsetLeft;
+    }
+    return track.scrollWidth ? track.scrollWidth / 3 : 0;
+}
+
+function jumpVIPShelfWithoutSmooth(track, left) {
+    if (!track) return;
+    track.dataset.vipLoopJumping = 'true';
+    track.classList.remove('is-smooth-scrolling');
+    track.style.scrollBehavior = 'auto';
+    track.scrollLeft = left;
+    requestAnimationFrame(() => {
+        track.style.scrollBehavior = '';
+        track.dataset.vipLoopJumping = 'false';
+    });
+}
+
+function normalizeVIPShelfLoop(track) {
+    const loopWidth = getVIPShelfLoopWidth(track);
+    if (!loopWidth) return;
+    const left = track.scrollLeft;
+    if (left >= loopWidth * 2) {
+        jumpVIPShelfWithoutSmooth(track, left - loopWidth);
+    } else if (left < loopWidth) {
+        jumpVIPShelfWithoutSmooth(track, left + loopWidth);
+    }
+}
+
+// Activa el "loop" infinito de las filas-carrusel: al llegar a cualquiera de
+// los extremos del track duplicado, salta sin animación al punto equivalente
+// del otro set, dando la sensación de scroll infinito.
+function initVIPBannerShelfLoops(root = document) {
+    root.querySelectorAll('[data-vip-shelf-loop="true"]').forEach(track => {
+        if (track.dataset.vipLoopBound === 'true') return;
+        track.dataset.vipLoopBound = 'true';
+        const count = parseInt(track.dataset.vipShelfCount || '0', 10);
+        if (!count) return;
+        requestAnimationFrame(() => {
+            const loopWidth = getVIPShelfLoopWidth(track);
+            if (loopWidth) jumpVIPShelfWithoutSmooth(track, loopWidth);
+        });
+        track.addEventListener('scroll', () => {
+            if (track.dataset.vipLoopJumping === 'true') return;
+            cancelAnimationFrame(track.vipLoopFrame);
+            track.vipLoopFrame = requestAnimationFrame(() => normalizeVIPShelfLoop(track));
+        }, { passive: true });
+    });
+}
+
+function renderVIPStationBanner(banner, isTemporadaCard = false) {
+    const owned = ownsBanner(banner);
+    const equipped = isBannerEquipped(banner);
+    const isGif = banner.animated || String(banner.cover).endsWith('.gif');
+    const stillNew = isBannerStillNew(banner);
+    const rarityColor = BANNER_RARITY_COLORS[banner.rarity] || (isGif ? '#cc44ff' : '#57b7dd');
+    const badges = `${isGif ? '<span class="vip-station-badge badge-gif">GIF</span>' : ''}${stillNew ? '<span class="vip-station-badge badge-new">NUEVO</span>' : ''}`;
+    return `
+        <article class="vip-station-card ${isGif ? 'is-animated' : ''} ${isTemporadaCard ? 'is-temporada' : ''} ${owned ? 'owned' : ''}" style="--vip-station-rarity:${rarityColor};">
             <div class="vip-station-banner" style="background-image:url('${banner.cover}');"></div>
-            <h3>${banner.name}</h3>
-            <div class="vip-mini-type">${banner.animated || String(banner.cover).endsWith('.gif') ? 'ANIMADO' : 'VIP'}</div>
-            <button class="vip-tech-button" onclick="${owned ? `equipBanner('${banner.id}')` : `buyVIPBanner('${banner.id}')`}" ${equipped ? 'disabled' : ''} type="button">${equipped ? 'EQUIPADO' : owned ? 'EQUIPAR' : `COMPRAR ${renderPrice(banner.price || 420, 'gems')}`}</button>
+            <div class="vip-station-scrim"></div>
+            ${badges ? `<div class="vip-station-badges">${badges}</div>` : ''}
+            <div class="vip-station-info">
+                <h3>${banner.name}</h3>
+                <div class="vip-mini-type" style="color:${rarityColor};">${isGif ? 'ANIMADO' : (banner.rarity || 'VIP')}</div>
+                <button class="vip-tech-button" onclick="${owned ? `equipBanner('${banner.id}')` : `buyVIPBanner('${banner.id}')`}" ${equipped ? 'disabled' : ''} type="button">${equipped ? 'EQUIPADO' : owned ? 'EQUIPAR' : `COMPRAR ${renderPrice(banner.price || 420, 'gems')}`}</button>
+            </div>
         </article>
     `;
 }
@@ -3054,8 +3502,8 @@ function renderVIPParallelogramItem(item, index) {
 }
 
 function renderVIPBannerItem(banner) {
-    const owned = localStorage.getItem('banner_' + banner.id) === 'true';
-    const equipped = localStorage.getItem('equippedBanner') === banner.id;
+    const owned = ownsBanner(banner);
+    const equipped = isBannerEquipped(banner);
     return `
         <article class="vip-mini-item vip-banner-item ${owned ? 'owned' : ''}">
             <div class="vip-banner-preview" style="background-image:url('${banner.cover}');"></div>
@@ -3067,7 +3515,7 @@ function renderVIPBannerItem(banner) {
 }
 
 function buyVIPBanner(id) {
-    const banner = getVIPBannerCatalog().find(item => item.id === id);
+    const banner = findBannerById(id);
     if (!banner) return;
     const price = banner.price || 420;
     showShopModal({
@@ -3082,7 +3530,7 @@ function buyVIPBanner(id) {
             if (!canAfford(price, 'gems')) return alert('No tienes suficientes rubies.');
             spendCurrency(price, 'gems');
             window.playSfx?.('vipBuy');
-            localStorage.setItem('banner_' + banner.id, 'true');
+            setBannerOwned(banner);
             localStorage.setItem('equippedBanner', banner.id);
             renderVIPPromoDetail('vip_specials');
             updateMenuHUD();
@@ -3598,10 +4046,10 @@ function closeInventory() {
 }
 
 // Orden y color de rareza para los chips de filtro del inventario
-const INV_RARITY_ORDER = ['BASICA', 'ESPECIAL', 'EPICA', 'DEMON', 'VIP'];
+const INV_RARITY_ORDER = ['DEFAULT', 'BASICO', 'ESPECIAL', 'EPICA', 'DEMON', 'VIP', 'LEGENDARIO', 'EXCLUSIVO'];
 
 let invActiveRarityFilter = { skins: 'TODAS', trails: 'TODAS', banners: 'TODAS', emotes: 'TODAS', powerups: 'TODAS' };
-const INV_BANNER_RARITY_ORDER = ['DEFAULT', 'BASICO', 'ESPECIAL', 'EPICA', 'DEMON', 'VIP'];
+const INV_BANNER_RARITY_ORDER = ['DEFAULT', 'BASICO', 'ESPECIAL', 'EPICA', 'DEMON', 'VIP', 'LEGENDARIO', 'EXCLUSIVO'];
 
 function invGetSkinsProgress() {
     const owned = getAllShopSkins().filter(s => isSkinOwned(s) && !s.soon);
@@ -3621,8 +4069,8 @@ function invGetTrailsProgress() {
 }
 
 function invGetBannersProgress() {
-    const all = [...BANNERS_DATA, ...VIP_BANNER_PLACEHOLDERS].filter((b, i, list) => list.findIndex(c => c.id === b.id) === i);
-    const owned = all.filter(b => b.id === 'Banner_Deafult' || localStorage.getItem('banner_' + b.id) === 'true' || b.owned === true);
+    const all = getAllBannerCatalog();
+    const owned = all.filter(ownsBanner);
     return { owned: owned.length, total: all.length };
 }
 
@@ -3662,7 +4110,7 @@ function renderInventoryHero(section) {
         <div class="inv-equip-info">
             <div class="inv-equip-label" id="inv-equip-label">${h.labelEquipada ?? 'SKIN EQUIPADA'}</div>
             <div class="inv-equip-name">${equippedSkin.name}</div>
-            <div class="inv-equip-rarity" id="inv-equip-rarity" style="--inv-rarity-color:${rarityColor};">★ ${isTrophy ? (h.labelLegendario ?? 'LEGENDARIO') : equippedSkin.rarity}</div>
+            <div class="inv-equip-rarity${gemRarityClass(isTrophy ? 'LEGENDARIO' : equippedSkin.rarity)}" id="inv-equip-rarity" style="--inv-rarity-color:${rarityColor};">★ ${isTrophy ? (h.labelLegendario ?? 'LEGENDARIO') : equippedSkin.rarity}</div>
         </div>
         <div class="inv-hero-progress">
             <div class="inv-p-item">
@@ -3697,13 +4145,13 @@ function renderInventorySkinCard(s, equipped) {
                 ${previewImage ? `<img src="${previewImage}" alt="" draggable="false">` : (s.emoji || `<div style="width:22px;height:22px;border-radius:50%;background:${s.color};"></div>`)}
             </div>
             <div class="inv-item-name">${s.name}</div>
-            <div class="inv-item-rarity">${isTrophy ? legendario : s.rarity}</div>
+            <div class="inv-item-rarity${gemRarityClass(isTrophy ? 'LEGENDARIO' : s.rarity)}">${isTrophy ? legendario : s.rarity}</div>
         </div>
     `;
 }
 
 function renderInventoryBannerCard(b, equipped) {
-    const isEquipped = equipped === b.id;
+    const isEquipped = isBannerEquipped(b, equipped);
     const isVIP = b.rarity === 'VIP';
     const rarityColor = BANNER_RARITY_COLORS[b.rarity] || 'rgba(255,255,255,0.4)';
     const cover = b.cover ? `url('${b.cover}')` : 'linear-gradient(135deg, rgba(0,255,231,0.18), rgba(255,77,109,0.14))';
@@ -3711,13 +4159,13 @@ function renderInventoryBannerCard(b, equipped) {
     const f = shopTextos('inventario').filtros || {};
     const tooltip = isEquipped ? (bn.tooltipEquipado ?? 'Equipado') : (bn.tooltipClickEquipar ?? 'Click para equipar');
     const vipLabel = shopTextos('banners').labelVipPaseRuby ?? 'VIP / PASE RUBY';
-    const rarityLabel = b.rarity === 'VIP' ? vipLabel : (b.rarity === 'DEFAULT' ? (f.chipInicial ?? 'INICIAL') : (b.rarity === 'BASICO' ? (f.chipBasico ?? 'BÁSICO') : b.rarity));
+    const rarityLabel = b.rarity === 'VIP' ? vipLabel : (b.rarity === 'BASICO' ? (f.chipBasico ?? 'BASICO') : b.rarity);
     return `
         <div class="inv-banner-card ${isEquipped ? 'inv-equipped' : ''}" style="--inv-card-color:${rarityColor};" onclick="equipBanner('${b.id}'); showInventorySection('banners');" title="${tooltip}">
             ${isEquipped ? `<div class="inv-item-check">✓</div>` : ''}
             <div class="inv-banner-cover" style="background-image:${cover};"></div>
             <div class="inv-banner-name">${b.name}</div>
-            <div class="inv-item-rarity">${rarityLabel}</div>
+            <div class="inv-item-rarity${gemRarityClass(b.rarity)}">${rarityLabel}</div>
         </div>
     `;
 }
@@ -3734,7 +4182,7 @@ function renderInventoryEmoteCard(e, equipped) {
                 ${e.image ? `<img src="${e.image}" alt="" draggable="false">` : '😀'}
             </div>
             <div class="inv-item-name">${e.name}</div>
-            <div class="inv-item-rarity">${e.rarity}</div>
+            <div class="inv-item-rarity${gemRarityClass(e.rarity)}">${e.rarity}</div>
         </div>
     `;
 }
@@ -3768,7 +4216,7 @@ function invRenderRarityFilters(section, rarities, colorMap = RARITY_COLORS) {
     filtersEl.innerHTML = chips.map(r => {
         const color = r === 'TODAS' ? '#22d3ee' : (colorMap[r] || '#22d3ee');
         const active = invActiveRarityFilter[section] === r;
-        const label = r === 'TODAS' ? (f.chipTodas ?? 'TODAS') : r === 'DEFAULT' ? (f.chipInicial ?? 'INICIAL') : r === 'BASICO' ? (f.chipBasico ?? 'BÁSICO') : r;
+        const label = r === 'TODAS' ? (f.chipTodas ?? 'TODAS') : r === 'BASICO' ? (f.chipBasico ?? 'BASICO') : r;
         return `<div class="inv-chip ${active ? 'active' : ''}" style="--inv-chip-color:${color};" onclick="invSetRarityFilter('${section}','${r}')">${label}</div>`;
     }).join('');
 }
@@ -3860,7 +4308,7 @@ function showInventorySection(section) {
                             <div class="inv-trail-head">
                                 <div>
                                     <div class="inv-trail-name">${t.name}</div>
-                                    <div class="inv-trail-rarity" style="color:${t.rarityColor};">${t.rarity}</div>
+                                    <div class="inv-trail-rarity${gemRarityClass(t.rarity)}" style="color:${t.rarityColor};">${t.rarity}</div>
                                 </div>
                                 <div class="inv-trail-status">
                                     ${allOwned ? `<span class="inv-trail-complete">${tr.labelCompleto ?? '★ COMPLETO'}</span>` : `<span class="inv-trail-count">${colors.length}/${TRAIL_COLOR_LIST.length}</span>`}
@@ -3898,14 +4346,8 @@ function showInventorySection(section) {
 
 
     } else if (section === 'banners') {
-        const equipped = localStorage.getItem('equippedBanner') || 'static_core';
-        let owned = [...BANNERS_DATA, ...VIP_BANNER_PLACEHOLDERS].filter((b, index, list) =>
-            list.findIndex(candidate => candidate.id === b.id) === index && (
-                b.id === 'Banner_Deafult' ||
-                localStorage.getItem('banner_' + b.id) === 'true' ||
-                b.owned === true
-            )
-        );
+        const equipped = localStorage.getItem('equippedBanner') || 'Banner_Deafult';
+        let owned = getAllBannerCatalog().filter(ownsBanner);
 
         const availableRarities = INV_BANNER_RARITY_ORDER.filter(r => owned.some(b => b.rarity === r));
         invRenderRarityFilters('banners', availableRarities, BANNER_RARITY_COLORS);
@@ -4040,8 +4482,8 @@ function renderInventoryChestCard(chest) {
 function renderInventoryProfileBanner(equipped) {
     const bn = shopTextos('inventario').banners || {};
     const name = localStorage.getItem('playerName') || (bn.fallbackNombreJugador ?? 'Jugador');
-    const avatar = localStorage.getItem('playerAvatar') || 'assets/Imagenes/Avatares/Avatar_Default.png';
-    const banner = BANNERS_DATA.find(b => b.id === equipped) || BANNERS_DATA[0];
+    const avatar = localStorage.getItem('playerAvatar') || 'assets/UI/Common/Avatars/Avatar_Default.png';
+    const banner = findBannerById(equipped) || BANNERS_DATA[0];
     const bg = banner.cover
         ? `linear-gradient(90deg, rgba(5,6,12,0.86), rgba(5,6,12,0.36)), url('${banner.cover}')`
         : 'linear-gradient(135deg, rgba(0,255,231,0.18), rgba(255,77,109,0.16))';
@@ -4185,7 +4627,7 @@ function renderTrailsPage(container) {
     overlay.style.cssText = `
         position: fixed; inset: 0; z-index: 99999;
         display: flex; flex-direction: column;
-        background: url('assets/UI/Store/Imagenes Trails/Fondo_Trails.png') no-repeat center center;
+        background: url('assets/UI/Store/Trails/Fondo_Trails.png') no-repeat center center;
         background-size: cover;
         font-family: monospace; overflow: visible;
     `;
@@ -4207,7 +4649,7 @@ function renderTrailsPage(container) {
 
             <div style="
                 width:220px; height:72px;
-                background: url('assets/UI/Store/Imagenes Trails/Fondo_Monedas.png') no-repeat center center;
+                background: url('assets/UI/Store/Trails/Fondo_Monedas.png') no-repeat center center;
                 background-size: contain; position:relative;">
                 <div style="position:absolute; top:18px; right:28px; text-align:right; line-height:1.5;">
                     <div style="font-size:11px; color:#00ffe7; font-weight:bold; letter-spacing:1px;">
@@ -4239,7 +4681,7 @@ function renderTrailsPage(container) {
         <div id="trail-buy-panel" style="
             position:absolute; bottom:15px; left:20px;
             width:380px; height:88px;
-            background: url('assets/UI/Store/Imagenes Trails/Fondo_Descripcion.png') no-repeat center center;
+            background: url('assets/UI/Store/Trails/Fondo_Descripcion.png') no-repeat center center;
             background-size:contain; z-index:20; padding:12px 24px;
             display:none; box-sizing:border-box;"></div>
     `;
@@ -4316,7 +4758,7 @@ function renderTrailCardNew(t, index) {
             </div>
             <div style="display:flex; flex-direction:column; align-items:center; gap:2px; width:100%;">
                 <div style="color:white; font-size:10px; letter-spacing:1px; font-weight:bold; text-align:center; font-family:'Geom',monospace;">NINGUNA</div>
-                <div style="color:#888; font-size:8px; letter-spacing:2px; font-weight:bold;">BASICA</div>
+                <div style="color:#888; font-size:8px; letter-spacing:2px; font-weight:bold;">BASICO</div>
             </div>
             <div style="width:100%; display:flex; justify-content:center;">
                 <div style="color:#00ff88; font-size:9px; font-weight:bold; letter-spacing:1px;">${shopTextos('trails').labelGratis ?? '✔ GRATIS'}</div>
@@ -4335,14 +4777,14 @@ function renderTrailCardNew(t, index) {
         ? equippedId === t.id 
         : equippedId.startsWith(t.id + '_');
     const priceIcon  = t.priceType === 'gems'
-        ? 'assets/Imagenes/Monetizacion/Rubies.png'
-        : 'assets/Imagenes/Monetizacion/DEAD_COIN.png';
+        ? 'assets/UI/Common/Currency/Rubies.png'
+        : 'assets/UI/Common/Currency/DEAD_COIN.png';
 
-    // Cargar la portada de la carpeta assets/UI/Store/Imagenes Trails/Trails portadas/
+    // Cargar la portada de la carpeta assets/UI/Store/Trails/Covers/
     const coverImages = {
-        'solid': 'assets/UI/Store/Imagenes Trails/Trails portadas/Basic_trail.png',
-        'glow': 'assets/UI/Store/Imagenes Trails/Trails portadas/Normal_trail.png',
-        'glow_shapes': 'assets/UI/Store/Imagenes Trails/Trails portadas/Figure_trail.png'
+        'solid': 'assets/UI/Store/Trails/Covers/Basic_trail.png',
+        'glow': 'assets/UI/Store/Trails/Covers/Normal_trail.png',
+        'glow_shapes': 'assets/UI/Store/Trails/Covers/Figure_trail.png'
     };
     const cover = coverImages[t.id] || t.image;
 
@@ -4365,7 +4807,7 @@ function renderTrailCardNew(t, index) {
         </div>
         <div style="display:flex; flex-direction:column; align-items:center; gap:2px; width:100%;">
             <div style="color:white; font-size:10px; letter-spacing:1px; font-weight:bold; text-align:center; font-family:'Geom',monospace;">${t.name.toUpperCase()}</div>
-            <div style="color:${t.rarityColor}; font-size:8px; letter-spacing:2px; font-weight:bold;">${t.rarity}</div>
+            <div class="${gemRarityClass(t.rarity)}" style="color:${t.rarityColor}; font-size:8px; letter-spacing:2px; font-weight:bold;">${t.rarity}</div>
         </div>
         <div style="width:100%; display:flex; justify-content:center; align-items:center;">
             ${isOwned
@@ -5041,7 +5483,7 @@ function showTrailBuyPanel() {
         panel.innerHTML = `
         <div style="display:flex; align-items:center; justify-content:space-between; height:100%; width:100%; box-sizing:border-box; font-family:monospace;">
             <div style="display:flex; flex-direction:column; justify-content:center;">
-                <div style="color:${trail.rarityColor}; font-size:8px; letter-spacing:3px; margin-bottom:2px; font-weight:bold;">${trail.rarity}</div>
+                <div class="${gemRarityClass(trail.rarity)}" style="color:${trail.rarityColor}; font-size:8px; letter-spacing:3px; margin-bottom:2px; font-weight:bold;">${trail.rarity}</div>
                 <div style="color:#fff; font-size:18px; font-weight:bold;">${trail.name}</div>
                 <div style="color:rgba(255,255,255,0.5); font-size:10px; margin-top:4px;">${tt1.labelTrailExclusivo ?? 'Trail exclusivo'}</div>
             </div>
@@ -5072,8 +5514,8 @@ function showTrailBuyPanel() {
     const equipped = localStorage.getItem('equippedTrail') === `${selectedTrailEffect}_${selectedTrailColor}`;
     const purchase = getTrailPurchaseInfo(trail, color);
     const pIcon    = purchase.currency === 'gems'
-        ? 'assets/Imagenes/Monetizacion/Rubies.png'
-        : 'assets/Imagenes/Monetizacion/DEAD_COIN.png';
+        ? 'assets/UI/Common/Currency/Rubies.png'
+        : 'assets/UI/Common/Currency/DEAD_COIN.png';
     const dot      = color.id === 'rgb'
         ? `<span style="font-size:13px;margin-right:3px;vertical-align:middle;">🌈</span>`
         : `<span style="display:inline-block;width:11px;height:11px;border-radius:50%;background:${color.color};vertical-align:middle;margin-right:5px;box-shadow: 0 0 6px ${color.color}cc;"></span>`;
@@ -5089,7 +5531,7 @@ function showTrailBuyPanel() {
                 <div style="color:white; font-size:12px; font-weight:bold; letter-spacing:1px; margin-bottom:2px; font-family:'Geom',monospace;">
                     ${dot}${trail.name.toUpperCase()}
                 </div>
-                <div style="color:${trail.rarityColor}; font-size:8px; letter-spacing:2px; font-weight:bold;">
+                <div class="${gemRarityClass(trail.rarity)}" style="color:${trail.rarityColor}; font-size:8px; letter-spacing:2px; font-weight:bold;">
                     ${trail.rarity} · <span style="color:${color.id==='rgb'?'#ff4dff':color.color}">${color.id.toUpperCase()}</span>
                 </div>
             </div>
@@ -5453,9 +5895,9 @@ function renderBattlePassPage(container, options = {}) {
     const tipAngle = 110 + renderProgress * 170;
     const visibleRewards = RUBY_PASS_REWARDS;
     const profileName = localStorage.getItem('playerName') || 'Jugador';
-    const profileAvatar = localStorage.getItem('playerAvatar') || 'assets/Imagenes/Avatares/Avatar_Default.png';
-    const bannerId = localStorage.getItem('equippedBanner') || 'static_core';
-    const banner = BANNERS_DATA.find(b => b.id === bannerId) || BANNERS_DATA[0];
+    const profileAvatar = localStorage.getItem('playerAvatar') || 'assets/UI/Common/Avatars/Avatar_Default.png';
+    const bannerId = localStorage.getItem('equippedBanner') || 'Banner_Deafult';
+    const banner = findBannerById(bannerId) || BANNERS_DATA[0];
     const profileBannerBg = banner.cover
         ? `linear-gradient(90deg, rgba(5,6,12,0.88), rgba(5,6,12,0.34)), url('${banner.cover}')`
         : 'linear-gradient(135deg, rgba(0,255,231,0.18), rgba(255,77,109,0.16))';
@@ -5651,23 +6093,23 @@ function renderConversionPage(container) {
             <div style="background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.08); border-radius:14px; padding:20px; text-align:center;">
                 <div style="color:rgba(255,255,255,0.4); font-family:monospace; font-size:11px; letter-spacing:3px; margin-bottom:12px;">${ct.labelTasaCambio ?? 'TASA DE CAMBIO'}</div>
                 <div style="display:flex; align-items:center; justify-content:center; gap:8px;">
-                    <img src="assets/Imagenes/Monetizacion/DEAD_COIN.png" style="width:20px;height:20px;object-fit:contain;">
+                    <img src="assets/UI/Common/Currency/DEAD_COIN.png" style="width:20px;height:20px;object-fit:contain;">
                     <span style="color:white; font-family:monospace; font-size:18px; letter-spacing:2px;">${ct.textoTasa ?? '100 = 1 / 1 = 30'}</span>
-                    <img src="assets/Imagenes/Monetizacion/Rubies.png" style="width:20px;height:20px;object-fit:contain;">
+                    <img src="assets/UI/Common/Currency/Rubies.png" style="width:20px;height:20px;object-fit:contain;">
                 </div>
             </div>
 
             <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
                 <div style="background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.08); border-radius:12px; padding:16px; text-align:center;">
                     <div style="display:flex; align-items:center; justify-content:center; gap:6px; margin-bottom:8px;">
-                        <img src="assets/Imagenes/Monetizacion/DEAD_COIN.png" style="width:16px;height:16px;object-fit:contain;">
+                        <img src="assets/UI/Common/Currency/DEAD_COIN.png" style="width:16px;height:16px;object-fit:contain;">
                         <span style="color:rgba(255,255,255,0.4); font-family:monospace; font-size:10px; letter-spacing:2px;">${ct.labelDeadCoins ?? 'DEAD COINS'}</span>
                     </div>
                     <div id="conv-coins" style="color:white; font-family:monospace; font-size:22px; font-weight:bold;">${coins}</div>
                 </div>
                 <div style="background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.08); border-radius:12px; padding:16px; text-align:center;">
                     <div style="display:flex; align-items:center; justify-content:center; gap:6px; margin-bottom:8px;">
-                        <img src="assets/Imagenes/Monetizacion/Rubies.png" style="width:16px;height:16px;object-fit:contain;">
+                        <img src="assets/UI/Common/Currency/Rubies.png" style="width:16px;height:16px;object-fit:contain;">
                         <span style="color:rgba(255,255,255,0.4); font-family:monospace; font-size:10px; letter-spacing:2px;">${ct.labelGemas ?? 'GEMAS'}</span>
                     </div>
                     <div id="conv-gems" style="color:#ffee00; font-family:monospace; font-size:22px; font-weight:bold;">${gems}</div>

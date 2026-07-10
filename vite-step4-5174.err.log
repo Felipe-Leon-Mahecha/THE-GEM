@@ -1,0 +1,17 @@
+[2m1:43:04 p.m.[22m [31m[1m[vite][22m[39m [31m[2m(client)[22m[39m [31m[Unhandled rejection] [1mNotAllowedError[22m: play() failed because the user didn't interact with the document first. https://goo.gl/xX8pDD
+[39m
+[2m1:43:44 p.m.[22m [31m[1m[vite][22m[39m [31m[2m(client)[22m[39m [31m[Unhandled error] [1mTypeError[22m: Cannot read properties of null (reading 'getContext')
+[39m > drawCarousel levelselect.js:417:28
+    415 |  
+    416 |      const container = document.getElementById("carouselCanvas");
+    417 |      const ctx2 = container.getContext("2d");
+        |                              ^
+    418 |  
+    419 |      const W = container.width;
+ > window.showLevelSelect levelselect.js:346:5
+ > ui.js:46:16
+
+[2m1:46:33 p.m.[22m [31m[1m[vite][22m[39m [31m[2m(client)[22m[39m [31m[Unhandled rejection] [1mNotAllowedError[22m: play() failed because the user didn't interact with the document first. https://goo.gl/xX8pDD
+[39m
+[2m1:47:16 p.m.[22m [31m[1m[vite][22m[39m [31m[2m(client)[22m[39m [31m[Unhandled rejection] [1mNotAllowedError[22m: play() failed because the user didn't interact with the document first. https://goo.gl/xX8pDD
+[39m

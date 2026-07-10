@@ -17,7 +17,7 @@ const GEM_LAYOUT = {
 
         // Ancho total del sidebar
         width: {
-            mobile: '100%',
+            mobile: '25%',
             desktop: '300px',
         },
 
@@ -41,11 +41,11 @@ const GEM_LAYOUT = {
         // Botón VOLVER
         backBtn: {
             padding: {
-                mobile: '7px',
+                mobile: '6px',
                 desktop: '15px',
             },
             fontSize: {
-                mobile: '9px',
+                mobile: '6px',
                 desktop: '15px',
             },
         },
@@ -244,34 +244,39 @@ const GEM_LAYOUT = {
         perfil: {
             // Posición y ancho del cuadro completo
             posicion: {
-                mobile: { width: '24%', right: '24px', top: '12px' },
+                mobile: { width: '24%', right: '14px', top: '6px' },
                 desktop: { width: '50%', maxWidth: '320px' },
             },
             // Tamaño del cuadro (alto, bordes redondeados, espacio interno)
             tamano: {
-                mobile: { height: '82px', borderRadius: '10px', padding: '10px' },
+                mobile: { height: '10px', borderRadius: '10px', padding: '4px' },
                 desktop: { height: '82px', borderRadius: '10px', padding: '10px' },
+            },
+            // Estiramiento / Escala manual (1.0 = normal, mayor = estira, menor = achica)
+            estirar: {
+                mobile: { scaleX: 5.0, scaleY: 0.8 },
+                desktop: { scaleX: 1.0, scaleY: 1.0 },
             },
             // Avatar circular dentro del banner
             avatar: {
-                mobile: { size: '32px' },
+                mobile: { size: '2px' },
                 desktop: { size: '52px' },
             },
             // Texto del nombre del jugador (ej: "Jugador")
             nombreFont: {
-                mobile: { size: '11px' },
+                mobile: { size: '5px' },
                 desktop: { size: '17px' },
             },
             // Texto del rango/nivel (ej: "CHISPA")
             rangoFont: {
-                mobile: { size: '9px' },
+                mobile: { size: '5px' },
                 desktop: { size: '14px' },
             },
 
             // Control de tamaño de Gemas (Rubíes), Monedas y sus PNGs en el menú
             monetizacion: {
                 gap: {
-                    mobile: '4px',
+                    mobile: '3px',
                     desktop: '6px'
                 },
                 padding: {
@@ -279,7 +284,7 @@ const GEM_LAYOUT = {
                     desktop: '4px 8px'
                 },
                 fontSize: {
-                    mobile: '10px',
+                    mobile: '5px',
                     desktop: '16px' // Tamaño del número de monedas/gemas
                 },
                 iconSize: {
@@ -300,13 +305,18 @@ const GEM_LAYOUT = {
             // más este espacio. "width" es el ancho propio del botón reyes
             // (independiente del ancho del perfil, para que no se desborde).
             posicion: {
-                mobile: { width: '24%', gap: '8px' },
+                mobile: { width: '28%', gap: '8px' },
                 desktop: { width: '34%', maxWidth: '220px', gap: '14px' },
             },
             // Tamaño del cuadro (alto, bordes redondeados, espacio interno)
             tamano: {
-                mobile: { height: '82px', borderRadius: '10px', padding: '10px' },
+                mobile: { height: '5px', borderRadius: '10px', padding: '4px' },
                 desktop: { height: '82px', borderRadius: '10px', padding: '10px' },
+            },
+            // Estiramiento / Escala manual (1.0 = normal, mayor = estira, menor = achica)
+            estirar: {
+                mobile: { scaleX: 1.0, scaleY: 0.8 },
+                desktop: { scaleX: 1.0, scaleY: 1.0 },
             },
             // Texto "CLASIFICACIÓN" dentro del botón
             fuente: {
@@ -377,7 +387,7 @@ const GEM_LAYOUT = {
             // icono: 'emoji' usa el texto de abajo (✎). 'imagen' usa editIconImg (poné la ruta del PNG).
             icono: 'emoji',
             emoji: '✎',
-            imagen: '', // ej: 'assets/Imagenes/Iconos/lapiz.png'
+            imagen: '', // ej: 'assets/UI/Common/Icons/lapiz.png'
             size: {
                 mobile: '34px',
                 desktop: '34px',
@@ -416,7 +426,7 @@ const GEM_LAYOUT = {
         rangoIcono: {
             icono: 'emoji', // 'emoji' = usa el texto de abajo. 'imagen' = usa rangoImagen (PNG).
             emoji: '✦',
-            imagen: '', // ej: 'assets/Imagenes/Iconos/estrella.png'
+            imagen: '', // ej: 'assets/UI/Common/Icons/estrella.png'
             imagenSize: {   // tamaño del ícono SOLO si icono:'imagen'
                 mobile: '14px',
                 desktop: '14px',
@@ -531,6 +541,25 @@ const GEM_LAYOUT = {
     },
 
     // --------------------------------------------------------
+    //  BOTONES FLOTANTES DE ACCESO RÁPIDO (Sonido, Opciones, Monedas Infinitas)
+    //  Permite cambiar ancho, alto, escala y desplazamiento horizontal (offsetX)
+    // --------------------------------------------------------
+    botonesFlotantes: {
+        sonido: {
+            mobile: { width: '28px', height: '28px', bottom: '14px', left: 'auto', right: '14px', scaleX: 1.0, scaleY: 1.0, offsetX: '0px' },
+            desktop: { width: '52px', height: '52px', bottom: '20px', right: '20px', left: 'auto', scaleX: 1.0, scaleY: 1.0, offsetX: '0px' },
+        },
+        opciones: {
+            mobile: { width: '28px', height: '28px', bottom: '14px', left: 'auto', right: '48px', scaleX: 1.0, scaleY: 1.0, offsetX: '0px' },
+            desktop: { width: '52px', height: '52px', bottom: '20px', right: '85px', left: 'auto', scaleX: 1.0, scaleY: 1.0, offsetX: '0px' },
+        },
+        monedasInfinitas: {
+            mobile: { width: '28px', height: '28px', bottom: '14px', left: 'auto', right: '82px', scaleX: 1.0, scaleY: 1.0, offsetX: '0px' },
+            desktop: { width: '52px', height: '52px', bottom: '20px', right: '150px', left: 'auto', scaleX: 1.0, scaleY: 1.0, offsetX: '0px' },
+        }
+    },
+
+    // --------------------------------------------------------
     //  HUD EN PARTIDA — Elementos durante el juego
     // --------------------------------------------------------
     hud: {
@@ -553,39 +582,61 @@ const GEM_LAYOUT = {
             // Posición vertical del header (top)
             top: { mobile: '14px', desktop: '-14px' },
             // Ancho del contenedor del header
-            width: { mobile: '96%', desktop: '92%' },
+            width: { mobile: 'calc(100% - 18px)', desktop: '92%' },
         },
 
         // --- TÍTULO: caja que encierra "THE GEM / SELECCIONAR NIVEL" ---
         titleBox: {
             // Activar o desactivar el cuadro visual alrededor del título
             enabled: true,
-            padding: { mobile: '10px 16px', desktop: '14px 26px' },
-            borderRadius: { mobile: '12px', desktop: '14px' },
-            background: 'rgba(0,0,0,0)',
+            x: { mobile: '-14px', desktop: '0px' },
+            y: { mobile: '0px', desktop: '0px' },
+            width: { mobile: 'min(64vw, 250px)', desktop: 'auto' },
+            height: { mobile: 'auto', desktop: 'auto' },
+            padding: { mobile: '8px 10px', desktop: '14px 26px' },
+            borderRadius: { mobile: '10px', desktop: '14px' },
+            background: 'rgba(0, 0, 0, 0)',
             border: '1px solid rgba(0, 255, 231, 0.18)',
             backdropBlur: 'blur(10px)',
         },
 
+        // --- CUADRO / BARRA IZQUIERDA: lista donde eliges el nivel ---
+        // x mueve la barra a la izquierda/derecha. y la sube/baja.
+        // width/height cambian el tamaño completo del cuadro.
+        // Tiene versión desktop y mobile para que lo puedas ajustar por separado.
+        listaNiveles: {
+            x: { mobile: '0px', desktop: '0px' },
+            y: { mobile: '0px', desktop: '0px' },
+            width: { mobile: '132px', desktop: 'clamp(160px, 22vw, 240px)' },
+            height: { mobile: '100%', desktop: '100%' },
+            paddingTop: { mobile: 'calc(92px + env(safe-area-inset-top))', desktop: 'calc(86px + env(safe-area-inset-top))' },
+            paddingBottom: { mobile: '84px', desktop: '10px' },
+            itemPadding: { mobile: '6px 6px', desktop: 'clamp(7px, 1.2vh, 12px) clamp(10px, 1.5vw, 16px)' },
+            itemGap: { mobile: '6px', desktop: 'clamp(6px, 1.2vw, 12px)' },
+            thumbSize: { mobile: '30px', desktop: 'clamp(30px, 4vw, 42px)' },
+            nameFont: { mobile: '8.5px', desktop: 'clamp(9px, 1.2vw, 12px)' },
+            percentFont: { mobile: '7px', desktop: 'clamp(8px, 1vw, 10px)' },
+        },
+
         // Tamaño del texto del título
         titleFont: {
-            small: { mobile: '9px', desktop: '11px' },   // "THE GEM"
-            large: { mobile: '26px', desktop: '42px' },   // "SELECCIONAR NIVEL"
+            small: { mobile: '8px', desktop: '11px' },   // "THE GEM"
+            large: { mobile: '20px', desktop: '42px' },   // "SELECCIONAR NIVEL"
         },
 
         // --- BOTÓN VOLVER ---
         backBtn: {
             // top: distancia desde arriba
-            top: { mobile: '14px', desktop: '28px' },
-            height: { mobile: '36px', desktop: '42px' },
-            fontSize: { mobile: '12px', desktop: '14px' },
-            padding: { mobile: '0 12px', desktop: '0 18px' },
+            top: { mobile: '54px', desktop: '28px' },
+            height: { mobile: '30px', desktop: '42px' },
+            fontSize: { mobile: '10px', desktop: '14px' },
+            padding: { mobile: '0 10px', desktop: '0 18px' },
         },
 
         // --- PLAYER BAR (arriba derecha con avatar/nombre/monedas) ---
         playerBar: {
             // solo afecta si back-btn y player-bar conviven
-            top: { mobile: '64px', desktop: '86px' },
+            top: { mobile: '50px', desktop: '86px' },
         },
 
         // --- FLECHAS DE NAVEGACIÓN (← →) ---
@@ -688,6 +739,7 @@ function applyConfig() {
     const mr = m.reyes;
     const sb = GEM_LAYOUT.tiendaSidebar;
     const ls = GEM_LAYOUT.levelSelect;
+    const lst = GEM_CONFIG.levelSelect?.titulo || {};
     const tema = GEM_CONFIG.tema; // cross-read: colores/fuentes viven en textgemconfig.js
     const pp = GEM_LAYOUT.perfilModal;
 
@@ -842,6 +894,8 @@ function applyConfig() {
         root.style.setProperty('--menu-avatar-size' + s, mp.avatar[d].size);
         root.style.setProperty('--menu-profile-name-font' + s, mp.nombreFont[d].size);
         root.style.setProperty('--menu-profile-level-font' + s, mp.rangoFont[d].size);
+        root.style.setProperty('--menu-profile-scale-x' + s, mp.estirar ? mp.estirar[d].scaleX : 1.0);
+        root.style.setProperty('--menu-profile-scale-y' + s, mp.estirar ? mp.estirar[d].scaleY : 1.0);
 
         // ── Menú principal — botón REYES (Clasificación), pegado al perfil ──
         root.style.setProperty('--menu-reyes-width' + s, mr.posicion[d].width);
@@ -854,6 +908,42 @@ function applyConfig() {
         root.style.setProperty('--menu-reyes-padding' + s, mr.tamano[d].padding);
         root.style.setProperty('--menu-reyes-font' + s, mr.fuente.size[d]);
         root.style.setProperty('--menu-reyes-font-family', mr.fuente.tipo);
+        root.style.setProperty('--menu-reyes-scale-x' + s, mr.estirar ? mr.estirar[d].scaleX : 1.0);
+        root.style.setProperty('--menu-reyes-scale-y' + s, mr.estirar ? mr.estirar[d].scaleY : 1.0);
+
+        // ── Botones flotantes (Sonido, Opciones, Monedas Infinitas) ──
+        if (GEM_LAYOUT.botonesFlotantes) {
+            const bf = GEM_LAYOUT.botonesFlotantes;
+            // Sonido
+            root.style.setProperty('--bf-sonido-width' + s, bf.sonido[d].width);
+            root.style.setProperty('--bf-sonido-height' + s, bf.sonido[d].height);
+            root.style.setProperty('--bf-sonido-bottom' + s, bf.sonido[d].bottom);
+            root.style.setProperty('--bf-sonido-left' + s, bf.sonido[d].left);
+            root.style.setProperty('--bf-sonido-right' + s, bf.sonido[d].right);
+            root.style.setProperty('--bf-sonido-scale-x' + s, bf.sonido[d].scaleX);
+            root.style.setProperty('--bf-sonido-scale-y' + s, bf.sonido[d].scaleY);
+            root.style.setProperty('--bf-sonido-offset-x' + s, bf.sonido[d].offsetX);
+
+            // Opciones
+            root.style.setProperty('--bf-opciones-width' + s, bf.opciones[d].width);
+            root.style.setProperty('--bf-opciones-height' + s, bf.opciones[d].height);
+            root.style.setProperty('--bf-opciones-bottom' + s, bf.opciones[d].bottom);
+            root.style.setProperty('--bf-opciones-left' + s, bf.opciones[d].left);
+            root.style.setProperty('--bf-opciones-right' + s, bf.opciones[d].right);
+            root.style.setProperty('--bf-opciones-scale-x' + s, bf.opciones[d].scaleX);
+            root.style.setProperty('--bf-opciones-scale-y' + s, bf.opciones[d].scaleY);
+            root.style.setProperty('--bf-opciones-offset-x' + s, bf.opciones[d].offsetX);
+
+            // Monedas Infinitas
+            root.style.setProperty('--bf-monedas-width' + s, bf.monedasInfinitas[d].width);
+            root.style.setProperty('--bf-monedas-height' + s, bf.monedasInfinitas[d].height);
+            root.style.setProperty('--bf-monedas-bottom' + s, bf.monedasInfinitas[d].bottom);
+            root.style.setProperty('--bf-monedas-left' + s, bf.monedasInfinitas[d].left);
+            root.style.setProperty('--bf-monedas-right' + s, bf.monedasInfinitas[d].right);
+            root.style.setProperty('--bf-monedas-scale-x' + s, bf.monedasInfinitas[d].scaleX);
+            root.style.setProperty('--bf-monedas-scale-y' + s, bf.monedasInfinitas[d].scaleY);
+            root.style.setProperty('--bf-monedas-offset-x' + s, bf.monedasInfinitas[d].offsetX);
+        }
 
         // ── Sidebar tienda ──
         root.style.setProperty('--shop-sidebar-width' + s, sb.width[d]);
@@ -883,8 +973,29 @@ function applyConfig() {
         // ── Level Select ──
         root.style.setProperty('--ls-header-top' + s, ls.header.top[d]);
         root.style.setProperty('--ls-header-width' + s, ls.header.width[d]);
+        root.style.setProperty('--ls-title-box-x' + s, ls.titleBox.x[d]);
+        root.style.setProperty('--ls-title-box-y' + s, ls.titleBox.y[d]);
+        root.style.setProperty('--ls-title-box-width' + s, ls.titleBox.width[d]);
+        root.style.setProperty('--ls-title-box-height' + s, ls.titleBox.height[d]);
         root.style.setProperty('--ls-title-box-padding' + s, ls.titleBox.padding[d]);
         root.style.setProperty('--ls-title-box-radius' + s, ls.titleBox.borderRadius[d]);
+        root.style.setProperty('--lsc-list-x' + s, ls.listaNiveles.x[d]);
+        root.style.setProperty('--lsc-list-y' + s, ls.listaNiveles.y[d]);
+        root.style.setProperty('--lsc-list-width' + s, ls.listaNiveles.width[d]);
+        root.style.setProperty('--lsc-list-height' + s, ls.listaNiveles.height[d]);
+        root.style.setProperty('--lsc-list-padding-top' + s, ls.listaNiveles.paddingTop[d]);
+        root.style.setProperty('--lsc-list-padding-bottom' + s, ls.listaNiveles.paddingBottom[d]);
+        root.style.setProperty('--lsc-item-padding' + s, ls.listaNiveles.itemPadding[d]);
+        root.style.setProperty('--lsc-item-gap' + s, ls.listaNiveles.itemGap[d]);
+        root.style.setProperty('--lsc-thumb-size' + s, ls.listaNiveles.thumbSize[d]);
+        root.style.setProperty('--lsc-item-name-font' + s, ls.listaNiveles.nameFont[d]);
+        root.style.setProperty('--lsc-item-percent-font' + s, ls.listaNiveles.percentFont[d]);
+        root.style.setProperty('--ls-title-color' + s, lst.color?.[d] || '#ffffff');
+        root.style.setProperty('--ls-title-font' + s, lst.fuente?.[d] || 'var(--font-principal)');
+        root.style.setProperty('--ls-title-glow-color' + s, lst.glowColor?.[d] || 'rgba(0, 255, 231, 0.55)');
+        const lsGlow = Number(lst.glowIntensidad?.[d] ?? 1);
+        root.style.setProperty('--ls-title-glow-size-1' + s, `${Math.max(0, lsGlow) * 18}px`);
+        root.style.setProperty('--ls-title-glow-size-2' + s, `${Math.max(0, lsGlow) * 40}px`);
         root.style.setProperty('--ls-font-small' + s, ls.titleFont.small[d]);
         root.style.setProperty('--ls-font-large' + s, ls.titleFont.large[d]);
         root.style.setProperty('--ls-back-top' + s, ls.backBtn.top[d]);
@@ -1422,4 +1533,3 @@ function aplicarTouchControlsConfig() {
     });
 }
 aplicarTouchControlsConfig();
-
