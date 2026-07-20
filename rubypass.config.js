@@ -13,6 +13,12 @@ const RUBY_PASS_CONFIG = {
         premiumCostGems: 250,   // costo de comprar el pase premium
         xpPerWin: 120,          // XP que se gana por cada victoria
 
+        // Fecha en que termina la temporada actual (formato 'YYYY-MM-DD').
+        // Mientras esto sea null, el countdown del topbar NO se muestra
+        // (no se inventa una fecha falsa). Poné acá la fecha real, ej:
+        // seasonEndsAt: '2026-08-15',
+        seasonEndsAt: null,
+
         // Montos por defecto si un nivel no especifica uno propio abajo
         defaultCoinsAmount: 50,
         defaultGemsAmount: 3,

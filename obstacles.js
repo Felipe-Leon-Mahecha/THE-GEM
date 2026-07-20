@@ -181,6 +181,8 @@ function playerHit() {
     // Si hay un powerup que absorbe el golpe, no hacer nada
     if (window.absorbPowerupHit?.()) return;
 
+    window.playSfx?.('hitImpact', 0.85);
+
     // Marcar todos los obstáculos como proximityChecked para evitar near-miss incorrectos
     if (window.obstacles) {
         window.obstacles.forEach(o => o.proximityChecked = true);
@@ -231,10 +233,10 @@ function spawnSierra() {
 
     // Posición aleatoria: desde el suelo o desde el domo
     let fromGround = Math.random() < 0.5;
-    
+
     // Ángulo aleatorio de aparición
     let a = Math.random() * Math.PI * 2;
-    
+
     // Dirección de movimiento (1 = horario, -1 = antihorario)
     let dir = Math.random() < 0.5 ? 1 : -1;
 
@@ -300,7 +302,7 @@ function updateSierras(timeScale = 1) {
             let step = 0.0025 * s.dir * timeScale;
             s.angle += step;
             s.traveled += Math.abs(step);
-            
+
             // Rotar la sierra visualmente
             s.rotation += 0.06 * s.dir * timeScale;
 

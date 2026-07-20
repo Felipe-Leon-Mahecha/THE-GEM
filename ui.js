@@ -556,11 +556,13 @@ document.body.addEventListener('click', () => {
 }, { once: true });
 
 document.getElementById('go-retry').onclick = () => {
+    window.playSfx?.('confirmAction');
     document.getElementById('gameOver').style.display = 'none';
     window.startGame(window.currentLevel);
 };
 
 document.getElementById('go-menu').onclick = () => {
+    window.playSfx?.('backAction');
     document.getElementById('gameOver').style.display = 'none';
     document.getElementById("gameCanvas").style.visibility = "hidden";
     document.body.classList.remove('is-playing-touch');
@@ -582,6 +584,7 @@ document.getElementById('go-menu').onclick = () => {
 };
 
 document.getElementById('go-levels').onclick = () => {
+    window.playSfx?.('backAction');
     document.getElementById('gameOver').style.display = 'none';
     document.getElementById("gameCanvas").style.visibility = "hidden";
     document.body.classList.remove('is-playing-touch');
@@ -591,6 +594,7 @@ document.getElementById('go-levels').onclick = () => {
 };
 
 document.getElementById('gw-menu').onclick = () => {
+    window.playSfx?.('backAction');
     document.getElementById('gameWin').style.display = 'none';
     window.menuMusic.currentTime = 0;
     if (window.menuMusic.paused)
@@ -608,6 +612,7 @@ document.getElementById('gw-menu').onclick = () => {
 };
 
 document.getElementById('gw-levels').onclick = () => {
+    window.playSfx?.('backAction');
     document.getElementById('gameWin').style.display = 'none';
     document.getElementById("gameCanvas").style.visibility = "hidden";
     document.body.classList.remove('is-playing-touch');
@@ -617,6 +622,7 @@ document.getElementById('gw-levels').onclick = () => {
 };
 
 document.getElementById('gw-retry').onclick = () => {
+    window.playSfx?.('confirmAction');
     document.getElementById('gameWin').style.display = 'none';
     window.startGame(window.currentLevel);
 };
@@ -624,19 +630,46 @@ document.getElementById('gw-retry').onclick = () => {
 window.pauseGame = function () {
     if (!window.running || window.paused) return;
     window.paused = true;
+    window.playSfx?.('pauseSound');
+    document.body.classList.add('is-paused');
     if (window.bgMusic) window.bgMusic.pause();
-    document.getElementById('pausePanel').classList.add('showing');
+    const panel = document.getElementById('pausePanel');
+    panel?.querySelector('.pause-drawer')?.classList.remove('closing');
+    panel?.querySelector('.pause-dim')?.classList.remove('closing');
+    panel?.classList.add('showing');
 };
 
 window.resumeGame = function () {
     if (!window.paused) return;
     window.paused = false;
-    document.getElementById('pausePanel').classList.remove('showing');
+    window.playSfx?.('resumeSound');
+    document.body.classList.remove('is-paused');
+    const panel = document.getElementById('pausePanel');
+    const drawer = panel?.querySelector('.pause-drawer');
+    const dim = panel?.querySelector('.pause-dim');
+    // Reproducimos la animación de cierre y recién después ocultamos el panel,
+    // para que no se corte de golpe como pasaba antes.
+    drawer?.classList.add('closing');
+    dim?.classList.add('closing');
+    setTimeout(() => {
+        panel?.classList.remove('showing');
+        drawer?.classList.remove('closing');
+        dim?.classList.remove('closing');
+    }, 260);
     if (window.bgMusic && !window.isMuted) window.safePlayAudio?.(window.bgMusic);
 };
 
 const pauseContinueBtn = document.getElementById('pause-continue');
 if (pauseContinueBtn) pauseContinueBtn.onclick = () => window.resumeGame();
+
+const pauseRestartBtn = document.getElementById('pause-restart');
+if (pauseRestartBtn) pauseRestartBtn.onclick = () => {
+    window.playSfx?.('confirmAction');
+    window.paused = false;
+    document.body.classList.remove('is-paused');
+    document.getElementById('pausePanel')?.classList.remove('showing');
+    window.startGame(window.currentLevel);
+};
 
 const pauseOptionsBtn = document.getElementById('pause-options');
 if (pauseOptionsBtn) pauseOptionsBtn.onclick = () => openOptionsPanel();
@@ -645,6 +678,7 @@ const pauseLevelsBtn = document.getElementById('pause-levels');
 if (pauseLevelsBtn) pauseLevelsBtn.onclick = () => {
     window.paused = false;
     window.running = false;
+    document.body.classList.remove('is-paused');
     document.getElementById('pausePanel')?.classList.remove('showing');
     document.getElementById('pause-btn')?.classList.remove('is-playing');
     const _gc = document.getElementById("gameCanvas"); if (_gc) _gc.style.visibility = "hidden";
@@ -657,6 +691,7 @@ const pauseMenuBtn = document.getElementById('pause-menu');
 if (pauseMenuBtn) pauseMenuBtn.onclick = () => {
     window.paused = false;
     window.running = false;
+    document.body.classList.remove('is-paused');
     document.getElementById('pausePanel')?.classList.remove('showing');
     const _gc = document.getElementById("gameCanvas"); if (_gc) _gc.style.visibility = "hidden";
     document.body.classList.remove('is-playing-touch');

@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>THE GEM — Preview v2 grid de categorías (bento a sangre completa)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=Chakra+Petch:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#07070c;
+  --line:rgba(255,255,255,.08);
+  --txt:#e8ecf5;
+  --txt-dim:#8a90a6;
+}
+*{box-sizing:border-box; margin:0; padding:0;}
+body{
+  background:var(--bg);
+  color:var(--txt);
+  font-family:'Chakra Petch', sans-serif;
+  padding:0;
+}
+.note{
+  padding:16px 24px; color:var(--txt-dim); font-size:12px; line-height:1.6;
+  border-bottom:1px solid var(--line); background:#0a0a12;
+}
+.hero-ref{
+  height:70px; margin:16px 24px 0;
+  background:linear-gradient(90deg, rgba(124,92,255,.20), rgba(0,229,255,.10));
+  border:1px solid var(--line); border-radius:6px;
+  display:flex; align-items:center; padding:0 20px;
+  font-family:'Rajdhani'; font-weight:700; font-size:11px; letter-spacing:3px; color:var(--txt-dim);
+}
+
+.bento{
+  display:grid;
+  grid-template-columns: repeat(4, 1fr);
+  grid-template-rows: 230px 140px 112px 64px;
+  grid-template-areas:
+    "skins skins cofres cofres"
+    "temporadas temporadas temporadas regalo"
+    "trails banners emotes potenciadores"
+    "conversion conversion conversion conversion";
+  gap:10px;
+  padding:16px 24px 32px;
+}
+
+.card{
+  position:relative;
+  overflow:hidden;
+  border-radius:4px;
+  border-top:2px solid var(--ac);
+  background:
+    linear-gradient(180deg, transparent 40%, rgba(4,4,8,.92) 100%),
+    radial-gradient(circle at 75% 15%, var(--ac-glow), transparent 55%),
+    linear-gradient(150deg, var(--ac-a), var(--ac-b));
+  display:flex; flex-direction:column; justify-content:flex-end;
+  padding:14px 16px;
+  cursor:pointer;
+  transition:transform .15s ease;
+}
+.card::after{
+  content:"";
+  position:absolute; top:0; right:0; width:26px; height:26px;
+  background:var(--ac); clip-path:polygon(100% 0,0 0,100% 100%); opacity:.7;
+}
+.card .glyph{
+  position:absolute; top:12px; right:16px; font-size:46px; opacity:.16; color:var(--ac); line-height:1;
+}
+.card .kicker{ font-size:9px; letter-spacing:2.5px; color:var(--ac); margin-bottom:4px; position:relative; z-index:1; text-transform:uppercase;}
+.card .title{ font-family:'Rajdhani'; font-weight:700; letter-spacing:.5px; position:relative; z-index:1; }
+.card .sub{ font-size:10px; color:var(--txt-dim); margin-top:3px; position:relative; z-index:1; }
+
+.card.skins{ grid-area:skins; --ac:#3ea7ff; --ac-glow:#3ea7ff2e; --ac-a:#0d2036; --ac-b:#050912;}
+.card.skins .title{ font-size:30px; }
+.card.cofres{ grid-area:cofres; --ac:#ffc340; --ac-glow:#ffc3402e; --ac-a:#2e2308; --ac-b:#0a0805;}
+.card.cofres .title{ font-size:30px; }
+
+.card.temporadas{ grid-area:temporadas; --ac:#a259ff; --ac-glow:#a259ff33; --ac-a:#241a45; --ac-b:#0a0e28;}
+.card.temporadas .title{ font-size:22px; }
+.card.temporadas .dots{
+  position:absolute; inset:0; background-image:radial-gradient(rgba(200,190,255,.5) 1px, transparent 1px);
+  background-size:22px 22px; opacity:.14;
+}
+
+.card.regalo{ grid-area:regalo; --ac:#ffd76a; --ac-glow:#ffd76a30; --ac-a:#2c2408; --ac-b:#0a0805;}
+.card.regalo .title{ font-size:15px; }
+
+.card.trails{ grid-area:trails; --ac:#00e5ff; --ac-glow:#00e5ff2e; --ac-a:#052226; --ac-b:#040a0c;}
+.card.banners{ grid-area:banners; --ac:#3ea7ff; --ac-glow:#3ea7ff2e; --ac-a:#0d2036; --ac-b:#040a12;}
+.card.emotes{ grid-area:emotes; --ac:#ff3b5c; --ac-glow:#ff3b5c2e; --ac-a:#2a0a12; --ac-b:#0a0508;}
+.card.potenciadores{ grid-area:potenciadores; --ac:#6bcf7f; --ac-glow:#6bcf7f2e; --ac-a:#0d2412; --ac-b:#050c07;}
+.bento .card.trails .title,
+.bento .card.banners .title,
+.bento .card.emotes .title,
+.bento .card.potenciadores .title{ font-size:14px; }
+.bento .card.trails .glyph,
+.bento .card.banners .glyph,
+.bento .card.emotes .glyph,
+.bento .card.potenciadores .glyph{ font-size:30px; top:8px; right:10px; }
+
+.card.conversion{
+  grid-area:conversion;
+  --ac:#00e5ff; --ac-glow:#00e5ff26; --ac-a:#082024; --ac-b:#04090b;
+  flex-direction:row; align-items:center; justify-content:space-between;
+  padding:0 20px;
+}
+.card.conversion .title{ font-size:13px; }
+.card.conversion .cv-icon{ font-size:16px; color:var(--ac); position:relative; z-index:1; }
+
+footer{
+  padding:16px 24px 30px; color:var(--txt-dim); font-size:11px; line-height:1.7;
+  border-top:1px solid var(--line);
+}
+</style>
+</head>
+<body>
+
+<div class="note">
+  PREVIEW v2 — cards a sangre completa (sin marco con padding alrededor de un ícono chico), degradé abajo para el texto, bento denso ocupando todo el ancho. Los glifos grandes semitransparentes (◆ ▣ etc.) son placeholder de TU arte — ahí van tus PNG de personaje/skin recortados a sangre completa, igual que en Fortnite/Valorant.
+</div>
+
+<div class="hero-ref">CARRUSEL ACTUAL (sin cambios) — TIENDA VIP / RUBY PASS / TEMPORADAS</div>
+
+<div class="bento">
+  <div class="card skins">
+    <div class="glyph">◆</div>
+    <div class="kicker">Catálogo principal</div>
+    <div class="title">SKINS</div>
+    <div class="sub">Personajes y variantes disponibles</div>
+  </div>
+  <div class="card cofres">
+    <div class="glyph">▣</div>
+    <div class="kicker">Recompensas</div>
+    <div class="title">COFRES</div>
+    <div class="sub">Abrí y ganá objetos aleatorios</div>
+  </div>
+
+  <div class="card temporadas">
+    <div class="dots"></div>
+    <div class="kicker">Contenido limitado</div>
+    <div class="title">TEMPORADAS</div>
+    <div class="sub">Eventos de tiempo limitado con recompensas exclusivas</div>
+  </div>
+  <div class="card regalo">
+    <div class="glyph" style="font-size:34px;">▤</div>
+    <div class="kicker">Racha diaria</div>
+    <div class="title">REGALO<br>DIARIO</div>
+    <div class="sub">Día 11 · reclamar</div>
+  </div>
+
+  <div class="card trails">
+    <div class="glyph">◈</div>
+    <div class="kicker">Rastros</div>
+    <div class="title">TRAILS</div>
+  </div>
+  <div class="card banners">
+    <div class="glyph">▬</div>
+    <div class="kicker">Estandartes</div>
+    <div class="title">BANNERS</div>
+  </div>
+  <div class="card emotes">
+    <div class="glyph">☺</div>
+    <div class="kicker">Expresiones</div>
+    <div class="title">EMOTES</div>
+  </div>
+  <div class="card potenciadores">
+    <div class="glyph">⬡</div>
+    <div class="kicker">Ventajas</div>
+    <div class="title">POTENC.</div>
+  </div>
+
+  <div class="card conversion">
+    <span class="cv-icon">⇄</span>
+    <span class="title">CONVERSIÓN DE RUBÍES / MONEDAS</span>
+    <span class="cv-icon">→</span>
+  </div>
+</div>
+
+<footer>
+  Todo sigue siendo CSS puro (gradientes + clip-path), no hace falta imagen nueva para que esto funcione — pero para que se vea realmente "pro" como las referencias, el salto grande es reemplazar el glifo placeholder por un recorte de personaje/skin a sangre completa (PNG con fondo transparente, la mitad superior del cuerpo asomando) detrás del degradé, tal como Fortnite/Valorant/Genshin usan el arte del personaje como fondo real de cada card en vez de un ícono chico centrado.
+</footer>
+
+</body>
+</html>

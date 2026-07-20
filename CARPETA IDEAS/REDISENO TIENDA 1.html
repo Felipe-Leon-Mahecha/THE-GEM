@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>THE GEM — Preview remodelación grid de categorías</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=Chakra+Petch:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#070910;
+  --line:rgba(255,255,255,.08);
+  --txt:#e8ecf5;
+  --txt-dim:#7c869c;
+}
+*{box-sizing:border-box; margin:0; padding:0;}
+body{
+  background:
+    radial-gradient(circle at 15% 0%, rgba(124,92,255,.08), transparent 40%),
+    radial-gradient(circle at 85% 20%, rgba(0,229,255,.06), transparent 40%),
+    var(--bg);
+  color:var(--txt);
+  font-family:'Chakra Petch', sans-serif;
+  padding:40px;
+}
+.note{
+  max-width:900px; margin:0 auto 28px; color:var(--txt-dim); font-size:13px; line-height:1.7;
+  border-left:2px solid rgba(255,255,255,.15); padding-left:14px;
+}
+.wrap{ max-width:900px; margin:0 auto; }
+
+/* ===== fila hero (sin cambios, referencia) ===== */
+.hero-ref{
+  height:64px; border-radius:8px; margin-bottom:22px;
+  background:linear-gradient(90deg, rgba(124,92,255,.18), rgba(0,229,255,.10));
+  border:1px solid var(--line);
+  display:flex; align-items:center; padding:0 20px;
+  font-family:'Rajdhani'; font-weight:700; font-size:12px; letter-spacing:3px; color:var(--txt-dim);
+}
+
+/* ===== fila 1: 2 cards grandes + temporadas ===== */
+.feature-row{
+  display:grid;
+  grid-template-columns: 1.25fr 1fr 0.8fr;
+  gap:16px;
+  margin-bottom:16px;
+}
+.feature-card{
+  position:relative;
+  height:220px;
+  background:rgba(255,255,255,.03);
+  border:1px solid var(--fc);
+  clip-path:polygon(0 0, calc(100% - 30px) 0, 100% 30px, 100% 100%, 0 100%);
+  overflow:hidden;
+  padding:20px;
+  display:flex; flex-direction:column; justify-content:flex-end;
+}
+.feature-card::before{
+  content:"";
+  position:absolute; top:0; right:0; width:30px; height:30px;
+  background:var(--fc); clip-path:polygon(100% 0, 0 0, 100% 100%); opacity:.55;
+}
+.feature-card::after{
+  content:"";
+  position:absolute; inset:0; z-index:0;
+  background:radial-gradient(circle at 30% 20%, var(--fc-soft), transparent 60%);
+  opacity:.5;
+}
+.feature-card .fc-icon{
+  position:absolute; top:22px; left:20px; z-index:1;
+  width:46px; height:46px;
+  clip-path:polygon(50% 0,100% 25%,100% 75%,50% 100%,0 75%,0 25%);
+  background:linear-gradient(160deg, rgba(255,255,255,.08), rgba(0,0,0,.3));
+  border:1.5px solid var(--fc);
+  display:flex; align-items:center; justify-content:center;
+  font-size:18px; color:var(--fc);
+}
+.feature-card .fc-kicker{ position:relative; z-index:1; font-size:10px; letter-spacing:3px; color:var(--fc); margin-bottom:6px; }
+.feature-card .fc-title{ position:relative; z-index:1; font-family:'Rajdhani'; font-weight:700; font-size:26px; letter-spacing:1px; }
+.feature-card .fc-sub{ position:relative; z-index:1; font-size:11px; color:var(--txt-dim); margin-top:4px; }
+
+.feature-card.skins{ --fc:#3ea7ff; --fc-soft:#3ea7ff33; }
+.feature-card.cofres{ --fc:#ffc340; --fc-soft:#ffc34033; }
+
+.feature-card.temporadas{
+  --fc:#a259ff; --fc-soft:#a259ff33;
+  clip-path:none;
+  border-radius:6px;
+  justify-content:flex-end;
+  background:linear-gradient(150deg, #201a3d 0%, #241a4a 55%, #0a0e28 100%);
+}
+.temporadas .dots{
+  position:absolute; inset:0; z-index:0;
+  background-image: radial-gradient(rgba(180,190,255,.5) 1px, transparent 1px);
+  background-size:24px 24px; opacity:.14;
+}
+
+/* ===== fila 2: accesos rápidos (barras, no cuadros) ===== */
+.quick-row{ display:flex; flex-direction:column; gap:8px; margin-bottom:16px; }
+.quick-item{
+  position:relative;
+  height:58px;
+  display:flex; align-items:center; gap:14px;
+  padding:0 18px;
+  background:linear-gradient(90deg, var(--qc-soft), transparent 65%);
+  border:1px solid var(--line);
+  border-left:3px solid var(--qc);
+  cursor:pointer;
+}
+.quick-item .qi-hex{
+  width:34px; height:34px; flex:0 0 auto;
+  clip-path:polygon(30% 0,70% 0,100% 30%,100% 70%,70% 100%,30% 100%,0 70%,0 30%);
+  background:linear-gradient(160deg, rgba(255,255,255,.08), rgba(0,0,0,.3));
+  border:1.5px solid var(--qc);
+  display:flex; align-items:center; justify-content:center;
+  font-size:13px; color:var(--qc);
+}
+.quick-item .qi-title{ font-family:'Rajdhani'; font-weight:700; font-size:15px; letter-spacing:1px; flex:1; }
+.quick-item .qi-arrow{ font-size:13px; color:var(--txt-dim); }
+.quick-item.trails{ --qc:#00e5ff; --qc-soft:#00e5ff22; }
+.quick-item.banners{ --qc:#3ea7ff; --qc-soft:#3ea7ff22; }
+.quick-item.emotes{ --qc:#ff3b5c; --qc-soft:#ff3b5c22; }
+.quick-item.potenciadores{ --qc:#6bcf7f; --qc-soft:#6bcf7f22; }
+
+/* ===== fila 3: utilitarios ===== */
+.util-row{ display:flex; gap:16px; align-items:stretch; }
+.gift-panel{
+  flex:1;
+  position:relative;
+  display:flex; align-items:center; gap:16px;
+  padding:16px 20px;
+  background:linear-gradient(90deg, rgba(255,215,106,.08), transparent 60%);
+  border:1px solid #8a6a1f;
+  clip-path:polygon(14px 0,100% 0,100% calc(100% - 14px),calc(100% - 14px) 100%,0 100%,0 14px);
+}
+.gift-box{
+  width:44px; height:44px; position:relative; flex:0 0 auto;
+  background:linear-gradient(160deg,#ffe9a8,#c99a2e);
+  clip-path:polygon(6px 0,100% 0,100% 100%,0 100%);
+}
+.gift-box::after{ content:""; position:absolute; left:50%; top:0; bottom:0; width:6px; background:#8a6a1f; transform:translateX(-50%); }
+.gift-txt{ font-family:'Rajdhani'; font-weight:700; font-size:14px; letter-spacing:1px; color:#ffd76a; }
+.gift-sub{ font-size:11px; color:var(--txt-dim); margin-top:2px; }
+
+.chip-conv{
+  display:flex; align-items:center; gap:10px;
+  padding:0 22px;
+  background:rgba(255,255,255,.04);
+  border:1px solid #00e5ff;
+  clip-path:polygon(10px 0,100% 0,calc(100% - 10px) 100%,0 100%);
+  font-family:'Rajdhani'; font-weight:700; font-size:13px; letter-spacing:1px; color:#00e5ff;
+  cursor:pointer;
+}
+
+footer{
+  max-width:900px; margin:26px auto 0; color:var(--txt-dim); font-size:12px; line-height:1.7;
+  border-top:1px solid var(--line); padding-top:16px;
+}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <div class="note">
+    PREVIEW — esto reemplaza SOLO el grid de categorías (Skins → Conversion). El carrusel de arriba (TIENDA VIP / RUBY PASS / TEMPORADAS) no cambia, acá abajo va una franja gris simulándolo nomás como referencia.
+  </div>
+
+  <div class="hero-ref">CARRUSEL ACTUAL (sin cambios) — TIENDA VIP / RUBY PASS / TEMPORADAS</div>
+
+  <div class="feature-row">
+    <div class="feature-card skins">
+      <div class="fc-icon">◆</div>
+      <div class="fc-kicker">CATÁLOGO PRINCIPAL</div>
+      <div class="fc-title">SKINS</div>
+      <div class="fc-sub">Personajes y variantes disponibles</div>
+    </div>
+    <div class="feature-card cofres">
+      <div class="fc-icon">▣</div>
+      <div class="fc-kicker">RECOMPENSAS</div>
+      <div class="fc-title">COFRES</div>
+      <div class="fc-sub">Abrí y ganá objetos aleatorios</div>
+    </div>
+    <div class="feature-card temporadas">
+      <div class="dots"></div>
+      <div class="fc-kicker">CONTENIDO LIMITADO</div>
+      <div class="fc-title" style="font-size:20px;">TEMPORADAS</div>
+    </div>
+  </div>
+
+  <div class="quick-row">
+    <div class="quick-item trails">
+      <div class="qi-hex">◈</div>
+      <div class="qi-title">TRAILS</div>
+      <div class="qi-arrow">→</div>
+    </div>
+    <div class="quick-item banners">
+      <div class="qi-hex">▬</div>
+      <div class="qi-title">BANNERS</div>
+      <div class="qi-arrow">→</div>
+    </div>
+    <div class="quick-item emotes">
+      <div class="qi-hex">☺</div>
+      <div class="qi-title">EMOTES</div>
+      <div class="qi-arrow">→</div>
+    </div>
+    <div class="quick-item potenciadores">
+      <div class="qi-hex">⬡</div>
+      <div class="qi-title">POTENCIADORES</div>
+      <div class="qi-arrow">→</div>
+    </div>
+  </div>
+
+  <div class="util-row">
+    <div class="gift-panel">
+      <div class="gift-box"></div>
+      <div>
+        <div class="gift-txt">REGALO DIARIO</div>
+        <div class="gift-sub">Día 11 · reclamar</div>
+      </div>
+    </div>
+    <div class="chip-conv">⇄ CONVERSIÓN</div>
+  </div>
+
+  <footer>
+    Colores tomados de tu propia paleta de rarezas (kit parte 1) — cada categoría tiene un acento fijo, no depende de rareza de ítem.
+    Los íconos (◆ ▣ ◈ etc.) son placeholders de texto — vos los cambiás por tus PNG/SVG reales, la forma del contenedor (socket hex/oct) ya está resuelta en CSS puro, sin imagen de fondo.
+    Todo en clip-path + gradientes, cero imágenes nuevas necesarias salvo el ícono/arte que quieras meter adentro de cada socket.
+  </footer>
+</div>
+
+</body>
+</html>

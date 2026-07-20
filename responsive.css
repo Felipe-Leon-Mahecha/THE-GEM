@@ -543,6 +543,7 @@ body.is-touch-device .profile-stat-card .stat-value {
     height: var(--menu-currency-icon-size, 14px) !important;
     object-fit: contain !important;
 }
+
 /* ============================================================
    CAMINO DE RANGOS — controlado desde config.js → RANK_MAP_CONFIG
    NO edites los valores aquí — edita config.js en su lugar.
@@ -550,21 +551,21 @@ body.is-touch-device .profile-stat-card .stat-value {
 
 /* ── Nodo normal ── */
 .rsm-node .rsm-circle {
-    width:  var(--rsm-node-size, 42px) !important;
+    width: var(--rsm-node-size, 42px) !important;
     height: var(--rsm-node-size, 42px) !important;
     font-size: var(--rsm-node-font, 15px) !important;
 }
 
 /* ── Nodo actual (el del jugador) ── */
 .rsm-current .rsm-circle {
-    width:  var(--rsm-node-size-current, 54px) !important;
+    width: var(--rsm-node-size-current, 54px) !important;
     height: var(--rsm-node-size-current, 54px) !important;
     font-size: var(--rsm-node-font-current, 20px) !important;
 }
 
 /* ── Avatar del jugador ── */
 #rsm-player-avatar {
-    width:  var(--rsm-avatar-size, 46px) !important;
+    width: var(--rsm-avatar-size, 46px) !important;
     height: var(--rsm-avatar-size, 46px) !important;
 }
 
@@ -590,6 +591,7 @@ body.is-touch-device .profile-stat-card .stat-value {
     position: relative;
     overflow: hidden;
 }
+
 body.is-touch-device .rs-header {
     padding: var(--rh-header-padding-mobile, 14px 14px 10px) !important;
 }
@@ -597,6 +599,7 @@ body.is-touch-device .rs-header {
 .rs-header-row {
     gap: var(--rh-header-gap, 20px) !important;
 }
+
 body.is-touch-device .rs-header-row {
     gap: var(--rh-header-gap-mobile, 10px) !important;
 }
@@ -623,8 +626,8 @@ body.is-touch-device .rs-header-row {
     border-radius: inherit;
     z-index: -1;
     /* Oscurece un poco para que el texto siga siendo legible encima */
-    -webkit-mask-image: linear-gradient(90deg, rgba(0,0,0,0.55) 0%, rgba(0,0,0,0.75) 100%);
-    mask-image: linear-gradient(90deg, rgba(0,0,0,0.55) 0%, rgba(0,0,0,0.75) 100%);
+    -webkit-mask-image: linear-gradient(90deg, rgba(0, 0, 0, 0.55) 0%, rgba(0, 0, 0, 0.75) 100%);
+    mask-image: linear-gradient(90deg, rgba(0, 0, 0, 0.55) 0%, rgba(0, 0, 0, 0.75) 100%);
 }
 
 .rs-xp-block {
@@ -635,6 +638,7 @@ body.is-touch-device .rs-header-row {
     border-radius: var(--rh-xp-radius, 10px) !important;
     clip-path: polygon(8px 0, 100% 0, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%, 0 8px);
 }
+
 body.is-touch-device .rs-xp-block {
     padding: var(--rh-xp-padding-mobile, 6px 12px) !important;
     border-radius: var(--rh-xp-radius-mobile, 8px) !important;
@@ -653,6 +657,7 @@ body.is-touch-device .rs-xp-block {
     text-align: center;
     text-transform: uppercase;
 }
+
 body.is-touch-device .rs-xp-label {
     font-size: var(--rh-xp-label-font-mobile, 7px) !important;
     letter-spacing: var(--rh-xp-label-spacing-mobile, 2px) !important;
@@ -669,6 +674,7 @@ body.is-touch-device .rs-xp-label {
     font-size: var(--rh-xp-value-font, 22px) !important;
     font-weight: 900;
 }
+
 body.is-touch-device .rs-xp-value {
     font-size: var(--rh-xp-value-font-mobile, 16px) !important;
 }
@@ -676,6 +682,7 @@ body.is-touch-device .rs-xp-value {
 .rs-xp-unit {
     font-size: var(--rh-xp-unit-font, 9px) !important;
 }
+
 body.is-touch-device .rs-xp-unit {
     font-size: var(--rh-xp-unit-font-mobile, 8px) !important;
 }
@@ -687,6 +694,7 @@ body.is-touch-device .rs-xp-unit {
     position: relative;
     z-index: 1;
 }
+
 body.is-touch-device .rs-title {
     font-size: var(--rh-title-font-mobile, 13px) !important;
     letter-spacing: var(--rh-title-spacing-mobile, 1px) !important;
@@ -699,6 +707,7 @@ body.is-touch-device .rs-title {
     overflow: hidden;
     flex-shrink: 0;
 }
+
 body.is-touch-device .rs-header-glow-line {
     height: var(--rh-glow-height-mobile, 2px);
 }
@@ -713,13 +722,18 @@ body.is-touch-device .rs-header-glow-line {
 }
 
 @keyframes rsHeaderGlowSlide {
-    0%   { left: -30%; }
-    100% { left: 100%; }
+    0% {
+        left: -30%;
+    }
+
+    100% {
+        left: 100%;
+    }
 }
 
 /* ───────────── TEMA HIELO (Mapa 1) ───────────── */
 .rs-header.tema-hielo {
-    background: linear-gradient(120deg, rgba(120,220,255,0.16) 0%, rgba(10,16,22,0.6) 35%, rgba(180,240,255,0.10) 100%);
+    background: linear-gradient(120deg, rgba(120, 220, 255, 0.16) 0%, rgba(10, 16, 22, 0.6) 35%, rgba(180, 240, 255, 0.10) 100%);
 }
 
 .rs-header.tema-hielo .rs-compact-profile,
@@ -728,13 +742,22 @@ body.is-touch-device .rs-header-glow-line {
 }
 
 .rs-header.tema-hielo .rs-xp-block {
-    background: linear-gradient(135deg, rgba(120,220,255,0.16), rgba(10,16,22,0.6));
+    background: linear-gradient(135deg, rgba(120, 220, 255, 0.16), rgba(10, 16, 22, 0.6));
     border: 1px solid rgba(150, 230, 255, 0.4);
 }
 
-.rs-header.tema-hielo .rs-xp-label { color: rgba(160, 230, 255, 0.7); }
-.rs-header.tema-hielo .rs-xp-value { color: #eafcff; text-shadow: 0 0 10px rgba(120,220,255,0.6); }
-.rs-header.tema-hielo .rs-xp-unit { color: rgba(255,255,255,0.5); }
+.rs-header.tema-hielo .rs-xp-label {
+    color: rgba(160, 230, 255, 0.7);
+}
+
+.rs-header.tema-hielo .rs-xp-value {
+    color: #eafcff;
+    text-shadow: 0 0 10px rgba(120, 220, 255, 0.6);
+}
+
+.rs-header.tema-hielo .rs-xp-unit {
+    color: rgba(255, 255, 255, 0.5);
+}
 
 .rs-header.tema-hielo .rs-title {
     font-family: 'Orbitron', monospace;
@@ -742,10 +765,11 @@ body.is-touch-device .rs-header-glow-line {
     text-shadow: 0 0 4px #fff, 0 0 16px #6fd6ff, 0 0 28px #2bb8ff;
 }
 
-.rs-header.tema-hielo ~ .rs-header-glow-line {
+.rs-header.tema-hielo~.rs-header-glow-line {
     background: linear-gradient(90deg, transparent, #9fe7ff, transparent);
 }
-.rs-header.tema-hielo ~ .rs-header-glow-line span {
+
+.rs-header.tema-hielo~.rs-header-glow-line span {
     background: linear-gradient(90deg, transparent, #fff, transparent);
     box-shadow: 0 0 12px 2px #6fd6ff;
 }
@@ -759,14 +783,21 @@ body.is-touch-device .rs-header-glow-line {
     height: 34px;
     top: 4px;
     background-image:
-        linear-gradient(0deg, transparent 47%, rgba(189,243,255,0.7) 47%, rgba(189,243,255,0.7) 53%, transparent 53%),
-        linear-gradient(90deg, transparent 47%, rgba(189,243,255,0.7) 47%, rgba(189,243,255,0.7) 53%, transparent 53%);
+        linear-gradient(0deg, transparent 47%, rgba(189, 243, 255, 0.7) 47%, rgba(189, 243, 255, 0.7) 53%, transparent 53%),
+        linear-gradient(90deg, transparent 47%, rgba(189, 243, 255, 0.7) 47%, rgba(189, 243, 255, 0.7) 53%, transparent 53%);
     background-size: 14px 1px, 1px 14px;
     background-position: top left, top left;
     background-repeat: no-repeat;
 }
-.rs-header.tema-hielo .rs-header-deco::before { left: 4px; }
-.rs-header.tema-hielo .rs-header-deco::after { right: 4px; transform: scaleX(-1); }
+
+.rs-header.tema-hielo .rs-header-deco::before {
+    left: 4px;
+}
+
+.rs-header.tema-hielo .rs-header-deco::after {
+    right: 4px;
+    transform: scaleX(-1);
+}
 
 /* Copos de nieve cayendo (los genera JS dentro de .rs-header-deco) */
 .rs-header.tema-hielo .rs-snowflake {
@@ -777,14 +808,20 @@ body.is-touch-device .rs-header-glow-line {
     box-shadow: 0 0 4px #fff;
     animation: rsSnowFall linear infinite;
 }
+
 @keyframes rsSnowFall {
-    0%   { transform: translateY(-10px) rotate(0deg); }
-    100% { transform: translateY(100px) rotate(180deg); }
+    0% {
+        transform: translateY(-10px) rotate(0deg);
+    }
+
+    100% {
+        transform: translateY(100px) rotate(180deg);
+    }
 }
 
 /* ───────────── TEMA FUEGO (Mapa 2) ───────────── */
 .rs-header.tema-fuego {
-    background: linear-gradient(120deg, rgba(255,90,0,0.18) 0%, rgba(20,8,4,0.65) 40%, rgba(255,30,0,0.12) 100%);
+    background: linear-gradient(120deg, rgba(255, 90, 0, 0.18) 0%, rgba(20, 8, 4, 0.65) 40%, rgba(255, 30, 0, 0.12) 100%);
 }
 
 .rs-header.tema-fuego .rs-compact-profile,
@@ -793,13 +830,22 @@ body.is-touch-device .rs-header-glow-line {
 }
 
 .rs-header.tema-fuego .rs-xp-block {
-    background: linear-gradient(135deg, rgba(255,90,0,0.18), rgba(20,8,4,0.65));
+    background: linear-gradient(135deg, rgba(255, 90, 0, 0.18), rgba(20, 8, 4, 0.65));
     border: 1px solid rgba(255, 140, 0, 0.4);
 }
 
-.rs-header.tema-fuego .rs-xp-label { color: rgba(255, 180, 100, 0.75); }
-.rs-header.tema-fuego .rs-xp-value { color: #fff3e0; text-shadow: 0 0 10px rgba(255,138,0,0.6); }
-.rs-header.tema-fuego .rs-xp-unit { color: rgba(255,255,255,0.5); }
+.rs-header.tema-fuego .rs-xp-label {
+    color: rgba(255, 180, 100, 0.75);
+}
+
+.rs-header.tema-fuego .rs-xp-value {
+    color: #fff3e0;
+    text-shadow: 0 0 10px rgba(255, 138, 0, 0.6);
+}
+
+.rs-header.tema-fuego .rs-xp-unit {
+    color: rgba(255, 255, 255, 0.5);
+}
 
 .rs-header.tema-fuego .rs-title {
     font-family: 'Orbitron', monospace;
@@ -807,16 +853,24 @@ body.is-touch-device .rs-header-glow-line {
     text-shadow: 0 0 6px #fff, 0 0 16px #ff8a00, 0 0 30px #ff3d00;
 }
 
-.rs-header.tema-fuego ~ .rs-header-glow-line {
+.rs-header.tema-fuego~.rs-header-glow-line {
     background: linear-gradient(90deg, #ff3d00, #ffae00, #ff3d00);
     background-size: 200% 100%;
     animation: rsEmberFlow 2s linear infinite;
 }
-.rs-header.tema-fuego ~ .rs-header-glow-line span { display: none; }
+
+.rs-header.tema-fuego~.rs-header-glow-line span {
+    display: none;
+}
 
 @keyframes rsEmberFlow {
-    0%   { background-position: 0% 0; }
-    100% { background-position: 200% 0; }
+    0% {
+        background-position: 0% 0;
+    }
+
+    100% {
+        background-position: 200% 0;
+    }
 }
 
 /* Brasas subiendo (las genera JS dentro de .rs-header-deco) */
@@ -827,15 +881,26 @@ body.is-touch-device .rs-header-glow-line {
     box-shadow: 0 0 6px #ff5500;
     animation: rsEmberRise ease-in infinite;
 }
+
 @keyframes rsEmberRise {
-    0%   { transform: translateY(0); opacity: 0; }
-    15%  { opacity: 1; }
-    100% { transform: translateY(-90px); opacity: 0; }
+    0% {
+        transform: translateY(0);
+        opacity: 0;
+    }
+
+    15% {
+        opacity: 1;
+    }
+
+    100% {
+        transform: translateY(-90px);
+        opacity: 0;
+    }
 }
 
 /* ───────────── TEMA DORADO / ÉLITE (Mapa 3) ───────────── */
 .rs-header.tema-dorado {
-    background: linear-gradient(120deg, rgba(255,215,0,0.10) 0%, rgba(18,16,10,0.7) 40%, rgba(255,255,255,0.06) 100%);
+    background: linear-gradient(120deg, rgba(255, 215, 0, 0.10) 0%, rgba(18, 16, 10, 0.7) 40%, rgba(255, 255, 255, 0.06) 100%);
 }
 
 .rs-header.tema-dorado .rs-compact-profile,
@@ -844,13 +909,21 @@ body.is-touch-device .rs-header-glow-line {
 }
 
 .rs-header.tema-dorado .rs-xp-block {
-    background: linear-gradient(135deg, rgba(255,215,0,0.14), rgba(10,10,20,0.6));
+    background: linear-gradient(135deg, rgba(255, 215, 0, 0.14), rgba(10, 10, 20, 0.6));
     border: 1px solid rgba(255, 215, 0, 0.4);
 }
 
-.rs-header.tema-dorado .rs-xp-label { color: rgba(255, 215, 0, 0.7); }
-.rs-header.tema-dorado .rs-xp-value { color: #fff; }
-.rs-header.tema-dorado .rs-xp-unit { color: rgba(255,255,255,0.5); }
+.rs-header.tema-dorado .rs-xp-label {
+    color: rgba(255, 215, 0, 0.7);
+}
+
+.rs-header.tema-dorado .rs-xp-value {
+    color: #fff;
+}
+
+.rs-header.tema-dorado .rs-xp-unit {
+    color: rgba(255, 255, 255, 0.5);
+}
 
 .rs-header.tema-dorado .rs-title {
     font-family: 'Cinzel', serif;
@@ -862,18 +935,24 @@ body.is-touch-device .rs-header-glow-line {
     background-clip: text;
     -webkit-text-fill-color: transparent;
     animation: rsGoldShimmer var(--rh-shimmer-speed, 3.5s) linear infinite;
-    filter: drop-shadow(0 0 6px rgba(255,215,0,0.4));
+    filter: drop-shadow(0 0 6px rgba(255, 215, 0, 0.4));
 }
 
 @keyframes rsGoldShimmer {
-    0%   { background-position: 200% 0; }
-    100% { background-position: -50% 0; }
+    0% {
+        background-position: 200% 0;
+    }
+
+    100% {
+        background-position: -50% 0;
+    }
 }
 
-.rs-header.tema-dorado ~ .rs-header-glow-line {
+.rs-header.tema-dorado~.rs-header-glow-line {
     background: linear-gradient(90deg, transparent, #ffd700, transparent);
 }
-.rs-header.tema-dorado ~ .rs-header-glow-line span {
+
+.rs-header.tema-dorado~.rs-header-glow-line span {
     background: linear-gradient(90deg, transparent, #fff, transparent);
     box-shadow: 0 0 12px 2px #ffd700;
 }
@@ -887,14 +966,20 @@ body.is-touch-device .rs-header-glow-line {
     height: 100%;
     top: 0;
     background-image:
-        linear-gradient(180deg, transparent 6%, rgba(255,215,0,0.4) 6%, rgba(255,215,0,0.4) 94%, transparent 94%);
+        linear-gradient(180deg, transparent 6%, rgba(255, 215, 0, 0.4) 6%, rgba(255, 215, 0, 0.4) 94%, transparent 94%);
     background-size: 1px 100%;
     background-position: 20px center;
     background-repeat: no-repeat;
     opacity: 0.6;
 }
-.rs-header.tema-dorado .rs-header-deco::before { left: 0; }
-.rs-header.tema-dorado .rs-header-deco::after { right: 0; }
+
+.rs-header.tema-dorado .rs-header-deco::before {
+    left: 0;
+}
+
+.rs-header.tema-dorado .rs-header-deco::after {
+    right: 0;
+}
 
 /* ============================================================
    VIP / BANNERS VIP - responsive mobile
@@ -932,8 +1017,8 @@ body.is-touch-device .rs-header-glow-line {
 }
 
 .vip-station-card {
-    flex-basis: var(--cfg-vip-card-width, 220px) !important;
-    min-height: var(--cfg-vip-card-height, 260px) !important;
+    flex-basis: var(--cfg-vip-card-width, 340px) !important;
+    min-height: var(--cfg-vip-card-height, 160px) !important;
     padding: var(--cfg-vip-card-padding, 14px) !important;
 }
 

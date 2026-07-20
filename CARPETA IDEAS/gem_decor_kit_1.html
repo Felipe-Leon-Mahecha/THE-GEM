@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>THE GEM — Kit de Decoraciones HUD</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=Chakra+Petch:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#070910;
+  --panel:#10131ecc;
+  --panel-solid:#11141f;
+  --line:rgba(255,255,255,.08);
+  --txt:#e8ecf5;
+  --txt-dim:#7c869c;
+
+  /* === COLOR DE RAREZA ACTIVO === */
+  --rc:#00e5ff;         /* color principal */
+  --rc-soft:#00e5ff33;  /* glow suave */
+  --rc-dim:#0891a3;     /* variante oscura */
+}
+
+*{box-sizing:border-box; margin:0; padding:0;}
+
+body{
+  background:
+    radial-gradient(circle at 15% 0%, rgba(124,92,255,.08), transparent 40%),
+    radial-gradient(circle at 85% 20%, rgba(0,229,255,.06), transparent 40%),
+    var(--bg);
+  color:var(--txt);
+  font-family:'Chakra Petch', sans-serif;
+  padding:36px 36px 100px;
+}
+
+h1{
+  font-family:'Rajdhani',sans-serif;
+  font-weight:700;
+  font-size:26px;
+  letter-spacing:2px;
+}
+h1 span{color:var(--rc);}
+
+.intro{
+  color:var(--txt-dim);
+  font-size:13px;
+  max-width:680px;
+  margin-top:8px;
+  line-height:1.6;
+}
+
+/* ============ SELECTOR DE RAREZA ============ */
+.rarity-picker{
+  display:flex;
+  gap:8px;
+  margin:22px 0 46px;
+  flex-wrap:wrap;
+}
+.rarity-picker button{
+  font-family:'Chakra Petch',sans-serif;
+  font-size:11px;
+  letter-spacing:1.5px;
+  text-transform:uppercase;
+  padding:8px 16px;
+  background:var(--panel-solid);
+  border:1px solid var(--line);
+  color:var(--txt-dim);
+  cursor:pointer;
+  clip-path:polygon(8px 0,100% 0,100% calc(100% - 8px),calc(100% - 8px) 100%,0 100%,0 8px);
+}
+.rarity-picker button.active{
+  color:#05070a;
+  border-color:transparent;
+}
+/* colores por botón (independiente de --rc, solo para pintar el selector) */
+.rarity-picker button[data-c="#8a93a6"].active{background:#8a93a6;}
+.rarity-picker button[data-c="#3ea7ff"].active{background:#3ea7ff;}
+.rarity-picker button[data-c="#a259ff"].active{background:#a259ff;}
+.rarity-picker button[data-c="#ff3b5c"].active{background:#ff3b5c;}
+.rarity-picker button[data-c="#ffc340"].active{background:#ffc340;}
+
+/* ============ GRID DE PIEZAS ============ */
+.piece{
+  margin-bottom:64px;
+}
+.piece-head{
+  display:flex;
+  align-items:baseline;
+  gap:12px;
+  margin-bottom:16px;
+}
+.piece-num{
+  font-family:'Rajdhani',sans-serif;
+  font-weight:700;
+  font-size:13px;
+  color:var(--rc);
+}
+.piece-name{
+  font-family:'Rajdhani',sans-serif;
+  font-weight:600;
+  font-size:16px;
+  letter-spacing:.5px;
+}
+.piece-use{
+  color:var(--txt-dim);
+  font-size:12px;
+  margin-left:auto;
+  text-align:right;
+}
+.stage{
+  padding:34px;
+  background:rgba(255,255,255,.015);
+  border:1px dashed var(--line);
+}
+.row{display:flex; gap:18px; flex-wrap:wrap; align-items:center;}
+.col{display:flex; flex-direction:column; gap:18px;}
+
+/* =========================================================
+   PIEZA 1 — MARCO DE ESQUINAS HUD (universal, cualquier panel)
+========================================================= */
+.p1-wrap{
+  position:relative;
+  width:320px; height:170px;
+  background:linear-gradient(135deg, rgba(255,255,255,.03), transparent);
+  border:1px solid var(--line);
+}
+.p1-corner{position:absolute; width:22px; height:22px; pointer-events:none;}
+.p1-corner::before,.p1-corner::after{content:"";position:absolute;background:var(--rc);}
+.p1-corner.tl{top:-1px;left:-1px;}
+.p1-corner.tl::before{width:100%;height:2px;top:0;left:0; box-shadow:0 0 6px var(--rc);}
+.p1-corner.tl::after{width:2px;height:100%;top:0;left:0; box-shadow:0 0 6px var(--rc);}
+.p1-corner.tr{top:-1px;right:-1px;}
+.p1-corner.tr::before{width:100%;height:2px;top:0;right:0; box-shadow:0 0 6px var(--rc);}
+.p1-corner.tr::after{width:2px;height:100%;top:0;right:0; box-shadow:0 0 6px var(--rc);}
+.p1-corner.bl{bottom:-1px;left:-1px;}
+.p1-corner.bl::before{width:100%;height:2px;bottom:0;left:0; box-shadow:0 0 6px var(--rc);}
+.p1-corner.bl::after{width:2px;height:100%;bottom:0;left:0; box-shadow:0 0 6px var(--rc);}
+.p1-corner.br{bottom:-1px;right:-1px;}
+.p1-corner.br::before{width:100%;height:2px;bottom:0;right:0; box-shadow:0 0 6px var(--rc);}
+.p1-corner.br::after{width:2px;height:100%;bottom:0;right:0; box-shadow:0 0 6px var(--rc);}
+.p1-label{position:absolute; bottom:14px; left:20px; font-family:'Rajdhani'; font-weight:700; font-size:20px;}
+
+/* =========================================================
+   PIEZA 2 — TAG ANGULAR "◀ TEXTO ▶"
+========================================================= */
+.p2-tag{
+  display:inline-flex;
+  align-items:center;
+  gap:10px;
+  padding:7px 18px;
+  font-size:11px;
+  letter-spacing:3px;
+  color:var(--rc);
+  border:1px solid var(--rc);
+  clip-path:polygon(10px 0,100% 0,calc(100% - 10px) 100%,0 100%);
+  background:linear-gradient(90deg, var(--rc-soft), transparent);
+}
+.p2-tag .arrow{font-size:9px; opacity:.7;}
+
+/* =========================================================
+   PIEZA 3 — SOCKET HEXAGONAL DE ICONO (como potenciadores)
+========================================================= */
+.p3-hex{
+  position:relative;
+  width:74px; height:74px;
+  display:flex; align-items:center; justify-content:center;
+  clip-path:polygon(50% 0,100% 25%,100% 75%,50% 100%,0 75%,0 25%);
+  background:linear-gradient(160deg, rgba(255,255,255,.06), rgba(0,0,0,.3));
+  border:2px solid var(--rc);
+  box-shadow:0 0 14px var(--rc-soft), inset 0 0 10px var(--rc-soft);
+  font-size:26px;
+}
+.p3-hex.oct{
+  clip-path:polygon(30% 0,70% 0,100% 30%,100% 70%,70% 100%,30% 100%,0 70%,0 30%);
+}
+.p3-hex{ color:var(--rc); }
+.p3-hex .ph{ width:22px; height:22px; background:currentColor; opacity:.85; }
+.p3-hex .ph.diamond{ clip-path:polygon(50% 0,100% 50%,50% 100%,0 50%); }
+.p3-hex .ph.circle{ border-radius:50%; }
+.p3-hex .ph.tri{ clip-path:polygon(50% 0,100% 100%,0 100%); }
+.p3-hex .ph.square{ clip-path:polygon(15% 15%,85% 15%,85% 85%,15% 85%); }
+
+/* =========================================================
+   PIEZA 4 — PANEL ESQUINA CORTADA (horizontal, bundle-style)
+========================================================= */
+.p4-panel{
+  position:relative;
+  width:280px; height:130px;
+  background:rgba(255,255,255,.035);
+  border:1px solid var(--rc);
+  clip-path:polygon(0 0, calc(100% - 24px) 0, 100% 24px, 100% 100%, 0 100%);
+}
+.p4-panel::before{
+  content:"";
+  position:absolute; top:0; right:0;
+  width:24px; height:24px;
+  background:var(--rc);
+  clip-path:polygon(100% 0, 0 0, 100% 100%);
+  opacity:.5;
+}
+.p4-title{position:absolute; left:18px; bottom:16px; font-family:'Rajdhani'; font-weight:700; font-size:19px;}
+
+/* =========================================================
+   PIEZA 5 — BARRA DE ENCABEZADO CON MUESCAS (header horizontal)
+========================================================= */
+.p5-bar{
+  position:relative;
+  width:340px; height:38px;
+  display:flex; align-items:center; padding-left:16px;
+  background:linear-gradient(90deg, var(--rc-soft), transparent 70%);
+  border-left:3px solid var(--rc);
+  font-family:'Rajdhani'; font-weight:700; letter-spacing:2px; font-size:14px;
+}
+.p5-bar::after{
+  content:"";
+  position:absolute; right:0; top:0; bottom:0;
+  width:60%;
+  background-image: repeating-linear-gradient(115deg, var(--rc) 0 2px, transparent 2px 9px);
+  -webkit-mask-image: linear-gradient(90deg, transparent, black 40%, black 60%, transparent);
+  mask-image: linear-gradient(90deg, transparent, black 40%, black 60%, transparent);
+  opacity:.55;
+}
+
+/* =========================================================
+   PIEZA 6 — DIVISOR CON NODO (restringido, no protagonista)
+========================================================= */
+.p6-divider{
+  position:relative; width:340px; height:20px;
+}
+.p6-divider::before{
+  content:""; position:absolute; left:0; right:0; top:50%; height:1px;
+  background:linear-gradient(90deg, transparent, var(--rc-dim), var(--rc), var(--rc-dim), transparent);
+}
+.p6-node{
+  position:absolute; left:50%; top:50%;
+  width:8px; height:8px;
+  background:var(--bg);
+  border:1.5px solid var(--rc);
+  transform:translate(-50%,-50%) rotate(45deg);
+}
+
+/* =========================================================
+   PIEZA 7 — RIEL VERTICAL (para sidebars / separación de columnas)
+========================================================= */
+.p7-rail{
+  position:relative;
+  width:14px; height:180px;
+}
+.p7-rail::before{
+  content:""; position:absolute; left:50%; top:0; bottom:0; width:1px;
+  background:linear-gradient(180deg, transparent, var(--rc-dim), var(--rc), var(--rc-dim), transparent);
+}
+.p7-tick{
+  position:absolute; left:50%; width:8px; height:1px; background:var(--rc);
+  transform:translateX(-50%);
+}
+
+/* =========================================================
+   PIEZA 8 — BANDERA DE ESQUINA (indicador de rareza en cards)
+========================================================= */
+.p8-card{
+  position:relative;
+  width:150px; height:190px;
+  background:rgba(255,255,255,.03);
+  border:1px solid var(--line);
+  overflow:hidden;
+}
+.p8-flag{
+  position:absolute; top:0; left:0;
+  width:0; height:0;
+  border-top:46px solid var(--rc);
+  border-right:46px solid transparent;
+  filter:drop-shadow(0 0 6px var(--rc-soft));
+}
+.p8-flag-txt{
+  position:absolute; top:6px; left:5px;
+  font-size:9px; font-weight:700; color:#05070a;
+  transform:rotate(-45deg); transform-origin:left top;
+  letter-spacing:.5px;
+}
+
+/* =========================================================
+   PIEZA 9 — MARCO CIRCULAR (avatar / retrato de estandarte)
+========================================================= */
+.p9-ring{
+  position:relative;
+  width:110px; height:110px;
+  border-radius:50%;
+}
+.p9-ring svg{position:absolute; inset:0; width:100%; height:100%;}
+.p9-ring img, .p9-ring .fill{
+  position:absolute; inset:10px;
+  border-radius:50%;
+  background:linear-gradient(160deg, #2a2f45, #12141f);
+  display:flex;align-items:center;justify-content:center;
+  font-size:11px; color:var(--txt-dim);
+}
+
+/* =========================================================
+   PIEZA 10 — BARRA SEGMENTADA (progreso / XP / carga)
+========================================================= */
+.p10-bar{
+  width:340px; height:22px;
+  display:flex; gap:3px;
+  padding:3px;
+  background:rgba(255,255,255,.03);
+  border:1px solid var(--line);
+  clip-path:polygon(6px 0,100% 0,calc(100% - 6px) 100%,0 100%);
+}
+.p10-seg{
+  flex:1;
+  background:rgba(255,255,255,.06);
+  clip-path:polygon(3px 0,100% 0,calc(100% - 3px) 100%,0 100%);
+}
+.p10-seg.on{
+  background:linear-gradient(90deg, var(--rc-dim), var(--rc));
+  box-shadow:0 0 8px var(--rc-soft);
+}
+
+footer{
+  margin-top:40px;
+  padding-top:20px;
+  border-top:1px solid var(--line);
+  color:var(--txt-dim);
+  font-size:12px;
+  max-width:680px;
+  line-height:1.7;
+}
+</style>
+</head>
+<body>
+
+<h1>THE GEM — Kit de <span>Decoraciones HUD</span></h1>
+<p class="intro">
+10 piezas reutilizables, todas hechas con CSS puro (clip-path, pseudo-elementos, gradientes) más un poco de SVG solo donde hace falta.
+Ninguna es una imagen. Cambiá la rareza abajo y mirá cómo TODAS las piezas se recolorean solas —
+esa es la idea: una pieza, cinco rarezas, cero PNGs nuevos.
+</p>
+
+<div class="rarity-picker">
+  <button data-c="#8a93a6" class="active">Básica</button>
+  <button data-c="#3ea7ff">Especial</button>
+  <button data-c="#a259ff">Épica</button>
+  <button data-c="#ff3b5c">Demon</button>
+  <button data-c="#ffc340">VIP</button>
+</div>
+
+<!-- 1 -->
+<div class="piece">
+  <div class="piece-head">
+    <span class="piece-num">01</span><span class="piece-name">Marco de Esquinas HUD</span>
+    <span class="piece-use">Envoltorio universal — sirve para el hero VIP, cards de skins, cualquier panel</span>
+  </div>
+  <div class="stage">
+    <div class="p1-wrap">
+      <div class="p1-corner tl"></div><div class="p1-corner tr"></div>
+      <div class="p1-corner bl"></div><div class="p1-corner br"></div>
+      <div class="p1-label">TIENDA VIP</div>
+    </div>
+  </div>
+</div>
+
+<!-- 2 -->
+<div class="piece">
+  <div class="piece-head">
+    <span class="piece-num">02</span><span class="piece-name">Tag Angular ◀ Texto ▶</span>
+    <span class="piece-use">Etiqueta suelta — "NUEVO", "LIMITADO", nombre de sección</span>
+  </div>
+  <div class="stage row">
+    <span class="p2-tag"><span class="arrow">◀</span>EXCLUSIVO<span class="arrow">▶</span></span>
+    <span class="p2-tag"><span class="arrow">◀</span>NUEVO<span class="arrow">▶</span></span>
+    <span class="p2-tag"><span class="arrow">◀</span>LIMITADO<span class="arrow">▶</span></span>
+  </div>
+</div>
+
+<!-- 3 -->
+<div class="piece">
+  <div class="piece-head">
+    <span class="piece-num">03</span><span class="piece-name">Socket Hexagonal / Octogonal</span>
+    <span class="piece-use">Ícono cuadrado — exactamente el estilo de tus potenciadores, confirmado: 100% código</span>
+  </div>
+  <div class="stage row">
+    <div class="p3-hex"><div class="ph diamond"></div></div>
+    <div class="p3-hex"><div class="ph circle"></div></div>
+    <div class="p3-hex oct"><div class="ph tri"></div></div>
+    <div class="p3-hex oct"><div class="ph square"></div></div>
+  </div>
+</div>
+
+<!-- 4 -->
+<div class="piece">
+  <div class="piece-head">
+    <span class="piece-num">04</span><span class="piece-name">Panel Esquina Cortada</span>
+    <span class="piece-use">Panel horizontal — bundles, banners, cards medianas (el que te gustó de Gemini)</span>
+  </div>
+  <div class="stage">
+    <div class="p4-panel">
+      <div class="p4-title">Poder de la Realeza</div>
+    </div>
+  </div>
+</div>
+
+<!-- 5 -->
+<div class="piece">
+  <div class="piece-head">
+    <span class="piece-num">05</span><span class="piece-name">Barra de Encabezado con Muescas</span>
+    <span class="piece-use">Header horizontal fino — título de sección dentro de un panel (SKINS, TRAILS, etc.)</span>
+  </div>
+  <div class="stage">
+    <div class="p5-bar">BANNERS VIP</div>
+  </div>
+</div>
+
+<!-- 6 -->
+<div class="piece">
+  <div class="piece-head">
+    <span class="piece-num">06</span><span class="piece-name">Divisor con Nodo</span>
+    <span class="piece-use">Línea horizontal — separa secciones dentro de un mismo panel largo</span>
+  </div>
+  <div class="stage">
+    <div class="p6-divider"><div class="p6-node"></div></div>
+  </div>
+</div>
+
+<!-- 7 -->
+<div class="piece">
+  <div class="piece-head">
+    <span class="piece-num">07</span><span class="piece-name">Riel Vertical</span>
+    <span class="piece-use">Separador vertical — entre sidebar y contenido, o entre columnas</span>
+  </div>
+  <div class="stage row">
+    <div class="p7-rail" id="rail7"></div>
+    <span style="color:var(--txt-dim); font-size:12px;">← así de discreto al lado de una lista</span>
+  </div>
+</div>
+
+<!-- 8 -->
+<div class="piece">
+  <div class="piece-head">
+    <span class="piece-num">08</span><span class="piece-name">Bandera de Esquina</span>
+    <span class="piece-use">Indicador de rareza en cards — reemplaza texto tipo "VIP" flotando</span>
+  </div>
+  <div class="stage row">
+    <div class="p8-card">
+      <div class="p8-flag"></div><span class="p8-flag-txt">VIP</span>
+    </div>
+  </div>
+</div>
+
+<!-- 9 -->
+<div class="piece">
+  <div class="piece-head">
+    <span class="piece-num">09</span><span class="piece-name">Marco Circular</span>
+    <span class="piece-use">Avatar / retrato de estandarte — anillo de progreso o solo decorativo</span>
+  </div>
+  <div class="stage row">
+    <div class="p9-ring">
+      <svg viewBox="0 0 100 100">
+        <circle cx="50" cy="50" r="47" fill="none" stroke="var(--rc)" stroke-width="2" opacity="0.25"/>
+        <circle cx="50" cy="50" r="47" fill="none" stroke="var(--rc)" stroke-width="2"
+          stroke-dasharray="70 220" stroke-linecap="round" transform="rotate(-90 50 50)"/>
+      </svg>
+      <div class="fill">LEON</div>
+    </div>
+  </div>
+</div>
+
+<!-- 10 -->
+<div class="piece">
+  <div class="piece-head">
+    <span class="piece-num">10</span><span class="piece-name">Barra Segmentada</span>
+    <span class="piece-use">Progreso / XP / carga — variante angular de una progress bar normal</span>
+  </div>
+  <div class="stage">
+    <div class="p10-bar" id="bar10"></div>
+  </div>
+</div>
+
+<footer>
+  Todo acá usa <code>--rc</code> como única variable de color — en tu proyecto sería <code>var(--rarity-color)</code>
+  seteada por JS según el ítem (igual que ya hacés con <code>RARITY_COLORS</code> en shop.js).
+  Ninguna pieza depende de tamaño fijo: son flexibles a lo alto, ancho o cuadrado según el contenedor que le pongas.
+</footer>
+
+<script>
+// pintar riel vertical con ticks
+const rail = document.getElementById('rail7');
+for(let i=0;i<7;i++){
+  const t=document.createElement('div');
+  t.className='p7-tick';
+  t.style.top=(10+i*26)+'px';
+  rail.appendChild(t);
+}
+// pintar barra segmentada
+const bar = document.getElementById('bar10');
+for(let i=0;i<16;i++){
+  const s=document.createElement('div');
+  s.className='p10-seg'+(i<10?' on':'');
+  bar.appendChild(s);
+}
+// selector de rareza
+document.querySelectorAll('.rarity-picker button').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    document.querySelectorAll('.rarity-picker button').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    const c = btn.dataset.c;
+    document.documentElement.style.setProperty('--rc', c);
+    document.documentElement.style.setProperty('--rc-soft', c+'33');
+    document.documentElement.style.setProperty('--rc-dim', c+'99');
+  });
+});
+</script>
+
+</body>
+</html>

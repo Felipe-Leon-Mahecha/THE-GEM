@@ -20,7 +20,16 @@ SHOP_SNOWFLAKE_IMAGE.src = 'assets/UI/Efectos de trails/Efecto copo de nieve.png
 const SHOP_CANDY_PARTICLE_IMAGE = new Image();
 SHOP_CANDY_PARTICLE_IMAGE.src = 'assets/UI/Efectos de trails/Particulas/particula_dulce.png';
 
-const TROPHY_IDS = ['skin_chocolate_trofeo_cobre', 'skin_sandia_trofeo_plata', 'skin_hamburguesa_trofeo_oro'];
+const TROPHY_IDS = ['skin_chocolate_trofeo_cobre', 'skin_sandia_trofeo_plata', 'skin_hamburguesa_trofeo_oro', 'skin_caballero_bronce', 'skin_caballero_plata', 'skin_caballero_dorado'];
+
+// Etiqueta de rango requerido para trofeos que se obtienen en Camino de Rangos
+// (no se compran). AJUSTA estos textos con el rango/nodo real donde se obtiene
+// cada uno en el Mapa 1 (La Forja Cosmica).
+const TROPHY_RANK_LABELS = {
+    skin_caballero_bronce: 'RANGO: [PENDIENTE]',
+    skin_caballero_plata: 'RANGO: [PENDIENTE]',
+    skin_caballero_dorado: 'RANGO: [PENDIENTE]'
+};
 
 // =====================================================
 // TEXTOS DE LA TIENDA NORMAL (GEM_CONFIG.textos.tienda)
@@ -375,9 +384,6 @@ const VIP_CAROUSEL_DATA = [
             vipSkin('DarkCarnival', 'skin_payaso_oscuro', 'Payaso Oscuro', 340),
             vipSkin('DarkCarnival', 'skin_marioneta', 'Marioneta'),
             vipSkin('DarkCarnival', 'skin_mascara_sonriente', 'Mascara Sonriente'),
-            vipSkin('DarkCarnival', 'skin_titiritero', 'Titiritero', 340),
-            vipSkin('DarkCarnival', 'skin_arlequin', 'Arlequin'),
-            vipSkin('DarkCarnival', 'skin_mascara_veneciana', 'Mascara Veneciana'),
             vipSkin('DarkCarnival', 'skin_sonrisa_rota', 'Sonrisa Rota', 340)
         ]
     }
@@ -478,19 +484,71 @@ const SKINS_DATA = [
     { id: 'kenji', name: 'KENJI', color: '#845cff', rarity: 'EPICA', price: 1500, priceType: 'coins', altPrice: 50, altType: 'gems', fragments: 3, owned: false, image: 'assets/UI/Store/Skins/Normal/KenjiEpic/Kenji_Skin.png', imageSide: 'assets/UI/Store/Skins/Normal/KenjiEpic/Kenji_Skin_lado.png' },
     { id: 'brifon', name: 'BRIFON', color: '#b86cff', rarity: 'EPICA', price: 1600, priceType: 'coins', owned: false, image: 'assets/UI/Store/Skins/Normal/BrifonEpic/Brifon.png', imageSide: 'assets/UI/Store/Skins/Normal/BrifonEpic/BRIFON_Skin_lado.png' },
     { id: 'demon_ember', name: 'Demon Ember', color: '#cf0000', rarity: 'DEMON', price: 4500, priceType: 'coins', altPrice: 150, altType: 'gems', fragments: 3, owned: false },
-    { id: 'daxor', name: 'DAXOR', color: '#ff2448', rarity: 'DEMON', price: 5200, priceType: 'coins', altPrice: 170, altType: 'gems', fragments: 3, owned: false, image: 'assets/UI/Store/Skins/Normal/DaxorDemon/DAXOR_Skin.png', imageSide: 'assets/UI/Store/Skins/Normal/DaxorDemon/DAXOR_Skin_lado.png' }
+    { id: 'daxor', name: 'DAXOR', color: '#ff2448', rarity: 'DEMON', price: 5200, priceType: 'coins', altPrice: 170, altType: 'gems', fragments: 3, owned: false, image: 'assets/UI/Store/Skins/Normal/DaxorDemon/DAXOR_Skin.png', imageSide: 'assets/UI/Store/Skins/Normal/DaxorDemon/DAXOR_Skin_lado.png' },
+
+    // ===== PRECIOS ESTIMADOS: bajaron de VIP, ajustar a tu economia real =====
+    // ----- ESPECIAL (bajaron de VIP: comida, espacio, oficios, animales sueltos) -----
+    { id: 'skin_helado', name: 'Helado', rarity: 'ESPECIAL', price: 450, priceType: 'coins', owned: false, image: 'assets/UI/Store/VIP/Bundles/Food/skin_helado.png' },
+    { id: 'skin_limon_toxico', name: 'Limon Toxico', rarity: 'ESPECIAL', price: 450, priceType: 'coins', owned: false, image: 'assets/UI/Store/VIP/Bundles/Food/skin_limon_toxico.png' },
+    { id: 'skin_sandia', name: 'Sandia', rarity: 'ESPECIAL', price: 450, priceType: 'coins', owned: false, image: 'assets/UI/Store/VIP/Bundles/Food/skin_sandia.png' },
+    { id: 'skin_cafe', name: 'Cafe', rarity: 'ESPECIAL', price: 400, priceType: 'coins', owned: false, image: 'assets/UI/Store/VIP/Bundles/Food/skin_cafe.png' },
+    { id: 'skin_papas_fritas', name: 'Papas Fritas', rarity: 'ESPECIAL', price: 550, priceType: 'coins', owned: false, image: 'assets/UI/Store/VIP/Bundles/Food/skin_papas_fritas.png' },
+    { id: 'skin_sandwich', name: 'Sandwich', rarity: 'ESPECIAL', price: 500, priceType: 'coins', owned: false, image: 'assets/UI/Store/VIP/Bundles/Food/skin_sandwich.png' },
+    { id: 'skin_manzana', name: 'Manzana', rarity: 'ESPECIAL', price: 400, priceType: 'coins', owned: false, image: 'assets/UI/Store/VIP/Bundles/Food/skin_manzana.png' },
+    { id: 'skin_palomitas', name: 'Palomitas', rarity: 'ESPECIAL', price: 450, priceType: 'coins', owned: false, image: 'assets/UI/Store/VIP/Bundles/Food/skin_palomitas.png' },
+    { id: 'skin_cupcake', name: 'Cupcake', rarity: 'ESPECIAL', price: 500, priceType: 'coins', owned: false, image: 'assets/UI/Store/VIP/Bundles/Food/skin_cupcake.png' },
+    { id: 'skin_jugo', name: 'Jugo', rarity: 'ESPECIAL', price: 350, priceType: 'coins', owned: false, image: 'assets/UI/Store/VIP/Bundles/Food/skin_jugo.png' },
+    { id: 'skin_galleta', name: 'Galleta', rarity: 'ESPECIAL', price: 450, priceType: 'coins', owned: false, image: 'assets/UI/Store/VIP/Bundles/Food/skin_galleta.png' },
+    { id: 'skin_torta', name: 'Torta', rarity: 'ESPECIAL', price: 550, priceType: 'coins', owned: false, image: 'assets/UI/Store/VIP/Bundles/Food/skin_torta.png' },
+    { id: 'skin_pina', name: 'Pina', rarity: 'ESPECIAL', price: 500, priceType: 'coins', owned: false, image: 'assets/UI/Store/VIP/Bundles/Food/skin_pina.png' },
+    { id: 'skin_pancakes', name: 'Pancakes', rarity: 'ESPECIAL', price: 700, priceType: 'coins', owned: false, image: 'assets/UI/Store/VIP/Bundles/Food/skin_pancakes.png' },
+    { id: 'skin_dona', name: 'Dona', rarity: 'ESPECIAL', price: 450, priceType: 'coins', owned: false, image: 'assets/UI/Store/VIP/Bundles/Food/skin_dona.png' },
+    { id: 'skin_planeta_marte', name: 'Planeta Marte', rarity: 'ESPECIAL', price: 650, priceType: 'coins', owned: false, rolling: true, image: 'assets/UI/Store/VIP/Bundles/Space/skin_planeta_marte.png' },
+    { id: 'skin_planeta_saturno', name: 'Planeta Saturno', rarity: 'ESPECIAL', price: 650, priceType: 'coins', owned: false, rolling: true, image: 'assets/UI/Store/VIP/Bundles/Space/skin_planeta_saturno.png' },
+    { id: 'skin_planeta_tierra', name: 'Planeta Tierra', rarity: 'ESPECIAL', price: 650, priceType: 'coins', owned: false, rolling: true, image: 'assets/UI/Store/VIP/Bundles/Space/skin_planeta_tierra.png' },
+    { id: 'skin_meteorito', name: 'Meteorito', rarity: 'ESPECIAL', price: 680, priceType: 'coins', owned: false, image: 'assets/UI/Store/VIP/Bundles/Space/skin_meteorito.png' },
+    { id: 'skin_alien', name: 'Alien', rarity: 'ESPECIAL', price: 700, priceType: 'coins', owned: false, image: 'assets/UI/Store/VIP/Bundles/Space/skin_alien.png' },
+    { id: 'skin_agujero_negro', name: 'Agujero Negro', rarity: 'ESPECIAL', price: 750, priceType: 'coins', owned: false, image: 'assets/UI/Store/VIP/Bundles/Space/skin_agujero_negro.png' },
+    { id: 'skin_galaxia', name: 'Galaxia', rarity: 'ESPECIAL', price: 650, priceType: 'coins', owned: false, rolling: true, image: 'assets/UI/Store/VIP/Bundles/Space/skin_galaxia.png' },
+    { id: 'skin_chef', name: 'Chef', rarity: 'ESPECIAL', price: 600, priceType: 'coins', owned: false, image: 'assets/UI/Store/VIP/Bundles/Professional/skin_chef.png' },
+    { id: 'skin_cerdo', name: 'Cerdo', rarity: 'ESPECIAL', price: 600, priceType: 'coins', owned: false, image: 'assets/UI/Store/VIP/Bundles/Wild/skin_cerdo.png' },
+    { id: 'skin_elefante', name: 'Elefante', rarity: 'ESPECIAL', price: 700, priceType: 'coins', owned: false, image: 'assets/UI/Store/VIP/Bundles/Wild/skin_elefante.png' },
+    { id: 'skin_bruja', name: 'Bruja', rarity: 'ESPECIAL', price: 500, priceType: 'coins', owned: false, image: 'assets/UI/Store/VIP/Bundles/Monsters/skin_bruja.png' },
+
+    // ----- EPICA (bajaron de VIP: comida, oficios, animales, monstruos sueltos) -----
+    { id: 'skin_chocolate', name: 'Chocolate', rarity: 'EPICA', price: 1200, priceType: 'coins', owned: false, image: 'assets/UI/Store/VIP/Bundles/Food/skin_chocolate.png' },
+    { id: 'skin_sol', name: 'Sol', rarity: 'EPICA', price: 1200, priceType: 'coins', owned: false, image: 'assets/UI/Store/VIP/Bundles/Space/skin_sol.png' },
+    { id: 'skin_luna', name: 'Luna', rarity: 'EPICA', price: 1200, priceType: 'coins', owned: false, image: 'assets/UI/Store/VIP/Bundles/Space/skin_luna.png' },
+    { id: 'skin_hamburguesa', name: 'Hamburguesa', rarity: 'EPICA', price: 1300, priceType: 'coins', owned: false, image: 'assets/UI/Store/VIP/Bundles/Food/skin_hamburguesa.png' },
+    { id: 'skin_pizza', name: 'Pizza', rarity: 'EPICA', price: 1200, priceType: 'coins', owned: false, image: 'assets/UI/Store/VIP/Bundles/Food/skin_pizza.png' },
+    { id: 'skin_ninja', name: 'Ninja', rarity: 'EPICA', price: 1300, priceType: 'coins', owned: false, image: 'assets/UI/Store/VIP/Bundles/Professional/skin_ninja.png' },
+    { id: 'skin_pirata', name: 'Pirata', rarity: 'EPICA', price: 1300, priceType: 'coins', owned: false, image: 'assets/UI/Store/VIP/Bundles/Professional/skin_pirata.png' },
+    { id: 'skin_cientifico', name: 'Cientifico', rarity: 'EPICA', price: 1300, priceType: 'coins', owned: false, image: 'assets/UI/Store/VIP/Bundles/Professional/skin_cientifico.png' },
+    { id: 'skin_hacker', name: 'Hacker', rarity: 'EPICA', price: 1400, priceType: 'coins', owned: false, image: 'assets/UI/Store/VIP/Bundles/Professional/skin_hacker.png' },
+    { id: 'skin_cebra', name: 'Cebra', rarity: 'EPICA', price: 1300, priceType: 'coins', owned: false, image: 'assets/UI/Store/VIP/Bundles/Wild/skin_cebra.png' },
+    { id: 'skin_tiburon', name: 'Tiburon', rarity: 'EPICA', price: 1400, priceType: 'coins', owned: false, image: 'assets/UI/Store/VIP/Bundles/Wild/skin_tiburon.png' },
+    { id: 'skin_cuervo', name: 'Cuervo', rarity: 'EPICA', price: 1300, priceType: 'coins', owned: false, image: 'assets/UI/Store/VIP/Bundles/Wild/skin_cuervo.png' },
+    { id: 'skin_escorpion', name: 'Escorpion', rarity: 'EPICA', price: 1350, priceType: 'coins', owned: false, image: 'assets/UI/Store/VIP/Bundles/Wild/skin_escorpion.png' },
+    { id: 'skin_serpiente', name: 'Serpiente', rarity: 'EPICA', price: 1300, priceType: 'coins', owned: false, image: 'assets/UI/Store/VIP/Bundles/Wild/skin_serpiente.png' },
+    { id: 'skin_fantasma', name: 'Fantasma', rarity: 'EPICA', price: 1200, priceType: 'coins', owned: false, image: 'assets/UI/Store/VIP/Bundles/Monsters/skin_fantasma.png' },
+    { id: 'skin_lobo_monstruo', name: 'Lobo Monstruo', rarity: 'EPICA', price: 1300, priceType: 'coins', owned: false, image: 'assets/UI/Store/VIP/Bundles/Monsters/skin_lobo_monstruo.png' },
+    { id: 'skin_calabaza', name: 'Calabaza', rarity: 'EPICA', price: 1200, priceType: 'coins', owned: false, image: 'assets/UI/Store/VIP/Bundles/Monsters/skin_calabaza.png' },
+    { id: 'skin_nocturna', name: 'Nocturna', rarity: 'EPICA', price: 1300, priceType: 'coins', owned: false, image: 'assets/UI/Store/VIP/Bundles/Monsters/skin_nocturna.png' },
+
+    // ----- DEMON (bajo de VIP) -----
+    { id: 'skin_samurai', name: 'Samurai', rarity: 'DEMON', price: 4800, priceType: 'coins', owned: false, image: 'assets/UI/Store/VIP/Bundles/Professional/skin_samurai.png' }
 ];
 
 // Lista de skins desbloqueables con fragmentos
 const FRAGMENT_SKINS_LIST = [
-    { id: 'skin_caballero_dorado', name: 'Caballero Dorado', rarity: 'VIP', vipOnly: true, imageRight: 'assets/UI/Store/VIP/Bundles/Royal/skin_caballero_dorado.png' },
+    { id: 'skin_caballero_dorado', name: 'Caballero Dorado', rarity: 'LEGENDARIO', imageRight: 'assets/UI/Store/VIP/Bundles/Royal/skin_caballero_dorado.png' }, // ahora trofeo, no vipOnly
     { id: 'skin_reina', name: 'Reina', rarity: 'VIP', vipOnly: true, imageRight: 'assets/UI/Store/VIP/Bundles/Royal/skin_reina.png' },
     { id: 'skin_emperador_oscuro', name: 'Principe Oscuro', rarity: 'VIP', vipOnly: true, imageRight: 'assets/UI/Store/VIP/Bundles/Royal/skin_emperador_oscuro.png' },
-    { id: 'skin_fantasma', name: 'Fantasma', rarity: 'VIP', vipOnly: true, imageRight: 'assets/UI/Store/VIP/Bundles/Monsters/skin_fantasma.png' },
-    { id: 'skin_limon_toxico', name: 'Limon', rarity: 'VIP', vipOnly: true, imageRight: 'assets/UI/Store/VIP/Bundles/Food/skin_limon_toxico.png' },
-    { id: 'skin_planeta_marte', name: 'Marte', rarity: 'VIP', vipOnly: true, imageRight: 'assets/UI/Store/VIP/Bundles/Space/skin_planeta_marte.png' },
-    { id: 'skin_planeta_tierra', name: 'Tierra', rarity: 'VIP', vipOnly: true, imageRight: 'assets/UI/Store/VIP/Bundles/Space/skin_planeta_tierra.png' },
-    { id: 'skin_cuervo', name: 'Cuervo', rarity: 'VIP', vipOnly: true, imageRight: 'assets/UI/Store/VIP/Bundles/Wild/skin_cuervo.png' },
+    { id: 'skin_fantasma', name: 'Fantasma', rarity: 'EPICA', imageRight: 'assets/UI/Store/VIP/Bundles/Monsters/skin_fantasma.png' }, // bajo a tienda normal
+    { id: 'skin_limon_toxico', name: 'Limon', rarity: 'ESPECIAL', imageRight: 'assets/UI/Store/VIP/Bundles/Food/skin_limon_toxico.png' }, // bajo a tienda normal
+    { id: 'skin_planeta_marte', name: 'Marte', rarity: 'ESPECIAL', imageRight: 'assets/UI/Store/VIP/Bundles/Space/skin_planeta_marte.png' }, // bajo a tienda normal
+    { id: 'skin_planeta_tierra', name: 'Tierra', rarity: 'ESPECIAL', imageRight: 'assets/UI/Store/VIP/Bundles/Space/skin_planeta_tierra.png' }, // bajo a tienda normal
+    { id: 'skin_cuervo', name: 'Cuervo', rarity: 'EPICA', imageRight: 'assets/UI/Store/VIP/Bundles/Wild/skin_cuervo.png' }, // bajo a tienda normal
     { id: 'skin_mama_claus', name: 'Mama Claus', rarity: 'VIP', vipOnly: true, imageRight: 'assets/UI/Store/VIP/Bundles/Christmas/skin_mama_claus.png' }
 ];
 
@@ -1074,6 +1132,18 @@ const CHESTS_DATA = [
 ];
 window.CHESTS_DATA = CHESTS_DATA;
 
+// Llave de Caronte (PLAN_LLAVES_CARONTE.md, Parte C): drop independiente,
+// muy raro, SOLO en cofres de rareza alta. basic/special/luck nunca la sueltan
+// (mantiene la sensación de rareza). Ajustar estos % con datos reales luego.
+const CARONTE_KEY_CHEST_CHANCE = {
+    basic: 0,
+    special: 0,
+    luck: 0,
+    epic: 0.008,   // 0.8%
+    demon: 0.02,   // 2%
+    vip: 0.035     // 3.5%
+};
+
 // Colores por cofre (no tienen campo rarity propio, se reusan los colores de RARITY_COLORS por tier)
 const CHEST_RARITY_COLORS = {
     basic: RARITY_COLORS.BASICO,
@@ -1094,6 +1164,15 @@ const RUBY_PASS_ASSETS = {
     arcTexture: RUBY_PASS_REWARD_PLACEHOLDER, // Slot visual de reserva por si se reactiva un arco unico.
     freeTrackTexture: 'assets/UI/Store/RubyPass/Arcs/ruby_pass_free_track.png', // RUBY_PASS_ASSET_SLOT_FREE_TRACK
     premiumTrackTexture: 'assets/UI/Store/RubyPass/Arcs/ruby_pass_premium_track.png', // RUBY_PASS_ASSET_SLOT_PREMIUM_TRACK
+    // Reasignados (ver PLAN_RUBY_PASS.md, tabla de referencias visuales):
+    // free_marco -> marco de la vidriera de "próxima recompensa" (Parte #2).
+    // premium_marco -> línea divisoria fina / borde de ítem premium (a usar más adelante).
+    freeMarco: 'assets/UI/Store/RubyPass/Arcs/ruby_pass_free_marco.png', // RUBY_PASS_ASSET_SLOT_FREE_MARCO
+    premiumMarco: 'assets/UI/Store/RubyPass/Arcs/ruby_pass_premium_marco.png', // RUBY_PASS_ASSET_SLOT_PREMIUM_MARCO
+    // Banner ancho de temporada (la "vidriera"), SIN texto quemado encima —
+    // el texto/kicker lo sigue poniendo el HTML alrededor. Si el archivo no
+    // existe todavía, renderBattlePassPage() lo oculta solo (onerror).
+    seasonBanner: 'assets/UI/Store/RubyPass/Banners/ruby_pass_season_banner.png', // RUBY_PASS_ASSET_SLOT_SEASON_BANNER
     levelMarker: 'assets/UI/Store/RubyPass/Markers/ruby_pass_level_marker.png', // RUBY_PASS_ASSET_SLOT_LEVEL_MARKER
     freeSkin01: 'assets/UI/Store/RubyPass/Rewards/Free/Skins/skin_free_ruby_01.png', // RUBY_PASS_ASSET_SLOT_FREE_SKIN_01
     freeSkin02: 'assets/UI/Store/RubyPass/Rewards/Free/Skins/skin_free_ruby_02.png', // RUBY_PASS_ASSET_SLOT_FREE_SKIN_02
@@ -1356,9 +1435,6 @@ const EMOTES_DATA = [
     { id: 'emoji_sonriente', name: 'Sonriente', image: 'assets/UI/Store/VIP/Bundles/Emojis/emoji_sonriente.png', rarity: 'VIP', vip: true, price: 200, priceType: 'gems', slot: 'SHOP_EMOTE_ASSET_SLOT_VIP_SONRIENTE' },
     { id: 'emoji_bomito', name: 'Bomito', image: 'assets/UI/Store/VIP/Bundles/Emojis/emoji_bomito.png', rarity: 'VIP', vip: true, price: 200, priceType: 'gems', slot: 'SHOP_EMOTE_ASSET_SLOT_VIP_BOMITO' },
 
-    // Emotes de fragmentos
-    { id: 'emote_risa', name: 'Risa', image: 'assets/UI/Efectos de trails/Particulas/particula_risa.png', rarity: 'ESPECIAL', slot: 'SHOP_EMOTE_ASSET_SLOT_FRAGMENT_RISA' },
-    { id: 'emote_risa_malvada', name: 'Risa Malvada', image: 'assets/UI/Efectos de trails/Particulas/particula_risa_malvada.png', rarity: 'EPICA', slot: 'SHOP_EMOTE_ASSET_SLOT_FRAGMENT_RISA_MALVADA' },
 ];
 
 applyGemRarityOverrides('normal');
@@ -1540,6 +1616,7 @@ const VIP_PACKAGES_DATA = [
         id: 'monsters',
         title: 'PAQUETE MONSTRUOS',
         price: 1200,
+        badge: 'best',
         cover: 'assets/UI/Store/VIP/Bundles/Monsters/panel_bundle_monsters.png',
         detailBackground: 'assets/UI/Store/VIP/Bundles/Monsters/bg_monsters_panel.png',
         popupBackground: 'assets/UI/Store/VIP/Bundles/Monsters/popup_monsters_bg.png',
@@ -1564,20 +1641,9 @@ const VIP_PACKAGES_DATA = [
                     { type: 'skin', id: 'skin_zombie', name: 'Zombie', image: 'assets/UI/Store/VIP/Bundles/Monsters/skin_zombie.png' },
                     { type: 'trail', id: 'trail_zombie', name: 'Trail Zombie', image: 'assets/UI/Store/VIP/Bundles/Monsters/trail_zombie.png', trailId: 'trail_zombie' }
                 ]
-            },
-            { type: 'vipSkin', id: 'skin_fantasma', name: 'Fantasma', price: 260, image: 'assets/UI/Store/VIP/Bundles/Monsters/skin_fantasma.png' },
-            { type: 'vipSkin', id: 'skin_lobo_monstruo', name: 'Lobo Monstruo', price: 300, image: 'assets/UI/Store/VIP/Bundles/Monsters/skin_lobo_monstruo.png' },
-            { type: 'vipSkin', id: 'skin_calabaza', name: 'Calabaza', price: 280, image: 'assets/UI/Store/VIP/Bundles/Monsters/skin_calabaza.png' },
-            {
-                type: 'bundle',
-                name: 'Las brujas',
-                price: 620,
-                image: 'assets/UI/Store/VIP/Bundles/Monsters/skin_bruja.png',
-                items: [
-                    { type: 'skin', id: 'skin_bruja', name: 'Bruja', image: 'assets/UI/Store/VIP/Bundles/Monsters/skin_bruja.png' },
-                    { type: 'skin', id: 'skin_nocturna', name: 'Nocturna', image: 'assets/UI/Store/VIP/Bundles/Monsters/skin_nocturna.png' }
-                ]
             }
+            // Fantasma, Lobo Monstruo, Calabaza y el sub-bundle "Las brujas" (bruja +
+            // nocturna) bajaron completos a tienda normal (ver SKINS_DATA).
         ]
     },
     {
@@ -1640,24 +1706,9 @@ const VIP_PACKAGES_DATA = [
         popupBackground: 'assets/UI/Store/VIP/Bundles/Food/popup_food_bg.png',
         accent: '#ff8a3d',
         items: [
-            { type: 'vipSkin', id: 'skin_hamburguesa', name: 'Hamburguesa', price: 300, image: 'assets/UI/Store/VIP/Bundles/Food/skin_hamburguesa.png', rolling: true },
-            { type: 'vipSkin', id: 'skin_pizza', name: 'Pizza', price: 250, image: 'assets/UI/Store/VIP/Bundles/Food/skin_pizza.png', rolling: true },
-            { type: 'vipSkin', id: 'skin_helado', name: 'Helado', price: 200, image: 'assets/UI/Store/VIP/Bundles/Food/skin_helado.png', rolling: true },
-            { type: 'vipSkin', id: 'skin_limon_toxico', name: 'Limon Toxico', price: 200, image: 'assets/UI/Store/VIP/Bundles/Food/skin_limon_toxico.png', rolling: true },
-            { type: 'vipSkin', id: 'skin_sandia', name: 'Sandia', price: 200, image: 'assets/UI/Store/VIP/Bundles/Food/skin_sandia.png', rolling: true },
-            { type: 'vipSkin', id: 'skin_cafe', name: 'Cafe', price: 180, image: 'assets/UI/Store/VIP/Bundles/Food/skin_cafe.png', rolling: true },
-            { type: 'vipSkin', id: 'skin_dona', name: 'Dona', price: 200, image: 'assets/UI/Store/VIP/Bundles/Food/skin_dona.png', rolling: true },
-            { type: 'vipSkin', id: 'skin_papas_fritas', name: 'Papas Fritas', price: 250, image: 'assets/UI/Store/VIP/Bundles/Food/skin_papas_fritas.png', rolling: true },
-            { type: 'vipSkin', id: 'skin_sandwich', name: 'Sandwich', price: 230, image: 'assets/UI/Store/VIP/Bundles/Food/skin_sandwich.png', rolling: true },
-            { type: 'vipSkin', id: 'skin_manzana', name: 'Manzana', price: 180, image: 'assets/UI/Store/VIP/Bundles/Food/skin_manzana.png', rolling: true },
-            { type: 'vipSkin', id: 'skin_palomitas', name: 'Palomitas', price: 200, image: 'assets/UI/Store/VIP/Bundles/Food/skin_palomitas.png', rolling: true },
-            { type: 'vipSkin', id: 'skin_cupcake', name: 'Cupcake', price: 230, image: 'assets/UI/Store/VIP/Bundles/Food/skin_cupcake.png', rolling: true },
-            { type: 'vipSkin', id: 'skin_jugo', name: 'Jugo', price: 100, image: 'assets/UI/Store/VIP/Bundles/Food/skin_jugo.png', rolling: true },
-            { type: 'vipSkin', id: 'skin_galleta', name: 'Galleta', price: 200, image: 'assets/UI/Store/VIP/Bundles/Food/skin_galleta.png', rolling: true },
-            { type: 'vipSkin', id: 'skin_torta', name: 'Torta', price: 250, image: 'assets/UI/Store/VIP/Bundles/Food/skin_torta.png', rolling: true },
-            { type: 'vipSkin', id: 'skin_chocolate', name: 'Chocolate', price: 250, image: 'assets/UI/Store/VIP/Bundles/Food/skin_chocolate.png', rolling: true },
-            { type: 'vipSkin', id: 'skin_pina', name: 'Pina', price: 230, image: 'assets/UI/Store/VIP/Bundles/Food/skin_pina.png', rolling: true },
-            { type: 'vipSkin', id: 'skin_pancakes', name: 'Pancakes', price: 350, image: 'assets/UI/Store/VIP/Bundles/Food/skin_pancakes.png', rolling: true },
+            // Las skins de comida (hamburguesa, pizza, helado, etc) bajaron a tienda
+            // normal (ver SKINS_DATA). Solo quedan aqui los 3 trofeos, que no se compran
+            // (se manejan via TROPHY_IDS / TROPHY_RANK_LABELS).
             { type: 'vipSkin', id: 'skin_hamburguesa_trofeo_oro', name: 'Hamburguesa Dorada', price: 0, image: 'assets/UI/Store/VIP/Bundles/Food/skin_hamburguesa_trofeo_oro.png', rolling: true },
             { type: 'vipSkin', id: 'skin_sandia_trofeo_plata', name: 'Sandia de Plata', price: 0, image: 'assets/UI/Store/VIP/Bundles/Food/skin_sandia_trofeo_plata.png', rolling: true },
             { type: 'vipSkin', id: 'skin_chocolate_trofeo_cobre', name: 'Chocolate de Cobre', price: 0, image: 'assets/UI/Store/VIP/Bundles/Food/skin_chocolate_trofeo_cobre.png', rolling: true },
@@ -1672,36 +1723,15 @@ const VIP_PACKAGES_DATA = [
         popupBackground: 'assets/UI/Store/VIP/Bundles/Space/popup_espacial_bg.png',
         accent: '#7fd8ff',
         items: [
-            { type: 'vipSkin', id: 'skin_sol', name: 'Sol', price: 300, image: 'assets/UI/Store/VIP/Bundles/Space/skin_sol.png' },
-            { type: 'vipSkin', id: 'skin_luna', name: 'Luna', price: 300, image: 'assets/UI/Store/VIP/Bundles/Space/skin_luna.png' },
-            { type: 'vipSkin', id: 'skin_galaxia', name: 'Galaxia', price: 300, image: 'assets/UI/Store/VIP/Bundles/Space/skin_galaxia.png', rolling: true },
-            { type: 'vipSkin', id: 'skin_planeta_marte', name: 'Planeta Marte', price: 300, image: 'assets/UI/Store/VIP/Bundles/Space/skin_planeta_marte.png', rolling: true },
-            { type: 'vipSkin', id: 'skin_planeta_saturno', name: 'Planeta Saturno', price: 300, image: 'assets/UI/Store/VIP/Bundles/Space/skin_planeta_saturno.png', rolling: true },
-            { type: 'vipSkin', id: 'skin_planeta_tierra', name: 'Planeta Tierra', price: 300, image: 'assets/UI/Store/VIP/Bundles/Space/skin_planeta_tierra.png', rolling: true },
-            { type: 'vipSkin', id: 'skin_agujero_negro', name: 'Agujero Negro', price: 380, image: 'assets/UI/Store/VIP/Bundles/Space/skin_agujero_negro.png' },
-            { type: 'vipSkin', id: 'skin_meteorito', name: 'Meteorito', price: 320, image: 'assets/UI/Store/VIP/Bundles/Space/skin_meteorito.png' },
-            { type: 'vipSkin', id: 'skin_alien', name: 'Alien', price: 340, image: 'assets/UI/Store/VIP/Bundles/Space/skin_alien.png' },
+            // Las 9 skins de planetas/espacio bajaron a tienda normal (ver SKINS_DATA).
+            // Los trails siguen sin confirmar si bajan tambien; por ahora quedan VIP.
             { type: 'vipTrailPng', id: 'trail_estrellas', name: 'Trail Estrellas', price: 320, image: 'assets/UI/Store/VIP/Bundles/Space/trail_estrellas.png', trailId: 'trail_estrellas' },
             { type: 'vipTrailPng', id: 'trail_auroras', name: 'Trail Auroras', price: 320, image: 'assets/UI/Store/VIP/Bundles/Space/trail_auroras.png', trailId: 'trail_auroras' }
         ]
     },
-    {
-        id: 'professional',
-        title: 'PAQUETE PROFESIONAL',
-        price: 1300,
-        cover: 'assets/UI/Store/VIP/Bundles/Professional/portada_paquete_profesional.png',
-        detailBackground: 'assets/UI/Store/VIP/Bundles/Professional/bg_profesional_panel.png',
-        popupBackground: 'assets/UI/Store/VIP/Bundles/Professional/popup_profesional_bg.png',
-        accent: '#b6c7ff',
-        items: [
-            { type: 'vipSkin', id: 'skin_ninja', name: 'Ninja', price: 300, image: 'assets/UI/Store/VIP/Bundles/Professional/skin_ninja.png' },
-            { type: 'vipSkin', id: 'skin_pirata', name: 'Pirata', price: 300, image: 'assets/UI/Store/VIP/Bundles/Professional/skin_pirata.png' },
-            { type: 'vipSkin', id: 'skin_cientifico', name: 'Cientifico', price: 300, image: 'assets/UI/Store/VIP/Bundles/Professional/skin_cientifico.png' },
-            { type: 'vipSkin', id: 'skin_hacker', name: 'Hacker', price: 340, image: 'assets/UI/Store/VIP/Bundles/Professional/skin_hacker.png' },
-            { type: 'vipSkin', id: 'skin_chef', name: 'Chef', price: 280, image: 'assets/UI/Store/VIP/Bundles/Professional/skin_chef.png' },
-            { type: 'vipSkin', id: 'skin_samurai', name: 'Samurai', price: 360, image: 'assets/UI/Store/VIP/Bundles/Professional/skin_samurai.png' }
-        ]
-    },
+    // El "PAQUETE PROFESIONAL" se elimino: sus 6 skins (ninja, pirata, cientifico,
+    // hacker, chef, samurai) bajaron todas a tienda normal (ver SKINS_DATA). Si en el
+    // futuro quieres un bundle VIP de oficios, habria que crear contenido nuevo.
     {
         id: 'wild',
         title: 'PAQUETE SALVAJE',
@@ -1711,16 +1741,11 @@ const VIP_PACKAGES_DATA = [
         popupBackground: 'assets/UI/Store/VIP/Bundles/Wild/popup_salvaje_bg.png',
         accent: '#44ff88',
         items: [
+            // cebra, tiburon, cuervo, escorpion, elefante, cerdo y serpiente bajaron
+            // a tienda normal (ver SKINS_DATA). Solo quedan VIP los "currados".
             { type: 'vipSkin', id: 'skin_lobo_salvaje', name: 'Lobo Salvaje', price: 320, image: 'assets/UI/Store/VIP/Bundles/Wild/skin_lobo_salvaje.png' },
-            { type: 'vipSkin', id: 'skin_serpiente', name: 'Serpiente', price: 300, image: 'assets/UI/Store/VIP/Bundles/Wild/skin_serpiente.png' },
-            { type: 'vipSkin', id: 'skin_tiburon', name: 'Tiburon', price: 340, image: 'assets/UI/Store/VIP/Bundles/Wild/skin_tiburon.png' },
-            { type: 'vipSkin', id: 'skin_cuervo', name: 'Cuervo', price: 300, image: 'assets/UI/Store/VIP/Bundles/Wild/skin_cuervo.png' },
-            { type: 'vipSkin', id: 'skin_escorpion', name: 'Escorpion', price: 320, image: 'assets/UI/Store/VIP/Bundles/Wild/skin_escorpion.png' },
             { type: 'vipSkin', id: 'skin_tigre', name: 'Tigre', price: 360, image: 'assets/UI/Store/VIP/Bundles/Wild/skin_tigre.png' },
             { type: 'vipSkin', id: 'skin_leon', name: 'Leon', price: 320, image: 'assets/UI/Store/VIP/Bundles/Wild/skin_leon.png' },
-            { type: 'vipSkin', id: 'skin_cebra', name: 'Cebra', price: 300, image: 'assets/UI/Store/VIP/Bundles/Wild/skin_cebra.png' },
-            { type: 'vipSkin', id: 'skin_elefante', name: 'Elefante', price: 340, image: 'assets/UI/Store/VIP/Bundles/Wild/skin_elefante.png' },
-            { type: 'vipSkin', id: 'skin_cerdo', name: 'Cerdo', price: 280, image: 'assets/UI/Store/VIP/Bundles/Wild/skin_cerdo.png' },
             { type: 'vipSkin', id: 'skin_ciervo', name: 'Ciervo', price: 300, image: 'assets/UI/Store/VIP/Bundles/Wild/skin_ciervo.png' },
             { type: 'vipSkin', id: 'skin_aguila', name: 'Aguila', price: 340, image: 'assets/UI/Store/VIP/Bundles/Wild/skin_aguila.png' }
         ]
@@ -1851,6 +1876,7 @@ function getVIPSkinCatalog() {
         if (!item || !(item.type === 'vipSkin' || item.type === 'skin') || !item.id) return;
         if (byId.has(item.id)) return;
         const gameplaySkin = withGameplaySkinAssets(item);
+        const isTrophyItem = TROPHY_IDS.includes(item.id);
         byId.set(item.id, {
             id: gameplaySkin.id,
             name: gameplaySkin.name,
@@ -1863,7 +1889,8 @@ function getVIPSkinCatalog() {
             imageRight: gameplaySkin.imageRight,
             imageLeft: gameplaySkin.imageLeft,
             rolling: gameplaySkin.rolling,
-            vipOnly: true,
+            vipOnly: !isTrophyItem,
+            rankLabel: isTrophyItem ? TROPHY_RANK_LABELS[item.id] : undefined,
             sourceItem: gameplaySkin
         });
     };
@@ -1929,7 +1956,7 @@ function isCanvasPreviewVisible(canvas) {
 // root: Elemento raíz (opcional)
 function optimizeShopMedia(root = document) {
     root.querySelectorAll?.('img').forEach(img => {
-        img.loading = img.closest('.vip-feature, .shop-vip-access-banner') ? 'eager' : 'lazy';
+        img.loading = img.closest('.vip-feature, .shop-hero-slide') ? 'eager' : 'lazy';
         img.decoding = 'async';
         if ('fetchPriority' in img) img.fetchPriority = img.loading === 'eager' ? 'high' : 'low';
     });
@@ -1977,12 +2004,16 @@ function openShop() {
     showShopSection('home');
     optimizeShopMedia(panel);
     updateMenuHUD();
+    hideVIPRoulette();
+    showShopRoulette();
 }
 
 // Cerrar el panel de tienda
 function closeShop() {
     if (trailAnimId) cancelAnimationFrame(trailAnimId);
     if (previewTrailAnim) cancelAnimationFrame(previewTrailAnim);
+    stopShopHeroAutoplay();
+    hideShopRoulette();
     const panel = document.getElementById('shopPanel');
     panel.classList.remove('entering');
     panel.classList.add('leaving');
@@ -2039,7 +2070,7 @@ function showShopSection(section) {
     else if (section === 'cofres') renderChestsPage(content);
     else if (section === 'emotes') renderEmotesPage(content);
     else if (section === 'daily') renderDailyGiftPage(content);
-    else if (section === 'conversion') renderConversionPage(content);
+    else if (section === 'conversion') renderRubyShopPage(content);
     else {
         content.innerHTML = `<div style="display:flex; align-items:center; gap:16px; margin-bottom:24px;">${shopBotonVolverHtml()}</div><div style="color:rgba(255,255,255,0.2); font-family:monospace; font-size:14px; letter-spacing:4px; height:300px; display:grid; place-items:center;">${shopTextos('comun').proximamente ?? 'PRÓXIMAMENTE'}</div>`;
     }
@@ -2066,52 +2097,209 @@ function renderSkinsPage(container) {
 // container: Elemento contenedor
 function renderHome(container) {
     const rubyClaimable = hasRubyPassClaimableRewards();
-    const panels = [
-        { section: 'skins', image: 'assets/UI/Store/Panels/portada_panel_skins_tienda_normal.png' },
-        { section: 'trails', image: 'assets/UI/Store/Panels/portada_panel_trails_tienda_normal.png' },
-        { section: 'powerups', image: 'assets/UI/Store/Panels/portada_panel_potenciadores_tienda_normal.png', },
-        { section: 'cofres', image: 'assets/UI/Store/Panels/portada_panel_cofres_tienda_normal.png' },
-        { section: 'banners', image: 'assets/UI/Store/Panels/portada_panel_banners_tienda_normal.png' },
-        { section: 'emotes', image: 'assets/UI/Store/Panels/portada_panel_emotes_tienda_normal.png' },
-        { section: 'daily', image: 'assets/UI/Store/Panels/portada_panel_regalo_diario_tienda_normal.png' },
-        { section: 'conversion', image: 'assets/UI/Store/Panels/portada_panel_conversion_tienda_normal.png' },
+
+    // Accesos rápidos — más chicos, en su propia fila con más aire
+    const quickAccess = [
+        { section: 'trails', image: 'assets/UI/Store/Panels/portada_panel_trails_tienda_normal.png', accent: '#00e5ff' },
+        { section: 'banners', image: 'assets/UI/Store/Panels/portada_panel_banners_tienda_normal.png', accent: '#7f8cff' },
+        { section: 'emotes', image: 'assets/UI/Store/Panels/portada_panel_emotes_tienda_normal.png', accent: '#ff5d8f' },
+        { section: 'powerups', image: 'assets/UI/Store/Panels/portada_panel_potenciadores_tienda_normal.png', accent: '#6bcf7f' },
     ];
+
+    const panelBtnHtml = (panel) => `
+        <button class="store-category-panel hud-frame" onclick="showShopSection('${panel.section}')" type="button" style="--cfg-hud-accent:${panel.accent};">
+            <div class="hud-frame-c tl"></div><div class="hud-frame-c tr"></div>
+            <div class="hud-frame-c bl"></div><div class="hud-frame-c br"></div>
+            <img src="${panel.image}" alt="" draggable="false">
+        </button>
+    `;
+
     container.innerHTML = `
-        <div class="shop-home-banner-row" style="height:130px;">
-            <div class="shop-vip-access-banner" style="flex:1; background-image:url('assets/UI/Store/VIP/Banners/banner_tienda_vip_home.png');">
-                <div style="position:absolute; right:0; top:0; bottom:0; width:300px; background:linear-gradient(90deg, transparent, rgba(255,180,0,0.06)); pointer-events:none;"></div>
-                <div style="position:absolute; left:0; top:0; bottom:0; width:4px; background:linear-gradient(to bottom, #ffcc00, #ff8800);"></div>
-                <button onclick="openVIP()" style="margin-left:auto; padding:8px 20px; background:rgba(255,255,255,0.64); border:1px solid rgba(0,0,0,0.22); border-radius:8px; color:#050505; font-family:monospace; font-size:11px; font-weight:900; letter-spacing:2px; cursor:pointer; pointer-events:all;">VER</button>
-            </div>
+        <div class="shop-hero-carousel" id="shopHeroCarousel">
+            <div class="shop-hero-track" id="shopHeroTrack">
 
-            <button onclick="openRubyPass()" class="ruby-pass-access ${rubyClaimable ? 'has-ruby-claim' : ''}" type="button" style="flex:none; width:130px; height:130px; ${RUBY_PASS_ASSETS.accessBanner ? `background-image:linear-gradient(90deg, rgba(25,0,8,0.78), rgba(8,6,10,0.52)), url('${RUBY_PASS_ASSETS.accessBanner}'); background-size:cover; background-position:center;` : ''}">
-                <div class="ruby-pass-access-bg"></div>
-                <div class="ruby-pass-lock-slot" style="width:52px; height:52px;">
-                    ${RUBY_PASS_ASSETS.logo ? `<img src="${RUBY_PASS_ASSETS.logo}" alt="">` : '<span></span>'}
-                </div>
-                <div class="ruby-pass-access-copy">
-                    <div class="ruby-pass-access-kicker" style="font-size:8px; letter-spacing:2px;">PASE DE TEMPORADA</div>
-                    <div class="ruby-pass-access-title" style="font-size:13px; letter-spacing:2px; margin-top:4px;">RUBY PASS</div>
-                    ${rubyClaimable ? '<div class="ruby-pass-claim-hint">RECOMPENSA LISTA</div>' : ''}
-                </div>
-            </button>
-        </div>
-
-        <div style="display:flex; align-items:center; gap:14px; margin-bottom:16px; padding:0 2px;">
-            <div style="flex:1; height:1px; background:linear-gradient(90deg, transparent, rgba(255,77,109,0.5), rgba(0,255,255,0.3), transparent);"></div>
-            <div style="width:6px; height:6px; border-radius:50%; background:rgba(255,77,109,0.7); box-shadow:0 0 8px rgba(255,77,109,0.6);"></div>
-            <div style="flex:1; height:1px; background:linear-gradient(90deg, transparent, rgba(0,255,255,0.3), rgba(255,77,109,0.5), transparent);"></div>
-        </div>
-
-        <div class="store-panel-grid">
-            ${panels.map(panel => `
-                <button class="store-category-panel" onclick="showShopSection('${panel.section}')" type="button">
-                    <img src="${panel.image}" alt="" draggable="false">
-                    ${panel.label ? `<span class="store-category-label">${panel.label}</span>` : ''}
+                <button class="shop-hero-slide shop-hero-vip" onclick="openVIP()" type="button"
+                    style="background-image:linear-gradient(90deg, rgba(10,6,20,.55), rgba(10,6,20,.1)), url('assets/UI/Store/VIP/Banners/banner_tienda_vip_home.png');">
+                    <div class="shop-hero-scrim"></div>
+                    <span class="shop-hero-kicker">CONTENIDO EXCLUSIVO</span>
+                    <strong class="shop-hero-title">TIENDA VIP</strong>
+                    <span class="shop-hero-go">VER →</span>
                 </button>
-            `).join('')}
+
+                <button class="shop-hero-slide shop-hero-ruby ${rubyClaimable ? 'has-ruby-claim' : ''}" onclick="openRubyPass()" type="button"
+                    ${RUBY_PASS_ASSETS.accessBanner ? `style="background-image:linear-gradient(90deg, rgba(20,0,10,.7), rgba(10,4,10,.25)), url('${RUBY_PASS_ASSETS.accessBanner}');"` : ''}>
+                    <div class="shop-hero-scrim"></div>
+                    <span class="shop-hero-kicker">PASE DE TEMPORADA</span>
+                    <strong class="shop-hero-title">RUBY PASS</strong>
+                    ${rubyClaimable ? '<span class="shop-hero-claim-hint">RECOMPENSA LISTA</span>' : '<span class="shop-hero-go">VER →</span>'}
+                </button>
+
+            </div>
+            <div class="shop-hero-dots" id="shopHeroDots">
+                <span class="active" onclick="goToShopHeroSlide(0)"></span>
+                <span onclick="goToShopHeroSlide(1)"></span>
+            </div>
+        </div>
+
+        <div class="store-group">
+            <div class="store-group-label"><span class="txt">CATEGORÍAS PRINCIPALES</span><span class="ln"></span></div>
+            <div class="store-grid-main">
+                <button class="store-category-panel hud-frame" onclick="showShopSection('skins')" type="button" style="--cfg-hud-accent:#3ea7ff;">
+                    <div class="hud-frame-c tl"></div><div class="hud-frame-c tr"></div>
+                    <div class="hud-frame-c bl"></div><div class="hud-frame-c br"></div>
+                    <img src="assets/UI/Store/Panels/portada_panel_skins_tienda_normal.png" alt="" draggable="false">
+                </button>
+
+                <button class="store-category-panel store-panel-seasons hud-frame" onclick="showShopSection('seasons')" type="button" style="--cfg-hud-accent:#a259ff; background-image:linear-gradient(180deg, rgba(10,8,20,.1), rgba(10,8,20,.7)), url('assets/seasons/Portadas%20temporadas/Temporada_1.png'); background-size:cover; background-position:center;">
+                    <div class="hud-frame-c tl"></div><div class="hud-frame-c tr"></div>
+                    <div class="hud-frame-c bl"></div><div class="hud-frame-c br"></div>
+                    <div class="store-panel-seasons-bg"></div>
+                    <div class="shop-hero-scrim"></div>
+                    <span class="shop-hero-kicker">CONTENIDO LIMITADO</span>
+                    <strong class="shop-hero-title">TEMPORADAS</strong>
+                </button>
+            </div>
+        </div>
+
+        <div class="store-group">
+            <div class="store-group-label"><span class="txt">ACCESOS RÁPIDOS</span><span class="ln"></span></div>
+            <div class="store-grid-quick">
+                ${quickAccess.map(panelBtnHtml).join('')}
+            </div>
+        </div>
+
+        <div class="store-group">
+            <div class="store-group-label"><span class="txt">DESTACADOS</span><span class="ln"></span></div>
+            <div class="store-grid-foot">
+                <button class="store-category-panel store-panel-daily hud-frame" onclick="showShopSection('daily')" type="button" style="--cfg-hud-accent:#ffd76a; background-image:linear-gradient(90deg, rgba(10,8,4,.35), rgba(10,8,4,.05)), url('assets/UI/Store/Panels/portada_panel_regalo_diario_tienda_normal.png'); background-size:cover; background-position:center;">
+                    <div class="hud-frame-c tl"></div><div class="hud-frame-c tr"></div>
+                    <div class="hud-frame-c bl"></div><div class="hud-frame-c br"></div>
+                </button>
+
+                <button class="store-category-panel hud-frame" onclick="showShopSection('cofres')" type="button" style="--cfg-hud-accent:#ffc340;">
+                    <div class="hud-frame-c tl"></div><div class="hud-frame-c tr"></div>
+                    <div class="hud-frame-c bl"></div><div class="hud-frame-c br"></div>
+                    <img src="assets/UI/Store/Panels/portada_panel_cofres_tienda_normal.png" alt="" draggable="false">
+                </button>
+
+                <button class="store-category-panel hud-frame" onclick="showShopSection('conversion')" type="button" style="--cfg-hud-accent:#ffee00;">
+                    <div class="hud-frame-c tl"></div><div class="hud-frame-c tr"></div>
+                    <div class="hud-frame-c bl"></div><div class="hud-frame-c br"></div>
+                    <img src="assets/UI/Store/Panels/portada_panel_Tienda_Ruby_tienda_normal.png" alt="" draggable="false">
+                </button>
+            </div>
         </div>
     `;
+
+    initShopHeroCarousel();
+}
+
+// ── carrusel del hero de la tienda: VIP / Ruby Pass / Temporadas, uno a la vez ──
+let shopHeroCarouselTimer = null;
+let shopHeroCarouselIndex = 0;
+const SHOP_HERO_SLIDE_COUNT = 2;
+const SHOP_HERO_AUTOPLAY_MS = 5000;
+
+function initShopHeroCarousel() {
+    shopHeroCarouselIndex = 0;
+    updateShopHeroCarousel();
+    startShopHeroAutoplay();
+
+    const carousel = document.getElementById('shopHeroCarousel');
+    if (carousel && !carousel.dataset.hoverBound) {
+        carousel.dataset.hoverBound = '1';
+        carousel.addEventListener('mouseenter', stopShopHeroAutoplay);
+        carousel.addEventListener('mouseleave', startShopHeroAutoplay);
+        bindShopHeroDrag(carousel);
+    }
+}
+
+// ── arrastre manual del carrusel (mouse y touch) ──
+function bindShopHeroDrag(carousel) {
+    const track = document.getElementById('shopHeroTrack');
+    let dragging = false;
+    let startX = 0;
+    let deltaX = 0;
+
+    const getX = (e) => (e.touches ? e.touches[0].clientX : e.clientX);
+
+    const onDown = (e) => {
+        dragging = true;
+        startX = getX(e);
+        deltaX = 0;
+        stopShopHeroAutoplay();
+        track.style.transition = 'none';
+    };
+
+    const onMove = (e) => {
+        if (!dragging) return;
+        deltaX = getX(e) - startX;
+        const basePercent = -(shopHeroCarouselIndex * (100 / SHOP_HERO_SLIDE_COUNT));
+        const dragPercent = (deltaX / carousel.offsetWidth) * (100 / SHOP_HERO_SLIDE_COUNT);
+        track.style.transform = `translateX(${basePercent + dragPercent}%)`;
+    };
+
+    const onUp = () => {
+        if (!dragging) return;
+        dragging = false;
+        track.style.transition = '';
+
+        if (Math.abs(deltaX) > 5) {
+            carousel.dataset.justDragged = '1';
+            setTimeout(() => { delete carousel.dataset.justDragged; }, 50);
+        }
+
+        const threshold = carousel.offsetWidth * 0.15;
+        if (deltaX <= -threshold) {
+            goToShopHeroSlide((shopHeroCarouselIndex + 1) % SHOP_HERO_SLIDE_COUNT);
+        } else if (deltaX >= threshold) {
+            goToShopHeroSlide((shopHeroCarouselIndex - 1 + SHOP_HERO_SLIDE_COUNT) % SHOP_HERO_SLIDE_COUNT);
+        } else {
+            updateShopHeroCarousel(); // no llegó al umbral, vuelve a su lugar
+        }
+        startShopHeroAutoplay();
+    };
+
+    carousel.addEventListener('mousedown', onDown);
+    carousel.addEventListener('touchstart', onDown, { passive: true });
+    window.addEventListener('mousemove', onMove);
+    carousel.addEventListener('touchmove', onMove, { passive: true });
+    window.addEventListener('mouseup', onUp);
+    carousel.addEventListener('touchend', onUp);
+
+    // evita que el "soltar" de un arrastre dispare el click del slide (abrir VIP/Ruby Pass/Temporadas)
+    track.addEventListener('click', (e) => {
+        if (carousel.dataset.justDragged) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+    }, true);
+}
+
+function startShopHeroAutoplay() {
+    stopShopHeroAutoplay();
+    shopHeroCarouselTimer = setInterval(() => {
+        goToShopHeroSlide((shopHeroCarouselIndex + 1) % SHOP_HERO_SLIDE_COUNT);
+    }, SHOP_HERO_AUTOPLAY_MS);
+}
+
+function stopShopHeroAutoplay() {
+    if (shopHeroCarouselTimer) {
+        clearInterval(shopHeroCarouselTimer);
+        shopHeroCarouselTimer = null;
+    }
+}
+
+function goToShopHeroSlide(index) {
+    shopHeroCarouselIndex = index;
+    updateShopHeroCarousel();
+}
+
+function updateShopHeroCarousel() {
+    const track = document.getElementById('shopHeroTrack');
+    const dots = document.querySelectorAll('#shopHeroDots span');
+    if (track) track.style.transform = `translateX(-${shopHeroCarouselIndex * (100 / SHOP_HERO_SLIDE_COUNT)}%)`;
+    dots.forEach((d, i) => d.classList.toggle('active', i === shopHeroCarouselIndex));
 }
 
 function renderSkinCard(s, equipped) {
@@ -2146,6 +2334,8 @@ function renderSkinCard(s, equipped) {
         action = `<button onclick="equipSkin('${s.id}')" style="width:100%; padding:6px 0; border-radius:8px; border:1px solid ${isEquipped ? rarityColor + '66' : 'rgba(255,255,255,0.12)'}; background:${isEquipped ? rarityColor + '15' : 'none'}; color:${isEquipped ? rarityColor : 'rgba(255,255,255,0.4)'}; font-family:Geom, monospace; font-size:9px; cursor:pointer; letter-spacing:1px;">${isEquipped ? (st.botonEquipada ?? '✔ EQUIPADA') : (st.botonEquipar ?? 'EQUIPAR')}</button>`;
     } else if (isFragmentItem) {
         action = window.renderFragmentProgressBar?.(s.id) || `<div style="color:rgba(255,255,255,0.3); font-family:monospace; font-size:9px;">${st.labelFragmentos ?? 'FRAGMENTOS'}</div>`;
+    } else if (isTrophy) {
+        action = `<div style="width:100%; padding:6px 0; border-radius:8px; border:1px solid rgba(138,43,226,0.4); background:rgba(138,43,226,0.06); color:#cc99ff; font-family:Geom, monospace; font-size:8px; letter-spacing:0.5px; text-align:center;">${s.rankLabel || TROPHY_RANK_LABELS[s.id] || 'RANGO REQUERIDO'}</div>`;
     } else if (s.vipOnly) {
         action = `<button onclick="openVIP('${s.id}')" style="width:100%; padding:6px 0; border-radius:8px; border:1px solid rgba(255, 215, 0, 0.4); background:rgba(255, 215, 0, 0.05); color:#FFD700; font-family:Geom, monospace; font-size:8px; cursor:pointer; letter-spacing:0.5px; transition: 0.2s;" onmouseover="this.style.background='rgba(255, 215, 0, 0.15)'" onmouseout="this.style.background='rgba(255, 215, 0, 0.05)'">${st.botonDirigirVIP ?? 'DIRIGIR A TIENDA VIP'}</button>`;
     } else {
@@ -2659,14 +2849,25 @@ function openChestReward(chest) {
     if (Math.random() < 0.25 && window.grantRandomFragment) {
         window.grantRandomFragment();
     }
+    // Llave de Caronte (PLAN_LLAVES_CARONTE.md, Parte C): roll independiente,
+    // no reemplaza ni compite con el drop normal del cofre.
+    result.caronteKey = false;
+    const keyChance = CARONTE_KEY_CHEST_CHANCE[chest.id] || 0;
+    if (keyChance > 0 && Math.random() < keyChance) {
+        addCurrency(1, 'caronteKeys');
+        result.caronteKey = true;
+    }
     return result;
 }
 
 function showChestResult(chest) {
-    const { coins, gems, drop } = openChestReward(chest);
+    const { coins, gems, drop, caronteKey } = openChestReward(chest);
     const rewardView = getChestRewardView(drop, coins, gems);
     const currencyHTML = renderCurrencyRewardPiles({ coins, gems });
     window.playSfx?.('reward');
+    const caronteKeyHTML = caronteKey
+        ? `<div class="caronte-key-drop-line">${renderCaronteKeyIcon('sm')}<span>+1 Llave de Caronte</span></div>`
+        : '';
     showShopModal({
         kicker: 'RECOMPENSA',
         title: drop,
@@ -2674,7 +2875,7 @@ function showChestResult(chest) {
         mediaHTML: currencyHTML || null,
         mediaClass: currencyHTML ? 'wide' : '',
         fallback: rewardView.text || 'ITEM',
-        body: `${drop}<br>Base: ${coins} monedas + ${gems} rubies`,
+        body: `${drop}<br>Base: ${coins} monedas + ${gems} rubies${caronteKeyHTML}`,
         cancelText: null,
         confirmText: 'CERRAR'
     });
@@ -2830,36 +3031,52 @@ function openGambit() {
     showChestResult({ ...rewardChest, name: luckChest.name, image: luckChest.image, openImage: luckChest.openImage });
 }
 
+// Llaves de Caronte (PLAN_LLAVES_CARONTE.md, Parte B): tercera "moneda",
+// se consigue por drop (cofres/partidas). Desde la Parte G, el modo
+// "monedas infinitas" también las regala/no las gasta, igual que
+// monedas y gemas (pedido explícito de Luna, para poder testear la
+// ruleta sin farmear).
+const CURRENCY_KEYS = { gems: 'gems', coins: 'deadCoins', caronteKeys: 'caronteKeys' };
+
 function canAfford(amount, currency) {
-    // Si el modo infinito está activo, siempre permitir compras
+    // Si el modo infinito está activo, siempre permitir compras (incluye llaves)
     if (window.infiniteCoinsMode) return true;
 
-    const key = currency === 'gems' ? 'gems' : 'deadCoins';
+    const key = CURRENCY_KEYS[currency] || 'deadCoins';
     return parseInt(localStorage.getItem(key) || '0') >= amount;
 }
 
 function spendCurrency(amount, currency) {
-    // Si el modo infinito está activo, no restar monedas
+    // Si el modo infinito está activo, no restar nada (incluye llaves)
     if (window.infiniteCoinsMode) {
         window.trackMissionProgress?.('shop_purchase', 1);
         refreshShopBalances();
         return;
     }
 
-    const key = currency === 'gems' ? 'gems' : 'deadCoins';
+    const key = CURRENCY_KEYS[currency] || 'deadCoins';
     localStorage.setItem(key, parseInt(localStorage.getItem(key) || '0') - amount);
+    if (window.playerData && currency === 'caronteKeys') {
+        window.playerData.caronteKeys = parseInt(localStorage.getItem(key) || '0');
+    }
     window.trackMissionProgress?.('shop_purchase', 1);
     refreshShopBalances();
 }
 
 function addCurrency(amount, currency) {
-    const key = currency === 'gems' ? 'gems' : 'deadCoins';
+    const key = CURRENCY_KEYS[currency] || 'deadCoins';
     localStorage.setItem(key, parseInt(localStorage.getItem(key) || '0') + amount);
     if (window.playerData) {
         if (currency === 'gems') window.playerData.gems = parseInt(localStorage.getItem(key) || '0');
+        else if (currency === 'caronteKeys') window.playerData.caronteKeys = parseInt(localStorage.getItem(key) || '0');
         else window.playerData.deadCoins = parseInt(localStorage.getItem(key) || '0');
     }
 }
+
+function getCaronteKeys() {
+    return parseInt(localStorage.getItem('caronteKeys') || '0');
+}
+window.getCaronteKeys = getCaronteKeys;
 
 function refreshShopBalances() {
     const coins = window.infiniteCoinsMode ? '∞' : parseInt(localStorage.getItem('deadCoins') || '0');
@@ -3115,6 +3332,8 @@ function openVIP() {
     panel.classList.add('entering');
     refreshShopBalances();
     renderVIPHome();
+    hideShopRoulette();
+    showVIPRoulette();
 }
 
 function closeVIP() {
@@ -3126,12 +3345,769 @@ function closeVIP() {
         cancelAnimationFrame(customTextTrailAnim);
         customTextTrailAnim = null;
     }
+    hideVIPRoulette();
     const panel = document.getElementById('vipPanel');
     panel.classList.add('leaving');
     setTimeout(() => {
         panel.style.display = 'none';
         panel.classList.remove('leaving');
     }, 300);
+}
+
+let vipRouletteInviteTimeout = null;
+let vipRouletteInviteInterval = null;
+let shopRouletteInviteTimeout = null;
+let shopRouletteInviteInterval = null;
+
+/* =====================================================
+   MOTOR DE RULETA (Fase 2.5) — compartido entre la ruleta
+   de la tienda normal ("Ruleta Diaria", monedas) y la de la
+   tienda VIP ("La Llave de Caronte", rubíes). Reusa TODO lo
+   que ya existe en el juego (addCurrency, storeChestInInventory,
+   gambitState del Cofre de la Suerte, grantRandomFragment) en
+   vez de inventar sistemas nuevos.
+   ===================================================== */
+
+// Elige una entrada de una tabla [{weight, ...}] según su peso relativo.
+function rollWeightedTable(table) {
+    const total = table.reduce((sum, entry) => sum + entry.weight, 0);
+    let roll = Math.random() * total;
+    for (const entry of table) {
+        if (roll < entry.weight) return entry;
+        roll -= entry.weight;
+    }
+    return table[table.length - 1];
+}
+
+// ── arte real de las ruedas (PNGs de Isabel, carpeta "Ruletas") ──
+const ROULETTE_WHEEL_IMAGES = {
+    vip: 'assets/Imagenes/Ruletas/Ruleta_VIP.png',
+    normal: 'assets/Imagenes/Ruletas/Ruleta_Free.png',
+};
+
+// Ícono del botón de info de "La Llave de Caronte" — un óbolo (la moneda
+// que se le pagaba a Caronte en la mitología) en vez de una "i" genérica.
+// Usa currentColor para heredar el color del botón vía CSS.
+const CARONTE_OBOLO_SVG = `<svg viewBox="0 0 40 40" width="20" height="20" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <circle cx="20" cy="20" r="18" stroke="currentColor" stroke-width="1.4" stroke-dasharray="2.6 2.2"/>
+    <circle cx="20" cy="20" r="13" stroke="currentColor" stroke-width="1.2"/>
+    <path d="M20 12 L26 20 L20 28 L14 20 Z" fill="currentColor"/>
+</svg>`;
+
+// Skins fijas de temporada — el premio-skin de cada ruleta NO rota
+// día a día como el resto (pedido explícito de Felix). Se cambian acá
+// manualmente cuando arranca una temporada nueva. Buscan por id en
+// FRAGMENT_SKINS_LIST, que ya tiene nombre + imagen de cada una.
+const VIP_ROULETTE_SEASON_SKIN = 'skin_emperador_oscuro';   // Príncipe Oscuro
+const NORMAL_ROULETTE_SEASON_SKIN = 'skin_limon_toxico';    // Limón
+
+// Tabla de premios — Ruleta Diaria (tienda normal, con monedas).
+// Suma de weights = 100 → cada weight es directamente el % real.
+const NORMAL_ROULETTE_TABLE = [
+    { type: 'coins', amount: 30, weight: 33 },
+    { type: 'coins', amount: 100, weight: 19 },
+    { type: 'chest', chestId: 'basic', weight: 19 },   // media probabilidad
+    { type: 'chest', chestId: 'special', weight: 11 }, // media-baja
+    { type: 'chest', chestId: 'epic', weight: 7 },     // baja
+    { type: 'chest', chestId: 'demon', weight: 3 },    // muy muy baja
+    { type: 'luckChest', startLevel: 0, fallbackCoins: 40, weight: 3 }, // empieza en Básico
+    { type: 'skin', skinId: NORMAL_ROULETTE_SEASON_SKIN, fallbackCoins: 150, weight: 5 }, // Limón — premio raro de temporada
+];
+
+// Tabla de premios — La Llave de Caronte (tienda VIP, con rubíes).
+// Sin cofre básico. Fragmentos SOLO acá (pedido explícito de Felix).
+const VIP_ROULETTE_TABLE = [
+    { type: 'gems', amount: 10, weight: 13 },
+    { type: 'gems', amount: 30, weight: 9 },
+    { type: 'fragment', weight: 14 },
+    { type: 'chest', chestId: 'special', weight: 7 },  // baja
+    { type: 'chest', chestId: 'epic', weight: 20 },    // media (la más alta de las 4)
+    { type: 'chest', chestId: 'demon', weight: 13 },   // medio-baja
+    { type: 'chest', chestId: 'vip', weight: 9 },      // baja pero no tan baja
+    { type: 'skin', skinId: VIP_ROULETTE_SEASON_SKIN, fallbackGems: 25, weight: 5 }, // Príncipe Oscuro — premio raro de temporada
+    { type: 'luckChest', startLevel: 2, fallbackGems: 15, weight: 6 }, // empieza en Épico, no en Básico
+];
+
+// Agrupa VIP_ROULETTE_TABLE por categoría y devuelve el % real de cada
+// una (se calcula en vivo desde los weights, así que si Felix los toca
+// en el futuro el panel de info nunca queda desactualizado).
+function getVIPRouletteProbabilityGroups() {
+    const total = VIP_ROULETTE_TABLE.reduce((sum, e) => sum + e.weight, 0);
+    const groups = [
+        { type: 'gems', label: 'Rubíes', weight: 0 },
+        { type: 'fragment', label: 'Fragmento', weight: 0 },
+        { type: 'chest', label: 'Cofres (Especial a VIP)', weight: 0 },
+        { type: 'skin', label: 'Skin de temporada', weight: 0 },
+        { type: 'luckChest', label: 'Cofre de la Suerte', weight: 0 },
+    ];
+    VIP_ROULETTE_TABLE.forEach(entry => {
+        const g = groups.find(g => g.type === entry.type);
+        if (g) g.weight += entry.weight;
+    });
+    return groups.map(g => ({ label: g.label, pct: (g.weight / total * 100).toFixed(1) }));
+}
+
+// Aplica el premio elegido usando los sistemas que YA existen en el
+// juego. Devuelve { label, image } para mostrar en el modal.
+function applyRouletteReward(entry) {
+    let result;
+    if (entry.type === 'coins') {
+        addCurrency(entry.amount, 'coins');
+        result = { label: `${entry.amount} monedas`, image: 'assets/UI/Common/Currency/DEAD_COIN.png' };
+    } else if (entry.type === 'gems') {
+        addCurrency(entry.amount, 'gems');
+        result = { label: `${entry.amount} rubíes`, image: 'assets/UI/Common/Currency/Rubies.png' };
+    } else if (entry.type === 'chest') {
+        const chest = CHESTS_DATA.find(c => c.id === entry.chestId);
+        storeChestInInventory(entry.chestId, 1);
+        result = { label: chest ? chest.name : 'Cofre', image: chest?.image };
+    } else if (entry.type === 'luckChest') {
+        const luckChest = CHESTS_DATA.find(c => c.id === 'luck');
+        if (gambitState) {
+            // Ya hay un Cofre de la Suerte en curso — no lo pisamos para
+            // no borrar el progreso de mejoras de Felix/el jugador. Se
+            // sustituye por un premio de respaldo equivalente.
+            if (entry.fallbackGems) {
+                addCurrency(entry.fallbackGems, 'gems');
+                result = { label: `${entry.fallbackGems} rubíes (ya tenías un Cofre de la Suerte activo)`, image: 'assets/UI/Common/Currency/Rubies.png' };
+            } else {
+                addCurrency(entry.fallbackCoins || 40, 'coins');
+                result = { label: `${entry.fallbackCoins || 40} monedas (ya tenías un Cofre de la Suerte activo)`, image: 'assets/UI/Common/Currency/DEAD_COIN.png' };
+            }
+        } else {
+            gambitState = { level: entry.startLevel || 0, clicks: 0 };
+            result = { label: 'Cofre de la Suerte', image: luckChest?.image };
+        }
+    } else if (entry.type === 'fragment') {
+        window.grantRandomFragment?.();
+        result = { label: 'Fragmento', image: null };
+    } else if (entry.type === 'skin') {
+        const skinDef = FRAGMENT_SKINS_LIST.find(s => s.id === entry.skinId);
+        if (skinDef && isSkinOwned(skinDef)) {
+            // ya la tiene — no tiene sentido regalarla de nuevo, se cambia por un
+            // premio de respaldo equivalente (mismo patrón que el Cofre de la Suerte arriba)
+            if (entry.fallbackGems) {
+                addCurrency(entry.fallbackGems, 'gems');
+                result = { label: `${entry.fallbackGems} rubíes (ya tenías esta skin)`, image: 'assets/UI/Common/Currency/Rubies.png' };
+            } else {
+                addCurrency(entry.fallbackCoins || 100, 'coins');
+                result = { label: `${entry.fallbackCoins || 100} monedas (ya tenías esta skin)`, image: 'assets/UI/Common/Currency/DEAD_COIN.png' };
+            }
+        } else {
+            // otorga la skin completa de una — mismo mecanismo que isSkinOwned() ya
+            // reconoce (flag directo en localStorage), sin tocar el sistema de fragmentos
+            localStorage.setItem(getSkinStorageKey(entry.skinId), 'true');
+            window.SKINS_DATA = getAllShopSkins();
+            result = { label: skinDef ? skinDef.name : 'Skin', image: skinDef?.imageRight };
+        }
+    } else {
+        result = { label: 'Premio' };
+    }
+    updateMenuHUD();
+    refreshShopBalances?.();
+    return result;
+}
+
+function getTodayKey() {
+    const now = new Date();
+    return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+}
+
+/* =====================================================
+   SEGMENTOS DE LA RUEDA — qué ícono va en cada uno de los 8
+   gajos. Cambian de posición cada día (mismo orden todo el día,
+   distinto al día siguiente — semilla = fecha), EXCEPTO el gajo
+   de la skin de temporada, que existe siempre y no rota a otra
+   skin distinta hasta que Felix cambie las constantes de arriba.
+   Es solo decorativo: no determina el premio real (eso lo decide
+   rollWeightedTable con las tablas de arriba), es la "vidriera"
+   de lo que se puede llegar a ganar.
+   ===================================================== */
+
+// Shuffle determinístico: mismo array de entrada + misma semilla = mismo
+// resultado siempre (así el orden no cambia entre giros del mismo día).
+function seededShuffle(array, seedStr) {
+    let seed = 0;
+    for (let i = 0; i < seedStr.length; i++) seed = (seed * 31 + seedStr.charCodeAt(i)) >>> 0;
+    const rand = () => { seed = (seed * 1103515245 + 12345) >>> 0; return seed / 4294967296; };
+    const result = [...array];
+    for (let i = result.length - 1; i > 0; i--) {
+        const j = Math.floor(rand() * (i + 1));
+        [result[i], result[j]] = [result[j], result[i]];
+    }
+    return result;
+}
+
+function getRouletteSkinIcon(skinId) {
+    const skin = FRAGMENT_SKINS_LIST.find(s => s.id === skinId);
+    return skin ? { image: skin.imageRight, label: skin.name, isSeasonSkin: true } : null;
+}
+
+function getNormalWheelSegments() {
+    const pool = [
+        { image: 'assets/UI/Common/Currency/DEAD_COIN.png', label: 'Monedas' },
+        { image: 'assets/UI/Common/Currency/DEAD_COIN.png', label: 'Monedas extra' },
+        { image: 'assets/Imagenes/Cofres Imagenes/Cofre BASICO.png', label: 'Cofre Básico' },
+        { image: 'assets/Imagenes/Cofres Imagenes/Cofre ESPECIAL.png', label: 'Cofre Especial' },
+        { image: 'assets/Imagenes/Cofres Imagenes/Cofre EPICO.png', label: 'Cofre Épico' },
+        { image: 'assets/Imagenes/Cofres Imagenes/Cofre DEMON.png', label: 'Cofre Demon' },
+        { image: 'assets/Imagenes/Cofres Imagenes/Cofre LUCK.png', label: 'Cofre de la Suerte' },
+    ];
+    const skinIcon = getRouletteSkinIcon(NORMAL_ROULETTE_SEASON_SKIN);
+    if (skinIcon) pool.push(skinIcon);
+    return seededShuffle(pool, 'normal_' + getTodayKey());
+}
+
+function getVIPWheelSegments() {
+    const pool = [
+        { image: 'assets/UI/Common/Currency/Rubies.png', label: 'Rubíes' },
+        { image: SHOP_PLACEHOLDER_IMAGE, label: 'Fragmento' },
+        { image: 'assets/Imagenes/Cofres Imagenes/Cofre ESPECIAL.png', label: 'Cofre Especial' },
+        { image: 'assets/Imagenes/Cofres Imagenes/Cofre EPICO.png', label: 'Cofre Épico' },
+        { image: 'assets/Imagenes/Cofres Imagenes/Cofre DEMON.png', label: 'Cofre Demon' },
+        { image: 'assets/Imagenes/Cofres Imagenes/Cofre VIP.png', label: 'Cofre VIP' },
+        { image: 'assets/Imagenes/Cofres Imagenes/Cofre LUCK.png', label: 'Cofre de la Suerte' },
+    ];
+    const skinIcon = getRouletteSkinIcon(VIP_ROULETTE_SEASON_SKIN);
+    if (skinIcon) pool.push(skinIcon);
+    return seededShuffle(pool, 'vip_' + getTodayKey());
+}
+
+// Distribuye los 8 íconos en círculo alrededor del centro (posiciones en %,
+// para ubicarlos con left/top sobre el contenedor cuadrado de la rueda).
+function renderWheelSegmentIcons(segments, wrapId) {
+    const R = 37; // radio en % — qué tan cerca del borde quedan los íconos
+    const half = 360 / segments.length / 2; // offset para caer en el CENTRO del gajo, no en el vértice
+    const icons = segments.map((seg, i) => {
+        const angle = (360 / segments.length) * i - 90 + half;
+        const x = 50 + R * Math.cos(angle * Math.PI / 180);
+        const y = 50 + R * Math.sin(angle * Math.PI / 180);
+        return `<div class="roulette-segment-icon${seg.isSeasonSkin ? ' is-skin' : ''}" style="left:${x}%; top:${y}%;" title="${seg.label}">
+            <img src="${seg.image}" alt="${seg.label}">
+        </div>`;
+    }).join('');
+    // van adentro de un wrapper con su propio id: performRouletteSpin le
+    // aplica el MISMO transform que a la rueda, para que los íconos giren
+    // pegados a sus gajos en vez de quedarse quietos mientras gira el fondo.
+    return `<div class="roulette-icons-wrap" id="${wrapId}">${icons}</div>`;
+}
+
+// Encuentra en `segments` (los 8 gajos visuales) cuál le corresponde
+// al premio real que ya salió sorteado (`entry`, de rollWeightedTable).
+// Así la rueda puede aterrizar en el gajo correcto en vez de en
+// cualquier lado al azar.
+function matchRouletteSegmentIndex(segments, entry) {
+    if (entry.type === 'skin') {
+        const i = segments.findIndex(s => s.isSeasonSkin);
+        if (i !== -1) return i;
+    }
+    if (entry.type === 'chest') {
+        const byChestLabel = {
+            basic: 'Cofre Básico', special: 'Cofre Especial', epic: 'Cofre Épico',
+            demon: 'Cofre Demon', vip: 'Cofre VIP',
+        };
+        const i = segments.findIndex(s => s.label === byChestLabel[entry.chestId]);
+        if (i !== -1) return i;
+    }
+    if (entry.type === 'coins') {
+        const label = entry.amount >= 100 ? 'Monedas extra' : 'Monedas';
+        const i = segments.findIndex(s => s.label === label);
+        if (i !== -1) return i;
+    }
+    const directLabel = { gems: 'Rubíes', fragment: 'Fragmento', luckChest: 'Cofre de la Suerte' }[entry.type];
+    if (directLabel) {
+        const i = segments.findIndex(s => s.label === directLabel);
+        if (i !== -1) return i;
+    }
+    // respaldo — no debería pasar si las tablas y los pools de segmentos
+    // están alineados (lo están), pero por las dudas no rompe el giro.
+    return Math.floor(Math.random() * segments.length);
+}
+
+/* =====================================================
+   MOTOR DE GIRO COMPARTIDO (Fase 2.6) — usado por ambas
+   ruletas (VIP y Diaria). El giro visual es largo y con
+   suspenso (6-8 vueltas + frenado suave), y al terminar:
+   aterriza con un flash de luz, saca chispas (cantidad según
+   qué tan bueno fue el premio) y abre la tarjeta de resultado
+   con una frase de sabor random (nunca la misma seguido).
+   El pago/costo/giro-gratis NO vive acá — eso lo maneja cada
+   ruleta por separado (spinVIPRoulette/spinShopRoulette) ANTES
+   de llamar a este motor.
+   ===================================================== */
+
+// Cuántas chispas salen y de qué tamaño de "susto" es la frase,
+// según qué tan bueno fue el premio real (no el visual de la rueda).
+function getRouletteRewardTier(entry) {
+    if (entry.type === 'skin') return 'legendary';
+    if (entry.type === 'coins' || entry.type === 'gems') return 'meh';
+    if (entry.type === 'chest' && (entry.chestId === 'basic' || entry.chestId === 'special')) return 'mid';
+    return 'good'; // chest epic/demon/vip, luckChest, fragment
+}
+
+const ROULETTE_SPARK_COUNTS = { meh: 5, mid: 11, good: 18, legendary: 28 };
+
+const ROULETTE_FLAVOR_MEH = [
+    'Suerte para la próxima.',
+    'Bueno, algo es algo.',
+    'La rueda te debe una.',
+    'Ni tan mal, ni tan bien.',
+    'El karma se está guardando algo mejor.',
+    'Modesto, pero es tuyo.',
+    'La próxima girá con más fe.',
+    'Cerca... pero no tanto.',
+    'Para el bolsillo, no está mal.',
+];
+
+const ROULETTE_FLAVOR_GOOD = [
+    '¡Hoy fue tu día de suerte!',
+    '¡La rueda te sonrió!',
+    '¡Eso sí que es un premio!',
+    '¡Cayó en el ángulo perfecto!',
+    '¡Vas a presumir esto!',
+    '¡La suerte estaba de tu lado!',
+    '¡Golazo de la ruleta!',
+    '¡Esto valió la pena!',
+    '¡No lo esperabas, pero acá está!',
+];
+
+const ROULETTE_FLAVOR_LEGENDARY = [
+    '¡¡PREMIO MAYOR!! No lo vas a creer.',
+    '¡La rueda se lució con vos!',
+    '¡Esto es de guardar en la vitrina!',
+    '¡Jackpot! Suerte de otro nivel.',
+];
+
+function pickRouletteFlavor(tier) {
+    const pool = tier === 'legendary' ? ROULETTE_FLAVOR_LEGENDARY
+        : (tier === 'meh' ? ROULETTE_FLAVOR_MEH : ROULETTE_FLAVOR_GOOD);
+    return pool[Math.floor(Math.random() * pool.length)];
+}
+
+// Chispas que salen disparadas del centro de la rueda al aterrizar.
+// La cantidad escala con el tier del premio real.
+function spawnRouletteSparks(wheelWrap, tier) {
+    if (!wheelWrap) return;
+    const n = ROULETTE_SPARK_COUNTS[tier] || ROULETTE_SPARK_COUNTS.mid;
+    for (let i = 0; i < n; i++) {
+        const spark = document.createElement('div');
+        spark.className = 'roulette-spark';
+        const angle = Math.random() * 360;
+        const dist = 55 + Math.random() * 95;
+        spark.style.setProperty('--sx', `${Math.cos(angle * Math.PI / 180) * dist}px`);
+        spark.style.setProperty('--sy', `${Math.sin(angle * Math.PI / 180) * dist}px`);
+        spark.style.animationDelay = `${Math.random() * 0.12}s`;
+        wheelWrap.appendChild(spark);
+        spark.addEventListener('animationend', () => spark.remove());
+    }
+}
+
+// Motor de giro compartido. `table` ya decide el premio real
+// (rollWeightedTable) — el giro visual de la rueda es puro
+// suspenso, no tiene que "aterrizar" en el ícono correcto (la
+// rueda es la vidriera, ver comentario en getNormalWheelSegments).
+function performRouletteSpin(opts) {
+    const { wheelWrapId, bigWheelId, iconsWrapId, smallWheelSelector, footerId, table, segments, resultTextColor, spinAgainFn } = opts;
+
+    const wheelWrap = document.getElementById(wheelWrapId);
+    const bigWheel = document.getElementById(bigWheelId);
+    const iconsWrap = iconsWrapId ? document.getElementById(iconsWrapId) : null;
+    const smallWheel = document.querySelector(smallWheelSelector);
+    const footer = document.getElementById(footerId);
+    if (!bigWheel || !footer) return;
+
+    const entry = rollWeightedTable(table);
+    const reduced = isShopPerformanceMode();
+
+    // Ángulo del gajo que REALMENTE ganó (misma fórmula que usa
+    // renderWheelSegmentIcons para ubicar los íconos), para que la
+    // rueda aterrice ahí y no en cualquier lado al azar.
+    const n = segments.length;
+    const half = 360 / n / 2;
+    const targetIndex = matchRouletteSegmentIndex(segments, entry);
+    const segAngle = (360 / n) * targetIndex - 90 + half;
+
+    // El puntero está fijo arriba (ángulo -90). Un poco de jitter dentro
+    // del propio gajo para que no caiga siempre justo en el centro.
+    const jitter = (Math.random() - 0.5) * (half * 0.7);
+    const desiredMod = (((-90 - segAngle + jitter) % 360) + 360) % 360;
+
+    // 6 a 8 vueltas completas, acumuladas sobre la rotación previa (para
+    // que nunca "salte" hacia atrás visualmente), ajustadas para terminar
+    // exactamente en el gajo ganador.
+    const prevRotation = parseFloat(bigWheel.dataset.rotation || '0');
+    const currentMod = ((prevRotation % 360) + 360) % 360;
+    const diff = (desiredMod - currentMod + 360) % 360;
+    const nextRotation = prevRotation + (6 + Math.random() * 2) * 360 + diff;
+    bigWheel.dataset.rotation = nextRotation;
+
+    const duration = reduced ? 0.9 : 4.6;
+    footer.innerHTML = `<div class="roulette-spinning-msg">GIRANDO…</div>`;
+
+    // Curva monótona (frena parejo, sin "rebotes" a mitad de camino) en vez
+    // de la anterior que arrancaba con un salto casi instantáneo al 82% del
+    // giro y después se arrastraba — eso era el efecto "rueda chueca".
+    const easing = 'cubic-bezier(0.16, 1, 0.3, 1)';
+    bigWheel.style.transition = `transform ${duration}s ${easing}`;
+    bigWheel.style.transform = `rotate(${nextRotation}deg)`;
+    if (iconsWrap) {
+        iconsWrap.style.transition = `transform ${duration}s ${easing}`;
+        iconsWrap.style.transform = `rotate(${nextRotation}deg)`;
+    }
+    if (smallWheel) {
+        smallWheel.style.transition = `transform ${duration}s ${easing}`;
+        smallWheel.style.transform = `rotate(${nextRotation}deg)`;
+    }
+    window.playSfx?.('powerUp');
+
+    setTimeout(() => {
+        const result = applyRouletteReward(entry);
+        window.playSfx?.('reward');
+
+        const tier = getRouletteRewardTier(entry);
+
+        wheelWrap?.classList.add('roulette-landed-glow');
+        bigWheel.classList.add('roulette-glowing');
+        setTimeout(() => {
+            wheelWrap?.classList.remove('roulette-landed-glow');
+            bigWheel.classList.remove('roulette-glowing');
+        }, 750);
+
+        if (!reduced) spawnRouletteSparks(wheelWrap, tier);
+
+        const flavor = pickRouletteFlavor(tier === 'mid' ? 'good' : tier);
+
+        footer.innerHTML = `
+            <div class="roulette-result-card${tier === 'legendary' ? ' is-legendary' : ''}">
+                ${result.image ? `<img src="${result.image}" class="roulette-result-img" alt="">` : ''}
+                <div class="roulette-result-label" style="color:${resultTextColor};">${result.label}</div>
+                <div class="roulette-result-flavor">${flavor}</div>
+                <button class="roulette-spin-btn roulette-spin-again-btn" onclick="${spinAgainFn}()">GIRAR DE NUEVO</button>
+            </div>
+        `;
+    }, duration * 1000);
+}
+
+// Costo del próximo giro en la Ruleta Diaria: gratis 1 vez por día
+// (mismo patrón de reinicio por día calendario que el Regalo Diario),
+// después escala 50 → 100 → 200 monedas.
+function getNormalRouletteSpinCost() {
+    const todayKey = getTodayKey();
+    if (localStorage.getItem('rouletteFreeSpin_' + todayKey) !== 'true') return 0;
+    const paidCount = parseInt(localStorage.getItem('roulettePaidSpins_' + todayKey) || '0');
+    const costs = [50, 100, 200];
+    return costs[Math.min(paidCount, costs.length - 1)];
+}
+
+// Llave de Caronte (PLAN_LLAVES_CARONTE.md, Parte F): la ruleta VIP ya NO
+// cobra en rubíes — se paga en Llaves de Caronte, que son 100% drop
+// (cofres raros / victorias muy raras). Dos opciones: 1 giro por 1 llave,
+// o 12 giros por 10 llaves (2 gratis de "descuento" por comprar en bulk).
+const VIP_ROULETTE_KEY_COST_SINGLE = 1;
+const VIP_ROULETTE_KEY_COST_BULK = 10;
+const VIP_ROULETTE_BULK_SPINS = 12;
+
+function ensureVIPRouletteButton() {
+    let btn = document.getElementById('vipRouletteBtn');
+    if (btn) return btn;
+
+    btn = document.createElement('div');
+    btn.id = 'vipRouletteBtn';
+    btn.className = 'vip-roulette-btn';
+    btn.style.setProperty('--cfg-hud-accent', '#e0b563');
+    btn.style.display = 'none';
+    btn.innerHTML = `
+        <div class="vip-roulette-wheel" style="background-image:url('${ROULETTE_WHEEL_IMAGES.vip}');"></div>
+        <span class="vip-roulette-label">CARONTE</span>
+    `;
+    btn.addEventListener('click', openVIPRouletteModal);
+    document.body.appendChild(btn);
+
+    const overlay = document.createElement('div');
+    overlay.id = 'vipRouletteOverlay';
+    overlay.className = 'vip-roulette-overlay';
+    overlay.innerHTML = `
+        <div class="vip-roulette-modal">
+            <div class="vip-roulette-modal-close" id="vipRouletteModalClose"></div>
+            <div class="vip-roulette-modal-title">LA LLAVE DE CARONTE</div>
+            <div class="vip-roulette-modal-body" id="vipRouletteModalBody"></div>
+        </div>
+    `;
+    overlay.addEventListener('pointerdown', (e) => {
+        if (e.target === overlay) closeVIPRouletteModal();
+    });
+    document.body.appendChild(overlay);
+    overlay.querySelector('#vipRouletteModalClose').addEventListener('click', closeVIPRouletteModal);
+
+    return btn;
+}
+
+function renderVIPRouletteModalBody() {
+    const body = document.getElementById('vipRouletteModalBody');
+    if (!body) return;
+    const keys = getCaronteKeys();
+    const canPaySingle = window.infiniteCoinsMode || keys >= VIP_ROULETTE_KEY_COST_SINGLE;
+    const canPayBulk = window.infiniteCoinsMode || keys >= VIP_ROULETTE_KEY_COST_BULK;
+    const keysDisplay = window.infiniteCoinsMode ? '∞' : keys;
+    const segments = getVIPWheelSegments();
+    const probGroups = getVIPRouletteProbabilityGroups();
+    body.innerHTML = `
+        <div class="roulette-wheel-big-wrap" id="vipRouletteWheelWrap">
+            <div class="roulette-wheel-pointer"></div>
+            <div class="vip-roulette-wheel roulette-wheel-big" id="vipRouletteBigWheel" style="background-image:url('${ROULETTE_WHEEL_IMAGES.vip}');"></div>
+            ${renderWheelSegmentIcons(segments, 'vipRouletteIconsWrap')}
+        </div>
+        <div class="roulette-footer" id="vipRouletteFooter">
+            <button type="button" class="caronte-info-btn" id="vipRouletteInfoBtn" aria-label="Información de La Llave de Caronte">
+                ${CARONTE_OBOLO_SVG}
+            </button>
+            <div class="caronte-info-panel" id="vipRouletteInfoPanel">
+                <p>Bienvenido a la Llave de Caronte. Aquí tendrás acceso a increíbles recompensas.</p>
+                <div class="caronte-info-divider"></div>
+                <p class="caronte-info-subtitle">Probabilidades por giro</p>
+                <ul class="caronte-info-list">
+                    ${probGroups.map(g => `<li><span>${g.label}</span><span>${g.pct}%</span></li>`).join('')}
+                </ul>
+            </div>
+            <div class="vip-roulette-keys-display">
+                ${renderCaronteKeyIcon('sm')}
+                <span>TIENES ${keysDisplay} LLAVE${keys === 1 ? '' : 'S'} DE CARONTE</span>
+            </div>
+            <div class="vip-roulette-spin-options">
+                <button id="vipRouletteSpinBtn" class="roulette-spin-btn" onclick="spinVIPRoulette()" ${canPaySingle ? '' : 'disabled'}>
+                    GIRAR x1 · ${renderCaronteKeyIcon('sm')} 1
+                </button>
+                <button id="vipRouletteSpinBulkBtn" class="roulette-spin-btn roulette-spin-bulk-btn" onclick="spinVIPRouletteBulk()" ${canPayBulk ? '' : 'disabled'}>
+                    GIRAR x12 · ${renderCaronteKeyIcon('sm')} 10
+                </button>
+            </div>
+        </div>
+    `;
+    document.getElementById('vipRouletteInfoBtn')?.addEventListener('click', () => {
+        document.getElementById('vipRouletteInfoPanel')?.classList.toggle('open');
+    });
+}
+
+function spinVIPRoulette() {
+    if (!window.infiniteCoinsMode && getCaronteKeys() < VIP_ROULETTE_KEY_COST_SINGLE) return;
+    if (!window.infiniteCoinsMode) spendCurrency(VIP_ROULETTE_KEY_COST_SINGLE, 'caronteKeys');
+
+    performRouletteSpin({
+        wheelWrapId: 'vipRouletteWheelWrap',
+        bigWheelId: 'vipRouletteBigWheel',
+        iconsWrapId: 'vipRouletteIconsWrap',
+        smallWheelSelector: '#vipRouletteBtn .vip-roulette-wheel',
+        footerId: 'vipRouletteFooter',
+        table: VIP_ROULETTE_TABLE,
+        segments: getVIPWheelSegments(),
+        resultTextColor: '#5a1220',
+        spinAgainFn: 'renderVIPRouletteModalBody',
+    });
+}
+
+// Giro x12 (Parte F): sin animación de rueda por cada giro individual (sería
+// ~55s de espera con la duración actual) — tira las 12 recompensas de una,
+// las agrupa, y muestra un resumen. Mismo patrón que "abrir cofre x N" en
+// el inventario (openInventoryChestAmount), para mantener consistencia.
+function spinVIPRouletteBulk() {
+    if (!window.infiniteCoinsMode && getCaronteKeys() < VIP_ROULETTE_KEY_COST_BULK) return;
+    if (!window.infiniteCoinsMode) spendCurrency(VIP_ROULETTE_KEY_COST_BULK, 'caronteKeys');
+
+    const footer = document.getElementById('vipRouletteFooter');
+    if (footer) footer.innerHTML = `<div class="roulette-spinning-msg">GIRANDO x${VIP_ROULETTE_BULK_SPINS}…</div>`;
+
+    setTimeout(() => {
+        const counts = {};
+        let firstImage = null;
+        for (let i = 0; i < VIP_ROULETTE_BULK_SPINS; i++) {
+            const entry = rollWeightedTable(VIP_ROULETTE_TABLE);
+            const result = applyRouletteReward(entry);
+            if (!firstImage) firstImage = result.image;
+            counts[result.label] = (counts[result.label] || 0) + 1;
+        }
+        window.playSfx?.('reward');
+        if (!footer) return;
+        footer.innerHTML = `
+            <div class="roulette-result-card">
+                <div class="roulette-result-label">¡${VIP_ROULETTE_BULK_SPINS} giros completados!</div>
+                <div class="roulette-bulk-list">
+                    ${Object.entries(counts).map(([label, qty]) => `<div>${label}${qty > 1 ? ' x' + qty : ''}</div>`).join('')}
+                </div>
+                <button class="roulette-spin-btn roulette-spin-again-btn" onclick="renderVIPRouletteModalBody()">CERRAR</button>
+            </div>
+        `;
+    }, 500); // pequeño delay para que se sienta como que "pasó algo", no instantáneo
+}
+
+function openVIPRouletteModal() {
+    window.playSfx?.('levelHover', 0.6);
+    renderVIPRouletteModalBody();
+    document.getElementById('vipRouletteOverlay')?.classList.add('open');
+}
+
+function closeVIPRouletteModal() {
+    document.getElementById('vipRouletteOverlay')?.classList.remove('open');
+}
+
+function showVIPRoulette() {
+    const btn = ensureVIPRouletteButton();
+    btn.style.display = 'flex';
+
+    const INITIAL_DELAY = 3000;  // no invita apenas se abre la tienda, espera un poco
+    const REPEAT_EVERY = 9000;   // cada cuánto vuelve a invitar
+    const CYCLE_LENGTH = 1100;   // debe matchear la duración de las animaciones CSS
+
+    const inviteOnce = () => {
+        const overlay = document.getElementById('vipRouletteOverlay');
+        if (!btn || overlay?.classList.contains('open')) return;
+        btn.classList.add('inviting');
+        setTimeout(() => btn.classList.remove('inviting'), CYCLE_LENGTH);
+    };
+
+    vipRouletteInviteTimeout = setTimeout(() => {
+        inviteOnce();
+        vipRouletteInviteInterval = setInterval(inviteOnce, REPEAT_EVERY);
+    }, INITIAL_DELAY);
+}
+
+function hideVIPRoulette() {
+    if (vipRouletteInviteTimeout) { clearTimeout(vipRouletteInviteTimeout); vipRouletteInviteTimeout = null; }
+    if (vipRouletteInviteInterval) { clearInterval(vipRouletteInviteInterval); vipRouletteInviteInterval = null; }
+    const btn = document.getElementById('vipRouletteBtn');
+    if (btn) { btn.style.display = 'none'; btn.classList.remove('inviting'); }
+    closeVIPRouletteModal();
+}
+
+/* =====================================================
+   RULETA DIARIA — tienda normal, con monedas. Mismo patrón
+   que la de VIP (botón fijo + modal), pero con acento rosa/rojo
+   (el color de marca de la tienda normal, no el dorado de VIP)
+   y 1 giro gratis por día antes de empezar a cobrar.
+   ===================================================== */
+function ensureShopRouletteButton() {
+    let btn = document.getElementById('shopRouletteBtn');
+    if (btn) return btn;
+
+    btn = document.createElement('div');
+    btn.id = 'shopRouletteBtn';
+    btn.className = 'vip-roulette-btn shop-roulette-btn';
+    btn.style.setProperty('--cfg-hud-accent', '#ff4d6d');
+    btn.style.display = 'none';
+    btn.innerHTML = `
+        <div class="vip-roulette-wheel" style="background-image:url('${ROULETTE_WHEEL_IMAGES.normal}');"></div>
+        <span class="vip-roulette-label">DIARIA</span>
+    `;
+    btn.addEventListener('click', openShopRouletteModal);
+    document.body.appendChild(btn);
+
+    const overlay = document.createElement('div');
+    overlay.id = 'shopRouletteOverlay';
+    overlay.className = 'vip-roulette-overlay shop-roulette-overlay';
+    overlay.innerHTML = `
+        <div class="vip-roulette-modal">
+            <div class="vip-roulette-modal-close" id="shopRouletteModalClose"></div>
+            <div class="vip-roulette-modal-title">RULETA DIARIA</div>
+            <div class="vip-roulette-modal-body" id="shopRouletteModalBody"></div>
+        </div>
+    `;
+    overlay.addEventListener('pointerdown', (e) => {
+        if (e.target === overlay) closeShopRouletteModal();
+    });
+    document.body.appendChild(overlay);
+    overlay.querySelector('#shopRouletteModalClose').addEventListener('click', closeShopRouletteModal);
+
+    return btn;
+}
+
+function renderShopRouletteModalBody() {
+    const body = document.getElementById('shopRouletteModalBody');
+    if (!body) return;
+    const cost = getNormalRouletteSpinCost();
+    const coins = parseInt(localStorage.getItem('deadCoins') || '0');
+    const canPay = cost === 0 || window.infiniteCoinsMode || coins >= cost;
+    const segments = getNormalWheelSegments();
+    body.innerHTML = `
+        <div class="roulette-wheel-big-wrap" id="shopRouletteWheelWrap">
+            <div class="roulette-wheel-pointer"></div>
+            <div class="vip-roulette-wheel roulette-wheel-big" id="shopRouletteBigWheel" style="background-image:url('${ROULETTE_WHEEL_IMAGES.normal}');"></div>
+            ${renderWheelSegmentIcons(segments, 'shopRouletteIconsWrap')}
+        </div>
+        <div class="roulette-footer" id="shopRouletteFooter">
+            <p class="roulette-hint-text">
+                ${cost === 0 ? 'Tenés tu giro gratis de hoy esperando.' : `Ya usaste el giro gratis de hoy. Girar de nuevo cuesta ${cost} monedas.`}
+            </p>
+            <button id="shopRouletteSpinBtn" class="roulette-spin-btn" onclick="spinShopRoulette()" ${canPay ? '' : 'disabled'}>
+                ${cost === 0 ? 'GIRAR GRATIS' : `GIRAR · ${cost} monedas`}
+            </button>
+            ${canPay ? '' : '<p class="roulette-cant-pay">No te alcanzan las monedas.</p>'}
+        </div>
+    `;
+}
+
+function spinShopRoulette() {
+    const cost = getNormalRouletteSpinCost();
+    const coins = parseInt(localStorage.getItem('deadCoins') || '0');
+    if (cost > 0 && !window.infiniteCoinsMode && coins < cost) return;
+
+    const todayKey = getTodayKey();
+    if (cost === 0) {
+        localStorage.setItem('rouletteFreeSpin_' + todayKey, 'true');
+    } else {
+        spendCurrency(cost, 'coins');
+        const paidCount = parseInt(localStorage.getItem('roulettePaidSpins_' + todayKey) || '0');
+        localStorage.setItem('roulettePaidSpins_' + todayKey, String(paidCount + 1));
+    }
+
+    performRouletteSpin({
+        wheelWrapId: 'shopRouletteWheelWrap',
+        bigWheelId: 'shopRouletteBigWheel',
+        iconsWrapId: 'shopRouletteIconsWrap',
+        smallWheelSelector: '#shopRouletteBtn .vip-roulette-wheel',
+        footerId: 'shopRouletteFooter',
+        table: NORMAL_ROULETTE_TABLE,
+        segments: getNormalWheelSegments(),
+        resultTextColor: '#ffffff',
+        spinAgainFn: 'renderShopRouletteModalBody',
+    });
+}
+
+function openShopRouletteModal() {
+    window.playSfx?.('levelHover', 0.6);
+    renderShopRouletteModalBody();
+    document.getElementById('shopRouletteOverlay')?.classList.add('open');
+}
+
+function closeShopRouletteModal() {
+    document.getElementById('shopRouletteOverlay')?.classList.remove('open');
+}
+
+function showShopRoulette() {
+    const btn = ensureShopRouletteButton();
+    btn.style.display = 'flex';
+
+    const INITIAL_DELAY = 3000;
+    const REPEAT_EVERY = 9000;
+    const CYCLE_LENGTH = 1100;
+
+    const inviteOnce = () => {
+        const overlay = document.getElementById('shopRouletteOverlay');
+        if (!btn || overlay?.classList.contains('open')) return;
+        btn.classList.add('inviting');
+        setTimeout(() => btn.classList.remove('inviting'), CYCLE_LENGTH);
+    };
+
+    shopRouletteInviteTimeout = setTimeout(() => {
+        inviteOnce();
+        shopRouletteInviteInterval = setInterval(inviteOnce, REPEAT_EVERY);
+    }, INITIAL_DELAY);
+}
+
+function hideShopRoulette() {
+    if (shopRouletteInviteTimeout) { clearTimeout(shopRouletteInviteTimeout); shopRouletteInviteTimeout = null; }
+    if (shopRouletteInviteInterval) { clearInterval(shopRouletteInviteInterval); shopRouletteInviteInterval = null; }
+    const btn = document.getElementById('shopRouletteBtn');
+    if (btn) { btn.style.display = 'none'; btn.classList.remove('inviting'); }
+    closeShopRouletteModal();
 }
 
 function renderVIPShell(panel) {
@@ -3166,13 +4142,20 @@ function renderVIPHome() {
     content.innerHTML = `
         <section class="vip-hero">
             <button class="vip-arrow" onclick="moveVIPCarousel(-1)" type="button">&lt;</button>
-            <div class="vip-feature vip-carousel-glow" style="--vip-glow-a:${active.glowA || '#ffee00'}; --vip-glow-b:${active.glowB || '#ff8800'};" onclick="renderVIPCarouselDetail('${active.id}')">
+            <div class="vip-feature hud-frame hud-panel-cut vip-carousel-glow" style="--vip-glow-a:${active.glowA || '#ffee00'}; --vip-glow-b:${active.glowB || '#ff8800'}; --cfg-hud-accent:#e0b563;" onclick="renderVIPCarouselDetail('${active.id}')">
+                <div class="hud-frame-c tl"></div><div class="hud-frame-c tr"></div>
+                <div class="hud-frame-c bl"></div><div class="hud-frame-c br"></div>
                 <div class="vip-feature-cover" style="background-image:linear-gradient(90deg, rgba(0,0,0,.35), rgba(0,0,0,.05)), url('${active.cover}');"></div>
+                <div class="vip-feature-scrim"></div>
                 <div class="vip-feature-copy">
-                    <div class="vip-kicker">PANEL DESTACADO</div>
+                    <span class="hud-tag">PANEL DESTACADO</span>
+                    <span class="hero-kicker-line"></span>
                     <h2>${active.title}</h2>
                     <p>${active.subtitle}</p>
-                    <div class="vip-price">${renderPrice(active.price, 'gems')}</div>
+                </div>
+                <div class="vip-feature-bottom">
+                    <span class="label">Desde</span>
+                    <span class="hud-price-chip">${renderPrice(active.price, 'gems')}</span>
                 </div>
             </div>
             <button class="vip-arrow" onclick="moveVIPCarousel(1)" type="button">&gt;</button>
@@ -3181,11 +4164,21 @@ function renderVIPHome() {
             ${VIP_CAROUSEL_DATA.map((panel, index) => `<button class="${index === vipCarouselIndex ? 'active' : ''}" onclick="setVIPCarousel(${index})" type="button">${index + 1}</button>`).join('')}
         </div>
         <section class="vip-banner-row">
-            ${VIP_PROMO_BANNERS.map(renderVIPPromoBanner).join('')}
+            ${VIP_PROMO_BANNERS.map(banner => `
+                <div class="vip-banner-col">
+                    <div class="vip-section-title hud-header-bar" style="--cfg-hud-accent:#e0b563;">${banner.title}</div>
+                    ${renderVIPPromoBanner(banner)}
+                </div>
+            `).join('')}
         </section>
+        <div class="vip-section-title hud-header-bar" style="--cfg-hud-accent:#e0b563;">PAQUETES DE LA VITRINA</div>
         <section class="vip-package-grid">
             ${VIP_PACKAGES_DATA.map(renderVIPPackageCard).join('')}
         </section>
+        <div class="vip-section-title hud-header-bar" style="--cfg-hud-accent:#e0b563;">OFERTAS RELÁMPAGO</div>
+        <div class="mini-row">
+            ${VIP_FLASH_OFFERS_DEMO.map(renderVIPFlashOfferMini).join('')}
+        </div>
     `;
     optimizeShopMedia(content);
 }
@@ -3200,15 +4193,45 @@ function setVIPCarousel(index) {
     renderVIPHome();
 }
 
+/* Ofertas relámpago (Fase 2.4.8) — SOLO VISUAL por ahora, calcada de
+   V6.html. No hay temporizador real corriendo ni sistema de expiración
+   de ofertas en el juego (ver nota en el .md, Fase 2.4.4) — el texto
+   de tiempo es fijo, no cuenta atrás de verdad. Usa 3 items reales que
+   YA existen en VIP_PACKAGES_DATA (no se inventaron items nuevos) solo
+   para no dejarlo con nombres de mentira. Cuando exista un sistema real
+   de ofertas con vencimiento, esto se reemplaza por datos reales ahí.
+   */
+const VIP_FLASH_OFFERS_DEMO = [
+    { name: 'Fantasma', timeText: '00:41:12', price: 260, image: 'assets/UI/Store/VIP/Bundles/Monsters/skin_fantasma.png' },
+    { name: 'Lobo Monstruo', timeText: '02:03:47', price: 300, image: 'assets/UI/Store/VIP/Bundles/Monsters/skin_lobo_monstruo.png' },
+    { name: 'Calabaza', timeText: '05:12:00', price: 280, image: 'assets/UI/Store/VIP/Bundles/Monsters/skin_calabaza.png' }
+];
+
+function renderVIPFlashOfferMini(offer) {
+    return `
+        <article class="hud-panel-cut mini-banner">
+            <div class="mini-art"></div>
+            <div class="mini-body"><span class="name">${offer.name}</span></div>
+            <div class="mini-foot">
+                <span class="hud-timer"><span class="hud-timer-clock"></span>${offer.timeText}</span>
+                <span class="hud-price-chip">${renderPrice(offer.price, 'gems')}</span>
+            </div>
+        </article>
+    `;
+}
+
 function renderVIPPackageCard(pack) {
     return `
-        <article class="vip-pack-card" style="--vip-accent:${pack.accent};" onclick="renderVIPPackageDetail('${pack.id}')">
-            <div class="vip-pack-cover" style="background-image:linear-gradient(180deg, rgba(0,0,0,.12), rgba(0,0,0,.64)), url('${pack.cover}');"></div>
+        <article class="vip-pack-card hud-panel-cut" style="--vip-accent:${pack.accent}; --cfg-hud-accent:#e0b563;" onclick="renderVIPPackageDetail('${pack.id}')">
+            ${pack.badge === 'best' ? '<div class="vip-pack-ribbon">MÁS VENDIDO</div>' : ''}
+            ${pack.isNew ? '<div class="hud-notify-dot"></div>' : ''}
+            <div class="vip-pack-cover" style="background-image:url('${pack.cover}');"></div>
+            <div class="vip-pack-scrim"></div>
             <div class="vip-pack-body">
                 <div class="vip-kicker">PAQUETE</div>
                 <h3>${pack.title}</h3>
-                <div>${pack.items.length} items</div>
-                <strong>${renderPrice(pack.price, 'gems')}</strong>
+                <div class="tier-sub">${pack.items.length} items</div>
+                <div class="tier-foot"><span class="hud-price-chip">${renderPrice(pack.price, 'gems')}</span></div>
             </div>
         </article>
     `;
@@ -3223,9 +4246,12 @@ function renderVIPCarouselDetail(id) {
 
 function renderVIPPromoBanner(banner) {
     if (banner.id === 'vip_powerups') return renderVIPPowerupPromoBanner(banner);
+    if (banner.id === 'vip_seasons') return renderVIPSeasonsBanner(banner);
 
     return `
-        <article class="vip-promo-banner" onclick="renderVIPPromoDetail('${banner.id}')">
+        <article class="vip-promo-banner hud-frame hud-panel-cut" style="--cfg-hud-accent:#e0b563;" onclick="renderVIPPromoDetail('${banner.id}')">
+            <div class="hud-frame-c tl"></div><div class="hud-frame-c tr"></div>
+            <div class="hud-frame-c bl"></div><div class="hud-frame-c br"></div>
             <img src="${banner.cover}" alt="" draggable="false">
         </article>
     `;
@@ -3238,14 +4264,145 @@ function renderVIPPromoDetail(id) {
     if (!content) return;
     window.currentVIPDetailRenderer = () => renderVIPPromoDetail(id);
     const isBannerShop = id === 'vip_specials';
+    const isSeasons = id === 'vip_seasons';
     content.innerHTML = `
         <button class="vip-back" onclick="renderVIPHome()" type="button">VOLVER A VIP</button>
         ${isBannerShop
             ? renderVIPLegendRoom(banner)
-            : renderVIPGameplayLab(banner)}
+            : isSeasons
+                ? renderVIPSeasonsDetail(banner)
+                : renderVIPGameplayLab(banner)}
     `;
     optimizeShopMedia(content);
     if (isBannerShop) initVIPBannerShelfLoops(content);
+}
+
+// Renderizar banner promocional de Temporadas VIP
+// banner: Objeto del banner
+// Retorna HTML del banner con carrusel de temporadas
+function renderVIPSeasonsBanner(banner) {
+    const seasons = window.GEM_SEASONS ? Object.values(window.GEM_SEASONS) : [];
+    const activeSeasons = seasons.filter(s => window.isSeasonActive?.(s.id));
+
+    return `
+        <article class="vip-promo-banner vip-seasons-promo-banner" onclick="renderVIPPromoDetail('${banner.id}')">
+            <div class="vip-seasons-promo-backdrop"></div>
+            <div class="vip-seasons-promo-copy">
+                <span>TEMPORADAS</span>
+                <strong>EXCLUSIVAS</strong>
+            </div>
+            <div class="vip-seasons-promo-grid">
+                ${seasons.slice(0, 4).map((season, index) => `
+                    <div class="vip-season-card season-${index + 1}" style="--season-active:${window.isSeasonActive?.(season.id) ? '1' : '0'};" onclick="event.stopPropagation(); renderVIPSeasonDetail('${season.id}');">
+                        <div class="vip-season-cover">
+                            <img src="${SHOP_PLACEHOLDER_IMAGE}" alt="${season.displayName}" draggable="false">
+                        </div>
+                        <div class="vip-season-info">
+                            <span>${season.displayName}</span>
+                        </div>
+                    </div>
+                `).join('')}
+            </div>
+        </article>
+    `;
+}
+
+// Renderizar detalle de Temporadas VIP
+// banner: Objeto del banner
+// Retorna HTML de la página de detalle de temporadas
+function renderVIPSeasonsDetail(banner) {
+    const seasons = window.GEM_SEASONS ? Object.values(window.GEM_SEASONS) : [];
+    const activeSeasons = seasons.filter(s => window.isSeasonActive?.(s.id));
+
+    return `
+        <section class="vip-seasons-hero" style="background-image:linear-gradient(90deg, rgba(2,5,12,0.82), rgba(4,10,16,0.58)), url('${banner.detailBackground || banner.cover}');">
+            <div class="vip-seasons-hero-content">
+                <div class="vip-kicker">TEMPORADAS</div>
+                <h2>${banner.title}</h2>
+                <p>${banner.subtitle}</p>
+                <div class="vip-seasons-count">${activeSeasons.length} temporadas activas</div>
+            </div>
+        </section>
+        <section class="vip-seasons-grid">
+            ${seasons.map(season => renderVIPSeasonCard(season)).join('')}
+        </section>
+    `;
+}
+
+// Renderizar tarjeta de temporada
+// season: Objeto de temporada
+// Retorna HTML de la tarjeta
+function renderVIPSeasonCard(season) {
+    const isActive = window.isSeasonActive?.(season.id);
+    const now = new Date();
+    const startsAt = new Date(`${season.startsAt}T00:00:00`);
+    const expiresAt = new Date(`${season.expiresAt}T23:59:59`);
+
+    let statusText = '';
+    let statusColor = '';
+
+    if (isActive) {
+        statusText = 'ACTIVA';
+        statusColor = '#00ff88';
+    } else if (now < startsAt) {
+        statusText = 'PRÓXIMAMENTE';
+        statusColor = '#ffee00';
+    } else {
+        statusText = 'EXPIRADA';
+        statusColor = '#ff4d6d';
+    }
+
+    return `
+        <article class="vip-season-detail-card" onclick="renderVIPSeasonDetail('${season.id}')">
+            <div class="vip-season-detail-cover">
+                <img src="${SHOP_PLACEHOLDER_IMAGE}" alt="${season.displayName}" draggable="false">
+                <div class="vip-season-status" style="color:${statusColor}; border-color:${statusColor};">${statusText}</div>
+            </div>
+            <div class="vip-season-detail-body">
+                <div class="vip-kicker">TEMPORADA</div>
+                <h3>${season.displayName}</h3>
+                <p>Del ${season.startsAt} al ${season.expiresAt}</p>
+                <div class="vip-season-items-count">
+                    ${season.contains.skins.length} skins • ${season.contains.trails.length} trails • ${season.contains.banners.length} banners • ${season.contains.emotes.length} emotes
+                </div>
+            </div>
+        </article>
+    `;
+}
+
+// Renderizar detalle individual de una temporada
+// seasonId: ID de la temporada
+// Retorna HTML de la página de detalle de la temporada
+function renderVIPSeasonDetail(seasonId) {
+    const season = window.getSeasonById?.(seasonId);
+    if (!season) return renderVIPSeasonsDetail(VIP_PROMO_BANNERS.find(b => b.id === 'vip_seasons'));
+
+    const content = document.getElementById('vipContent');
+    if (!content) return;
+
+    window.currentVIPDetailRenderer = () => renderVIPSeasonDetail(seasonId);
+
+    content.innerHTML = `
+        <button class="vip-back" onclick="renderVIPPromoDetail('vip_seasons')" type="button">VOLVER A TEMPORADAS</button>
+        <section class="vip-season-detail-hero" style="background-image:linear-gradient(90deg, rgba(2,5,12,0.82), rgba(4,10,16,0.58));">
+            <div class="vip-season-detail-hero-cover">
+                <img src="${SHOP_PLACEHOLDER_IMAGE}" alt="${season.displayName}" draggable="false">
+            </div>
+            <div class="vip-season-detail-hero-content">
+                <div class="vip-kicker">TEMPORADA</div>
+                <h2>${season.displayName}</h2>
+                <p>Del ${season.startsAt} al ${season.expiresAt}</p>
+            </div>
+        </section>
+        <section class="vip-season-detail-content">
+            <div class="vip-season-empty-state">
+                <div style="color:rgba(255,255,255,0.3); font-family:monospace; font-size:14px; letter-spacing:2px; text-align:center; padding:40px;">
+                    CONTENIDO DE TEMPORADA
+                </div>
+            </div>
+        </section>
+    `;
+    optimizeShopMedia(content);
 }
 
 function renderVIPGameplayPlaceholder(item) {
@@ -3359,18 +4516,24 @@ function renderVIPBannerShelf({ title, items, variant, offset = false }) {
 }
 
 // Desplaza una fila-carrusel de banners hacia la izquierda/derecha.
+// NOTA (fix bug carrusel): ya no forzamos normalizeVIPShelfLoop() ni
+// tocamos scrollLeft de forma síncrona aquí. Antes esta función y el
+// listener de scroll (más abajo) escribían scrollLeft casi al mismo tiempo
+// que la animación nativa 'smooth' seguía en curso, y se peleaban entre sí
+// (esos eran los saltos/glitches visibles). Ahora scrollVIPShelf() SOLO
+// dispara el scroll suave; el reacomodo del loop lo hace siempre el mismo
+// mecanismo (ver initVIPBannerShelfLoops), sin importar si el scroll vino
+// del botón, del touch o de la rueda del mouse.
 function scrollVIPShelf(id, direction) {
     const track = document.getElementById(id);
     if (!track) return;
-    normalizeVIPShelfLoop(track);
     const card = track.querySelector('.vip-station-card');
     const step = ((card?.offsetWidth || 220) + 18) * 3;
+    // Esta clase le dice al CSS que anime este scroll (scroll-behavior:
+    // smooth); el touch/wheel nativo se queda "auto" (instantáneo) siempre,
+    // así que no compite con el gesto del usuario. Se quita en 'settle',
+    // cuando el scroll ya terminó de verdad (ver initVIPBannerShelfLoops).
     track.classList.add('is-smooth-scrolling');
-    clearTimeout(track.vipSmoothTimer);
-    track.vipSmoothTimer = setTimeout(() => {
-        track.classList.remove('is-smooth-scrolling');
-        normalizeVIPShelfLoop(track);
-    }, 520);
     track.scrollBy({ left: direction * step, behavior: 'smooth' });
 }
 
@@ -3387,12 +4550,15 @@ function getVIPShelfLoopWidth(track) {
 function jumpVIPShelfWithoutSmooth(track, left) {
     if (!track) return;
     track.dataset.vipLoopJumping = 'true';
-    track.classList.remove('is-smooth-scrolling');
     track.style.scrollBehavior = 'auto';
     track.scrollLeft = left;
     requestAnimationFrame(() => {
         track.style.scrollBehavior = '';
-        track.dataset.vipLoopJumping = 'false';
+        // Doble rAF: esperamos un frame extra para que el propio salto no
+        // dispare de nuevo el listener de scroll antes de limpiar la bandera.
+        requestAnimationFrame(() => {
+            track.dataset.vipLoopJumping = 'false';
+        });
     });
 }
 
@@ -3410,7 +4576,15 @@ function normalizeVIPShelfLoop(track) {
 // Activa el "loop" infinito de las filas-carrusel: al llegar a cualquiera de
 // los extremos del track duplicado, salta sin animación al punto equivalente
 // del otro set, dando la sensación de scroll infinito.
+//
+// FIX BUG (ver notas arriba): normalizeVIPShelfLoop ya NO se ejecuta en cada
+// frame mientras el scroll está en movimiento (eso era lo que chocaba con el
+// scroll suave del botón y con el touch/wheel nativo). Ahora se espera a que
+// el scroll realmente se haya detenido -usando el evento nativo 'scrollend'
+// si el navegador lo soporta, o un debounce corto como fallback- y solo
+// ENTONCES se decide si hace falta el salto de loop.
 function initVIPBannerShelfLoops(root = document) {
+    const supportsScrollEnd = 'onscrollend' in window;
     root.querySelectorAll('[data-vip-shelf-loop="true"]').forEach(track => {
         if (track.dataset.vipLoopBound === 'true') return;
         track.dataset.vipLoopBound = 'true';
@@ -3420,11 +4594,29 @@ function initVIPBannerShelfLoops(root = document) {
             const loopWidth = getVIPShelfLoopWidth(track);
             if (loopWidth) jumpVIPShelfWithoutSmooth(track, loopWidth);
         });
-        track.addEventListener('scroll', () => {
+
+        const settle = () => {
             if (track.dataset.vipLoopJumping === 'true') return;
-            cancelAnimationFrame(track.vipLoopFrame);
-            track.vipLoopFrame = requestAnimationFrame(() => normalizeVIPShelfLoop(track));
-        }, { passive: true });
+            track.classList.remove('is-smooth-scrolling');
+            normalizeVIPShelfLoop(track);
+        };
+
+        if (supportsScrollEnd) {
+            // Camino ideal: el navegador avisa cuando el scroll (venga de
+            // botón, touch o wheel) terminó de verdad, sin adivinar tiempos.
+            track.addEventListener('scrollend', settle, { passive: true });
+        } else {
+            // Fallback (navegadores sin 'scrollend', ej. Safari viejo):
+            // debounce. Reinicia el timer en cada evento de scroll y solo
+            // normaliza cuando pasan 150ms sin nuevos eventos, es decir,
+            // cuando el scroll ya se detuvo por completo (sea cual sea su
+            // origen), en vez de reaccionar a cada frame intermedio.
+            track.addEventListener('scroll', () => {
+                if (track.dataset.vipLoopJumping === 'true') return;
+                clearTimeout(track.vipScrollSettleTimer);
+                track.vipScrollSettleTimer = setTimeout(settle, 150);
+            }, { passive: true });
+        }
     });
 }
 
@@ -3583,10 +4775,20 @@ function renderVIPMiniItem(item) {
     // ... (mantén todos tus if) ...
 
     const isSkinItem = item.type === 'vipSkin' || item.type === 'skin';
+    const rarity = String(item.rarity || '').toUpperCase();
+    const rarityColor = item.rarityColor || '#ffee00';
+    const flagClass = rarity === 'VIP' ? 'hud-flag--vip' : '';
+    const flagLetter = rarity ? rarity.charAt(0) : '';
 
     // AQUÍ ES EL ÚNICO RETURN QUE DEBE QUEDAR:
     return `
-        <article class="vip-mini-item ${owned ? 'owned' : ''} ${trophyClass}">
+        <article class="vip-mini-item ${owned ? 'owned' : ''} ${trophyClass}" style="--inv-rarity-color:${rarityColor};">
+            ${rarity ? `
+                <div class="hud-flag ${flagClass}" style="${flagClass ? '' : `background:${rarityColor};`}">
+                    <span class="hud-flag-txt">${flagLetter}</span>
+                </div>
+                ${flagClass ? '<div class="hud-flag-shine"></div>' : ''}
+            ` : ''}
             <div class="${isSkinItem ? 'vip-skin-orb' : 'vip-mini-image'}">
                 <img src="${item.image}" alt="" draggable="false">
             </div>
@@ -4236,6 +5438,9 @@ function showInventorySection(section) {
     const gemsEl = document.getElementById('inv-gems-value');
     if (gemsEl) gemsEl.textContent = parseInt(localStorage.getItem('gems') || '0');
 
+    const keysEl = document.getElementById('inv-keys-value');
+    if (keysEl) keysEl.textContent = window.infiniteCoinsMode ? '∞' : (window.getCaronteKeys ? window.getCaronteKeys() : 0);
+
     const heroEl = document.getElementById('inv-hero');
     if (heroEl) heroEl.innerHTML = renderInventoryHero(section);
     // El hero se regenera cada vez (nuevo HTML => nuevos ids), así que hay que
@@ -4526,15 +5731,19 @@ function openInventoryChestAmount(id, amount) {
     if (!chest || total <= 0) return;
 
     localStorage.setItem('invChest_' + id, String(count - total));
-    const summary = { coins: 0, gems: 0, drops: {} };
+    const summary = { coins: 0, gems: 0, drops: {}, caronteKeys: 0 };
     for (let i = 0; i < total; i++) {
         const result = openChestReward(chest);
         summary.coins += result.coins;
         summary.gems += result.gems;
         summary.drops[result.drop] = (summary.drops[result.drop] || 0) + 1;
+        if (result.caronteKey) summary.caronteKeys++;
     }
     window.playSfx?.('reward');
     showInventorySection('cofres');
+    const caronteKeyHTML = summary.caronteKeys > 0
+        ? `<div class="caronte-key-drop-line">${renderCaronteKeyIcon('sm')}<span>+${summary.caronteKeys} Llave${summary.caronteKeys > 1 ? 's' : ''} de Caronte</span></div>`
+        : '';
     showShopModal({
         kicker: `${total} COFRE${total > 1 ? 'S' : ''} ABIERTO${total > 1 ? 'S' : ''}`,
         title: chest.name,
@@ -4543,6 +5752,7 @@ function openInventoryChestAmount(id, amount) {
             <div class="chest-open-result">
                 <div>Base: ${summary.coins} monedas + ${summary.gems} rubies</div>
                 <div>${Object.entries(summary.drops).map(([drop, qty]) => `${drop} x${qty}`).join('<br>')}</div>
+                ${caronteKeyHTML}
             </div>
         `,
         cancelText: null,
@@ -5800,6 +7010,45 @@ function addRubyPassXpDev(amount = 250) {
     }
 }
 
+// ── Helpers del banner de Premium (Parte #4 del plan) ──
+// Cuando el jugador NO tiene premium: junta las próximas 3 recompensas
+// premium que se está perdiendo, para mostrarlas como preview en el CTA.
+function getRubyPassUpcomingPremiumRewards(state, count) {
+    return RUBY_PASS_REWARDS
+        .filter(reward => reward.level > state.premiumLevel)
+        .slice(0, count);
+}
+
+// Cuando el jugador SÍ tiene premium: cuenta cuántas recompensas premium
+// ya desbloqueadas todavía no reclamó — ese es el dato útil que reemplaza
+// al CTA de compra en el mismo espacio (nunca queda vacío).
+function getRubyPassClaimablePremiumCount(state) {
+    return RUBY_PASS_REWARDS.filter(reward => {
+        if (reward.level > state.premiumLevel) return false;
+        return localStorage.getItem(`rubyPassClaimed_premium_${reward.level}`) !== 'true';
+    }).length;
+}
+
+// ── Countdown de temporada (Parte #3 del plan) ──
+// Lee settings.seasonEndsAt de rubypass.config.js (fecha 'YYYY-MM-DD').
+// Si Felipe todavía no cargó la fecha real, devuelve null y el HTML
+// no muestra el countdown (no inventa datos falsos).
+function getRubyPassSeasonCountdown() {
+    const cfg = window.RUBY_PASS_CONFIG;
+    const endsAt = cfg && cfg.settings && cfg.settings.seasonEndsAt;
+    if (!endsAt) return null;
+    const end = new Date(endsAt + 'T23:59:59');
+    const now = new Date();
+    const diffMs = end.getTime() - now.getTime();
+    if (Number.isNaN(diffMs)) return null;
+    if (diffMs <= 0) return { expired: true, label: 'TEMPORADA FINALIZADA' };
+    const totalHours = Math.ceil(diffMs / 3600000);
+    const days = Math.floor(totalHours / 24);
+    const hours = totalHours % 24;
+    const label = days > 0 ? `${days}d ${hours}h` : `${hours}h`;
+    return { expired: false, label };
+}
+
 function claimRubyPassReward(lane, level, rewardType) {
     const state = getRubyPassState();
     const unlocked = lane === 'free' ? level <= state.freeLevel : state.premiumOwned && level <= state.premiumLevel;
@@ -5887,13 +7136,9 @@ function renderBattlePassPage(container, options = {}) {
     const progress = getRubyPassProgress(currentXp, currentLevel);
     const renderXp = options.animateFrom?.xp ?? currentXp;
     const renderFreeLevel = options.animateFrom?.freeLevel ?? currentLevel;
-    const renderPremiumLevel = options.animateFrom?.premiumLevel ?? state.premiumLevel;
     const renderProgress = getRubyPassProgress(renderXp, renderFreeLevel);
-    const freeRotation = getRubyPassRotation(renderFreeLevel);
-    const premiumLevelForRender = options.premiumCatchUpFrom || state.premiumLevel;
-    const premiumRotation = state.premiumOwned ? getRubyPassRotation(options.animateFrom ? renderPremiumLevel : premiumLevelForRender) : 0;
-    const tipAngle = 110 + renderProgress * 170;
     const visibleRewards = RUBY_PASS_REWARDS;
+    const seasonCountdown = getRubyPassSeasonCountdown();
     const profileName = localStorage.getItem('playerName') || 'Jugador';
     const profileAvatar = localStorage.getItem('playerAvatar') || 'assets/UI/Common/Avatars/Avatar_Default.png';
     const bannerId = localStorage.getItem('equippedBanner') || 'Banner_Deafult';
@@ -5916,26 +7161,75 @@ function renderBattlePassPage(container, options = {}) {
                     <span>NIVEL ${currentLevel}</span>
                     <strong>${currentXp} XP</strong>
                 </div>
+                ${seasonCountdown ? `
+                <div class="ruby-rail-countdown ${seasonCountdown.expired ? 'is-expired' : ''}">
+                    TERMINA EN<b>${seasonCountdown.label}</b>
+                </div>` : ''}
                 <button onclick="closeRubyPass()" class="ruby-pass-back" type="button">VOLVER</button>
             </div>
 
             <div class="ruby-pass-stage">
-                <div class="ruby-pass-arc-window">
-                    <div class="ruby-pass-gear-shell">
-                        <div class="ruby-pass-lane ruby-pass-lane-premium ${state.premiumOwned ? 'is-active' : 'is-locked'}" style="--premium-rotation:${premiumRotation}deg;">
-                            <div class="ruby-pass-track ruby-pass-track-premium" style="${RUBY_PASS_ASSETS.premiumTrackTexture ? `background-image:url('${RUBY_PASS_ASSETS.premiumTrackTexture}')` : ''}"></div>
-                            ${state.premiumOwned ? visibleRewards.map((reward, index) => renderRubyPassNode(reward, index, state.premiumLevel, 'premium', true)).join('') : ''}
-                        </div>
-                        <div class="ruby-pass-lane ruby-pass-lane-free" style="--free-rotation:${freeRotation}deg;">
-                            <div class="ruby-pass-track ruby-pass-track-free" style="${RUBY_PASS_ASSETS.freeTrackTexture ? `background-image:url('${RUBY_PASS_ASSETS.freeTrackTexture}')` : ''}"></div>
-                            <div class="ruby-pass-liquid" style="--ruby-fill:${Math.round(renderProgress * 100)}%;"></div>
-                            <div class="ruby-pass-liquid-tip" style="--ruby-tip-angle:${tipAngle}deg;"></div>
-                            ${visibleRewards.map((reward, index) => renderRubyPassNode(reward, index, currentLevel, 'free', true)).join('')}
-                        </div>
-                        <div class="ruby-pass-current-point" data-asset-slot="RUBY_PASS_ASSET_SLOT_CURRENT_POINT">
-                            ${RUBY_PASS_ASSETS.currentPoint ? `<img src="${RUBY_PASS_ASSETS.currentPoint}" alt="" draggable="false">` : '<span></span>'}
+                ${RUBY_PASS_ASSETS.seasonBanner ? `
+                <div class="ruby-rail-showcase-banner">
+                    <img src="${RUBY_PASS_ASSETS.seasonBanner}" alt="" draggable="false"
+                        onerror="this.closest('.ruby-rail-showcase-banner').style.display='none'">
+                </div>` : ''}
+
+                <div class="ruby-rail-top-row">
+                    ${renderRubyPassNextShowcase(state, currentLevel)}
+                    <button class="ruby-rail-viewall-btn" onclick="openRubyPassGallery()" type="button">VER TODO</button>
+                </div>
+
+                <div class="ruby-rail-stage">
+                    <div class="ruby-rail-scroll" id="rubyRailScroll">
+                        <div class="ruby-rail-group ${state.premiumOwned ? '' : 'is-premium-locked'}">
+                            <div class="ruby-rail-nodes is-premium">
+                                ${visibleRewards.map(reward => renderRubyPassRailNode(reward, state.premiumLevel, 'premium', state.premiumOwned)).join('')}
+                            </div>
+                            <div class="ruby-rail-bar-slot is-premium"></div>
+
+                            <div class="ruby-rail-path">
+                                <div class="ruby-rail-path-track">
+                                    <div class="ruby-rail-path-fill" style="width:${Math.round(renderProgress * 100)}%;"></div>
+                                </div>
+                                <div class="ruby-rail-path-spark" style="left:${Math.round(renderProgress * 100)}%;"></div>
+                            </div>
+
+                            <div class="ruby-rail-bar-slot is-free"></div>
+                            <div class="ruby-rail-nodes is-free">
+                                ${visibleRewards.map(reward => renderRubyPassRailNode(reward, currentLevel, 'free', true)).join('')}
+                            </div>
                         </div>
                     </div>
+                </div>
+
+                <div class="ruby-rail-bottom-row">
+                ${state.premiumOwned ? `
+                <div class="ruby-rail-premium-banner is-owned">
+                    <div class="ruby-rail-premium-banner-text">
+                        <b>PREMIUM ACTIVO ✓</b>
+                        <span>${(() => {
+                    const ready = getRubyPassClaimablePremiumCount(state);
+                    return ready > 0
+                        ? `${ready} recompensa${ready === 1 ? '' : 's'} premium esperando reclamo`
+                        : 'Estás al día con tus recompensas premium';
+                })()}</span>
+                    </div>
+                </div>` : `
+                <div class="ruby-rail-premium-banner">
+                    <div class="ruby-rail-premium-banner-text">
+                        <b>Activá el Ruby Pass Premium</b>
+                        <span>Desbloqueá estas recompensas y muchas más antes de que termine la temporada</span>
+                    </div>
+                    <div class="ruby-rail-premium-previews">
+                        ${getRubyPassUpcomingPremiumRewards(state, 3).map(reward => `
+                        <div class="ruby-rail-premium-preview-icon">${renderRewardIcon(reward.premium, 'premium', reward.level)}</div>
+                        `).join('')}
+                    </div>
+                    <button class="ruby-rail-premium-banner-btn" onclick="unlockRubyPassPremium()" type="button">DESBLOQUEAR · ${RUBY_PASS_PREMIUM_COST_GEMS} <img src="${getCurrencyPileAsset('gems', 1)}" alt="" draggable="false"></button>
+                </div>`}
+
+                ${renderRubyRailMissionsSummary()}
                 </div>
 
                 <div class="ruby-pass-focus">
@@ -5945,10 +7239,6 @@ function renderBattlePassPage(container, options = {}) {
                         <p>${Math.round(renderProgress * 100)}% PROGRESO</p>
                         <div class="ruby-pass-xpbar"><span style="width:${Math.round(renderProgress * 100)}%;"></span></div>
                     </div>
-                    ${state.premiumOwned
-            ? `<button class="ruby-pass-buy is-owned" type="button">PREMIUM ACTIVO</button>`
-            : `<button class="ruby-pass-buy" onclick="unlockRubyPassPremium()" type="button">RUBY PREMIUM · ${RUBY_PASS_PREMIUM_COST_GEMS} RUBIES</button>`
-        }
                     <button class="ruby-pass-dev" onclick="addRubyPassXpDev()" type="button">DEV +250 XP</button>
                     <button class="ruby-pass-dev" onclick="resetRubyPassXpDev()" type="button">DEV RESET XP</button>
                 </div>
@@ -5957,107 +7247,191 @@ function renderBattlePassPage(container, options = {}) {
     `;
 
     if (options.animateFrom) {
-        animateRubyPassProgress(container, {
-            progress,
-            freeRotation: getRubyPassRotation(currentLevel),
-            premiumRotation: state.premiumOwned ? getRubyPassRotation(state.premiumLevel) : getRubyPassRotation(currentLevel)
-        });
+        animateRubyPassProgress(container, { progress });
     }
-    initRubyPassDrag(container);
+    initRubyPassRail(container);
 }
 
+// Anima solo la barra de XP del panel focus (el resto de la animación
+// vieja —rotación de los anillos— se borró junto con el círculo).
+// TODO (parte 4): la vidriera de "próxima recompensa" probablemente
+// quiera su propia transición al ganar XP; se suma ahí, no acá.
 function animateRubyPassProgress(container, target) {
     requestAnimationFrame(() => {
         const fill = Math.round(target.progress * 100) + '%';
-        const tipAngle = 110 + target.progress * 170;
-        container.querySelector('.ruby-pass-lane-free')?.style.setProperty('--free-rotation', target.freeRotation + 'deg');
-        container.querySelector('.ruby-pass-lane-premium')?.style.setProperty('--premium-rotation', target.premiumRotation + 'deg');
-        container.querySelector('.ruby-pass-liquid')?.style.setProperty('--ruby-fill', fill);
-        container.querySelector('.ruby-pass-liquid-tip')?.style.setProperty('--ruby-tip-angle', tipAngle + 'deg');
         const xpFill = container.querySelector('.ruby-pass-xpbar span');
         if (xpFill) xpFill.style.width = fill;
     });
 }
 
-function initRubyPassDrag(container) {
-    const shell = container.querySelector('.ruby-pass-gear-shell');
-    if (!shell) return;
-
-    let dragging = false;
-    let startX = 0;
-    let startRot = parseFloat(shell.dataset.dragRotation || '0');
-    let moved = false;
-
-    const setDrag = value => {
-        const clamped = Math.max(-180, Math.min(180, value));
-        shell.dataset.dragRotation = String(clamped);
-        shell.style.setProperty('--ruby-drag-rotation', clamped + 'deg');
-    };
-
-    shell.addEventListener('pointerdown', e => {
-        dragging = true;
-        moved = false;
-        startX = e.clientX;
-        startRot = parseFloat(shell.dataset.dragRotation || '0');
-        shell.setPointerCapture?.(e.pointerId);
-        e.preventDefault();
-    });
-
-    shell.addEventListener('pointermove', e => {
-        if (!dragging) return;
-        const delta = e.clientX - startX;
-        if (Math.abs(delta) > 4) moved = true;
-        setDrag(startRot + delta * 0.22);
-    });
-
-    const endDrag = () => { dragging = false; };
-    shell.addEventListener('pointerup', endDrag);
-    shell.addEventListener('pointercancel', endDrag);
-
-    shell.addEventListener('click', e => {
-        if (moved) return;
-
-        const rewards = shell.querySelectorAll('.ruby-pass-reward');
-        let closest = null, closestDist = Infinity;
-
-        rewards.forEach(el => {
-            const rect = el.getBoundingClientRect();
-            const cx = rect.left + rect.width / 2;
-            const cy = rect.top + rect.height / 2;
-            const dist = Math.hypot(e.clientX - cx, e.clientY - cy);
-            const radius = Math.max(rect.width, rect.height) * 0.9;
-            if (dist < radius && dist < closestDist) {
-                closestDist = dist;
-                closest = el;
-            }
-        });
-
-        if (!closest) return;
-        const [lane, levelText] = (closest.dataset.rubyClaim || '').split('_');
-        const level = parseInt(levelText || '0');
-        const rewardType = closest.dataset.rewardType || 'reward';
-        if (lane && level) claimRubyPassReward(lane, level, rewardType);
+// Reemplaza a initRubyPassDrag(): ya no hay que rotar nada ni adivinar
+// en qué nodo hizo click el jugador por distancia — cada nodo del
+// riel tiene su propio onclick directo. Lo único que hace esta
+// función es centrar el scroll horizontal en el nivel actual al
+// abrir el pase, para que el jugador no tenga que buscarlo.
+function initRubyPassRail(container) {
+    const scroller = container.querySelector('#rubyRailScroll');
+    const current = container.querySelector('.ruby-rail-node.is-current');
+    if (!scroller || !current) return;
+    requestAnimationFrame(() => {
+        const target = current.offsetLeft - (scroller.clientWidth / 2) + (current.offsetWidth / 2);
+        scroller.scrollLeft = Math.max(0, target);
     });
 }
 
-function renderRubyPassNode(reward, index, currentLevel, lane, laneActive) {
-    const angle = -90 + index * (360 / RUBY_PASS_REWARDS.length);
-    const unlocked = laneActive && reward.level <= currentLevel;
+// Nodo del riel horizontal (reemplaza a renderRubyPassNode, que
+// posicionaba todo con trigonometría circular). Mantiene el mismo
+// data-ruby-claim que ya usa claimRubyPassReward() para no tocar esa
+// lógica, y agrega el onclick directo (antes el click se resolvía
+// por distancia al nodo más cercano en initRubyPassDrag — ya no hace
+// falta con un riel recto).
+function renderRubyPassRailNode(reward, currentLevelForLane, lane, laneActive) {
+    const unlocked = laneActive && reward.level <= currentLevelForLane;
     const rewardData = lane === 'premium' ? reward.premium : reward.free;
     const claimed = localStorage.getItem(`rubyPassClaimed_${lane}_${reward.level}`) === 'true';
     const claimable = unlocked && !claimed;
+    const isCurrent = laneActive && reward.level === currentLevelForLane;
     return `
-        <div class="ruby-pass-node ruby-pass-node-${lane} ruby-pass-node-${index}" style="--node-angle:${angle}deg;">
-            <div class="ruby-pass-level-marker ${unlocked ? 'is-unlocked' : ''} ${claimable ? 'is-claimable' : ''} ${laneActive ? '' : 'is-locked'}" data-asset-slot="RUBY_PASS_ASSET_SLOT_LEVEL_MARKER">
-                ${RUBY_PASS_ASSETS.levelMarker ? `<img src="${RUBY_PASS_ASSETS.levelMarker}" alt="">` : ''}
-            </div>
-            <div class="ruby-pass-level-number">${reward.level}</div>
-            <div class="ruby-pass-reward ruby-pass-reward-${lane} ${unlocked ? 'is-lit' : ''} ${claimable ? 'is-claimable' : ''} ${laneActive ? '' : 'is-locked'} ${claimed ? 'is-claimed' : ''}" data-ruby-claim="${lane}_${reward.level}" data-reward-type="${rewardData.type}" title="${lane === 'premium' ? 'Premium' : 'Free'} nivel ${reward.level}">
+        <div class="ruby-rail-node ${isCurrent ? 'is-current' : ''}">
+            <button type="button"
+                class="ruby-rail-node-icon ${unlocked ? 'is-unlocked' : ''} ${claimable ? 'is-claimable' : ''} ${laneActive ? '' : 'is-locked'} ${claimed ? 'is-claimed' : ''}"
+                data-ruby-claim="${lane}_${reward.level}"
+                data-reward-type="${rewardData.type}"
+                onclick="claimRubyPassReward('${lane}', ${reward.level}, '${rewardData.type}')"
+                title="${lane === 'premium' ? 'Premium' : 'Free'} nivel ${reward.level}">
                 ${renderRewardIcon(rewardData, lane, reward.level)}
+            </button>
+            <span class="ruby-rail-node-level">${reward.level}</span>
+        </div>
+    `;
+}
+
+// Parte #2: busca qué recompensa mostrar en la "vidriera" de próxima
+// recompensa. Prioriza el carril premium (es la pieza más atractiva —
+// skins/emotes — y la que más empuja la compra del pase VIP). Si el
+// jugador ya reclamó todo lo premium disponible, muestra la última
+// como referencia (no debería pasar con 30 niveles, pero por las dudas).
+function getRubyPassNextShowcaseReward(state, currentLevel) {
+    const next = RUBY_PASS_REWARDS.find(r =>
+        r.level >= currentLevel &&
+        localStorage.getItem(`rubyPassClaimed_premium_${r.level}`) !== 'true'
+    );
+    return next || RUBY_PASS_REWARDS[RUBY_PASS_REWARDS.length - 1];
+}
+
+function renderRubyPassNextShowcase(state, currentLevel) {
+    const reward = getRubyPassNextShowcaseReward(state, currentLevel);
+    // "Borrosa" solo si todavía no llegó a ese nivel (es una recompensa
+    // futura real, no una ya alcanzada pero sin reclamar) — el efecto es
+    // para generar curiosidad ("¿qué es esa skin del nivel 12?"), no para
+    // ocultar algo que el jugador ya podría reclamar.
+    const isFuture = reward.level > currentLevel;
+    return `
+        <div class="ruby-rail-next-showcase">
+            <div class="ruby-rail-next-showcase-frame">
+                <div class="ruby-rail-next-showcase-icon ${isFuture ? 'is-future' : ''}">
+                    ${renderRewardIcon(reward.premium, 'premium', reward.level)}
+                </div>
+                ${isFuture ? '<span class="ruby-rail-next-showcase-mark">?</span>' : ''}
+            </div>
+            <div class="ruby-rail-next-showcase-text">
+                <span>PRÓXIMA RECOMPENSA VIP</span>
+                <b>NIVEL ${reward.level}</b>
             </div>
         </div>
     `;
 }
+
+
+// ── Parte #6: galería completa "ver todo" (gratis / premium) ──
+// Reutiliza RUBY_PASS_REWARDS y renderRewardIcon() tal cual (no se
+// tocan). El único agregado real es claimFromRubyPassGallery(), un
+// wrapper fino sobre claimRubyPassReward() — la lógica de reclamo no
+// se duplica, solo se asegura de refrescar las DOS vistas (galería +
+// riel) ya que pueden convivir en el DOM al mismo tiempo (el riel
+// sigue detrás del modal) y claimRubyPassReward() solo actualiza el
+// primer nodo que encuentra con ese data-ruby-claim.
+function renderRubyPassGalleryRow(reward, lane, currentLevelForLane, laneActive) {
+    const unlocked = laneActive && reward.level <= currentLevelForLane;
+    const rewardData = lane === 'premium' ? reward.premium : reward.free;
+    const claimed = localStorage.getItem(`rubyPassClaimed_${lane}_${reward.level}`) === 'true';
+    const claimable = unlocked && !claimed;
+    return `
+        <button type="button"
+            class="ruby-gallery-row ${claimable ? 'is-claimable' : ''} ${claimed ? 'is-claimed' : ''} ${unlocked ? '' : 'is-locked'}"
+            data-ruby-claim="${lane}_${reward.level}"
+            onclick="claimFromRubyPassGallery('${lane}', ${reward.level}, '${rewardData.type}')"
+            title="Nivel ${reward.level}">
+            <span class="ruby-gallery-row-level">${reward.level}</span>
+            <span class="ruby-gallery-row-icon ${unlocked ? '' : 'is-future'}">${renderRewardIcon(rewardData, lane, reward.level)}</span>
+            ${claimed ? '<span class="ruby-gallery-row-check">&check;</span>' : ''}
+        </button>`;
+}
+
+function renderRubyPassGalleryColumn(lane, state) {
+    const currentLevelForLane = lane === 'premium' ? state.premiumLevel : state.freeLevel;
+    const laneActive = lane === 'premium' ? state.premiumOwned : true;
+    return `
+        <div class="ruby-gallery-column is-${lane} ${laneActive ? '' : 'is-locked'}">
+            <div class="ruby-gallery-column-head">${lane === 'premium' ? 'PREMIUM' : 'GRATIS'}</div>
+            <div class="ruby-gallery-column-rows">
+                ${RUBY_PASS_REWARDS.map(reward => renderRubyPassGalleryRow(reward, lane, currentLevelForLane, laneActive)).join('')}
+            </div>
+        </div>`;
+}
+
+function renderRubyPassGalleryPage() {
+    const state = getRubyPassState();
+    return `
+        <section class="ruby-gallery-panel">
+            <button class="ruby-gallery-close" onclick="closeRubyPassGallery()" type="button">X</button>
+            <div class="ruby-gallery-header">
+                <span>RUBY PASS</span>
+                <strong>TODAS LAS RECOMPENSAS</strong>
+            </div>
+            <div class="ruby-gallery-columns">
+                ${renderRubyPassGalleryColumn('free', state)}
+                ${renderRubyPassGalleryColumn('premium', state)}
+            </div>
+        </section>`;
+}
+
+function ensureRubyPassGalleryModal() {
+    let modal = document.getElementById('rubyPassGalleryModal');
+    if (modal) return modal;
+    modal = document.createElement('div');
+    modal.id = 'rubyPassGalleryModal';
+    modal.className = 'ruby-gallery-modal';
+    modal.addEventListener('click', event => {
+        if (event.target === modal) closeRubyPassGallery();
+    });
+    document.body.appendChild(modal);
+    return modal;
+}
+
+function openRubyPassGallery() {
+    const modal = ensureRubyPassGalleryModal();
+    modal.innerHTML = renderRubyPassGalleryPage();
+    modal.style.display = 'grid';
+}
+
+function closeRubyPassGallery() {
+    const modal = document.getElementById('rubyPassGalleryModal');
+    if (modal) modal.style.display = 'none';
+}
+
+// Reclama vía claimRubyPassReward() de siempre (cero lógica nueva de
+// reclamo) y después refresca ambas vistas para que no queden
+// desincronizadas entre sí.
+function claimFromRubyPassGallery(lane, level, type) {
+    claimRubyPassReward(lane, level, type);
+    openRubyPassGallery();
+    const rubyContent = document.getElementById('rubyPassContent');
+    if (rubyContent) renderBattlePassPage(rubyContent);
+}
+window.openRubyPassGallery = openRubyPassGallery;
+window.closeRubyPassGallery = closeRubyPassGallery;
+window.claimFromRubyPassGallery = claimFromRubyPassGallery;
 
 function renderRewardIcon(reward, lane, level) {
     if (reward.image) return `<img src="${reward.image}" alt="" draggable="false">`;
@@ -6074,20 +7448,157 @@ function renderRewardIcon(reward, lane, level) {
 }
 
 // =====================================================
-// CONVERSIÓN COINS ↔ GEMS
+// TIENDA RUBY — paquetes de monedas/gemas (dinero real) +
+// conversión interna coins <-> gems (gratis, tasa fija).
+// Reemplaza a la vieja pantalla suelta de "CONVERSIÓN": ahora
+// esa misma sección del nav ('conversion') abre este panel con
+// pestañas [COMPRAR | CONVERTIR].
 // =====================================================
 
-function renderConversionPage(container) {
+// Paquetes de monedas — usa los assets de contenedores ya generados
+// (carpeta assets/UI/Common/Rewards/Currency/Coins/). Ajusta 'price'
+// cuando conectes una pasarela de pago real (Google Play Billing,
+// Stripe, etc.) — por ahora 'price' es solo el texto que se muestra.
+const RUBY_SHOP_COIN_PACKAGES = [
+    { id: 'coins_manojo', name: 'Manojo de Monedas', amount: 500, bonus: 0, price: '$0.99', image: 'assets/UI/Common/Rewards/Currency/Coins/Monojo_de_monedas.png' },
+    { id: 'coins_saco', name: 'Saco de Monedas', amount: 1200, bonus: 10, price: '$2.49', image: 'assets/UI/Common/Rewards/Currency/Coins/Saco_de_monedas.png' },
+    { id: 'coins_caja', name: 'Caja de Monedas', amount: 2600, bonus: 15, price: '$4.99', image: 'assets/UI/Common/Rewards/Currency/Coins/Caja_de_monedas.png' },
+    { id: 'coins_cofre', name: 'Cofre de Monedas', amount: 5500, bonus: 20, price: '$9.99', image: 'assets/UI/Common/Rewards/Currency/Coins/Cofre_grande_de_monedas.png', best: true },
+    { id: 'coins_baul', name: 'Baúl de Monedas', amount: 12000, bonus: 25, price: '$19.99', image: 'assets/UI/Common/Rewards/Currency/Coins/Baúl_de_monedas.png' },
+    { id: 'coins_arca', name: 'Arca de Monedas', amount: 28000, bonus: 35, price: '$39.99', image: 'assets/UI/Common/Rewards/Currency/Coins/Arca_de_monedas.png' },
+];
+
+// Paquetes de gemas (rubies) — carpeta .../Currency/Gems/
+const RUBY_SHOP_GEM_PACKAGES = [
+    { id: 'gems_manojo', name: 'Manojo de Gemas', amount: 60, bonus: 0, price: '$0.99', image: 'assets/UI/Common/Rewards/Currency/Gems/Monojo_de_gemas.png' },
+    { id: 'gems_saco', name: 'Bolsa de Gemas', amount: 150, bonus: 10, price: '$2.49', image: 'assets/UI/Common/Rewards/Currency/Gems/Saco_de_gemas.png' },
+    { id: 'gems_cofrecillo', name: 'Cofrecillo de Gemas', amount: 340, bonus: 15, price: '$4.99', image: 'assets/UI/Common/Rewards/Currency/Gems/Cofrecillo_de_gemas.png', best: true },
+    { id: 'gems_cristal', name: 'Cofre de Cristal', amount: 720, bonus: 20, price: '$9.99', image: 'assets/UI/Common/Rewards/Currency/Gems/Cofre_de_cristal.png' },
+    { id: 'gems_relicario', name: 'Relicario de Gemas', amount: 1600, bonus: 25, price: '$19.99', image: 'assets/UI/Common/Rewards/Currency/Gems/Relicario_de_gemas.png' },
+    { id: 'gems_geoda', name: 'Geoda de Gemas', amount: 3800, bonus: 35, price: '$39.99', image: 'assets/UI/Common/Rewards/Currency/Gems/Geoda_de_gemas.png' },
+];
+
+let rubyShopActiveTab = 'comprar';
+
+// Abre la Tienda Ruby directamente (botón carrito, visible en toda la tienda).
+// Reutiliza el mismo id de sección 'conversion' que ya maneja showShopSection,
+// así no hay que tocar el arreglo de navegación ni la lógica de estilos del nav.
+function openRubyShop() {
+    showShopSection('conversion');
+}
+window.openRubyShop = openRubyShop;
+
+// Punto de entrada de la sección (nav 'conversion' -> este panel)
+function renderRubyShopPage(container) {
+    const ct = shopTextos('conversion');
+    container.innerHTML = `
+        <div style="position:relative; display:flex; align-items:center; min-height:38px; margin-bottom:22px; flex-wrap:wrap;">
+            <div style="display:flex; gap:8px;">
+                <button id="ruby-tab-comprar" onclick="switchRubyShopTab('comprar')" style="padding:10px 22px; border-radius:8px 8px 0 0; border:1px solid rgba(255,255,255,0.1); border-bottom:none; background:rgba(255,238,0,0.1); color:#ffee00; font-family:monospace; font-size:12px; letter-spacing:2px; cursor:pointer;">${ct.tabComprar ?? 'COMPRAR'}</button>
+                <button id="ruby-tab-convertir" onclick="switchRubyShopTab('convertir')" style="padding:10px 22px; border-radius:8px 8px 0 0; border:1px solid transparent; background:none; color:rgba(255,255,255,0.4); font-family:monospace; font-size:12px; letter-spacing:2px; cursor:pointer;">${ct.tabConvertir ?? 'CONVERTIR'}</button>
+            </div>
+
+            <div class="ruby-shop-gem-title" style="position:absolute; left:50%; top:50%; transform:translate(-50%, -50%);">${ct.tituloTienda ?? 'TIENDA RUBY'}</div>
+
+            <div style="position:absolute; right:0; top:50%; transform:translateY(-50%);">${shopBotonVolverHtml()}</div>
+        </div>
+
+        <div id="ruby-shop-tab-body"></div>
+    `;
+    rubyShopActiveTab = 'comprar';
+    renderRubyShopTabBody();
+}
+
+function switchRubyShopTab(tab) {
+    rubyShopActiveTab = tab;
+    const cBtn = document.getElementById('ruby-tab-comprar');
+    const vBtn = document.getElementById('ruby-tab-convertir');
+    if (cBtn && vBtn) {
+        const on = { background: 'rgba(255,238,0,0.1)', color: '#ffee00', border: '1px solid rgba(255,255,255,0.1)', borderBottom: 'none' };
+        const off = { background: 'none', color: 'rgba(255,255,255,0.4)', border: '1px solid transparent' };
+        Object.assign(cBtn.style, tab === 'comprar' ? on : off);
+        Object.assign(vBtn.style, tab === 'convertir' ? on : off);
+    }
+    renderRubyShopTabBody();
+}
+
+function renderRubyShopTabBody() {
+    const body = document.getElementById('ruby-shop-tab-body');
+    if (!body) return;
+    if (rubyShopActiveTab === 'convertir') {
+        body.innerHTML = renderConversionTabHtml();
+    } else {
+        body.innerHTML = renderRubyPackagesTabHtml();
+    }
+}
+
+function rubyPackCardHtml(pack, currency) {
+    const accent = currency === 'gems' ? '#ff4d6d' : '#ffee00';
+    const accentBg = currency === 'gems' ? 'rgba(255,77,109,0.08)' : 'rgba(255,238,0,0.08)';
+    const icon = currency === 'gems' ? 'assets/UI/Common/Currency/Rubies.png' : 'assets/UI/Common/Currency/DEAD_COIN.png';
+    return `
+        <div style="position:relative; background:rgba(255,255,255,0.03); border:1px solid ${pack.best ? accent : 'rgba(255,255,255,0.08)'}; border-radius:14px; padding:18px 14px; text-align:center; display:flex; flex-direction:column; align-items:center; gap:8px;">
+            ${pack.best ? `<div style="position:absolute; top:8px; right:8px; background:${accent}; color:#0a0a0a; font-size:9px; font-weight:bold; letter-spacing:1px; padding:3px 8px; border-radius:6px;">${currency === 'gems' ? 'MÁS POPULAR' : 'MEJOR VALOR'}</div>` : ''}
+            <img src="${pack.image}" onerror="this.src='${SHOP_PLACEHOLDER_IMAGE}'" style="width:64px; height:64px; object-fit:contain; margin-top:6px;">
+            <div style="color:white; font-family:monospace; font-size:12px; letter-spacing:0.5px;">${pack.name}</div>
+            <div style="display:flex; align-items:center; gap:6px; font-family:monospace; font-size:17px; font-weight:bold; color:white;">
+                <img src="${icon}" style="width:14px;height:14px;object-fit:contain;">${pack.amount.toLocaleString()}
+            </div>
+            ${pack.bonus > 0 ? `<div style="font-size:10px; color:${accent}; background:${accentBg}; padding:2px 8px; border-radius:6px; letter-spacing:0.5px;">+${pack.bonus}% BONUS</div>` : '<div style="height:18px;"></div>'}
+            <button onclick="buyCurrencyPackage('${currency}', ${pack.amount}, '${pack.name.replace(/'/g, "\\'")}', '${pack.price}')"
+                style="width:100%; margin-top:6px; padding:9px 0; border-radius:8px; border:1px solid ${accent}; background:${accentBg}; color:${accent}; font-family:monospace; font-size:13px; font-weight:bold; letter-spacing:1px; cursor:pointer;">
+                ${pack.price}
+            </button>
+        </div>
+    `;
+}
+
+function renderRubyPackagesTabHtml() {
+    return `
+        <div class="ruby-shop-label-gold" style="margin-bottom:10px;">PAQUETES DE MONEDAS</div>
+        <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(150px, 1fr)); gap:14px; margin-bottom:28px;">
+            ${RUBY_SHOP_COIN_PACKAGES.map(p => rubyPackCardHtml(p, 'coins')).join('')}
+        </div>
+
+        <div class="ruby-shop-label-ruby" style="margin-bottom:10px;">PAQUETES DE GEMAS</div>
+        <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(150px, 1fr)); gap:14px;">
+            ${RUBY_SHOP_GEM_PACKAGES.map(p => rubyPackCardHtml(p, 'gems')).join('')}
+        </div>
+    `;
+}
+
+// Compra "simulada" de un paquete: confirma, entrega la divisa y refresca HUD.
+// Cuando integres una pasarela de pago real, este es el punto donde se debe
+// llamar primero al SDK de pago y solo ejecutar addCurrency() en su callback
+// de éxito (no antes).
+function buyCurrencyPackage(currency, amount, packName, priceLabel) {
+    showShopModal({
+        kicker: currency === 'gems' ? 'PAQUETE DE GEMAS' : 'PAQUETE DE MONEDAS',
+        title: packName,
+        body: `¿Confirmar compra de ${amount.toLocaleString()} ${shopMonedaLabel(currency)} por ${priceLabel}? (simulado, sin cobro real todavía)`,
+        confirmText: 'COMPRAR',
+        cancelText: 'CANCELAR',
+        onConfirm: () => {
+            addCurrency(amount, currency);
+            window.playSfx?.('spend');
+            updateMenuHUD();
+            refreshShopBalances();
+            renderRubyShopTabBody();
+        }
+    });
+}
+
+// =====================================================
+// CONVERSIÓN COINS ↔ GEMS (gratis, tasa fija — sin tocar la lógica
+// económica que ya tenías: 100 coins = 1 gema / 1 gema = 30 coins)
+// =====================================================
+
+function renderConversionTabHtml() {
     const coins = parseInt(localStorage.getItem('deadCoins') || '0');
     const gems = parseInt(localStorage.getItem('gems') || '0');
     const ct = shopTextos('conversion');
 
-    container.innerHTML = `
-        <div style="display:flex; align-items:center; gap:16px; margin-bottom:24px;">
-            ${shopBotonVolverHtml()}
-            <div style="color:rgba(255,255,255,0.4); font-family:monospace; font-size:11px; letter-spacing:4px;">${ct.titulo ?? 'CONVERSIÓN'}</div>
-        </div>
-
+    return `
         <div style="max-width:480px; margin:0 auto; display:flex; flex-direction:column; gap:20px;">
 
             <div style="background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.08); border-radius:14px; padding:20px; text-align:center;">
@@ -6136,6 +7647,19 @@ function renderConversionPage(container) {
                 <div id="conv-gem-result" style="color:rgba(255,255,255,0.3); font-family:monospace; font-size:11px; margin-top:10px;"></div>
             </div>
         </div>
+    `;
+}
+
+// Mantenido por compatibilidad si algo externo aún llama a renderConversionPage
+// directamente (ya no se usa desde showShopSection).
+function renderConversionPage(container) {
+    const ct = shopTextos('conversion');
+    container.innerHTML = `
+        <div style="display:flex; align-items:center; gap:16px; margin-bottom:24px;">
+            ${shopBotonVolverHtml()}
+            <div style="color:rgba(255,255,255,0.4); font-family:monospace; font-size:11px; letter-spacing:4px;">${ct.titulo ?? 'CONVERSIÓN'}</div>
+        </div>
+        ${renderConversionTabHtml()}
     `;
 }
 
@@ -6324,6 +7848,63 @@ function renderMissionReward(reward = {}) {
         reward.coins ? `${reward.coins} monedas` : '',
         reward.gems ? `${reward.gems} rubies` : ''
     ].filter(Boolean).join(' + ');
+}
+
+// Parte #5 (Ruby Pass): arma el resumen compacto de misiones que va al
+// lado del riel. Cero lógica nueva de misiones — solo lee readMissionState()
+// y ordena, la reclamación real sigue pasando por openMissionsPanel() /
+// claimMissionReward(), que no se tocan.
+function getRubyRailMissionsPreview(limit = 2) {
+    const state = readMissionState();
+    const withProgress = DAILY_MISSIONS.map(mission => {
+        const raw = parseFloat(state.progress[mission.metric] || 0);
+        const progress = Math.min(mission.goal, raw);
+        const pct = Math.max(0, Math.min(100, (progress / mission.goal) * 100));
+        const claimed = state.claimed[mission.id] === true;
+        const ready = raw >= mission.goal && !claimed;
+        return { mission, progress, pct, claimed, ready };
+    });
+    // La más cerca de completarse primero; las ya reclamadas no se muestran
+    // (no aportan nada nuevo en un resumen compacto).
+    return withProgress
+        .filter(item => !item.claimed)
+        .sort((a, b) => b.pct - a.pct)
+        .slice(0, limit);
+}
+
+function renderRubyRailMissionsSummary() {
+    const mt = shopTextos('misiones');
+    const preview = getRubyRailMissionsPreview(2);
+    const readyCount = getMissionReadyCount();
+    const verTodas = mt.verTodas ?? 'VER TODAS';
+
+    if (preview.length === 0) {
+        return `
+        <div class="ruby-rail-missions-summary">
+            <div class="ruby-rail-missions-summary-head">
+                <span>${mt.tituloResumen ?? 'MISIONES DE HOY'}</span>
+            </div>
+            <p class="ruby-rail-missions-summary-empty">${mt.completadas ?? 'Completaste todas tus misiones de hoy'}</p>
+            <button class="ruby-rail-missions-summary-link" onclick="openMissionsPanel()" type="button">${verTodas} &rsaquo;</button>
+        </div>`;
+    }
+
+    return `
+        <div class="ruby-rail-missions-summary">
+            <div class="ruby-rail-missions-summary-head">
+                <span>${mt.tituloResumen ?? 'MISIONES DE HOY'}</span>
+                ${readyCount > 0 ? `<b class="ruby-rail-missions-summary-badge">${readyCount}</b>` : ''}
+            </div>
+            ${preview.map(item => `
+            <button class="ruby-rail-missions-summary-row ${item.ready ? 'is-ready' : ''}" onclick="openMissionsPanel()" type="button">
+                <div class="ruby-rail-missions-summary-row-text">
+                    <span>${item.mission.title}</span>
+                    <div class="ruby-rail-missions-summary-row-bar"><i style="width:${item.pct}%"></i></div>
+                </div>
+                <small>${Math.floor(item.progress)}/${item.mission.goal}</small>
+            </button>`).join('')}
+            <button class="ruby-rail-missions-summary-link" onclick="openMissionsPanel()" type="button">${verTodas} &rsaquo;</button>
+        </div>`;
 }
 
 function openMissionsPanel() {
@@ -6921,3 +8502,49 @@ updateMenuHUD();
 window.openVIP = openVIP;
 window.closeVIP = closeVIP;
 window.openRubyPass = openRubyPass;
+
+
+// =====================================================
+// LLAVE DE CARONTE — helper de render (Parte A del plan)
+// Icono dibujado en CSS puro, dos tamaños: 'sm' (HUD/inventario)
+// y 'lg' (animación de "conseguiste una llave").
+// =====================================================
+// =====================================================
+// LLAVE DE CARONTE — helper de render (Parte A del plan, rediseño chico
+// por feedback de Luna: la llave completa escalada a ~11px de ancho no
+// se veía, quedaba una rayita sin detalle. Para 'sm' ahora se dibuja un
+// óbolo/moneda compacta con la calavera grabada, pensada para leerse bien
+// de chica. 'lg' sigue siendo la llave completa, para la animación de
+// "conseguiste una llave" (todavía no implementada).
+// =====================================================
+function renderCaronteKeyIcon(size = 'sm') {
+    if (size === 'lg') {
+        return `
+            <div class="caronte-key--lg">
+                <div class="caronte-key-canvas">
+                    <div class="caronte-key-skull"></div>
+                    <div class="caronte-key-eye caronte-key-eye--l"></div>
+                    <div class="caronte-key-eye caronte-key-eye--r"></div>
+                    <div class="caronte-key-crack"></div>
+                    <div class="caronte-key-jaw"></div>
+                    <div class="caronte-key-connector"></div>
+                    <div class="caronte-key-vertebra caronte-key-vertebra--1"></div>
+                    <div class="caronte-key-vertebra caronte-key-vertebra--2"></div>
+                    <div class="caronte-key-shaft"></div>
+                    <div class="caronte-key-tooth caronte-key-tooth--l1"></div>
+                    <div class="caronte-key-tooth caronte-key-tooth--r1"></div>
+                    <div class="caronte-key-tooth caronte-key-tooth--l2"></div>
+                    <div class="caronte-key-tooth caronte-key-tooth--r2"></div>
+                </div>
+            </div>
+        `;
+    }
+    return `
+        <div class="caronte-key-mini">
+            <div class="caronte-key-mini-eye caronte-key-mini-eye--l"></div>
+            <div class="caronte-key-mini-eye caronte-key-mini-eye--r"></div>
+            <div class="caronte-key-mini-crack"></div>
+        </div>
+    `;
+}
+window.renderCaronteKeyIcon = renderCaronteKeyIcon;

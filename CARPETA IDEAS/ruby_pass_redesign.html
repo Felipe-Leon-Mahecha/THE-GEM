@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>THE GEM — Ruby Pass Redesign</title>
+<style>
+  :root{
+    --bg-deep:#0a0d16;
+    --bg-panel:#11141f;
+    --bg-panel-2:#161a28;
+    --gold:#f0c860;
+    --gold-dim:#8a7238;
+    --silver:#9fb0c4;
+    --silver-dim:#4c5563;
+    --teal:#3ee6c4;
+    --purple:#8b5cf6;
+    --red:#e8455c;
+    --text-hi:#f2f4f8;
+    --text-mid:#a9b0c2;
+    --text-dim:#5b6274;
+    --border-soft: rgba(255,255,255,0.06);
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  body{
+    font-family:'Segoe UI', Arial, sans-serif;
+    background:
+      radial-gradient(circle at 15% 10%, rgba(139,92,246,0.10), transparent 40%),
+      radial-gradient(circle at 85% 0%, rgba(62,230,196,0.08), transparent 45%),
+      repeating-linear-gradient(45deg, rgba(255,255,255,0.015) 0 2px, transparent 2px 40px),
+      var(--bg-deep);
+    color:var(--text-hi);
+    padding:22px;
+  }
+  .screen{ max-width:1180px; margin:0 auto; }
+
+  /* ===== TOP BAR ===== */
+  .topbar{
+    display:flex; align-items:center; justify-content:space-between;
+    background:linear-gradient(90deg, rgba(139,92,246,0.16), rgba(20,22,34,0.4));
+    border:1px solid var(--border-soft);
+    border-radius:14px;
+    padding:14px 20px;
+    margin-bottom:16px;
+  }
+  .season-id{ display:flex; align-items:center; gap:14px; }
+  .season-id img{ width:48px; height:48px; border-radius:10px; border:2px solid var(--gold); object-fit:cover;}
+  .season-id .name{ font-size:11px; letter-spacing:2px; color:var(--purple); font-weight:700; text-transform:uppercase; }
+  .season-id .title{ font-size:19px; font-weight:800; color:var(--text-hi); letter-spacing:0.5px; }
+  .timer{
+    display:flex; align-items:center; gap:8px;
+    background:rgba(232,69,92,0.12); border:1px solid rgba(232,69,92,0.4);
+    padding:8px 14px; border-radius:10px; font-size:13px; font-weight:700; color:#ff8a9a;
+  }
+  .timer .dot{width:6px;height:6px;border-radius:50%;background:#ff8a9a; box-shadow:0 0 8px #ff8a9a; animation:pulse 1.4s infinite;}
+  @keyframes pulse{0%,100%{opacity:1;}50%{opacity:0.3;}}
+
+  /* ===== HERO SHOWCASE ===== */
+  .hero{
+    position:relative;
+    background:linear-gradient(120deg, rgba(240,200,96,0.08), rgba(139,92,246,0.10) 60%, rgba(10,13,22,0.2));
+    border:1px solid rgba(240,200,96,0.25);
+    border-radius:16px;
+    padding:26px 30px;
+    margin-bottom:16px;
+    display:flex; align-items:center; justify-content:space-between;
+    overflow:hidden;
+  }
+  .hero::before{
+    content:''; position:absolute; top:-40%; right:-10%; width:340px; height:340px;
+    background:radial-gradient(circle, rgba(240,200,96,0.25), transparent 70%);
+    filter:blur(10px);
+  }
+  .hero-left{ position:relative; z-index:2; }
+  .hero-eyebrow{ font-size:11px; letter-spacing:3px; color:var(--gold); font-weight:800; margin-bottom:6px; }
+  .hero-title{ font-size:34px; font-weight:900; letter-spacing:0.5px; line-height:1.05; color:var(--text-hi);
+    text-shadow:0 0 24px rgba(240,200,96,0.35); }
+  .hero-sub{ font-size:14px; color:var(--text-mid); margin-top:8px; max-width:420px; }
+  .hero-tier-badge{
+    display:inline-flex; align-items:center; gap:6px; margin-top:14px;
+    background:rgba(139,92,246,0.18); border:1px solid rgba(139,92,246,0.5);
+    color:#c7b6ff; font-size:12px; font-weight:700; padding:6px 12px; border-radius:8px; letter-spacing:1px;
+  }
+  .hero-right{ position:relative; z-index:2; display:flex; flex-direction:column; align-items:center; gap:10px; }
+  .hero-orb{
+    width:132px; height:132px; border-radius:24px;
+    background:linear-gradient(145deg, #2a2140, #171226);
+    border:2px solid var(--gold);
+    box-shadow:0 0 30px rgba(240,200,96,0.35), inset 0 0 20px rgba(240,200,96,0.15);
+    display:flex; align-items:center; justify-content:center;
+    font-size:52px;
+  }
+  .hero-tier-num{ font-size:12px; color:var(--text-mid); letter-spacing:1px; }
+  .hero-tier-num b{ color:var(--gold); font-size:14px; }
+  .buy-pass-btn{
+    margin-top:16px; display:block;
+    background:linear-gradient(90deg,#f0c860,#c72b3f); color:#1c0603; font-weight:900;
+    font-size:14px; padding:12px 26px; border-radius:10px; border:none; letter-spacing:0.5px;
+    box-shadow:0 0 22px rgba(240,200,96,0.5); cursor:pointer;
+  }
+
+  /* ===== XP BAR ===== */
+  .xpbar-wrap{ margin-bottom:18px; }
+  .xpbar-labels{ display:flex; justify-content:space-between; font-size:12px; color:var(--text-mid); margin-bottom:6px; font-weight:600;}
+  .xpbar-labels .lvl{ color:var(--teal); font-weight:800; }
+  .xpbar-track{ position:relative; height:14px; background:var(--bg-panel-2); border-radius:8px; border:1px solid var(--border-soft); overflow:hidden;}
+  .xpbar-fill{ position:absolute; inset:0; width:57%; border-radius:8px;
+    background:linear-gradient(90deg, var(--purple), var(--teal));
+    box-shadow:0 0 14px rgba(62,230,196,0.5);}
+  .xpbar-ticks{ position:absolute; inset:0; display:flex; }
+  .xpbar-ticks span{ flex:1; border-right:1px solid rgba(0,0,0,0.35); }
+  .xpbar-ticks span:last-child{ border-right:none; }
+
+  /* ===== DUAL TRACK ===== */
+  .track-panel{
+    background:var(--bg-panel);
+    border:1px solid var(--border-soft);
+    border-radius:16px;
+    padding:20px 22px 16px;
+    margin-bottom:16px;
+    overflow-x:auto;
+  }
+  .track-legend{ display:flex; gap:20px; margin-bottom:14px; font-size:12px; color:var(--text-mid); font-weight:600;}
+  .track-legend .lg{ display:flex; align-items:center; gap:6px;}
+  .track-legend .sw{ width:12px; height:12px; border-radius:4px; }
+  .sw-gold{ background:linear-gradient(145deg,#f0c860,#a9812f); box-shadow:0 0 6px rgba(240,200,96,0.6);}
+  .sw-silver{ background:linear-gradient(145deg,#c7d1de,#6b7688);}
+
+  .rail{ position:relative; min-width:920px; }
+  .rail-row{ display:flex; align-items:center; position:relative; height:96px; }
+  .rail-line{ position:absolute; left:0; right:0; top:50%; height:4px; transform:translateY(-50%); border-radius:4px; z-index:0;}
+  .rail-line.gold{ background:linear-gradient(90deg, var(--gold-dim), rgba(240,200,96,0.15)); }
+  .rail-line.silver{ background:linear-gradient(90deg, var(--silver-dim), rgba(159,176,196,0.12)); }
+  .rail-line.gold::before, .rail-line.silver::before{
+    content:''; position:absolute; left:0; top:0; bottom:0; width:32%; border-radius:4px;
+  }
+  .rail-line.gold::before{ background:linear-gradient(90deg,#f0c860,#c79b3a); box-shadow:0 0 10px rgba(240,200,96,0.7);}
+  .rail-line.silver::before{ background:linear-gradient(90deg,#c7d1de,#93a0b3); box-shadow:0 0 8px rgba(159,176,196,0.5);}
+
+  .node-set{ display:flex; justify-content:space-between; width:100%; position:relative; z-index:1; }
+  .node{
+    width:64px; height:64px; border-radius:14px; position:relative;
+    display:flex; align-items:center; justify-content:center; font-size:24px;
+    flex-shrink:0;
+  }
+  .node.gold-item{ background:linear-gradient(155deg,#2c2410,#171206); border:2px solid var(--gold-dim); }
+  .node.gold-item.claimed{ border-color:var(--gold); box-shadow:0 0 16px rgba(240,200,96,0.5);}
+  .node.gold-item.current{ border-color:var(--gold); box-shadow:0 0 22px rgba(240,200,96,0.85); animation:glow 1.6s infinite; }
+  .node.silver-item{ background:linear-gradient(155deg,#1c212c,#0f1218); border:2px solid var(--silver-dim);}
+  .node.silver-item.claimed{ border-color:var(--silver); box-shadow:0 0 12px rgba(159,176,196,0.4);}
+  .node.silver-item.current{ border-color:var(--silver); box-shadow:0 0 18px rgba(159,176,196,0.7); animation:glow 1.6s infinite;}
+  @keyframes glow{0%,100%{filter:brightness(1);}50%{filter:brightness(1.25);}}
+
+  .node.locked{ opacity:0.45; }
+  .tier-num{
+    position:absolute; bottom:-20px; left:50%; transform:translateX(-50%);
+    font-size:11px; color:var(--text-dim); font-weight:700;
+  }
+  .check{
+    position:absolute; top:-6px; right:-6px; width:20px; height:20px; border-radius:50%;
+    background:var(--teal); color:#04231c; font-size:12px; font-weight:900;
+    display:flex; align-items:center; justify-content:center; border:2px solid var(--bg-panel);
+  }
+  .lock-ic{ position:absolute; top:-6px; right:-6px; width:20px; height:20px; border-radius:50%;
+    background:#1c2029; color:var(--text-dim); font-size:11px; display:flex; align-items:center; justify-content:center; border:2px solid var(--bg-panel);}
+
+  .rail-divider{ height:1px; background:var(--border-soft); margin:22px 0 10px; }
+
+  /* ===== BOTTOM: PREMIUM CTA + MISSIONS ===== */
+  .bottom-grid{ display:grid; grid-template-columns:1.3fr 1fr; gap:16px; }
+  .premium-card{
+    background:linear-gradient(135deg, rgba(240,200,96,0.10), rgba(20,22,34,0.5));
+    border:1px solid rgba(240,200,96,0.3);
+    border-radius:16px; padding:20px 22px;
+    display:flex; flex-direction:column; justify-content:space-between;
+  }
+  .premium-top{ display:flex; justify-content:space-between; align-items:flex-start;}
+  .premium-label{ font-size:11px; letter-spacing:2px; color:var(--gold); font-weight:800;}
+  .premium-name{ font-size:20px; font-weight:800; margin-top:4px;}
+  .premium-pct{ font-size:26px; font-weight:900; color:var(--gold); }
+  .premium-bar-track{ height:10px; background:var(--bg-panel-2); border-radius:6px; margin-top:14px; overflow:hidden; border:1px solid var(--border-soft);}
+  .premium-bar-fill{ height:100%; width:85%; background:linear-gradient(90deg,#c72b3f,#f0c860); box-shadow:0 0 10px rgba(240,200,96,0.5); border-radius:6px;}
+  .premium-cta{
+    margin-top:16px; align-self:flex-start;
+    background:linear-gradient(90deg,#f0c860,#c79b3a); color:#241c04; font-weight:800;
+    font-size:13px; padding:10px 22px; border-radius:10px; border:none; letter-spacing:0.5px;
+    box-shadow:0 0 16px rgba(240,200,96,0.4); cursor:pointer;
+  }
+
+  .missions-card{ background:var(--bg-panel); border:1px solid var(--border-soft); border-radius:16px; padding:18px 20px;}
+  .missions-head{ display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;}
+  .missions-head .t{ font-size:13px; letter-spacing:1.5px; font-weight:800; color:var(--text-mid);}
+  .missions-head .badge{ background:var(--red); color:white; font-size:11px; font-weight:800; width:20px; height:20px; border-radius:50%; display:flex; align-items:center; justify-content:center;}
+  .mission-row{ margin-bottom:10px; }
+  .mission-row .m-top{ display:flex; justify-content:space-between; font-size:12.5px; margin-bottom:5px;}
+  .mission-row .m-top .name{ font-weight:700; color:var(--text-hi);}
+  .mission-row .m-top .prog{ color:var(--text-dim); }
+  .m-track{ height:6px; background:var(--bg-panel-2); border-radius:4px; overflow:hidden;}
+  .m-fill{ height:100%; border-radius:4px; }
+  .m-fill.done{ background:var(--teal); box-shadow:0 0 6px rgba(62,230,196,0.6); }
+  .m-fill.wip{ background:var(--purple); }
+</style>
+</head>
+<body>
+<div class="screen">
+
+  <div class="topbar">
+    <div class="season-id">
+      <img src="https://images.unsplash.com/photo-1614851099175-e5b30eb6f696?w=100&h=100&fit=crop" onerror="this.style.display='none'">
+      <div>
+        <div class="name">Temporada 04 · Ecos del vacío</div>
+        <div class="title">RUBY PASS</div>
+      </div>
+    </div>
+    <div class="timer"><span class="dot"></span> Termina en 12d 04h</div>
+  </div>
+
+  <div class="hero">
+    <div class="hero-left">
+      <div class="hero-eyebrow">RECOMPENSA ESTRELLA · TIER 10</div>
+      <div class="hero-title">Skin "Sombra Void"</div>
+      <div class="hero-sub">Efecto de partículas exclusivo y trail personalizado. Solo disponible durante esta temporada.</div>
+      <div class="hero-tier-badge">◆ EXCLUSIVO</div>
+      <button class="buy-pass-btn">🔓 DESBLOQUEAR RUBY PASS · 950 💎</button>
+    </div>
+    <div class="hero-right">
+      <div class="hero-orb">👾</div>
+      <div class="hero-tier-num">Desbloquea en <b>tier 10</b></div>
+    </div>
+  </div>
+
+  <div class="xpbar-wrap">
+    <div class="xpbar-labels"><span class="lvl">NIVEL 2 · 395 XP</span><span>605 XP para el siguiente tier</span></div>
+    <div class="xpbar-track">
+      <div class="xpbar-fill"></div>
+      <div class="xpbar-ticks"><span></span><span></span><span></span><span></span><span></span></div>
+    </div>
+  </div>
+
+  <div class="track-panel">
+    <div class="track-legend">
+      <div class="lg"><span class="sw sw-gold"></span> Recompensas VIP</div>
+      <div class="lg"><span class="sw sw-silver"></span> Recompensas gratis</div>
+    </div>
+
+    <div class="rail">
+      <div class="rail-row">
+        <div class="rail-line gold"></div>
+        <div class="node-set">
+          <div class="node gold-item claimed">💰<span class="check">✓</span><span class="tier-num">1</span></div>
+          <div class="node gold-item claimed">🛡️<span class="check">✓</span><span class="tier-num">2</span></div>
+          <div class="node gold-item current">💎<span class="tier-num">3</span></div>
+          <div class="node gold-item locked">🎭<span class="lock-ic">🔒</span><span class="tier-num">4</span></div>
+          <div class="node gold-item locked">✨<span class="lock-ic">🔒</span><span class="tier-num">5</span></div>
+          <div class="node gold-item locked">🏆<span class="lock-ic">🔒</span><span class="tier-num">6</span></div>
+          <div class="node gold-item locked">🔥<span class="lock-ic">🔒</span><span class="tier-num">7</span></div>
+          <div class="node gold-item locked">🌀<span class="lock-ic">🔒</span><span class="tier-num">8</span></div>
+          <div class="node gold-item locked">👑<span class="lock-ic">🔒</span><span class="tier-num">9</span></div>
+          <div class="node gold-item locked" style="border-color:var(--gold); box-shadow:0 0 10px rgba(240,200,96,0.3)">👾<span class="lock-ic">🔒</span><span class="tier-num">10</span></div>
+        </div>
+      </div>
+
+      <div class="rail-divider"></div>
+
+      <div class="rail-row">
+        <div class="rail-line silver"></div>
+        <div class="node-set">
+          <div class="node silver-item claimed">🪙<span class="check">✓</span></div>
+          <div class="node silver-item claimed">🎟️<span class="check">✓</span></div>
+          <div class="node silver-item current">🧩</div>
+          <div class="node silver-item locked">🪙<span class="lock-ic">🔒</span></div>
+          <div class="node silver-item locked">🎨<span class="lock-ic">🔒</span></div>
+          <div class="node silver-item locked">🪙<span class="lock-ic">🔒</span></div>
+          <div class="node silver-item locked">🎟️<span class="lock-ic">🔒</span></div>
+          <div class="node silver-item locked">🪙<span class="lock-ic">🔒</span></div>
+          <div class="node silver-item locked">🎁<span class="lock-ic">🔒</span></div>
+          <div class="node silver-item locked">🪙<span class="lock-ic">🔒</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="bottom-grid">
+    <div class="premium-card">
+      <div class="premium-top">
+        <div>
+          <div class="premium-label">VIP ACTIVO</div>
+          <div class="premium-name">Ruby Pass Temporada 04</div>
+        </div>
+        <div class="premium-pct">85%</div>
+      </div>
+      <div class="premium-bar-track"><div class="premium-bar-fill"></div></div>
+      <button class="premium-cta">SALTAR TIER · 250 💎</button>
+    </div>
+
+    <div class="missions-card">
+      <div class="missions-head"><span class="t">MISIONES DE HOY</span><span class="badge">1</span></div>
+      <div class="mission-row">
+        <div class="m-top"><span class="name">Compra algo</span><span class="prog">1/1</span></div>
+        <div class="m-track"><div class="m-fill done" style="width:100%"></div></div>
+      </div>
+      <div class="mission-row">
+        <div class="m-top"><span class="name">Recorre distancia</span><span class="prog">27/1800</span></div>
+        <div class="m-track"><div class="m-fill wip" style="width:2%"></div></div>
+      </div>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>

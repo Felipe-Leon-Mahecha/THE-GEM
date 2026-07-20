@@ -325,19 +325,24 @@ function buildStaticCanvas(lvl = window.level || 1) {
     offCtx.strokeStyle = "rgba(255,255,255,0.15)";
     offCtx.stroke();
 
-    // CORE 
+    // CORE — clip exacto a BASE_RADIUS: el borde visible SIEMPRE coincide con la física
     if (coreImg) {
+        offCtx.save();
+        offCtx.beginPath();
+        offCtx.arc(0, 0, window.BASE_RADIUS, 0, Math.PI * 2);
+        offCtx.clip();
         drawCenteredImage(
             offCtx,
             coreImg,
             0,
             0,
-            window.BASE_RADIUS * 2.2,
-            window.BASE_RADIUS * 2.2,
+            window.BASE_RADIUS * 2,
+            window.BASE_RADIUS * 2,
             visual.coreScale ?? 1,
             visual.coreOffsetX || 0,
             visual.coreOffsetY || 0
         );
+        offCtx.restore();
     } else {
         let cg = offCtx.createRadialGradient(-20, -20, 10, 0, 0, window.BASE_RADIUS);
         cg.addColorStop(0, "#fff");
@@ -1206,9 +1211,33 @@ function draw() {
     }
 
     // 6) MARCO: encima del player para que el borde exterior lo tape.
+    // Clip tipo dona: fuerza el borde INTERNO a DOME_RADIUS exacto, sin importar cómo venga el PNG.
+    // El límite exterior es todo el canvas (no restringe el borde externo del marco, solo el interno).
     if (window.running && frameImg) {
+        ctx.save();
+        ctx.beginPath();
+        ctx.rect(0, 0, canvas.width, canvas.height);
+        ctx.arc(cx, cy, window.DOME_RADIUS, 0, Math.PI * 2, true);
+        ctx.clip("evenodd");
         const marcoSize = window.DOME_RADIUS * (visual.frameSize || 2.28);
         drawCenteredImage(ctx, frameImg, cx, cy, marcoSize, marcoSize, visual.frameScale ?? 1, visual.frameOffsetX || 0, visual.frameOffsetY || 0);
+        ctx.restore();
+    }
+
+    // DEBUG TEMPORAL: activa con `window.DEBUG_RADII = true` en la consola.
+    // Dibuja BASE_RADIUS (rojo) y DOME_RADIUS (verde) exactos para comparar contra el arte.
+    if (window.running && window.DEBUG_RADII) {
+        ctx.save();
+        ctx.lineWidth = 2;
+        ctx.strokeStyle = "lime";
+        ctx.beginPath();
+        ctx.arc(cx, cy, window.DOME_RADIUS, 0, Math.PI * 2);
+        ctx.stroke();
+        ctx.strokeStyle = "red";
+        ctx.beginPath();
+        ctx.arc(cx, cy, window.BASE_RADIUS, 0, Math.PI * 2);
+        ctx.stroke();
+        ctx.restore();
     }
 
     // 7) Trampas encima del marco: si hacen dano, se ven.
@@ -2000,6 +2029,27 @@ function winGame() {
     }
     // ── FIN XP ───────────────────────────────────────────────
 
+    // Llave de Caronte (PLAN_LLAVES_CARONTE.md, Parte D): drop rarísimo al
+    // ganar una partida (normal o survival). Mucho más raro que en cofres a
+    // propósito — el drop principal sigue siendo por cofres, esto es un extra.
+    // Decisión: solo en VICTORIA, no en derrota (showGameOverWithRevive no
+    // tiene este roll). Si Luna quiere que también caiga al perder, agregar
+    // el mismo bloque ahí con una chance todavía más baja.
+    try {
+        const CARONTE_KEY_WIN_CHANCE = 0.003; // 0.3%
+        if (window.addCurrency && Math.random() < CARONTE_KEY_WIN_CHANCE) {
+            window.addCurrency(1, 'caronteKeys');
+            const gwUnlockEl = document.getElementById('gw-unlock');
+            if (gwUnlockEl) {
+                const keyMsg = 'Encontraste una Llave de Caronte...';
+                gwUnlockEl.innerHTML = (gwUnlockEl._xpMsg ? gwUnlockEl._xpMsg + '<br>' : '') + keyMsg;
+                gwUnlockEl.style.display = 'block';
+            }
+        }
+    } catch (e) {
+        console.warn('[winGame] Error en drop de Llave de Caronte:', e);
+    }
+
     let wins = parseInt(localStorage.getItem('gamesWon') || '0');
     wins++;
     localStorage.setItem('gamesWon', wins);
@@ -2034,35 +2084,10 @@ window.storeWonChest = function () {
 // INPUT
 // =====================================================
 window.worldRotation = 0;
-addEventListener("keydown", e => {
-    if (e.key === "Escape" || e.key === "p" || e.key === "P") {
-        if (window.paused) window.resumeGame();
-        else window.pauseGame();
-        return;
-    }
-    if (window.paused) return;
-    if (e.key === "a" || e.key === "A" || e.key === "ArrowLeft") window.keys.left = true;
-    if (e.key === "d" || e.key === "D" || e.key === "ArrowRight") window.keys.right = true;
-    if ((e.key === "s" || e.key === "S" || e.key === " " || e.key === "ArrowUp") && window.gravityFlipCooldown <= 0) {
-        e.preventDefault();
-        window.keys.gravity = true;
-    }
-    if (e.key === "w" || e.key === "W") {
-        e.preventDefault();
-        window.keys.powerW = true;
-    }
-    if (e.key === "e" || e.key === "E") {
-        e.preventDefault();
-        window.keys.powerE = true;
-    }
-});
-
-addEventListener("keyup", e => {
-    if (e.key === "a" || e.key === "A" || e.key === "ArrowLeft") window.keys.left = false;
-    if (e.key === "d" || e.key === "D" || e.key === "ArrowRight") window.keys.right = false;
-    if (e.key === "w" || e.key === "W") window.keys.powerW = false;
-    if (e.key === "e" || e.key === "E") window.keys.powerE = false;
-});
+// NOTA: el manejo de teclado (movimiento y pausa) se hizo cargo
+// por completo "keybinds-integration.js" (se carga después de este
+// archivo). Tenerlo duplicado acá causaba que la pausa se abriera
+// y se cerrara en el mismo instante al presionar P/Escape.
 
 // =====================================================
 // PAUSE / RESUME

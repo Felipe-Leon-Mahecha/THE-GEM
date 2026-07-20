@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>THE GEM — Panel de Monedas y Gemas</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=Chakra+Petch:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#070910;
+  --panel-solid:#11141f;
+  --line:rgba(255,255,255,.08);
+  --txt:#e8ecf5;
+  --txt-dim:#7c869c;
+
+  --gold:#ffd76a;
+  --gold-dark:#8a6a1f;
+  --gold-soft:#ffd76a26;
+
+  --ruby:#ff4d6a;
+  --ruby-dark:#8a1f33;
+  --ruby-soft:#ff4d6a26;
+
+  --cyan:#00e5ff;
+  --cyan-soft:#00e5ff33;
+}
+
+*{box-sizing:border-box; margin:0; padding:0;}
+
+body{
+  min-height:100vh;
+  background:
+    radial-gradient(circle at 15% 0%, rgba(124,92,255,.08), transparent 40%),
+    radial-gradient(circle at 85% 20%, rgba(0,229,255,.06), transparent 40%),
+    var(--bg);
+  color:var(--txt);
+  font-family:'Chakra Petch', sans-serif;
+  display:flex; align-items:center; justify-content:center;
+  padding:20px;
+}
+
+/* fondo de "juego" detrás, para dar contexto de que esto es un overlay */
+.game-backdrop{
+  position:fixed; inset:0;
+  background:linear-gradient(160deg,#0c0f18,#070910);
+  z-index:0;
+}
+.game-backdrop::after{
+  content:"THE GEM";
+  position:absolute; top:26px; left:36px;
+  font-family:'Rajdhani'; font-weight:700; font-size:20px; letter-spacing:3px;
+  color:rgba(255,255,255,.06);
+}
+
+/* ============ OVERLAY + MODAL ============ */
+.overlay{
+  position:relative; z-index:1;
+  width:min(1180px, 96vw);
+  height:min(760px, 92vh);
+  background:var(--panel-solid);
+  border:1px solid var(--line);
+  clip-path:polygon(0 0, calc(100% - 34px) 0, 100% 34px, 100% 100%, 0 100%);
+  display:flex; flex-direction:column;
+  box-shadow:0 30px 80px rgba(0,0,0,.55);
+  overflow:hidden;
+}
+
+/* ---- header ---- */
+.modal-head{
+  position:relative;
+  display:flex; align-items:center; gap:18px;
+  padding:22px 30px 18px;
+  border-bottom:1px solid var(--line);
+  background:linear-gradient(90deg, rgba(255,255,255,.03), transparent 70%);
+  flex-shrink:0;
+}
+.modal-title{
+  font-family:'Rajdhani'; font-weight:700; font-size:24px; letter-spacing:2px;
+}
+.modal-title span{ color:var(--gold); }
+.modal-sub{ color:var(--txt-dim); font-size:12px; margin-top:2px; letter-spacing:.5px; }
+
+.balance-row{
+  display:flex; gap:10px; margin-left:auto;
+}
+.balance-chip{
+  display:inline-flex; align-items:center; gap:9px;
+  padding:9px 16px;
+  background:rgba(255,255,255,.04);
+  border:1px solid var(--line);
+  clip-path:polygon(8px 0,100% 0,calc(100% - 8px) 100%,0 100%);
+  font-weight:700; font-size:14px;
+}
+.balance-chip .coin-ico{ width:16px; height:16px; border-radius:50%;
+  background:radial-gradient(circle at 32% 28%, #fff3c4, var(--gold) 45%, var(--gold-dark) 100%);
+  box-shadow:0 0 6px var(--gold-soft); flex-shrink:0;
+}
+.balance-chip .gem-ico{ width:14px; height:14px;
+  background:linear-gradient(160deg,#ffb3c0,var(--ruby) 55%,var(--ruby-dark));
+  clip-path:polygon(50% 0,100% 50%,50% 100%,0 50%);
+  box-shadow:0 0 6px var(--ruby-soft); flex-shrink:0;
+}
+
+.close-btn{
+  position:relative; width:30px; height:30px; flex-shrink:0;
+  border:1px solid var(--line);
+  clip-path:polygon(7px 0,100% 0,100% calc(100% - 7px),calc(100% - 7px) 100%,0 100%,0 7px);
+  cursor:pointer;
+  transition:border-color .15s;
+}
+.close-btn:hover{ border-color:var(--txt); }
+.close-btn::before,.close-btn::after{
+  content:""; position:absolute; top:50%; left:50%;
+  width:13px; height:1.5px; background:var(--txt-dim);
+}
+.close-btn::before{ transform:translate(-50%,-50%) rotate(45deg); }
+.close-btn::after{ transform:translate(-50%,-50%) rotate(-45deg); }
+
+/* ---- tabs ---- */
+.tabs{
+  display:flex; gap:8px;
+  padding:16px 30px 0;
+  flex-shrink:0;
+}
+.tab-btn{
+  position:relative;
+  font-family:'Rajdhani'; font-weight:700; font-size:14px; letter-spacing:2px;
+  text-transform:uppercase;
+  padding:10px 26px;
+  background:rgba(255,255,255,.03);
+  border:1px solid var(--line); border-bottom:none;
+  color:var(--txt-dim);
+  cursor:pointer;
+  clip-path:polygon(10px 0,100% 0,100% 100%,0 100%);
+}
+.tab-btn.active{ color:var(--bg); }
+.tab-btn[data-tab="monedas"].active{ background:linear-gradient(90deg,var(--gold-dark),var(--gold)); color:#241a03; }
+.tab-btn[data-tab="gemas"].active{ background:linear-gradient(90deg,var(--ruby-dark),var(--ruby)); color:#2a0510; }
+.tab-btn[data-tab="conversion"].active{ background:linear-gradient(90deg,#0891a3,var(--cyan)); color:#03242b; }
+
+/* ---- content ---- */
+.content{
+  flex:1; overflow-y:auto;
+  padding:26px 30px 30px;
+}
+.content::-webkit-scrollbar{ width:8px; }
+.content::-webkit-scrollbar-thumb{ background:var(--line); }
+
+.section-label{
+  display:flex; align-items:center; gap:12px;
+  margin-bottom:18px;
+}
+.section-label .num{ font-family:'Rajdhani'; font-weight:700; font-size:12px; color:var(--txt-dim); }
+.section-label .line{ flex:1; height:1px; background:linear-gradient(90deg, var(--line), transparent); }
+.section-label .txt{ font-family:'Rajdhani'; font-weight:700; font-size:15px; letter-spacing:2px; }
+
+/* ---- grid de paquetes ---- */
+.pack-grid{
+  display:grid;
+  grid-template-columns:repeat(3, 1fr);
+  gap:16px;
+}
+.pack-card{
+  position:relative;
+  background:rgba(255,255,255,.025);
+  border:1px solid var(--line);
+  clip-path:polygon(0 0, calc(100% - 18px) 0, 100% 18px, 100% 100%, 0 100%);
+  padding:20px 18px 18px;
+  display:flex; flex-direction:column; align-items:center; text-align:center;
+  gap:10px;
+  transition:border-color .15s, transform .15s;
+  cursor:pointer;
+}
+.pack-card:hover{ transform:translateY(-3px); }
+.pack-grid.monedas .pack-card:hover{ border-color:var(--gold-dark); }
+.pack-grid.gemas .pack-card:hover{ border-color:var(--ruby-dark); }
+
+.pack-card .best-flag{
+  position:absolute; top:0; left:0; width:0; height:0;
+  clip-path:polygon(0 0, 100% 0, 0 100%);
+  width:58px; height:58px;
+  background:linear-gradient(135deg,#fff6d9 0%,var(--gold) 35%,var(--gold-dark) 100%);
+  overflow:hidden;
+}
+.pack-card .best-flag::after{
+  content:"MEJOR VALOR";
+  position:absolute; top:9px; left:2px;
+  font-size:8px; font-weight:700; color:#3a2a05; letter-spacing:.3px;
+  transform:rotate(-45deg); transform-origin:left top; white-space:nowrap;
+}
+.pack-card .best-flag.ruby{ background:linear-gradient(135deg,#ffd4dc 0%,var(--ruby) 45%,var(--ruby-dark) 100%); }
+.pack-card .best-flag.ruby::after{ content:"MÁS POPULAR"; color:#2a0510; }
+
+/* ---- iconos de contenedores, dibujados en CSS ---- */
+.container-icon{ width:76px; height:64px; position:relative; margin-top:6px; }
+
+/* MONEDAS: manojo, saco, caja, cofre, baul, arca */
+.ci-manojo{ background:radial-gradient(circle at 30% 70%, var(--gold), var(--gold-dark) 75%); border-radius:50% 50% 45% 45%; width:56px; height:34px; margin:16px auto 0; box-shadow:0 0 10px var(--gold-soft);}
+.ci-saco{ width:52px; height:60px; margin:4px auto 0; background:linear-gradient(160deg,#4a3626,#2a1c12); border-radius:45% 45% 50% 50% / 55% 55% 45% 45%; position:relative; }
+.ci-saco::before{ content:""; position:absolute; top:-6px; left:50%; transform:translateX(-50%); width:34px; height:14px; background:#5a4230; border-radius:40% 40% 0 0; }
+.ci-saco::after{ content:""; position:absolute; top:2px; left:50%; transform:translateX(-50%); width:38px; height:5px; background:var(--gold-dark); border-radius:3px; }
+.ci-caja{ width:64px; height:48px; margin:14px auto 0; background:linear-gradient(160deg,#6b4326,#3a2413); border:3px solid #1c130a; position:relative; }
+.ci-caja::before{ content:""; position:absolute; inset:-3px -3px auto -3px; height:10px; background:linear-gradient(180deg,var(--gold),var(--gold-dark)); border-radius:3px 3px 0 0; }
+.ci-cofre{ width:66px; height:44px; margin:16px auto 0; background:linear-gradient(160deg,#5a3a20,#2a1a0d); border-radius:8px 8px 3px 3px; border:3px solid #16100a; position:relative; }
+.ci-cofre::before{ content:""; position:absolute; top:-14px; left:0; right:0; height:16px; background:linear-gradient(160deg,#5a3a20,#2a1a0d); border-radius:10px 10px 0 0; border:3px solid #16100a; border-bottom:none; }
+.ci-cofre::after{ content:""; position:absolute; bottom:16px; left:50%; transform:translateX(-50%); width:10px; height:10px; background:var(--gold); border-radius:2px; }
+.ci-baul{ width:78px; height:42px; margin:18px auto 0; background:linear-gradient(160deg,#5a3a20,#2a1a0d); border:3px solid #16100a; position:relative; }
+.ci-baul::before{ content:""; position:absolute; top:-10px; left:0; right:0; height:12px; background:linear-gradient(160deg,#6b4326,#3a2413); border-radius:6px 6px 0 0; border:3px solid #16100a; border-bottom:none; }
+.ci-baul::after{ content:""; position:absolute; inset:0; margin:auto; width:90%; height:3px; top:16px; background:var(--gold-dark); }
+.ci-arca{ width:84px; height:46px; margin:16px auto 0; background:linear-gradient(160deg,#5a5a5a,#2a2a2a); border:3px solid #131313; position:relative; }
+.ci-arca::before{ content:""; position:absolute; top:-8px; left:-6px; right:-6px; height:10px; background:linear-gradient(160deg,#7a7a7a,#3a3a3a); border-radius:4px; }
+.ci-arca::after{ content:""; position:absolute; top:12px; left:50%; transform:translateX(-50%); width:16px; height:16px; border:3px solid var(--gold-dark); border-radius:50%; background:transparent; }
+
+/* GEMAS: manojo, bolsa, cofrecillo, cristal, relicario, geoda */
+.gi-manojo{ width:0; height:0; margin:20px auto 0; border-left:16px solid transparent; border-right:16px solid transparent; border-bottom:22px solid var(--ruby); filter:drop-shadow(0 0 8px var(--ruby-soft)); position:relative; }
+.gi-manojo::after{ content:""; position:absolute; top:22px; left:-16px; width:0; height:0; border-left:16px solid transparent; border-right:16px solid transparent; border-top:16px solid var(--ruby-dark); }
+.gi-bolsa{ width:50px; height:58px; margin:6px auto 0; background:linear-gradient(160deg,#7a1530,#4a0d1c); border-radius:45% 45% 50% 50% / 55% 55% 45% 45%; position:relative; }
+.gi-bolsa::before{ content:""; position:absolute; top:-6px; left:50%; transform:translateX(-50%); width:32px; height:12px; background:#8a1c38; border-radius:40% 40% 0 0; }
+.gi-bolsa::after{ content:""; position:absolute; top:1px; left:50%; transform:translateX(-50%); width:36px; height:5px; background:var(--gold-dark); border-radius:3px; }
+.gi-cofrecillo{ width:62px; height:40px; margin:18px auto 0; background:linear-gradient(160deg,#3a2418,#1c120b); border:3px solid var(--gold-dark); border-radius:4px; position:relative; }
+.gi-cofrecillo::before{ content:""; position:absolute; top:-13px; left:0; right:0; height:15px; background:linear-gradient(160deg,#3a2418,#1c120b); border-radius:5px 5px 0 0; border:3px solid var(--gold-dark); border-bottom:none; }
+.gi-cristal{ width:60px; height:44px; margin:16px auto 0; background:linear-gradient(160deg, rgba(255,77,106,.35), rgba(138,31,51,.55)); border:3px solid var(--gold); border-radius:6px 6px 3px 3px; box-shadow:0 0 14px var(--ruby-soft), inset 0 0 12px rgba(255,255,255,.15); position:relative; }
+.gi-cristal::before{ content:""; position:absolute; top:-13px; left:0; right:0; height:15px; background:linear-gradient(160deg, rgba(255,77,106,.35), rgba(138,31,51,.55)); border-radius:8px 8px 0 0; border:3px solid var(--gold); border-bottom:none; }
+.gi-relicario{ width:38px; height:52px; margin:12px auto 0; background:linear-gradient(160deg,#2a2030,#14101a); border:2px solid var(--gold-dark); border-radius:50% 50% 10% 10% / 30% 30% 10% 10%; position:relative; }
+.gi-relicario::before{ content:""; position:absolute; bottom:-8px; left:-8px; right:-8px; height:8px; background:var(--gold-dark); border-radius:3px; }
+.gi-geoda{ width:80px; height:50px; margin:14px auto 0; background:linear-gradient(160deg,#4a4a4a,#232323); clip-path:polygon(10% 100%,0 40%,25% 0,75% 0,100% 40%,90% 100%); position:relative; }
+.gi-geoda::before{ content:""; position:absolute; inset:8px 12px 4px; background:linear-gradient(160deg, rgba(255,77,106,.5), rgba(138,31,51,.7)); clip-path:polygon(15% 100%,0 35%,50% 0,100% 35%,85% 100%); box-shadow:0 0 12px var(--ruby-soft); }
+
+.pack-name{ font-family:'Rajdhani'; font-weight:700; font-size:15px; letter-spacing:.5px; margin-top:4px; }
+.pack-amount{ display:flex; align-items:center; gap:6px; font-size:18px; font-weight:700; }
+.pack-amount .coin-ico{ width:14px; height:14px; border-radius:50%; background:radial-gradient(circle at 32% 28%, #fff3c4, var(--gold) 45%, var(--gold-dark) 100%); }
+.pack-amount .gem-ico{ width:12px; height:12px; background:linear-gradient(160deg,#ffb3c0,var(--ruby) 55%,var(--ruby-dark)); clip-path:polygon(50% 0,100% 50%,50% 100%,0 50%); }
+.pack-bonus{ font-size:10px; letter-spacing:.5px; color:var(--gold); background:var(--gold-soft); padding:3px 8px; border-radius:2px; }
+.pack-grid.gemas .pack-bonus{ color:var(--ruby); background:var(--ruby-soft); }
+
+.pack-price{
+  width:100%; margin-top:6px;
+  font-family:'Rajdhani'; font-weight:700; font-size:14px; letter-spacing:1px;
+  padding:9px 0;
+  border:1px solid var(--gold-dark);
+  background:linear-gradient(90deg, var(--gold-soft), transparent);
+  color:var(--gold);
+  clip-path:polygon(8px 0,100% 0,calc(100% - 8px) 100%,0 100%);
+  cursor:pointer;
+  transition:background .15s;
+}
+.pack-price:hover{ background:linear-gradient(90deg, var(--gold-dark), var(--gold)); color:#241a03; }
+.pack-grid.gemas .pack-price{ border-color:var(--ruby-dark); background:linear-gradient(90deg, var(--ruby-soft), transparent); color:var(--ruby); }
+.pack-grid.gemas .pack-price:hover{ background:linear-gradient(90deg, var(--ruby-dark), var(--ruby)); color:#2a0510; }
+
+/* ---- conversion tab ---- */
+.conv-wrap{ max-width:520px; margin:10px auto 0; text-align:center; }
+.conv-panel{
+  background:rgba(255,255,255,.025);
+  border:1px solid var(--line);
+  clip-path:polygon(16px 0,100% 0,100% calc(100% - 16px),calc(100% - 16px) 100%,0 100%,0 16px);
+  padding:34px 30px;
+}
+.conv-row{ display:flex; align-items:center; justify-content:center; gap:22px; margin-bottom:26px; }
+.conv-side{ display:flex; flex-direction:column; align-items:center; gap:8px; }
+.conv-side .lbl{ font-size:11px; color:var(--txt-dim); letter-spacing:1.5px; }
+.conv-side .val{ font-family:'Rajdhani'; font-weight:700; font-size:26px; display:flex; align-items:center; gap:8px;}
+.conv-arrow{ font-size:20px; color:var(--cyan); }
+.conv-slider{ width:100%; margin:14px 0 20px; accent-color:var(--cyan); }
+.conv-rate{ font-size:11px; color:var(--txt-dim); margin-bottom:22px; }
+.conv-btn{
+  font-family:'Rajdhani'; font-weight:700; font-size:14px; letter-spacing:2px;
+  padding:12px 40px;
+  background:linear-gradient(90deg,#0891a3,var(--cyan));
+  color:#03242b; border:none;
+  clip-path:polygon(10px 0,100% 0,100% calc(100% - 10px),calc(100% - 10px) 100%,0 100%,0 10px);
+  cursor:pointer;
+}
+
+.hint{ text-align:center; color:var(--txt-dim); font-size:11px; margin-top:22px; letter-spacing:.3px; }
+
+@media (max-width:820px){
+  .pack-grid{ grid-template-columns:repeat(2,1fr); }
+  .balance-row{ gap:6px; }
+  .modal-title{ font-size:19px; }
+}
+</style>
+</head>
+<body>
+<div class="game-backdrop"></div>
+
+<div class="overlay">
+  <div class="modal-head">
+    <div>
+      <div class="modal-title">TIENDA DE <span>DIVISAS</span></div>
+      <div class="modal-sub">Consigue monedas y gemas para desbloquear recompensas</div>
+    </div>
+    <div class="balance-row">
+      <div class="balance-chip"><span class="coin-ico"></span>1803</div>
+      <div class="balance-chip"><span class="gem-ico"></span>621</div>
+    </div>
+    <div class="close-btn"></div>
+  </div>
+
+  <div class="tabs">
+    <div class="tab-btn active" data-tab="monedas">Monedas</div>
+    <div class="tab-btn" data-tab="gemas">Gemas</div>
+    <div class="tab-btn" data-tab="conversion">Conversión</div>
+  </div>
+
+  <div class="content">
+
+    <!-- MONEDAS -->
+    <div class="tab-pane" id="pane-monedas">
+      <div class="section-label"><span class="num">$</span><span class="line"></span><span class="txt">PAQUETES DE MONEDAS</span></div>
+      <div class="pack-grid monedas">
+
+        <div class="pack-card">
+          <div class="ci-manojo container-icon"></div>
+          <div class="pack-name">Manojo de Monedas</div>
+          <div class="pack-amount"><span class="coin-ico"></span>500</div>
+          <button class="pack-price">$0.99</button>
+        </div>
+
+        <div class="pack-card">
+          <div class="ci-saco container-icon"></div>
+          <div class="pack-name">Saco de Monedas</div>
+          <div class="pack-amount"><span class="coin-ico"></span>1,200</div>
+          <div class="pack-bonus">+10% BONUS</div>
+          <button class="pack-price">$2.49</button>
+        </div>
+
+        <div class="pack-card">
+          <div class="ci-caja container-icon"></div>
+          <div class="pack-name">Caja de Monedas</div>
+          <div class="pack-amount"><span class="coin-ico"></span>2,600</div>
+          <div class="pack-bonus">+15% BONUS</div>
+          <button class="pack-price">$4.99</button>
+        </div>
+
+        <div class="pack-card">
+          <div class="best-flag"></div>
+          <div class="ci-cofre container-icon"></div>
+          <div class="pack-name">Cofre de Monedas</div>
+          <div class="pack-amount"><span class="coin-ico"></span>5,500</div>
+          <div class="pack-bonus">+20% BONUS</div>
+          <button class="pack-price">$9.99</button>
+        </div>
+
+        <div class="pack-card">
+          <div class="ci-baul container-icon"></div>
+          <div class="pack-name">Baúl de Monedas</div>
+          <div class="pack-amount"><span class="coin-ico"></span>12,000</div>
+          <div class="pack-bonus">+25% BONUS</div>
+          <button class="pack-price">$19.99</button>
+        </div>
+
+        <div class="pack-card">
+          <div class="ci-arca container-icon"></div>
+          <div class="pack-name">Arca de Monedas</div>
+          <div class="pack-amount"><span class="coin-ico"></span>28,000</div>
+          <div class="pack-bonus">+35% BONUS</div>
+          <button class="pack-price">$39.99</button>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- GEMAS -->
+    <div class="tab-pane" id="pane-gemas" style="display:none;">
+      <div class="section-label"><span class="num">$</span><span class="line"></span><span class="txt">PAQUETES DE GEMAS</span></div>
+      <div class="pack-grid gemas">
+
+        <div class="pack-card">
+          <div class="gi-manojo container-icon"></div>
+          <div class="pack-name">Manojo de Gemas</div>
+          <div class="pack-amount"><span class="gem-ico"></span>60</div>
+          <button class="pack-price">$0.99</button>
+        </div>
+
+        <div class="pack-card">
+          <div class="gi-bolsa container-icon"></div>
+          <div class="pack-name">Bolsa de Gemas</div>
+          <div class="pack-amount"><span class="gem-ico"></span>150</div>
+          <div class="pack-bonus">+10% BONUS</div>
+          <button class="pack-price">$2.49</button>
+        </div>
+
+        <div class="pack-card">
+          <div class="best-flag ruby"></div>
+          <div class="gi-cofrecillo container-icon"></div>
+          <div class="pack-name">Cofrecillo de Gemas</div>
+          <div class="pack-amount"><span class="gem-ico"></span>340</div>
+          <div class="pack-bonus">+15% BONUS</div>
+          <button class="pack-price">$4.99</button>
+        </div>
+
+        <div class="pack-card">
+          <div class="gi-cristal container-icon"></div>
+          <div class="pack-name">Cofre de Cristal</div>
+          <div class="pack-amount"><span class="gem-ico"></span>720</div>
+          <div class="pack-bonus">+20% BONUS</div>
+          <button class="pack-price">$9.99</button>
+        </div>
+
+        <div class="pack-card">
+          <div class="gi-relicario container-icon"></div>
+          <div class="pack-name">Relicario de Gemas</div>
+          <div class="pack-amount"><span class="gem-ico"></span>1,600</div>
+          <div class="pack-bonus">+25% BONUS</div>
+          <button class="pack-price">$19.99</button>
+        </div>
+
+        <div class="pack-card">
+          <div class="gi-geoda container-icon"></div>
+          <div class="pack-name">Geoda de Gemas</div>
+          <div class="pack-amount"><span class="gem-ico"></span>3,800</div>
+          <div class="pack-bonus">+35% BONUS</div>
+          <button class="pack-price">$39.99</button>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- CONVERSION -->
+    <div class="tab-pane" id="pane-conversion" style="display:none;">
+      <div class="conv-wrap">
+        <div class="section-label"><span class="num">⇄</span><span class="line"></span><span class="txt">CONVERTIR GEMAS A MONEDAS</span></div>
+        <div class="conv-panel">
+          <div class="conv-row">
+            <div class="conv-side">
+              <div class="lbl">GASTAS</div>
+              <div class="val"><span class="gem-ico"></span><span id="convFrom">100</span></div>
+            </div>
+            <div class="conv-arrow">→</div>
+            <div class="conv-side">
+              <div class="lbl">RECIBES</div>
+              <div class="val"><span class="coin-ico"></span><span id="convTo">800</span></div>
+            </div>
+          </div>
+          <input type="range" min="10" max="621" value="100" class="conv-slider" id="convSlider">
+          <div class="conv-rate">Tasa actual: 1 gema = 8 monedas</div>
+          <button class="conv-btn">CONFIRMAR CONVERSIÓN</button>
+        </div>
+        <div class="hint">La conversión es de un solo sentido: gemas → monedas. No se puede revertir.</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+document.querySelectorAll('.tab-btn').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    document.querySelectorAll('.tab-pane').forEach(p=>p.style.display='none');
+    document.getElementById('pane-'+btn.dataset.tab).style.display='block';
+  });
+});
+const slider = document.getElementById('convSlider');
+slider.addEventListener('input',()=>{
+  document.getElementById('convFrom').textContent = slider.value;
+  document.getElementById('convTo').textContent = (slider.value*8).toLocaleString();
+});
+</script>
+</body>
+</html>

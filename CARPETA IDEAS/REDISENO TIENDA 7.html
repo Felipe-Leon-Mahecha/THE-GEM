@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>THE GEM — Preview: retícula actual + HUD potenciado</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@600;700;800&family=Chakra+Petch:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#07070d;
+  --line:rgba(255,255,255,.08);
+  --txt:#e8ecf5;
+  --txt-dim:#7c869c;
+  --gold:#ffd76a;
+}
+*{box-sizing:border-box; margin:0; padding:0;}
+body{
+  background:var(--bg); color:var(--txt); font-family:'Chakra Petch', sans-serif;
+}
+.note{ padding:14px 22px; color:var(--txt-dim); font-size:11.5px; line-height:1.6; border-bottom:1px solid var(--line); background:#0a0a12; }
+
+.app{ display:flex; height:calc(100vh - 62px); min-height:640px; }
+
+/* ===================== SIDEBAR (tal cual el tuyo, sin tocar) ===================== */
+.sidebar{ width:300px; flex-shrink:0; background:#0b0b12; border-right:1px solid var(--line); padding:20px 18px; display:flex; flex-direction:column; gap:16px; overflow-y:auto; }
+.sb-title{ font-family:'Rajdhani'; font-weight:800; font-size:26px; letter-spacing:1px; color:#ff4d6d; }
+.sb-back{ width:100%; padding:10px; background:none; border:1px solid var(--line); border-radius:8px; color:var(--txt-dim); font-family:monospace; font-size:11px; letter-spacing:1px; cursor:pointer; }
+.sb-label{ font-size:10px; letter-spacing:2px; color:var(--txt-dim); margin-bottom:6px; }
+.sb-banner{ position:relative; height:110px; border-radius:10px; overflow:hidden; border:2px solid var(--gold); background:linear-gradient(160deg,#4a3a5a,#1a1424); }
+.sb-banner::after{ content:"LEON\A Nivel 1"; white-space:pre; position:absolute; left:12px; bottom:10px; font-family:'Rajdhani'; font-weight:700; font-size:15px; line-height:1.3; }
+.sb-currency{ display:flex; flex-direction:column; gap:8px; }
+.sb-cur-row{ display:flex; align-items:center; justify-content:space-between; padding:10px 12px; background:rgba(255,255,255,.03); border:1px solid var(--line); border-radius:8px; font-size:12px; }
+.sb-cur-row .lbl{ display:flex; align-items:center; gap:8px; color:var(--txt-dim); letter-spacing:1px; }
+.sb-dot{ width:14px; height:14px; border-radius:50%; }
+.sb-dot.ruby{ background:radial-gradient(circle at 30% 30%,#ff9bb0,#ff4d6d); }
+.sb-dot.coin{ background:radial-gradient(circle at 30% 30%,#fff3c4,#ffc93c); }
+.sb-cur-row .val{ font-weight:700; }
+.sb-missions{ display:flex; justify-content:space-between; align-items:center; padding:12px; background:rgba(255,255,255,.03); border:1px solid var(--line); border-radius:8px; cursor:pointer; }
+.sb-missions b{ font-family:'Rajdhani'; font-size:13px; letter-spacing:.5px; }
+.sb-missions small{ display:block; color:var(--txt-dim); font-size:10px; }
+.sb-missions .n{ background:rgba(255,255,255,.08); padding:3px 9px; border-radius:10px; font-size:11px; }
+.sb-equip-label{ font-size:10px; letter-spacing:2px; color:var(--txt-dim); }
+.sb-equip{ display:flex; align-items:center; gap:10px; }
+.sb-equip-dot{ width:36px; height:36px; border-radius:50%; background:radial-gradient(circle at 35% 30%,#fff6c9,#d8a800); }
+.sb-equip .n{ font-size:12px; font-weight:600; }
+.sb-equip .r{ font-size:10px; color:#00e5ff; letter-spacing:1px; }
+
+/* ===================== MAIN CONTENT ===================== */
+.main{ flex:1; position:relative; overflow-y:auto; padding:24px 26px 40px; }
+.main::before{
+  content:""; position:fixed; inset:0; left:300px; pointer-events:none; z-index:0;
+  background-image:repeating-linear-gradient(115deg, rgba(255,255,255,.012) 0 2px, transparent 2px 26px);
+}
+
+.cart-btn{
+  position:absolute; top:24px; right:26px; z-index:6;
+  display:flex; align-items:center; gap:8px;
+  padding:9px 16px 9px 12px;
+  background:rgba(255,238,0,.08); border:1px solid rgba(255,238,0,.4); border-radius:999px;
+  color:#ffee00; font-family:'Rajdhani'; font-weight:700; font-size:12px; letter-spacing:1.5px; cursor:pointer;
+}
+.cart-btn svg{ width:16px; height:16px; }
+
+/* ---- hero VIP (igual que ya tienes, referencia) ---- */
+.hero-vip{
+  position:relative; height:150px; border-radius:14px; margin-bottom:28px; overflow:hidden;
+  background:linear-gradient(120deg,#1c1440 0%, #241a4a 45%, #0a0e28 100%);
+  border:1px solid rgba(162,89,255,.35);
+  display:flex; flex-direction:column; justify-content:center; padding:0 30px;
+}
+.hero-vip .kicker{ font-size:10px; letter-spacing:3px; color:#c9a8ff; }
+.hero-vip .title{ font-family:'Rajdhani'; font-weight:800; font-size:32px; letter-spacing:1px; background:linear-gradient(90deg,#c9a8ff,#7fd8ff); -webkit-background-clip:text; background-clip:text; color:transparent; }
+
+/* ===================== GRID — grupos separados, con aire ===================== */
+.group{ margin-bottom:30px; }
+.group-label{ display:flex; align-items:center; gap:12px; margin-bottom:14px; }
+.group-label .txt{ font-family:'Rajdhani'; font-weight:700; font-size:12px; letter-spacing:3px; color:var(--txt-dim); }
+.group-label .ln{ flex:1; height:1px; background:linear-gradient(90deg, var(--line), transparent); }
+
+.grid-main{ display:grid; grid-template-columns:1.4fr 1fr; gap:20px; grid-auto-rows:190px; }
+.grid-quick{ display:grid; grid-template-columns:repeat(4, 1fr); gap:20px; grid-auto-rows:130px; }
+.grid-foot{ display:grid; grid-template-columns:1fr 1.6fr; gap:20px; grid-auto-rows:150px; }
+
+.card{
+  position:relative;
+  border-radius:6px;
+  overflow:hidden;
+  padding:18px;
+  display:flex; flex-direction:column; justify-content:flex-end;
+  background:linear-gradient(150deg, var(--c1), var(--c2));
+  border:1px solid rgba(255,255,255,.06);
+  cursor:pointer;
+  transition:transform .18s ease;
+}
+.card:hover{ transform:translateY(-3px); }
+
+/* corners HUD marcados */
+.card .hc{ position:absolute; width:20px; height:20px; border:var(--ac) solid; opacity:.9; }
+.card .hc.tl{ top:8px; left:8px; border-width:2px 0 0 2px; }
+.card .hc.tr{ top:8px; right:8px; border-width:2px 2px 0 0; }
+.card .hc.bl{ bottom:8px; left:8px; border-width:0 0 2px 2px; }
+.card .hc.br{ bottom:8px; right:8px; border-width:0 2px 2px 0; }
+
+/* línea de scan al hover */
+.card .scan{ position:absolute; left:0; right:0; top:-40%; height:40%; background:linear-gradient(180deg, transparent, var(--ac-a), transparent); opacity:0; transition:opacity .2s; pointer-events:none; }
+.card:hover .scan{ opacity:.5; animation:scanmove 1.1s linear infinite; }
+@keyframes scanmove{ from{ top:-40%; } to{ top:100%; } }
+
+.card .glyph{ position:absolute; top:10px; right:14px; font-size:34px; opacity:.15; color:var(--ac); }
+.card .kicker{ font-size:9px; letter-spacing:2.5px; color:var(--ac); text-transform:uppercase; margin-bottom:3px; }
+.card .title{ font-family:'Rajdhani'; font-weight:800; font-size:22px; letter-spacing:.5px; text-shadow:0 0 14px var(--ac-a); }
+
+.card.skins{ --ac:#3ea7ff; --ac-a:#3ea7ff88; --c1:#0d2036; --c2:#050912; }
+.card.trails{ --ac:#00e5ff; --ac-a:#00e5ff88; --c1:#052226; --c2:#03080a; }
+.card.banners{ --ac:#7f8cff; --ac-a:#7f8cff88; --c1:#161540; --c2:#08071c; }
+.card.emotes{ --ac:#ff5d8f; --ac-a:#ff5d8f88; --c1:#2a0a1c; --c2:#0a0508; }
+.card.powerups{ --ac:#6bcf7f; --ac-a:#6bcf7f88; --c1:#0d2412; --c2:#050c07; }
+.card.cofres{ --ac:#ffc340; --ac-a:#ffc34088; --c1:#2e2308; --c2:#0a0805; }
+.card.seasons{ --ac:#a259ff; --ac-a:#a259ff88; --c1:#241a4a; --c2:#0a0818; justify-content:space-between; }
+.card.seasons .timer{ align-self:flex-start; font-size:10px; color:#ffb3c4; border:1px solid #ff3b5c66; padding:3px 8px; border-radius:4px; background:#ff3b5c14; }
+.card.seasons .title{ font-size:26px; }
+
+.card.daily{ flex-direction:row; align-items:center; gap:14px; --ac:#ffd76a; --ac-a:#ffd76a88; --c1:#2e2410; --c2:#0d0a04; }
+.card.daily .gift-ico{ width:38px; height:38px; flex-shrink:0; background:linear-gradient(160deg,#ffe9a8,#c99a2e); clip-path:polygon(6px 0,100% 0,100% 100%,0 100%); }
+.card.daily .title{ font-size:18px; }
+.card.daily .sub{ font-size:10px; color:var(--txt-dim); }
+
+footer{ padding:16px 24px 30px; color:var(--txt-dim); font-size:11px; line-height:1.7; border-top:1px solid var(--line); }
+</style>
+</head>
+<body>
+
+<div class="note">
+  PREVIEW v2 — misma idea (esquinas HUD, colores por categoría, scan al hover) pero con AIRE de verdad: gaps más grandes, y la retícula partida en 3 grupos con su propio label ("CATEGORÍAS PRINCIPALES", "ACCESOS RÁPIDOS", "DESTACADOS") en vez de una sola plancha tipo tetris. El sidebar sigue siendo el tuyo real, sin cambios.
+</div>
+
+<div class="app">
+
+  <div class="sidebar">
+    <div class="sb-title">TIENDA</div>
+    <button class="sb-back">← VOLVER</button>
+    <div>
+      <div class="sb-label">ESTANDARTE</div>
+      <div class="sb-banner"></div>
+    </div>
+    <div class="sb-currency">
+      <div class="sb-cur-row"><span class="lbl"><span class="sb-dot ruby"></span>RUBIES</span><span class="val">621</span></div>
+      <div class="sb-cur-row"><span class="lbl"><span class="sb-dot coin"></span>COINS</span><span class="val">1803</span></div>
+    </div>
+    <div class="sb-missions"><span><b>MISIONES</b><small>Diarias y racha</small></span><span class="n">0</span></div>
+    <div>
+      <div class="sb-equip-label">EQUIPADO</div>
+      <div class="sb-equip"><div class="sb-equip-dot"></div><div><div class="n">Pelota Amarillo</div><div class="r">BASICO</div></div></div>
+    </div>
+  </div>
+
+  <div class="main">
+    <button class="cart-btn">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle>
+        <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+      </svg>
+      TIENDA RUBY
+    </button>
+
+    <div class="hero-vip">
+      <div class="kicker">CONTENIDO EXCLUSIVO</div>
+      <div class="title">TIENDA VIP</div>
+    </div>
+
+    <div class="group">
+      <div class="group-label"><span class="txt">CATEGORÍAS PRINCIPALES</span><span class="ln"></span></div>
+      <div class="grid-main">
+        <div class="card skins"><div class="hc tl"></div><div class="hc tr"></div><div class="hc bl"></div><div class="hc br"></div><div class="scan"></div><div class="glyph">◆</div><div class="kicker">Catálogo principal</div><div class="title">SKINS</div></div>
+        <div class="card cofres"><div class="hc tl"></div><div class="hc tr"></div><div class="hc bl"></div><div class="hc br"></div><div class="scan"></div><div class="glyph">▣</div><div class="kicker">Recompensas</div><div class="title">COFRES</div></div>
+      </div>
+    </div>
+
+    <div class="group">
+      <div class="group-label"><span class="txt">ACCESOS RÁPIDOS</span><span class="ln"></span></div>
+      <div class="grid-quick">
+        <div class="card trails"><div class="hc tl"></div><div class="hc tr"></div><div class="hc bl"></div><div class="hc br"></div><div class="scan"></div><div class="glyph">◈</div><div class="kicker">Rastros</div><div class="title">TRAILS</div></div>
+        <div class="card banners"><div class="hc tl"></div><div class="hc tr"></div><div class="hc bl"></div><div class="hc br"></div><div class="scan"></div><div class="glyph">▬</div><div class="kicker">Estandartes</div><div class="title">BANNERS</div></div>
+        <div class="card emotes"><div class="hc tl"></div><div class="hc tr"></div><div class="hc bl"></div><div class="hc br"></div><div class="scan"></div><div class="glyph">☺</div><div class="kicker">Expresiones</div><div class="title">EMOTES</div></div>
+        <div class="card powerups"><div class="hc tl"></div><div class="hc tr"></div><div class="hc bl"></div><div class="hc br"></div><div class="scan"></div><div class="glyph">⬡</div><div class="kicker">Ventajas</div><div class="title">POTENC.</div></div>
+      </div>
+    </div>
+
+    <div class="group">
+      <div class="group-label"><span class="txt">DESTACADOS</span><span class="ln"></span></div>
+      <div class="grid-foot">
+        <div class="card seasons"><div class="hc tl"></div><div class="hc tr"></div><div class="hc bl"></div><div class="hc br"></div><div class="scan"></div><div class="timer">◷ 04D 12H</div><div><div class="kicker">Contenido limitado</div><div class="title">TEMPORADAS</div></div></div>
+        <div class="card daily"><div class="hc tl"></div><div class="hc tr"></div><div class="hc bl"></div><div class="hc br"></div><div class="scan"></div><div class="gift-ico"></div><div><div class="title">REGALO DIARIO</div><div class="sub">Día 11 · reclamar</div></div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<footer>
+  Ideas adicionales que se pueden sumar sin romper esta base: (1) un pequeño contador "NUEVO" o "%" en la esquina de una card cuando hay oferta activa, (2) el glyph de fondo (◆ ◈ ▬ etc.) reemplazado por tu arte real de mascota/personaje ya recortado, tal como en tu captura — la letra es solo placeholder de posición. (3) Podrías animar el borde con un degradado que rote muy lento (borde "vivo") en la card de Temporadas para que destaque como la más premium, sin tocar las demás.
+</footer>
+
+</body>
+</html>

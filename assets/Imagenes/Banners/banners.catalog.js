@@ -54,16 +54,19 @@ window.GEM_BANNERS_CATALOG = {
         { id: 'Un_poco_de_hielo_VIP', name: 'Un poco de hielo', file: 'Un_poco_de_hielo_VIP.png', category: 'tienda_vip', price: 500, rarity: 'VIP', exclusive: true },
         { id: 'La_playa_relajante_VIP', name: 'La playa es relajante', file: 'Vacaciones_en_la playa_VIP.png', category: 'tienda_vip', price: 500, rarity: 'VIP', exclusive: true },
 
-        { id: 'VIP_Placeholder_PNG_1', name: 'VIP Placeholder PNG 1', file: 'VIP_Placeholder_PNG_1.png', category: 'tienda_vip', price: 420, rarity: 'VIP', exclusive: true },
-        { id: 'VIP_Placeholder_PNG_2', name: 'VIP Placeholder PNG 2', file: 'VIP_Placeholder_PNG_2.png', category: 'tienda_vip', price: 420, rarity: 'VIP', exclusive: true },
-        { id: 'VIP_Placeholder_PNG_3', name: 'VIP Placeholder PNG 3', file: 'VIP_Placeholder_PNG_3.png', category: 'tienda_vip', price: 420, rarity: 'VIP', exclusive: true },
-        { id: 'VIP_Placeholder_PNG_4', name: 'VIP Placeholder PNG 4', file: 'VIP_Placeholder_PNG_4.png', category: 'tienda_vip', price: 420, rarity: 'VIP', exclusive: true },
-        { id: 'VIP_Placeholder_PNG_5', name: 'VIP Placeholder PNG 5', file: 'VIP_Placeholder_PNG_5.png', category: 'tienda_vip', price: 420, rarity: 'VIP', exclusive: true },
-        { id: 'VIP_Placeholder_GIF_1', name: 'VIP Placeholder GIF 1', file: 'VIP_Placeholder_GIF_1.gif', category: 'tienda_vip', price: 560, rarity: 'VIP', exclusive: true, animated: true },
-        { id: 'VIP_Placeholder_GIF_2', name: 'VIP Placeholder GIF 2', file: 'VIP_Placeholder_GIF_2.gif', category: 'tienda_vip', price: 560, rarity: 'VIP', exclusive: true, animated: true },
-        { id: 'VIP_Placeholder_GIF_3', name: 'VIP Placeholder GIF 3', file: 'VIP_Placeholder_GIF_3.gif', category: 'tienda_vip', price: 560, rarity: 'VIP', exclusive: true, animated: true },
-        { id: 'VIP_Placeholder_GIF_4', name: 'VIP Placeholder GIF 4', file: 'VIP_Placeholder_GIF_4.gif', category: 'tienda_vip', price: 560, rarity: 'VIP', exclusive: true, animated: true },
-        { id: 'VIP_Placeholder_GIF_5', name: 'VIP Placeholder GIF 5', file: 'VIP_Placeholder_GIF_5.gif', category: 'tienda_vip', price: 560, rarity: 'VIP', exclusive: true, animated: true },
+        // Renombrados según mapeo final decidido (PENDIENTES_rarezas_temporadas.md / LISTA_COMPLETA_items_rareza.txt).
+        // Los ids se conservan (VIP_Placeholder_PNG_1, etc.) para no romper referencias existentes en shop.js/localStorage;
+        // solo cambia el "name" visible al jugador.
+        { id: 'VIP_Placeholder_PNG_1', name: 'Poder de la realeza', file: 'VIP_Placeholder_PNG_1.png', category: 'tienda_vip', price: 420, rarity: 'VIP', exclusive: true }, // -> Bundle Realeza
+        { id: 'VIP_Placeholder_PNG_2', name: 'El gran olimpo', file: 'VIP_Placeholder_PNG_2.png', category: 'tienda_vip', price: 420, rarity: 'VIP', exclusive: true }, // -> Bundle Dioses
+        { id: 'VIP_Placeholder_PNG_3', name: 'Nuestro mejor amigo', file: 'VIP_Placeholder_PNG_3.png', category: 'tienda_vip', price: 420, rarity: 'VIP', exclusive: true }, // -> Bundle Salvaje
+        { id: 'VIP_Placeholder_PNG_4', name: 'El antiguo Egipto', file: 'VIP_Placeholder_PNG_4.png', category: 'tienda_vip', price: 420, rarity: 'VIP', exclusive: true }, // -> Bundle Egipto
+        { id: 'VIP_Placeholder_PNG_5', name: 'Un circo tenebroso', file: 'VIP_Placeholder_PNG_5.png', category: 'tienda_vip', price: 420, rarity: 'VIP', exclusive: true }, // -> Bundle Circo
+        { id: 'VIP_Placeholder_GIF_1', name: 'Mucha risa?', file: 'VIP_Placeholder_GIF_1.gif', category: 'tienda_vip', price: 560, rarity: 'VIP', exclusive: true, animated: true }, // -> Paquete Emoji
+        { id: 'VIP_Placeholder_GIF_2', name: 'Espacio exterior', file: 'VIP_Placeholder_GIF_2.gif', category: 'tienda_vip', price: 560, rarity: 'VIP', exclusive: true, animated: true }, // -> Bundle Espacio
+        { id: 'VIP_Placeholder_GIF_3', name: 'Un lugar tranquilo', file: 'VIP_Placeholder_GIF_3.gif', category: 'tienda_vip', price: 560, rarity: 'VIP', exclusive: true, animated: true }, // -> futura temporada Naturaleza
+        { id: 'VIP_Placeholder_GIF_4', name: 'Corta unas sandias', file: 'VIP_Placeholder_GIF_4.gif', category: 'tienda_vip', price: 560, rarity: 'VIP', exclusive: true, animated: true }, // -> Bundle Comida
+        { id: 'VIP_Placeholder_GIF_5', name: 'Personalízame', file: 'VIP_Placeholder_GIF_5.gif', category: 'tienda_vip', price: 10000, rarity: 'VIP', exclusive: true, animated: true }, // -> feature standalone: banner personalizado, precio especial (10.000 gemas)
 
         { id: 'normal_placeholder_01', name: 'Normal Placeholder 01', autoIdFromName: true, file: 'banner_normal_placeholder_01.png', category: 'tienda_normal', price: 180, rarity: 'BASICO', exclusive: false },
         { id: 'normal_placeholder_02', name: 'Normal Placeholder 02', autoIdFromName: true, file: 'banner_normal_placeholder_02.png', category: 'tienda_normal', price: 180, rarity: 'BASICO', exclusive: false },

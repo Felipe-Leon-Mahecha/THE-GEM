@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>THE GEM — Idea 5: Catálogo Real</title>
+<style>
+  :root{
+    --purple:#b04bff;
+    --blue:#3b5bfe;
+    --bg-deep:#08070f;
+    --panel:#12111f;
+    --txt-dim:rgba(220,215,255,.55);
+    --font-title:"Cinzel Decorative","Geom",serif;
+    --font-especial:"Audiowide","Geom",sans-serif;
+  }
+  *{ box-sizing:border-box; }
+  body{
+    margin:0; min-height:100vh; background:var(--bg-deep);
+    color:#eee9ff; font-family:'Geom',monospace; padding:26px;
+  }
+  .note{
+    font-size:11px; color:var(--txt-dim); letter-spacing:.5px; max-width:940px;
+    margin:0 auto 24px; line-height:1.5; border-left:2px solid var(--purple); padding-left:12px;
+  }
+  .app{ max-width:1180px; margin:0 auto; display:flex; gap:18px; }
+
+  /* ── sidebar cómodo, no compite por espacio con el contenido ── */
+  .sidebar{ width:220px; flex-shrink:0; display:flex; flex-direction:column; gap:12px; }
+  .side-title{ font-family:var(--font-title); font-size:22px; color:#e6d4ff; letter-spacing:2px; }
+  .side-back{
+    height:34px; border:1px solid rgba(255,255,255,.12); background:rgba(255,255,255,.03);
+    color:var(--txt-dim); font-size:10px; letter-spacing:2px; display:flex; align-items:center;
+    justify-content:center; gap:6px; border-radius:4px; cursor:pointer;
+  }
+  .side-label{ font-size:9.5px; letter-spacing:2px; color:var(--txt-dim); margin:4px 0 2px; }
+
+  .estandarte{
+    position:relative; height:140px; border-radius:6px; overflow:hidden; padding:10px;
+    background:linear-gradient(160deg,#241a4a,#0c0a1c);
+    border:1px solid rgba(176,75,255,.25);
+    display:flex; flex-direction:column; justify-content:flex-end;
+  }
+  .estandarte .name{ font-weight:700; font-size:13px; }
+  .estandarte .lvl{ font-size:10px; color:var(--txt-dim); margin-top:2px; }
+
+  .currency-row{
+    height:42px; border-radius:4px; display:flex; align-items:center; justify-content:space-between;
+    padding:0 14px; background:rgba(255,255,255,.03); border:1px solid rgba(255,255,255,.08);
+  }
+  .currency-row .lbl{ font-size:10px; letter-spacing:1px; color:var(--txt-dim); display:flex; align-items:center; gap:8px; }
+  .currency-row .dot{ width:14px; height:14px; border-radius:50%; background:var(--purple); box-shadow:0 0 7px var(--purple); }
+  .currency-row .dot.blue{ background:var(--blue); box-shadow:0 0 7px var(--blue); }
+  .currency-row b{ font-size:14px; }
+
+  .misiones-btn{
+    height:48px; border-radius:4px; display:flex; align-items:center; justify-content:space-between;
+    padding:0 14px; background:linear-gradient(90deg, rgba(176,75,255,.14), rgba(255,255,255,.02));
+    border:1px solid var(--purple); cursor:pointer;
+  }
+  .misiones-btn strong{ font-size:11px; letter-spacing:.5px; display:block; }
+  .misiones-btn small{ font-size:9px; color:var(--txt-dim); font-weight:400; }
+  .misiones-count{ width:22px; height:22px; border-radius:50%; border:1px solid var(--purple); display:flex; align-items:center; justify-content:center; font-size:10px; }
+
+  .equipado-row{
+    height:56px; border-radius:4px; display:flex; align-items:center; gap:10px; padding:0 12px;
+    background:rgba(255,255,255,.03); border:1px solid rgba(255,255,255,.08);
+  }
+  .equipado-dot{ width:28px; height:28px; border-radius:50%; background:radial-gradient(circle at 35% 30%, #fff5, transparent 60%), var(--purple); flex-shrink:0; }
+  .equipado-row .name{ font-size:11px; } .equipado-row .rarity{ font-size:9px; color:var(--txt-dim); }
+
+  /* ── main ── */
+  .main{ flex:1; min-width:0; display:flex; flex-direction:column; gap:22px; }
+
+  .hero-row{ display:grid; grid-template-columns:1.3fr 1fr 1fr; gap:14px; }
+  .hero-card{
+    position:relative; overflow:hidden; border-radius:6px; min-height:150px; padding:20px;
+    display:flex; flex-direction:column; justify-content:flex-end;
+    border:1px solid rgba(255,255,255,.08);
+  }
+  .hero-card.vip{ background:radial-gradient(circle at 78% 0%, #7f3ffb 0%, #2a1265 45%, #0a0620 85%); }
+  .hero-card.pass{ background:radial-gradient(circle at 20% 0%, #3b5bfe 0%, #101a5c 50%, #06081f 90%); }
+  .hero-card.seasons{
+    background:linear-gradient(155deg, #1c2450 0%, #241a4a 55%, #0a0e28 100%);
+    box-shadow:inset 0 0 40px rgba(90,110,255,.12);
+  }
+  .hero-card.seasons::before{
+    content:""; position:absolute; inset:0; z-index:0;
+    background-image: radial-gradient(rgba(180,190,255,.5) 1px, transparent 1px);
+    background-size:26px 26px; opacity:.18;
+  }
+  .hero-card.seasons .kicker,.hero-card.seasons h2,.hero-card.seasons p,.hero-card.seasons .go{ position:relative; z-index:1; }
+  .hero-card.seasons h2{ color:#cfd6ff; text-shadow:0 0 16px rgba(140,160,255,.5); }
+  .hero-card .kicker{ font-family:var(--font-especial); font-size:9px; letter-spacing:2.5px; opacity:.8; margin-bottom:6px; }
+  .hero-card h2{ font-family:var(--font-title); font-size:25px; margin:0 0 4px; letter-spacing:1px; text-shadow:0 0 16px currentColor; }
+  .hero-card.vip h2{ color:#e6d4ff; } .hero-card.pass h2{ color:#d3ddff; }
+  .hero-card p{ font-size:11px; color:rgba(255,255,255,.6); margin:0; max-width:280px; }
+  .hero-card .go{
+    position:absolute; top:16px; right:16px; height:26px; padding:0 14px; font-size:9px;
+    letter-spacing:1.5px; border-radius:999px; background:rgba(255,255,255,.14); display:flex; align-items:center;
+  }
+
+  .section-title{
+    display:flex; align-items:baseline; justify-content:space-between;
+    font-family:var(--font-especial); font-size:11px; letter-spacing:3px; color:#cfc4ff;
+  }
+  .section-title small{ font-family:'Geom',monospace; font-size:9.5px; letter-spacing:1px; color:var(--txt-dim); }
+
+  /* ── grid de categorías, estilo Fortnite: barra de color + info extra, llena todo el ancho ── */
+  .cat-grid{ display:grid; grid-template-columns:repeat(4, 1fr); gap:12px; }
+  .cat-card{
+    position:relative; border-radius:5px; overflow:hidden; background:var(--panel);
+    border:1px solid rgba(255,255,255,.07); padding:16px 16px 14px 18px;
+    display:flex; flex-direction:column; gap:10px; cursor:pointer;
+    transition:transform .15s ease, border-color .15s ease;
+  }
+  .cat-card:hover{ transform:translateY(-3px); border-color:var(--accent-c, var(--purple)); }
+  .cat-card::before{
+    content:""; position:absolute; left:0; top:0; bottom:0; width:4px; background:var(--accent-c, var(--purple));
+  }
+  .cat-card .top-row{ display:flex; align-items:center; justify-content:space-between; }
+  .cat-card svg.icon{ width:24px; height:24px; stroke:var(--accent-c, var(--purple)); fill:none; stroke-width:1.7; filter:drop-shadow(0 0 5px var(--accent-c, var(--purple))); }
+  .cat-card .tag{
+    font-size:7px; letter-spacing:1px; color:#0a0620; background:var(--accent-c, var(--purple));
+    padding:2px 6px; border-radius:3px; font-weight:700;
+  }
+  .cat-card .tag.red{ background:#ff5c5c; color:#fff; }
+  .cat-card .label{ font-family:var(--font-especial); font-size:12px; letter-spacing:1.5px; color:#f2edff; }
+  .cat-card .sub{ font-size:9.5px; color:var(--txt-dim); }
+  .cat-card .preview-strip{ display:flex; gap:5px; margin-top:2px; }
+  .cat-card .preview-strip span{
+    width:20px; height:20px; border-radius:3px; background:linear-gradient(160deg, rgba(255,255,255,.14), rgba(255,255,255,.02));
+    border:1px solid rgba(255,255,255,.1);
+  }
+
+  .bottom-dock{ height:0; } /* la info de jugador ya vive en el sidebar en esta idea */
+</style>
+</head>
+<body>
+
+  <div class="note">
+    PREVIEW FINAL — Idea 5 "Catálogo Real", con Temporadas ya integrado. En vez de ponerlo como el
+    cuadro 2x2 suelto que tenías, pasa a ser el TERCER elemento del hero (junto a VIP y Ruby Pass) —
+    los tres son contenido rotativo/destacado, así que se ganan el mismo nivel de jerarquía. Se le dio
+    un tono propio (más frío, "brumoso", con textura de puntos) para que se lea como "contenido
+    limitado" y no se confunda con VIP ni Ruby Pass. Los cuadros de color en categorías siguen siendo
+    placeholders — ahí van tus imágenes reales de cada panel.
+  </div>
+
+  <div class="app">
+
+    <aside class="sidebar">
+      <div class="side-title">TIENDA</div>
+      <button class="side-back">← VOLVER</button>
+
+      <div class="side-label">ESTANDARTE</div>
+      <div class="estandarte">
+        <div class="name">LEON</div>
+        <div class="lvl">Nivel 1</div>
+      </div>
+
+      <div class="currency-row"><span class="lbl"><i class="dot"></i>RUBIES</span><b>615</b></div>
+      <div class="currency-row"><span class="lbl"><i class="dot blue"></i>COINS</span><b>1386</b></div>
+
+      <button class="misiones-btn">
+        <div><strong>MISIONES</strong><small>Diarias y racha</small></div>
+        <div class="misiones-count">0</div>
+      </button>
+
+      <div class="side-label">EQUIPADO</div>
+      <div class="equipado-row">
+        <div class="equipado-dot"></div>
+        <div><div class="name">Pelota Amarillo</div><div class="rarity">BÁSICA</div></div>
+      </div>
+    </aside>
+
+    <main class="main">
+
+      <div class="hero-row">
+        <div class="hero-card vip">
+          <div class="kicker">CONTENIDO EXCLUSIVO</div>
+          <h2>TIENDA VIP</h2>
+          <p>Paneles destacados, bundles y cosméticos premium de la temporada.</p>
+          <div class="go">VER →</div>
+        </div>
+        <div class="hero-card pass">
+          <div class="kicker">PASE DE TEMPORADA</div>
+          <h2>RUBY PASS</h2>
+          <p>Recompensa lista para reclamar.</p>
+          <div class="go">VER →</div>
+        </div>
+        <div class="hero-card seasons">
+          <div class="kicker">CONTENIDO LIMITADO</div>
+          <h2>TEMPORADAS</h2>
+          <p>Eventos y recompensas de tiempo limitado.</p>
+          <div class="go">VER →</div>
+        </div>
+      </div>
+
+      <div class="section-title">CATEGORÍAS <small>8 disponibles</small></div>
+
+      <div class="cat-grid">
+
+        <div class="cat-card" style="--accent-c:#b04bff">
+          <div class="top-row">
+            <svg class="icon" viewBox="0 0 24 24"><path d="M4 4 L14 14 M14 14 L20 20 M14 14 L20 8 M4 20 L10 14" stroke-linecap="round"/></svg>
+          </div>
+          <div class="label">SKINS</div>
+          <div class="sub">18 disponibles</div>
+          <div class="preview-strip"><span></span><span></span><span></span><span></span></div>
+        </div>
+
+        <div class="cat-card" style="--accent-c:#3b5bfe">
+          <div class="top-row"><svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2 C12 7 17 8 22 8 M12 22 C12 17 7 16 2 16" stroke-linecap="round"/></svg><span class="tag">NUEVO</span></div>
+          <div class="label">TRAILS</div>
+          <div class="sub">12 disponibles</div>
+          <div class="preview-strip"><span></span><span></span><span></span><span></span></div>
+        </div>
+
+        <div class="cat-card" style="--accent-c:#b04bff">
+          <div class="top-row"><svg class="icon" viewBox="0 0 24 24"><path d="M6 3 L6 21 M6 3 L18 6 L6 10" stroke-linejoin="round"/></svg></div>
+          <div class="label">BANNERS</div>
+          <div class="sub">9 disponibles</div>
+          <div class="preview-strip"><span></span><span></span><span></span></div>
+        </div>
+
+        <div class="cat-card" style="--accent-c:#3b5bfe">
+          <div class="top-row"><svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M8 10 h.01 M16 10 h.01 M8 15 c2 2 6 2 8 0" stroke-linecap="round"/></svg></div>
+          <div class="label">EMOTES</div>
+          <div class="sub">14 disponibles</div>
+          <div class="preview-strip"><span></span><span></span><span></span><span></span></div>
+        </div>
+
+        <div class="cat-card" style="--accent-c:#3b5bfe">
+          <div class="top-row"><svg class="icon" viewBox="0 0 24 24"><path d="M13 2 L5 14 h6 l-2 8 l10 -14 h-6 z" stroke-linejoin="round"/></svg></div>
+          <div class="label">POTENCIADORES</div>
+          <div class="sub">6 disponibles</div>
+          <div class="preview-strip"><span></span><span></span></div>
+        </div>
+
+        <div class="cat-card" style="--accent-c:#b04bff">
+          <div class="top-row"><svg class="icon" viewBox="0 0 24 24"><rect x="4" y="9" width="16" height="11" rx="1"/><path d="M4 13 h16 M8 9 V6 a4 4 0 0 1 8 0 v3"/></svg><span class="tag red">●</span></div>
+          <div class="label">COFRES</div>
+          <div class="sub">3 disponibles</div>
+          <div class="preview-strip"><span></span><span></span><span></span></div>
+        </div>
+
+        <div class="cat-card" style="--accent-c:#3b5bfe">
+          <div class="top-row"><svg class="icon" viewBox="0 0 24 24"><rect x="4" y="8" width="16" height="12" rx="1"/><path d="M4 12 h16 M12 8 v12"/></svg></div>
+          <div class="label">REGALO DIARIO</div>
+          <div class="sub">Reclamable</div>
+          <div class="preview-strip"><span></span></div>
+        </div>
+
+        <div class="cat-card" style="--accent-c:#b04bff">
+          <div class="top-row"><svg class="icon" viewBox="0 0 24 24"><path d="M4 8 a8 8 0 0 1 14 -3 M20 5 v5 h-5" stroke-linecap="round" stroke-linejoin="round"/><path d="M20 16 a8 8 0 0 1 -14 3 M4 19 v-5 h5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          <div class="label">CONVERSIÓN</div>
+          <div class="sub">Intercambiar</div>
+        </div>
+
+      </div>
+
+    </main>
+  </div>
+
+</body>
+</html>

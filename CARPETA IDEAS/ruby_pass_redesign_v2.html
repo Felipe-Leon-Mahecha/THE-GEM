@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>THE GEM — Ruby Pass V2</title>
+<style>
+  :root{
+    --bg-deep:#08090f;
+    --gold:#f5cd6e;
+    --gold-deep:#9c7a2e;
+    --silver:#a7b4c6;
+    --silver-deep:#4a525f;
+    --teal:#3ee6c4;
+    --purple:#9c6bff;
+    --red:#ff5468;
+    --text-hi:#f4f6fb;
+    --text-mid:#9aa1b4;
+    --text-dim:#5b6274;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  body{
+    font-family:'Segoe UI', Arial, sans-serif;
+    background:
+      radial-gradient(ellipse 900px 500px at 20% -10%, rgba(156,107,255,0.16), transparent 60%),
+      radial-gradient(ellipse 700px 500px at 100% 20%, rgba(62,230,196,0.10), transparent 55%),
+      radial-gradient(ellipse 900px 600px at 50% 120%, rgba(245,205,110,0.08), transparent 60%),
+      var(--bg-deep);
+    color:var(--text-hi);
+    overflow-x:hidden;
+  }
+  .screen{ max-width:1180px; margin:0 auto; position:relative; padding-bottom:40px; }
+
+  /* ===== FLOATING TOP STRIP (no box) ===== */
+  .topstrip{
+    display:flex; align-items:center; justify-content:space-between;
+    padding:22px 26px 0;
+  }
+  .season-id{ display:flex; align-items:center; gap:14px; }
+  .season-id .ring{
+    width:50px; height:50px; border-radius:50%;
+    background:conic-gradient(from 0deg, var(--gold), var(--purple), var(--teal), var(--gold));
+    display:flex; align-items:center; justify-content:center; padding:2px;
+  }
+  .season-id .ring img{ width:100%; height:100%; border-radius:50%; object-fit:cover; display:block; background:#111;}
+  .season-id .name{ font-size:10.5px; letter-spacing:3px; color:var(--purple); font-weight:700; text-transform:uppercase;}
+  .season-id .title{ font-size:20px; font-weight:900; letter-spacing:0.5px;}
+  .timer-txt{ font-size:12.5px; color:var(--text-mid); font-weight:600; text-align:right;}
+  .timer-txt b{ color:var(--red); font-weight:800;}
+
+  /* ===== HERO — diagonal cut, no border box ===== */
+  .hero{
+    position:relative;
+    margin:18px 0 10px;
+    padding:50px 26px 70px;
+    clip-path: polygon(0 0, 100% 0, 100% 88%, 0 100%);
+    background:
+      linear-gradient(115deg, rgba(156,107,255,0.22) 0%, rgba(245,205,110,0.10) 45%, transparent 75%),
+      linear-gradient(180deg, rgba(20,15,35,0.4), transparent);
+    text-align:center;
+  }
+  .hero-eyebrow{ font-size:11px; letter-spacing:5px; color:var(--gold); font-weight:800;}
+  .hero-title{
+    font-size:52px; font-weight:900; letter-spacing:1px; line-height:1;
+    margin:10px 0 6px;
+    background:linear-gradient(180deg, #fff, var(--gold) 120%);
+    -webkit-background-clip:text; background-clip:text; color:transparent;
+    text-shadow:0 0 50px rgba(245,205,110,0.4);
+  }
+  .hero-sub{ font-size:14px; color:var(--text-mid); max-width:420px; margin:0 auto; }
+  .hero-orb-float{
+    width:150px; height:150px; margin:26px auto 6px; border-radius:50%;
+    background:radial-gradient(circle at 35% 30%, #2f2350, #120c22 70%);
+    display:flex; align-items:center; justify-content:center; font-size:58px;
+    box-shadow:0 0 0 1px rgba(245,205,110,0.35), 0 0 60px rgba(245,205,110,0.35), 0 0 120px rgba(156,107,255,0.25);
+    animation:float 3.4s ease-in-out infinite;
+  }
+  @keyframes float{0%,100%{transform:translateY(0);}50%{transform:translateY(-10px);}}
+  .buy-pass-btn{
+    margin-top:18px; display:inline-block;
+    background:linear-gradient(90deg,var(--gold), #e2793f); color:#1c0603; font-weight:900;
+    font-size:14px; padding:13px 30px; border-radius:999px; border:none; letter-spacing:0.5px;
+    box-shadow:0 0 30px rgba(245,205,110,0.5); cursor:pointer;
+  }
+
+  /* ===== XP — just a floating line, no track box ===== */
+  .xp-float{ text-align:center; margin:-30px 0 30px; position:relative; z-index:2;}
+  .xp-float .lbl{ font-size:12px; color:var(--text-mid); font-weight:700; letter-spacing:1px; margin-bottom:8px;}
+  .xp-float .lbl b{ color:var(--teal);}
+  .xp-line{ width:70%; max-width:520px; height:4px; margin:0 auto; border-radius:4px; background:rgba(255,255,255,0.06); position:relative;}
+  .xp-line i{ position:absolute; left:0; top:0; bottom:0; width:57%; border-radius:4px; background:linear-gradient(90deg,var(--purple),var(--teal)); box-shadow:0 0 12px var(--teal);}
+
+  /* ===== SERPENTINE PATH ===== */
+  .path-zone{ position:relative; padding:10px 40px 30px; }
+  .path-svg{ width:100%; height:340px; display:block; }
+  .nodes-layer{ position:relative; margin-top:-340px; height:340px; pointer-events:none; }
+  .node{
+    position:absolute; width:70px; height:70px; border-radius:50%;
+    display:flex; align-items:center; justify-content:center; font-size:26px;
+    transform:translate(-50%,-50%);
+  }
+  .node.vip{ background:radial-gradient(circle at 35% 30%, #3a2c14, #120d05 75%); box-shadow:0 0 0 2px var(--gold-deep);}
+  .node.vip.claimed{ box-shadow:0 0 0 2px var(--gold), 0 0 18px rgba(245,205,110,0.5);}
+  .node.vip.current{ box-shadow:0 0 0 2px var(--gold), 0 0 30px rgba(245,205,110,0.9); animation:pulse 1.5s infinite;}
+  .node.free{ width:52px; height:52px; font-size:19px; background:radial-gradient(circle at 35% 30%, #1c2430, #0a0d12 75%); box-shadow:0 0 0 2px var(--silver-deep);}
+  .node.free.claimed{ box-shadow:0 0 0 2px var(--silver), 0 0 14px rgba(167,180,198,0.4);}
+  .node.free.current{ box-shadow:0 0 0 2px var(--silver), 0 0 20px rgba(167,180,198,0.7); animation:pulse 1.5s infinite;}
+  @keyframes pulse{0%,100%{filter:brightness(1);}50%{filter:brightness(1.3);}}
+  .node .tag{ position:absolute; bottom:-18px; font-size:10px; color:var(--text-dim); font-weight:700; }
+  .node .lock{ position:absolute; top:-4px; right:-4px; width:18px; height:18px; border-radius:50%; background:#0d0f14; font-size:9px; display:flex; align-items:center; justify-content:center; color:var(--text-dim);}
+  .node.locked{ opacity:0.4; }
+
+  /* ===== BOTTOM — asymmetric split, no bordered cards ===== */
+  .bottom-flow{ display:flex; gap:0; align-items:stretch; margin-top:10px; }
+  .flow-left{
+    flex:1.3; padding:24px 30px 24px 10px; position:relative;
+  }
+  .flow-left::after{
+    content:''; position:absolute; right:0; top:15%; bottom:15%; width:1px;
+    background:linear-gradient(180deg, transparent, rgba(255,255,255,0.12), transparent);
+  }
+  .flow-eyebrow{ font-size:10.5px; letter-spacing:2.5px; color:var(--gold); font-weight:800;}
+  .flow-title{ font-size:19px; font-weight:800; margin:4px 0 12px;}
+  .prog-row{ display:flex; align-items:center; gap:14px; }
+  .prog-ring{ position:relative; width:60px; height:60px; flex-shrink:0;}
+  .prog-ring svg{ transform:rotate(-90deg); }
+  .prog-ring .pct{ position:absolute; inset:0; display:flex; align-items:center; justify-content:center; font-size:14px; font-weight:900; color:var(--gold);}
+  .skip-btn{
+    margin-top:14px;
+    background:transparent; color:var(--text-hi); font-weight:700; font-size:12.5px;
+    padding:9px 18px; border-radius:999px; border:1px solid rgba(245,205,110,0.4); cursor:pointer;
+  }
+
+  .flow-right{ flex:1; padding:24px 10px 24px 30px; }
+  .mission-item{ display:flex; align-items:center; gap:12px; margin-bottom:16px; }
+  .mission-dot{ width:34px; height:34px; border-radius:50%; flex-shrink:0; display:flex; align-items:center; justify-content:center; font-size:14px; font-weight:900;}
+  .mission-dot.done{ background:radial-gradient(circle at 35% 30%,#1a4a3d,#0a1f19); color:var(--teal); box-shadow:0 0 0 1px rgba(62,230,196,0.4);}
+  .mission-dot.wip{ background:radial-gradient(circle at 35% 30%,#241a40,#120c20); color:var(--purple); box-shadow:0 0 0 1px rgba(156,107,255,0.35);}
+  .mission-txt .name{ font-size:13px; font-weight:700; }
+  .mission-txt .sub{ font-size:11.5px; color:var(--text-dim); margin-top:2px;}
+  .mission-mini-line{ width:110px; height:3px; border-radius:3px; background:rgba(255,255,255,0.07); margin-top:5px; position:relative;}
+  .mission-mini-line i{ position:absolute; left:0; top:0; bottom:0; border-radius:3px;}
+  .mission-mini-line i.done{ width:100%; background:var(--teal);}
+  .mission-mini-line i.wip{ width:2%; background:var(--purple);}
+</style>
+</head>
+<body>
+<div class="screen">
+
+  <div class="topstrip">
+    <div class="season-id">
+      <div class="ring"><img src="https://images.unsplash.com/photo-1614851099175-e5b30eb6f696?w=100&h=100&fit=crop" onerror="this.style.background='#221833'"></div>
+      <div>
+        <div class="name">Temporada 04 · Ecos del vacío</div>
+        <div class="title">RUBY PASS</div>
+      </div>
+    </div>
+    <div class="timer-txt">Termina en<br><b>12d 04h</b></div>
+  </div>
+
+  <div class="hero">
+    <div class="hero-eyebrow">RECOMPENSA ESTRELLA</div>
+    <div class="hero-title">SOMBRA VOID</div>
+    <div class="hero-sub">Skin exclusiva con partículas y trail personalizado — solo esta temporada, tier 10.</div>
+    <div class="hero-orb-float">👾</div>
+    <button class="buy-pass-btn">🔓 DESBLOQUEAR RUBY PASS · 950 💎</button>
+  </div>
+
+  <div class="xp-float">
+    <div class="lbl"><b>NIVEL 2</b> · 395 / 1000 XP para el siguiente tier</div>
+    <div class="xp-line"><i></i></div>
+  </div>
+
+  <div class="path-zone">
+    <svg class="path-svg" viewBox="0 0 1000 340" preserveAspectRatio="none">
+      <path d="M 40 60 Q 200 20, 320 90 T 560 100 Q 700 110, 760 200 T 960 250"
+            fill="none" stroke="rgba(245,205,110,0.25)" stroke-width="3" stroke-dasharray="2 10" stroke-linecap="round"/>
+      <path d="M 40 60 Q 200 20, 320 90 T 560 100 Q 700 110, 760 200 T 960 250"
+            fill="none" stroke="url(#g1)" stroke-width="3" stroke-linecap="round"
+            stroke-dasharray="330 2000"/>
+      <path d="M 60 190 Q 220 150, 340 210 T 580 220 Q 720 230, 780 150 T 980 110"
+            fill="none" stroke="rgba(167,180,198,0.18)" stroke-width="2.5" stroke-dasharray="2 9" stroke-linecap="round"/>
+      <path d="M 60 190 Q 220 150, 340 210 T 580 220 Q 720 230, 780 150 T 980 110"
+            fill="none" stroke="url(#g2)" stroke-width="2.5" stroke-linecap="round"
+            stroke-dasharray="330 2000"/>
+      <defs>
+        <linearGradient id="g1" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0%" stop-color="#f5cd6e"/><stop offset="100%" stop-color="#c78a3a"/>
+        </linearGradient>
+        <linearGradient id="g2" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0%" stop-color="#a7b4c6"/><stop offset="100%" stop-color="#6b7688"/>
+        </linearGradient>
+      </defs>
+    </svg>
+    <div class="nodes-layer">
+      <div class="node vip claimed" style="left:4%; top:17.6%;">💰<span class="tag">1</span></div>
+      <div class="node vip claimed" style="left:22%; top:14%;">🛡️<span class="tag">2</span></div>
+      <div class="node vip current" style="left:38%; top:27%;">💎<span class="tag">3</span></div>
+      <div class="node vip locked" style="left:53%; top:29%;">🎭<span class="lock">🔒</span><span class="tag">4</span></div>
+      <div class="node vip locked" style="left:68%; top:39%;">✨<span class="lock">🔒</span><span class="tag">5</span></div>
+      <div class="node vip locked" style="left:80%; top:58%;">🏆<span class="lock">🔒</span><span class="tag">6</span></div>
+      <div class="node vip locked" style="left:94%; top:73%;">👾<span class="lock">🔒</span><span class="tag">10</span></div>
+
+      <div class="node free claimed" style="left:6%; top:56%;">🪙</div>
+      <div class="node free claimed" style="left:24%; top:44%;">🎟️</div>
+      <div class="node free current" style="left:40%; top:61%;">🧩</div>
+      <div class="node free locked" style="left:58%; top:64%;">🎨<span class="lock">🔒</span></div>
+      <div class="node free locked" style="left:78%; top:44%;">🎁<span class="lock">🔒</span></div>
+      <div class="node free locked" style="left:98%; top:32%;">🪙<span class="lock">🔒</span></div>
+    </div>
+  </div>
+
+  <div class="bottom-flow">
+    <div class="flow-left">
+      <div class="flow-eyebrow">VIP ACTIVO</div>
+      <div class="flow-title">Progreso de temporada</div>
+      <div class="prog-row">
+        <div class="prog-ring">
+          <svg width="60" height="60">
+            <circle cx="30" cy="30" r="26" fill="none" stroke="rgba(255,255,255,0.08)" stroke-width="5"/>
+            <circle cx="30" cy="30" r="26" fill="none" stroke="#f5cd6e" stroke-width="5"
+              stroke-dasharray="163" stroke-dashoffset="24.5" stroke-linecap="round"/>
+          </svg>
+          <div class="pct">85%</div>
+        </div>
+        <div style="font-size:12.5px; color:var(--text-mid);">Estás al día con tus<br>recompensas premium.</div>
+      </div>
+      <button class="skip-btn">SALTAR TIER · 250 💎</button>
+    </div>
+    <div class="flow-right">
+      <div class="flow-eyebrow">MISIONES DE HOY</div>
+      <div class="flow-title" style="margin-bottom:16px;">1 pendiente</div>
+      <div class="mission-item">
+        <div class="mission-dot done">✓</div>
+        <div class="mission-txt">
+          <div class="name">Compra algo</div>
+          <div class="sub">1 / 1 completado</div>
+          <div class="mission-mini-line"><i class="done"></i></div>
+        </div>
+      </div>
+      <div class="mission-item">
+        <div class="mission-dot wip">…</div>
+        <div class="mission-txt">
+          <div class="name">Recorre distancia</div>
+          <div class="sub">27 / 1800</div>
+          <div class="mission-mini-line"><i class="wip"></i></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>

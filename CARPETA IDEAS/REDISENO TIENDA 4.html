@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>THE GEM — Preview v3 (topbar + diagonal dinámico)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=Chakra+Petch:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#07070c;
+  --line:rgba(255,255,255,.09);
+  --txt:#e8ecf5;
+  --txt-dim:#8a90a6;
+  --gold:#e0b563;
+}
+*{box-sizing:border-box; margin:0; padding:0;}
+body{
+  background:
+    repeating-linear-gradient(115deg, rgba(255,255,255,.015) 0 2px, transparent 2px 22px),
+    var(--bg);
+  color:var(--txt); font-family:'Chakra Petch', sans-serif;
+}
+.note{ padding:16px 24px; color:var(--txt-dim); font-size:12px; line-height:1.6; border-bottom:1px solid var(--line); background:#0a0a12; }
+
+/* ===== topbar (PC) ===== */
+.topbar{
+  display:flex; align-items:center; gap:18px; padding:10px 20px;
+  background:linear-gradient(180deg, rgba(255,255,255,.03), transparent);
+  border-bottom:1px solid var(--line);
+}
+.tb-back{ font-family:'Rajdhani'; font-weight:700; font-size:11px; letter-spacing:2px; color:var(--txt-dim); background:none; border:1px solid var(--line); padding:8px 14px; border-radius:6px; cursor:pointer; }
+.tb-title{ font-family:'Rajdhani'; font-weight:700; font-size:15px; letter-spacing:2px; color:var(--gold); }
+.tb-divider{ width:1px; height:26px; background:var(--line); }
+.tb-profile{ display:flex; align-items:center; gap:10px; }
+.tb-avatar{ width:38px; height:38px; border-radius:50%; background:linear-gradient(160deg,#3a2f55,#161022); border:2px solid var(--gold); display:flex; align-items:center; justify-content:center; font-size:14px; color:var(--gold); }
+.tb-profile-txt .name{ font-family:'Rajdhani'; font-weight:700; font-size:13px; }
+.tb-profile-txt .lvl{ font-size:10px; color:var(--txt-dim); }
+.tb-currency{ display:flex; align-items:center; gap:6px; padding:6px 12px; background:rgba(255,255,255,.04); border:1px solid var(--line); border-radius:20px; font-size:12px; font-weight:600;}
+.tb-currency.ruby{ color:#ff4d6d; }
+.tb-currency.coin{ color:#ffc93c; }
+.tb-missions{ display:flex; align-items:center; gap:8px; padding:7px 14px; background:rgba(255,255,255,.03); border:1px solid var(--line); border-radius:6px; }
+.tb-missions b{ font-family:'Rajdhani'; font-size:11px; letter-spacing:1px; }
+.tb-missions .badge{ background:#ff4d6d; color:#1a0508; font-size:10px; font-weight:700; padding:1px 6px; border-radius:8px; }
+.tb-equipped{ display:flex; align-items:center; gap:8px; margin-left:auto; padding:6px 12px 6px 6px; background:rgba(255,255,255,.03); border:1px solid var(--line); border-radius:20px; }
+.tb-eq-dot{ width:26px; height:26px; border-radius:50%; background:radial-gradient(circle at 35% 30%, #fff6c9, #d8a800); }
+.tb-eq-txt .n{ font-size:11px; font-weight:600; }
+.tb-eq-txt .r{ font-size:9px; color:#00e5ff; letter-spacing:1px; }
+
+.stage{ padding:34px 30px 60px; }
+
+/* ===== HERO temporadas: banner diagonal dominante ===== */
+.season-hero{
+  position:relative;
+  height:230px;
+  margin-bottom:26px;
+  padding:26px 60px 26px 34px;
+  display:flex; flex-direction:column; justify-content:flex-end;
+  clip-path:polygon(0 0, 100% 0, calc(100% - 70px) 100%, 0 100%);
+  background:
+    radial-gradient(circle at 80% 15%, rgba(200,150,255,.35), transparent 55%),
+    linear-gradient(115deg, #241a4a 0%, #150f30 55%, #0a0818 100%);
+  border-left:3px solid #a259ff;
+  overflow:hidden;
+}
+.season-hero .dots{ position:absolute; inset:0; background-image:radial-gradient(rgba(200,190,255,.5) 1px, transparent 1px); background-size:24px 24px; opacity:.14; }
+.season-hero .streak{
+  position:absolute; top:0; right:60px; bottom:0; width:44%;
+  background-image:repeating-linear-gradient(115deg, rgba(162,89,255,.5) 0 2px, transparent 2px 14px);
+  -webkit-mask-image:linear-gradient(90deg, transparent, black 50%);
+  mask-image:linear-gradient(90deg, transparent, black 50%);
+  opacity:.5;
+}
+.season-hero .kicker{ position:relative; font-size:11px; letter-spacing:4px; color:#c9a8ff; margin-bottom:6px; }
+.season-hero .title{ position:relative; font-family:'Rajdhani'; font-weight:700; font-size:42px; letter-spacing:1px; line-height:1; }
+.season-hero .sub{ position:relative; font-size:12px; color:var(--txt-dim); margin-top:8px; max-width:420px; }
+.season-hero .timer{
+  position:absolute; top:26px; right:70px;
+  display:inline-flex; align-items:center; gap:8px;
+  padding:6px 14px; background:rgba(255,59,92,.1); border:1px solid #ff3b5c;
+  clip-path:polygon(0 0, calc(100% - 8px) 0, 100% 50%, calc(100% - 8px) 100%, 0 100%);
+  font-size:11px; color:#ff8fa3; font-weight:700; letter-spacing:1px;
+}
+
+/* ===== fila 1: skins + cofres, escalonadas ===== */
+.row-shard{ display:flex; gap:14px; margin-bottom:14px; align-items:flex-start; }
+.shard{
+  position:relative;
+  height:190px;
+  padding:16px 20px;
+  display:flex; flex-direction:column; justify-content:flex-end;
+  overflow:hidden;
+  border-top:2px solid var(--ac);
+  background:
+    radial-gradient(circle at 78% 12%, var(--ac-glow), transparent 55%),
+    linear-gradient(140deg, var(--ac-a), var(--ac-b));
+}
+.shard .glyph{ position:absolute; top:14px; right:18px; font-size:44px; opacity:.16; color:var(--ac); }
+.shard .kicker{ font-size:9px; letter-spacing:2.5px; color:var(--ac); margin-bottom:4px; text-transform:uppercase; }
+.shard .title{ font-family:'Rajdhani'; font-weight:700; font-size:26px; }
+
+.shard.skins{ flex:1.3; clip-path:polygon(0 0, 100% 0, 100% 100%, 36px 100%); --ac:#3ea7ff; --ac-glow:#3ea7ff2e; --ac-a:#0d2036; --ac-b:#050912; }
+.shard.cofres{ flex:1; margin-top:22px; clip-path:polygon(36px 0, 100% 0, 100% 100%, 0 100%); --ac:#ffc340; --ac-glow:#ffc3402e; --ac-a:#2e2308; --ac-b:#0a0805; }
+
+/* ===== fila 2: zigzag de accesos rápidos ===== */
+.row-zigzag{ display:flex; gap:12px; margin-bottom:14px; }
+.tile{
+  position:relative;
+  flex:1; height:132px;
+  padding:12px 14px;
+  display:flex; flex-direction:column; justify-content:flex-end;
+  overflow:hidden;
+  border-top:2px solid var(--ac);
+}
+.tile.up{ margin-top:0; clip-path:polygon(0 0, 100% 0, 100% 84%, 50% 100%, 0 84%); }
+.tile.down{ margin-top:20px; clip-path:polygon(0 16%, 50% 0, 100% 16%, 100% 100%, 0 100%); }
+.tile .glyph{ position:absolute; top:10px; right:12px; font-size:26px; opacity:.18; color:var(--ac); }
+.tile .kicker{ font-size:8px; letter-spacing:2px; color:var(--ac); text-transform:uppercase; margin-bottom:2px; }
+.tile .title{ font-family:'Rajdhani'; font-weight:700; font-size:13px; letter-spacing:.5px; }
+
+.tile.trails{ background:linear-gradient(150deg,#052226,#040a0c); --ac:#00e5ff; }
+.tile.banners{ background:linear-gradient(150deg,#0d2036,#040a12); --ac:#3ea7ff; }
+.tile.emotes{ background:linear-gradient(150deg,#2a0a12,#0a0508); --ac:#ff3b5c; }
+.tile.potenciadores{ background:linear-gradient(150deg,#0d2412,#050c07); --ac:#6bcf7f; }
+
+/* ===== fila 3: regalo diario + conversión ===== */
+.row-util{ display:flex; gap:14px; align-items:stretch; margin-top:6px; }
+.gift{
+  flex:2; position:relative; display:flex; align-items:center; gap:16px; padding:16px 26px 16px 20px;
+  clip-path:polygon(0 0, 100% 0, calc(100% - 26px) 100%, 0 100%);
+  background:linear-gradient(100deg, rgba(255,215,106,.1), transparent 65%);
+  border-top:2px solid #ffd76a;
+}
+.gift-box{ width:40px; height:40px; position:relative; flex:0 0 auto; background:linear-gradient(160deg,#ffe9a8,#c99a2e); clip-path:polygon(6px 0,100% 0,100% 100%,0 100%); }
+.gift-box::after{ content:""; position:absolute; left:50%; top:0; bottom:0; width:6px; background:#8a6a1f; transform:translateX(-50%); }
+.gift .txt{ font-family:'Rajdhani'; font-weight:700; font-size:14px; color:#ffd76a; letter-spacing:1px; }
+.gift .sub{ font-size:10px; color:var(--txt-dim); margin-top:2px; }
+
+.conv{
+  flex:1; position:relative; display:flex; align-items:center; justify-content:center; gap:10px;
+  clip-path:polygon(20px 0, 100% 0, 100% 100%, 0 100%);
+  border-top:2px solid #00e5ff;
+  background:linear-gradient(100deg, rgba(0,229,255,.08), transparent 65%);
+  font-family:'Rajdhani'; font-weight:700; font-size:12px; letter-spacing:1px; color:#00e5ff; cursor:pointer;
+}
+
+footer{ padding:16px 24px 30px; color:var(--txt-dim); font-size:11px; line-height:1.7; border-top:1px solid var(--line); }
+</style>
+</head>
+<body>
+
+<div class="note">
+  PREVIEW v3 — topbar arriba (así queda solo en PC, en celular seguís con el sidebar de costado como está ahora). Todo cortado en diagonal (clip-path), nada de rectángulo con esquinas redondeadas. Temporadas es el elemento más grande y dominante, arriba de todo, con su propio timer de evento — glifos y texturas siguen siendo placeholder de tu arte real.
+</div>
+
+<div class="topbar">
+  <button class="tb-back">← VOLVER</button>
+  <div class="tb-title">TIENDA</div>
+  <div class="tb-divider"></div>
+  <div class="tb-profile">
+    <div class="tb-avatar">◆</div>
+    <div class="tb-profile-txt"><div class="name">LEÓN</div><div class="lvl">Nivel 1</div></div>
+  </div>
+  <div class="tb-currency ruby">♦ 621</div>
+  <div class="tb-currency coin">● 1803</div>
+  <div class="tb-missions"><b>MISIONES</b><span class="badge">0</span></div>
+  <div class="tb-equipped">
+    <div class="tb-eq-dot"></div>
+    <div class="tb-eq-txt"><div class="n">Pelota Amarillo</div><div class="r">BASICO</div></div>
+  </div>
+</div>
+
+<div class="stage">
+
+  <div class="season-hero">
+    <div class="dots"></div>
+    <div class="streak"></div>
+    <div class="timer">◷ 04D 12H</div>
+    <div class="kicker">TEMPORADA ACTIVA</div>
+    <div class="title">VOID LUX</div>
+    <div class="sub">Recompensas exclusivas de temporada — nuevas skins, trails y emotes por tiempo limitado</div>
+  </div>
+
+  <div class="row-shard">
+    <div class="shard skins">
+      <div class="glyph">◆</div>
+      <div class="kicker">Catálogo principal</div>
+      <div class="title">SKINS</div>
+    </div>
+    <div class="shard cofres">
+      <div class="glyph">▣</div>
+      <div class="kicker">Recompensas</div>
+      <div class="title">COFRES</div>
+    </div>
+  </div>
+
+  <div class="row-zigzag">
+    <div class="tile up trails"><div class="glyph">◈</div><div class="kicker">Rastros</div><div class="title">TRAILS</div></div>
+    <div class="tile down banners"><div class="glyph">▬</div><div class="kicker">Estandartes</div><div class="title">BANNERS</div></div>
+    <div class="tile up emotes"><div class="glyph">☺</div><div class="kicker">Expresiones</div><div class="title">EMOTES</div></div>
+    <div class="tile down potenciadores"><div class="glyph">⬡</div><div class="kicker">Ventajas</div><div class="title">POTENC.</div></div>
+  </div>
+
+  <div class="row-util">
+    <div class="gift">
+      <div class="gift-box"></div>
+      <div><div class="txt">REGALO DIARIO</div><div class="sub">Día 11 · reclamar</div></div>
+    </div>
+    <div class="conv">⇄ CONVERSIÓN</div>
+  </div>
+
+</div>
+
+<footer>
+  Detalles que le dan el "vibe cool": corte diagonal en todos los bordes (nada de rectángulo con radius), la franja de 4 accesos en zigzag (arriba/abajo alternado en vez de alineados), el timer de evento en Temporadas, y la textura de rayas diagonales de fondo (la misma que ya usás en la Tienda VIP) para que se sienta parte de la misma familia visual.
+</footer>
+
+</body>
+</html>

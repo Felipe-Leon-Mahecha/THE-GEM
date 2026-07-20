@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>THE GEM — Ruby Pass PRO</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=Chakra+Petch:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#07080d;
+  --panel-solid:#0e1017;
+  --line:rgba(255,255,255,.09);
+  --txt:#f2f4f9;
+  --txt-dim:#8890a1;
+
+  --gold:#ffd76a;
+  --gold-dark:#8a6a1f;
+  --red:#ff3b5c;
+  --red-dim:#8a1f30;
+  --white:#f5f7fc;
+}
+*{box-sizing:border-box; margin:0; padding:0;}
+body{
+  font-family:'Chakra Petch', sans-serif;
+  background:
+    radial-gradient(circle at 12% -10%, rgba(255,215,106,.10), transparent 40%),
+    radial-gradient(circle at 90% 10%, rgba(255,59,92,.08), transparent 42%),
+    var(--bg);
+  color:var(--txt);
+  padding:24px;
+}
+.screen{ max-width:1180px; margin:0 auto; }
+h2,h3{ font-family:'Rajdhani',sans-serif; }
+
+/* ===================== TOP BAR ===================== */
+.topbar{ display:flex; align-items:center; justify-content:space-between; margin-bottom:18px; }
+.season-id{ display:flex; align-items:center; gap:16px; }
+.p9-ring{ position:relative; width:58px; height:58px; border-radius:50%; flex-shrink:0; }
+.p9-ring svg{ position:absolute; inset:0; width:100%; height:100%; }
+.p9-ring .fill{
+  position:absolute; inset:8px; border-radius:50%;
+  background:linear-gradient(160deg,#232635,#101219);
+  display:flex; align-items:center; justify-content:center;
+  font-size:9px; font-weight:700; color:var(--txt-dim); letter-spacing:.5px;
+}
+.season-eyebrow{ font-size:10.5px; letter-spacing:3px; color:var(--gold); font-weight:700; text-transform:uppercase; }
+.season-title{ font-family:'Rajdhani',sans-serif; font-weight:700; font-size:22px; letter-spacing:1px; margin-top:2px;}
+
+.p16-timer{
+  display:inline-flex; align-items:center; gap:9px; padding:8px 16px;
+  background:rgba(255,59,92,.08); border:1px solid var(--red);
+  clip-path:polygon(0 0,calc(100% - 9px) 0,100% 50%,calc(100% - 9px) 100%,0 100%);
+  font-size:12.5px; color:#ff8fa3; font-weight:700; letter-spacing:1.5px;
+}
+.p16-clock{ position:relative; width:13px; height:13px; border:1.5px solid #ff8fa3; border-radius:50%; }
+.p16-clock::before{ content:""; position:absolute; top:50%; left:50%; width:4px; height:1.5px; background:#ff8fa3; transform-origin:left center; transform:translate(0,-50%) rotate(-35deg); }
+.p16-clock::after{ content:""; position:absolute; top:50%; left:50%; width:3px; height:1.5px; background:#ff8fa3; transform-origin:left center; transform:translate(0,-50%) rotate(90deg); }
+
+/* ===================== PIEZA 01 — MARCO DE ESQUINAS ===================== */
+.hud-frame{ position:relative; border:1px solid var(--line); background:linear-gradient(135deg, rgba(255,255,255,.025), transparent); }
+.hud-corner{ position:absolute; width:22px; height:22px; pointer-events:none; }
+.hud-corner::before,.hud-corner::after{ content:""; position:absolute; background:var(--gold); }
+.hud-corner.tl{ top:-1px; left:-1px; } .hud-corner.tl::before{ width:100%; height:2px; top:0; left:0; box-shadow:0 0 6px var(--gold); } .hud-corner.tl::after{ width:2px; height:100%; top:0; left:0; box-shadow:0 0 6px var(--gold); }
+.hud-corner.tr{ top:-1px; right:-1px; } .hud-corner.tr::before{ width:100%; height:2px; top:0; right:0; box-shadow:0 0 6px var(--gold); } .hud-corner.tr::after{ width:2px; height:100%; top:0; right:0; box-shadow:0 0 6px var(--gold); }
+.hud-corner.bl{ bottom:-1px; left:-1px; } .hud-corner.bl::before{ width:100%; height:2px; bottom:0; left:0; box-shadow:0 0 6px var(--gold); } .hud-corner.bl::after{ width:2px; height:100%; bottom:0; left:0; box-shadow:0 0 6px var(--gold); }
+.hud-corner.br{ bottom:-1px; right:-1px; } .hud-corner.br::before{ width:100%; height:2px; bottom:0; right:0; box-shadow:0 0 6px var(--gold); } .hud-corner.br::after{ width:2px; height:100%; bottom:0; right:0; box-shadow:0 0 6px var(--gold); }
+
+/* ===================== HERO ===================== */
+.hero{ padding:30px 34px; margin-bottom:16px; display:flex; align-items:center; justify-content:space-between; gap:24px;}
+.hero-left{ flex:1; }
+.p2-tag{ display:inline-flex; align-items:center; gap:9px; padding:6px 16px; font-size:10.5px; letter-spacing:3px; color:var(--gold); border:1px solid var(--gold); clip-path:polygon(9px 0,100% 0,calc(100% - 9px) 100%,0 100%); background:linear-gradient(90deg, rgba(255,215,106,.15), transparent); margin-bottom:14px;}
+.hero-title{ font-family:'Rajdhani',sans-serif; font-weight:700; font-size:36px; letter-spacing:1px; color:var(--white); line-height:1.05;}
+.hero-sub{ font-size:13.5px; color:var(--txt-dim); max-width:400px; margin-top:10px; line-height:1.55;}
+.buy-btn{
+  margin-top:20px; display:inline-flex; align-items:center; gap:10px;
+  padding:13px 28px; font-family:'Rajdhani',sans-serif; font-weight:700; font-size:14.5px; letter-spacing:1px;
+  color:#241a03; background:linear-gradient(90deg,#fff6d9,var(--gold) 40%,#c99a2e);
+  border:none; clip-path:polygon(10px 0,100% 0,100% calc(100% - 10px),calc(100% - 10px) 100%,0 100%,0 10px);
+  box-shadow:0 0 24px rgba(255,215,106,.35); cursor:pointer;
+}
+
+.hex-oct{
+  position:relative; width:132px; height:132px; flex-shrink:0;
+  display:flex; align-items:center; justify-content:center;
+  clip-path:polygon(30% 0,70% 0,100% 30%,100% 70%,70% 100%,30% 100%,0 70%,0 30%);
+  background:linear-gradient(160deg, rgba(255,255,255,.06), rgba(0,0,0,.35));
+  border:2px solid var(--gold);
+  box-shadow:0 0 22px rgba(255,215,106,.35), inset 0 0 16px rgba(255,215,106,.15);
+  font-size:54px;
+}
+
+/* ===================== XP SEGMENTED BAR ===================== */
+.xp-wrap{ margin-bottom:16px; }
+.xp-label{ display:flex; justify-content:space-between; font-size:12px; color:var(--txt-dim); font-weight:600; margin-bottom:8px; letter-spacing:.5px;}
+.xp-label b{ color:var(--gold); font-family:'Rajdhani',sans-serif; font-weight:700; letter-spacing:1px;}
+.p10-bar{ height:20px; display:flex; gap:3px; padding:3px; background:rgba(255,255,255,.03); border:1px solid var(--line); clip-path:polygon(6px 0,100% 0,calc(100% - 6px) 100%,0 100%); }
+.p10-seg{ flex:1; background:rgba(255,255,255,.06); clip-path:polygon(3px 0,100% 0,calc(100% - 3px) 100%,0 100%); }
+.p10-seg.on{ background:linear-gradient(90deg,var(--gold-dark),var(--gold)); box-shadow:0 0 8px rgba(255,215,106,.4); }
+
+/* ===================== TRACK PANEL ===================== */
+.track-panel{ padding:26px 30px 22px; margin-bottom:16px; overflow-x:auto; }
+
+.p21-header{ display:flex; align-items:center; gap:12px; margin-bottom:16px; }
+.p21-header .num{ font-family:'Rajdhani'; font-weight:700; font-size:12px; color:var(--gold); }
+.p21-header .line{ width:16px; height:1px; background:var(--gold); }
+.p21-header .txt{ font-family:'Rajdhani'; font-weight:700; font-size:14px; letter-spacing:2px; }
+.p21-header .fade{ flex:1; height:1px; background:linear-gradient(90deg, var(--line), transparent); }
+.p21-header.silver .num,.p21-header.silver .line{ color:var(--txt-dim); background:var(--txt-dim); }
+
+.p12-tiers{ display:flex; gap:7px; min-width:840px; }
+.p12-tier{
+  flex:1; height:74px; position:relative; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:4px;
+  background:rgba(255,255,255,.035); border:1px solid var(--gold-dark);
+  clip-path:polygon(8px 0,100% 0,calc(100% - 8px) 100%,0 100%);
+  font-size:24px;
+}
+.p12-tier .tnum{ position:absolute; top:5px; left:8px; font-size:9px; color:var(--txt-dim); font-weight:700; }
+.p12-tier.done{ border-color:var(--gold); box-shadow:0 0 14px rgba(255,215,106,.25); }
+.p12-tier.done::after{ content:"✓"; position:absolute; top:5px; right:8px; font-size:10px; color:var(--gold); font-weight:900; }
+.p12-tier.current{ border-color:var(--gold); box-shadow:0 0 22px rgba(255,215,106,.55); animation:tglow 1.6s infinite; }
+@keyframes tglow{ 0%,100%{ filter:brightness(1); } 50%{ filter:brightness(1.3); } }
+.p12-tier.locked{ opacity:.55; }
+.mini-lock{ position:absolute; top:5px; right:7px; width:10px; height:8px; }
+.mini-lock::before{ content:""; position:absolute; top:-5px; left:2px; width:6px; height:6px; border:1.2px solid var(--txt-dim); border-bottom:none; border-radius:5px 5px 0 0; }
+.mini-lock::after{ content:""; position:absolute; bottom:0; left:0; width:10px; height:7px; background:var(--txt-dim); border-radius:1px; }
+
+.p12-tier.free{ border-color:rgba(255,255,255,.18); height:56px; font-size:18px; }
+.p12-tier.free.done{ border-color:var(--white); box-shadow:0 0 10px rgba(255,255,255,.18); }
+.p12-tier.free.done::after{ color:var(--white); }
+.p12-tier.free.current{ border-color:var(--white); box-shadow:0 0 16px rgba(255,255,255,.35); }
+
+.p6-divider{ position:relative; height:22px; margin:6px 0; }
+.p6-divider::before{ content:""; position:absolute; left:0; right:0; top:50%; height:1px; background:linear-gradient(90deg, transparent, var(--red-dim), var(--red), var(--red-dim), transparent); }
+.p6-node{ position:absolute; left:50%; top:50%; width:8px; height:8px; background:var(--bg); border:1.5px solid var(--red); transform:translate(-50%,-50%) rotate(45deg); }
+
+/* ===================== BOTTOM ROW ===================== */
+.bottom-grid{ display:flex; gap:0; }
+.p4-panel{
+  flex:1.25; position:relative; padding:22px 26px;
+  background:rgba(255,255,255,.03); border:1px solid var(--gold-dark);
+  clip-path:polygon(0 0, calc(100% - 22px) 0, 100% 22px, 100% 100%, 0 100%);
+}
+.p4-panel::before{ content:""; position:absolute; top:0; right:0; width:22px; height:22px; background:var(--gold); clip-path:polygon(100% 0,0 0,100% 100%); opacity:.5; }
+.p4-eyebrow{ font-size:10.5px; letter-spacing:2.5px; color:var(--gold); font-weight:700;}
+.p4-title{ font-family:'Rajdhani'; font-weight:700; font-size:18px; margin:4px 0 14px;}
+.p4-pct-row{ display:flex; align-items:center; gap:16px;}
+.p10-bar.mini{ height:12px; flex:1; }
+.pct-num{ font-family:'Rajdhani'; font-weight:700; font-size:20px; color:var(--gold); min-width:46px; text-align:right;}
+.p15-chip{ display:inline-flex; align-items:center; gap:6px; padding:8px 16px; margin-top:16px; background:rgba(255,255,255,.04); border:1px solid var(--gold); clip-path:polygon(9px 0,100% 0,calc(100% - 9px) 100%,0 100%); font-weight:700; font-size:13px; cursor:pointer; color:var(--gold);}
+.p15-chip .ico{ color:var(--gold); }
+
+.p7-rail{ position:relative; width:26px; }
+.p7-rail::before{ content:""; position:absolute; left:50%; top:12%; bottom:12%; width:1px; background:linear-gradient(180deg, transparent, var(--line), var(--line), transparent); }
+
+.missions-side{ flex:1; padding:22px 12px; }
+.p5-bar{ position:relative; display:flex; align-items:center; padding-left:14px; height:32px; background:linear-gradient(90deg, rgba(255,59,92,.10), transparent 70%); border-left:3px solid var(--red); font-family:'Rajdhani'; font-weight:700; letter-spacing:2px; font-size:12.5px; margin-bottom:16px;}
+.p20-dot-wrap{ position:relative; width:16px; height:16px; margin-left:8px;}
+.p20-dot{ position:absolute; inset:3px; border-radius:50%; background:var(--red); box-shadow:0 0 8px var(--red); }
+.p20-dot::after{ content:""; position:absolute; inset:-3px; border-radius:50%; border:1.5px solid var(--red); animation:ping 1.6s infinite; }
+@keyframes ping{ 0%{ transform:scale(.6); opacity:1;} 100%{ transform:scale(1.6); opacity:0;} }
+
+.mission-item{ display:flex; align-items:center; gap:12px; margin-bottom:14px;}
+.mission-check{ width:26px; height:26px; clip-path:polygon(5px 0,100% 0,100% calc(100% - 5px),calc(100% - 5px) 100%,0 100%,0 5px); display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:900; flex-shrink:0;}
+.mission-check.done{ background:var(--gold); color:#241a03; }
+.mission-check.wip{ border:1px solid var(--line); color:var(--txt-dim); }
+.mission-txt .name{ font-size:13px; font-weight:600; }
+.mission-txt .sub{ font-size:11px; color:var(--txt-dim); margin-top:2px;}
+.mm-bar{ width:120px; height:4px; background:rgba(255,255,255,.06); margin-top:5px; clip-path:polygon(2px 0,100% 0,calc(100% - 2px) 100%,0 100%);}
+.mm-bar i{ display:block; height:100%; }
+.mm-bar i.done{ width:100%; background:var(--gold); }
+.mm-bar i.wip{ width:2%; background:var(--red); }
+</style>
+</head>
+<body>
+<div class="screen">
+
+  <div class="topbar">
+    <div class="season-id">
+      <div class="p9-ring">
+        <svg viewBox="0 0 100 100">
+          <circle cx="50" cy="50" r="47" fill="none" stroke="var(--gold)" stroke-width="2" opacity="0.22"/>
+          <circle cx="50" cy="50" r="47" fill="none" stroke="var(--gold)" stroke-width="2" stroke-dasharray="70 220" stroke-linecap="round" transform="rotate(-90 50 50)"/>
+        </svg>
+        <div class="fill">LEON</div>
+      </div>
+      <div>
+        <div class="season-eyebrow">Temporada 04 · Ecos del vacío</div>
+        <div class="season-title">RUBY PASS</div>
+      </div>
+    </div>
+    <div class="p16-timer"><div class="p16-clock"></div>12D · 04H RESTANTES</div>
+  </div>
+
+  <div class="hud-frame hero">
+    <div class="hud-corner tl"></div><div class="hud-corner tr"></div><div class="hud-corner bl"></div><div class="hud-corner br"></div>
+    <div class="hero-left">
+      <span class="p2-tag"><span>◀</span>EXCLUSIVO<span>▶</span></span>
+      <div class="hero-title">SOMBRA VOID</div>
+      <div class="hero-sub">Skin de tier 10 con partículas y trail personalizado. Disponible solo durante esta temporada.</div>
+      <button class="buy-btn">🔓 DESBLOQUEAR RUBY PASS · 950 ◆</button>
+    </div>
+    <div class="hex-oct">👾</div>
+  </div>
+
+  <div class="xp-wrap">
+    <div class="xp-label"><span><b>NIVEL 2</b> · 395 XP</span><span>605 XP para el siguiente tier</span></div>
+    <div class="p10-bar" id="xpbar"></div>
+  </div>
+
+  <div class="hud-frame track-panel">
+    <div class="hud-corner tl"></div><div class="hud-corner tr"></div><div class="hud-corner bl"></div><div class="hud-corner br"></div>
+
+    <div class="p21-header">
+      <span class="num">01</span><span class="line"></span><span class="txt" style="color:var(--gold)">VIP</span><span class="fade"></span>
+    </div>
+    <div class="p12-tiers">
+      <div class="p12-tier done"><span class="tnum">1</span>💰</div>
+      <div class="p12-tier done"><span class="tnum">2</span>🛡️</div>
+      <div class="p12-tier current"><span class="tnum">3</span>💎</div>
+      <div class="p12-tier locked"><span class="tnum">4</span><div class="mini-lock"></div>🎭</div>
+      <div class="p12-tier locked"><span class="tnum">5</span><div class="mini-lock"></div>✨</div>
+      <div class="p12-tier locked"><span class="tnum">6</span><div class="mini-lock"></div>🏆</div>
+      <div class="p12-tier locked"><span class="tnum">7</span><div class="mini-lock"></div>🔥</div>
+      <div class="p12-tier locked"><span class="tnum">8</span><div class="mini-lock"></div>🌀</div>
+      <div class="p12-tier locked"><span class="tnum">9</span><div class="mini-lock"></div>👑</div>
+      <div class="p12-tier locked" style="border-color:var(--gold)"><span class="tnum">10</span><div class="mini-lock"></div>👾</div>
+    </div>
+
+    <div class="p6-divider"><div class="p6-node"></div></div>
+
+    <div class="p21-header silver">
+      <span class="num">02</span><span class="line"></span><span class="txt" style="color:var(--txt-dim)">GRATIS</span><span class="fade"></span>
+    </div>
+    <div class="p12-tiers">
+      <div class="p12-tier free done">🪙</div>
+      <div class="p12-tier free done">🎟️</div>
+      <div class="p12-tier free current">🧩</div>
+      <div class="p12-tier free locked"><div class="mini-lock"></div>🪙</div>
+      <div class="p12-tier free locked"><div class="mini-lock"></div>🎨</div>
+      <div class="p12-tier free locked"><div class="mini-lock"></div>🪙</div>
+      <div class="p12-tier free locked"><div class="mini-lock"></div>🎟️</div>
+      <div class="p12-tier free locked"><div class="mini-lock"></div>🪙</div>
+      <div class="p12-tier free locked"><div class="mini-lock"></div>🎁</div>
+      <div class="p12-tier free locked"><div class="mini-lock"></div>🪙</div>
+    </div>
+  </div>
+
+  <div class="bottom-grid">
+    <div class="p4-panel">
+      <div class="p4-eyebrow">VIP ACTIVO</div>
+      <div class="p4-title">Progreso de temporada</div>
+      <div class="p4-pct-row">
+        <div class="p10-bar mini" id="progbar"></div>
+        <div class="pct-num">85%</div>
+      </div>
+      <div class="p15-chip"><span class="ico">◆</span>SALTAR TIER · 250</div>
+    </div>
+
+    <div class="p7-rail"></div>
+
+    <div class="missions-side">
+      <div class="p5-bar">MISIONES DE HOY<div class="p20-dot-wrap"><div class="p20-dot"></div></div></div>
+      <div class="mission-item">
+        <div class="mission-check done">✓</div>
+        <div class="mission-txt">
+          <div class="name">Compra algo</div>
+          <div class="sub">1 / 1 completado</div>
+          <div class="mm-bar"><i class="done"></i></div>
+        </div>
+      </div>
+      <div class="mission-item">
+        <div class="mission-check wip">···</div>
+        <div class="mission-txt">
+          <div class="name">Recorre distancia</div>
+          <div class="sub">27 / 1800</div>
+          <div class="mm-bar"><i class="wip"></i></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+<script>
+const xp=document.getElementById('xpbar');
+for(let i=0;i<20;i++){const s=document.createElement('div');s.className='p10-seg'+(i<11?' on':'');xp.appendChild(s);}
+const pg=document.getElementById('progbar');
+for(let i=0;i<24;i++){const s=document.createElement('div');s.className='p10-seg'+(i<20?' on':'');pg.appendChild(s);}
+</script>
+</body>
+</html>

@@ -948,11 +948,14 @@ body.is-touch-device.is-playing-touch #touch-controls {
     top: 18px;
     right: 86px;
     z-index: 10000;
+    display: none;
+    align-items: center;
+    gap: 8px;
     height: 42px;
-    padding: 0 18px;
+    padding: 0 18px 0 14px;
     border: 1px solid rgba(0, 255, 231, 0.35);
-    border-radius: 8px;
-    background: rgba(8, 12, 16, 0.62);
+    border-radius: 21px;
+    background: linear-gradient(145deg, rgba(0, 255, 231, 0.12), rgba(8, 12, 16, 0.74));
     color: var(--color-cian);
     font-family: var(--font-secundaria);
     font-size: 12px;
@@ -960,11 +963,63 @@ body.is-touch-device.is-playing-touch #touch-controls {
     letter-spacing: 2px;
     cursor: pointer;
     backdrop-filter: blur(8px);
-    display: none;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.28);
+    transition: opacity 0.25s ease, transform 0.15s ease, box-shadow 0.2s ease, border-color 0.2s ease;
 }
 
 #pause-btn.is-playing {
-    display: block;
+    display: inline-flex;
+}
+
+#pause-btn:hover {
+    box-shadow: 0 4px 18px rgba(0, 255, 231, 0.3);
+    border-color: rgba(0, 255, 231, 0.6);
+}
+
+#pause-btn:active {
+    transform: scale(0.94);
+}
+
+#pause-btn:focus {
+    outline: none;
+}
+
+#pause-btn:focus-visible {
+    outline: 2px solid rgba(0, 255, 231, 0.7);
+    outline-offset: 3px;
+}
+
+/* Fade suave: el botón se esconde con transición en vez de parpadear cuando pausás */
+body.is-paused #pause-btn {
+    opacity: 0;
+    pointer-events: none;
+}
+
+.pause-btn-icon {
+    position: relative;
+    display: inline-block;
+    width: 10px;
+    height: 12px;
+    flex-shrink: 0;
+}
+
+.pause-btn-icon::before,
+.pause-btn-icon::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    width: 3px;
+    height: 12px;
+    background: currentColor;
+    border-radius: 1px;
+}
+
+.pause-btn-icon::before {
+    left: 0;
+}
+
+.pause-btn-icon::after {
+    right: 0;
 }
 
 .emote-float-btn {
@@ -1429,7 +1484,7 @@ body.is-touch-device .active-emote-bubble {
 }
 
 #pausePanel.showing {
-    display: block;
+    display: block !important;
     pointer-events: auto;
 }
 
@@ -2234,6 +2289,27 @@ body.is-touch-device .active-emote-bubble {
     }
 }
 
+.pause-drawer.closing {
+    animation: pauseOut 0.26s cubic-bezier(0.4, 0, 1, 1) forwards;
+}
+
+@keyframes pauseOut {
+    from {
+        transform: translateX(0);
+    }
+    to {
+        transform: translateX(100%);
+    }
+}
+
+.pause-dim {
+    transition: opacity 0.26s ease;
+}
+
+.pause-dim.closing {
+    opacity: 0;
+}
+
 @keyframes spinPass {
     to {
         transform: rotate(360deg);
@@ -2550,23 +2626,28 @@ body.is-touch-device .active-emote-bubble {
     color: rgba(255, 255, 255, 0.58);
 }
 
+/* Fondo de la Tienda VIP (Fase 2.4.8) — antes era la imagen dorada
+   assets/UI/Store/VIP/Backgrounds/bg_store_vip.png + un velo negro al
+   68%. Felix pidió que el fondo sea IDÉNTICO al de V6.html: un fondo
+   casi negro (#0a080b) con un brillo dorado radial muy sutil arriba a
+   la izquierda, nada de textura dorada de fondo. La imagen se deja
+   oculta (display:none) en vez de borrarla del HTML, por si Felix
+   quiere volver atrás con un solo cambio acá. */
 .vip-bg {
     position: absolute;
     inset: 0;
     overflow: hidden;
+    background:
+        radial-gradient(circle at 12% -8%, rgba(224, 181, 99, .08), transparent 42%),
+        #0a080b;
 }
 
 .vip-bg img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
+    display: none;
 }
 
 .vip-bg div {
-    position: absolute;
-    inset: 0;
-    background: rgba(0, 0, 0, 0.68);
-    box-shadow: inset 0 0 140px rgba(0, 0, 0, 0.82);
+    display: none;
 }
 
 .vip-shell {
@@ -2658,7 +2739,6 @@ body.is-touch-device .active-emote-bubble {
     cursor: pointer;
 }
 
-.vip-feature,
 .vip-detail-head {
     border-radius: 8px;
     border: 1px solid rgba(255, 215, 0, 0.22);
@@ -2667,6 +2747,21 @@ body.is-touch-device .active-emote-bubble {
     display: grid;
     grid-template-columns: minmax(280px, 1.4fr) minmax(260px, 0.8fr);
     min-height: 280px;
+    cursor: pointer;
+}
+
+/* Hero VIP (panel destacado) — remodelado con el kit HUD (Fase 2.4).
+   Ya no es grid cover/copy lado a lado: la imagen ocupa todo el panel
+   y el texto se apila abajo a la izquierda, con el precio abajo a la
+   derecha, como en el preview V6. */
+.vip-feature {
+    position: relative;
+    overflow: hidden;
+    min-height: 280px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: 26px 30px;
     cursor: pointer;
 }
 
@@ -2707,9 +2802,7 @@ body.is-touch-device .active-emote-bubble {
     padding: 18px;
 }
 
-.vip-feature-cover,
-.vip-detail-cover,
-.vip-pack-cover {
+.vip-detail-cover {
     min-height: 100%;
     background-size: cover;
     background-position: center;
@@ -2718,6 +2811,20 @@ body.is-touch-device .active-emote-bubble {
     color: rgba(255, 255, 255, 0.34);
     letter-spacing: 3px;
     font-size: 11px;
+}
+
+.vip-feature-cover {
+    position: absolute;
+    inset: 0;
+    background-size: cover;
+    background-position: center;
+}
+
+/* velo oscuro para que el texto siempre se lea sobre la imagen */
+.vip-feature-scrim {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(0deg, rgba(6, 5, 4, .72) 0%, rgba(6, 5, 4, .12) 62%);
 }
 
 .vip-detail-cover {
@@ -2739,14 +2846,57 @@ body.is-touch-device .active-emote-bubble {
     display: grid;
 }
 
-.vip-feature-copy,
-.vip-detail-head>div:last-child,
-.vip-pack-body {
+.vip-detail-head>div:last-child {
     padding: 26px;
     display: flex;
     flex-direction: column;
     justify-content: center;
     gap: 12px;
+}
+
+/* card de paquete (Fase 2.4.8): ya no es una zona con padding propio,
+   es el bloque de texto que flota sobre la imagen, abajo de la card
+   (el padding lo pone .vip-pack-card). "tier-sub" (cantidad de items)
+   y "tier-foot" (precio) son nombres tomados de V6.html. */
+.vip-pack-body {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.vip-pack-body .tier-sub {
+    color: rgba(255, 255, 255, 0.55);
+    font-size: 11px;
+}
+
+.vip-pack-body .tier-foot {
+    margin-top: 8px;
+}
+
+.vip-feature-copy {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+/* el hud-tag (pieza 02) no debe estirarse a todo el ancho dentro del flex column */
+.vip-feature-copy .hud-tag {
+    align-self: flex-start;
+    margin-bottom: 2px;
+}
+
+/* línea completa debajo del tag (referencia V6) — sí puede estirarse,
+   por eso va suelta y no como borde del propio tag */
+.hero-kicker-line {
+    display: block;
+    width: 100%;
+    height: 1px;
+    background: var(--cfg-hud-accent);
+    opacity: .9;
 }
 
 .vip-feature h2,
@@ -2770,6 +2920,23 @@ body.is-touch-device .active-emote-bubble {
     color: #ffee00;
     font-size: 18px;
     font-weight: 900;
+}
+
+/* precio + label "Desde", abajo a la derecha del panel (pieza 15, chip sólido) */
+.vip-feature-bottom {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 6px;
+    margin-top: 14px;
+}
+
+.vip-feature-bottom .label {
+    font-size: 10.5px;
+    color: rgba(255, 255, 255, 0.52);
+    letter-spacing: 1px;
 }
 
 .vip-dots {
@@ -2843,7 +3010,6 @@ body.is-touch-device .active-emote-bubble {
     line-height: 1.35;
 }
 
-.vip-pack-card,
 .vip-mini-item {
     border-radius: 8px;
     border: 1px solid rgba(255, 255, 255, 0.16);
@@ -2862,6 +3028,120 @@ body.is-touch-device .active-emote-bubble {
         inset 0 -18px 30px rgba(0, 0, 0, 0.26),
         0 16px 34px rgba(0, 0, 0, 0.32);
     transition: transform 0.22s ease, border-color 0.22s ease, box-shadow 0.22s ease, filter 0.22s ease;
+}
+
+/* card de paquete (Fase 2.4.8) — antes tenía el mismo diseño octagonal
+   que vip-mini-item de arriba. Felix pidió que se vea como el kit
+   (hud-panel-cut, igual que el Hero y el banner genérico): la imagen
+   real del paquete ocupa TODA la card de fondo, con el nombre/precio
+   apilados abajo encima de un velo oscuro — la card en sí ya no trae
+   fondo/clip-path/box-shadow propios, esos los pone hud-panel-cut. */
+.vip-pack-card {
+    position: relative;
+    overflow: hidden;
+    isolation: isolate;
+    min-height: 200px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: 16px;
+    cursor: pointer;
+    transition: transform 0.22s ease, border-color 0.22s ease;
+}
+
+.vip-pack-card:hover {
+    transform: translateY(-4px);
+}
+
+/* ribbon diagonal "MÁS VENDIDO" (Fase 2.4) — opcional, se activa
+   con pack.badge === 'best' en VIP_PACKAGES_DATA. Mismas coordenadas
+   exactas que V6.html (top:12px; left:-32px; width:130px) — ahora que
+   la card usa hud-panel-cut (corta solo la esquina sup-derecha) ya no
+   hace falta correrlo, la esquina sup-izquierda donde va el ribbon
+   quedó intacta. */
+.vip-pack-ribbon {
+    position: absolute;
+    top: 12px;
+    left: -32px;
+    width: 130px;
+    padding: 4px 0;
+    text-align: center;
+    transform: rotate(-40deg);
+    background: var(--cfg-hud-accent, #e0b563);
+    color: #241a05;
+    font-family: var(--font-especial);
+    font-weight: 700;
+    font-size: 9px;
+    letter-spacing: 1.5px;
+    z-index: 3;
+}
+
+/* el notify-dot genérico (pieza 20) va pegado al borde -4px/-4px, pero
+   hud-panel-cut corta 10px de la esquina sup-derecha — se lo separa un
+   poco solo en esta card para que no quede mordido por ese corte. */
+.vip-pack-card .hud-notify-dot {
+    top: 8px;
+    right: 8px;
+    z-index: 3;
+}
+
+/* =====================================================
+   OFERTAS RELÁMPAGO (Fase 2.4.8) — calcado casi literal de
+   V6.html (mismos nombres de clase: mini-row/mini-banner/
+   mini-art/mini-body/mini-foot). Recordatorio: el hud-timer de
+   acá es solo visual, no cuenta atrás de verdad.
+   ===================================================== */
+.mini-row {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 14px;
+    margin-top: 16px;
+}
+
+.mini-banner {
+    position: relative;
+    overflow: hidden;
+    min-height: 96px;
+    padding: 14px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    cursor: default;
+}
+
+.mini-art {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(224, 181, 99, .12), rgba(0, 0, 0, .35));
+}
+
+.mini-body {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.mini-body .name {
+    font-family: var(--font-title, var(--font-especial));
+    font-size: 13px;
+    color: #f5efe0;
+}
+
+.mini-foot {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+}
+
+@media (max-width: 820px) {
+    .mini-row {
+        grid-template-columns: 1fr;
+    }
 }
 
 body.reduced-motion *,
@@ -2963,11 +3243,27 @@ body.is-touch-device .vip-emoji-orb img {
 
 .vip-package-grid>*,
 .vip-item-grid>*,
-.store-panel-grid>*,
+.store-grid-main>*,
+.store-grid-quick>*,
+.store-grid-foot>*,
 .inventory-emote-grid>*,
 .daily-grid>* {
     content-visibility: auto;
     contain-intrinsic-size: 240px 260px;
+}
+
+/* =====================================================
+   TIPOGRAFÍA TIENDA VIP (Fase 2.4.6) — igual que V6.html
+   (Cinzel / Cinzel Decorative / Rajdhani en vez de las
+   fuentes normales del juego). Escopeado a #vipPanel nada
+   más, así que el resto de paneles (tienda normal, inventario,
+   etc.) no se ven afectados — usan las variables globales de
+   siempre.
+   ===================================================== */
+#vipPanel {
+    --font-principal: 'Rajdhani', sans-serif;
+    --font-especial: 'Cinzel', serif;
+    --font-title: 'Cinzel Decorative', serif;
 }
 
 #shopPanel,
@@ -2993,6 +3289,18 @@ body.is-touch-device .vip-emoji-orb img {
 .vip-station-card h3,
 .shop-section-title {
     font-family: var(--font-especial) !important;
+}
+
+/* dentro de VIP, los TÍTULOS grandes (no los tags/labels chicos)
+   usan Cinzel Decorative en vez de Cinzel — así como V6.html, que
+   distingue "font-especial" (tags) de "font-title" (nombres). Va
+   con más especificidad para ganarle a la regla de arriba. */
+#vipPanel .vip-title,
+#vipPanel .vip-feature h2,
+#vipPanel .vip-detail-head h2,
+#vipPanel .vip-pack-body h3,
+#vipPanel .vip-mini-item h3 {
+    font-family: var(--font-title) !important;
 }
 
 .vip-pack-card:hover,
@@ -3083,11 +3391,17 @@ body.is-touch-device .vip-emoji-orb img {
 }
 
 .vip-pack-cover {
-    height: 150px;
+    position: absolute;
+    inset: 0;
     background-size: 112%;
     background-position: center;
     transition: background-position 1.2s ease, background-size 1.2s ease, filter 0.22s ease;
-    box-shadow: inset 0 0 42px color-mix(in srgb, var(--vip-accent, #ffee00) 20%, transparent);
+}
+
+.vip-pack-scrim {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(0deg, rgba(6, 5, 4, .88) 0%, rgba(6, 5, 4, .1) 62%);
 }
 
 .vip-pack-card:hover .vip-pack-cover {
@@ -3116,21 +3430,6 @@ body.is-touch-device .vip-emoji-orb img {
     color: #ffee00;
 }
 
-.shop-vip-access-banner {
-    min-height: 140px;
-    border-radius: 16px;
-    border: 1px solid rgba(255, 200, 0, 0.3);
-    background-size: cover;
-    background-position: center;
-    display: flex;
-    align-items: center;
-    padding: 0 32px;
-    gap: 24px;
-    overflow: hidden;
-    position: relative;
-    box-shadow: 0 0 30px rgba(255, 180, 0, 0.08);
-}
-
 .vip-banner-row {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -3138,14 +3437,47 @@ body.is-touch-device .vip-emoji-orb img {
     margin-bottom: 22px;
 }
 
+/* cada columna del banner-row lleva su propio header arriba
+   (POTENCIADORES VIP / BANNERS VIP) — antes había un solo header
+   arriba de las 2, Felix pidió que sea uno por columna */
+.vip-banner-col {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    min-width: 0;
+}
+
+.vip-banner-col .vip-section-title {
+    margin: 0;
+}
+
+/* headers de sección (pieza 05) — el de "PAQUETES DE LA VITRINA"
+   (el único que queda suelto, no dentro de una columna) */
+.vip-section-title {
+    margin: 18px 0 14px;
+}
+
+/* la segunda (Paquetes) va justo después de cerrar la sección de
+   banners, por eso lleva más margin-top que la primera */
+section + .vip-section-title {
+    margin-top: 30px;
+}
+
 .vip-promo-banner {
-    height: 172px;
+    height: 190px;
     border-radius: 8px;
     border: 1px solid rgba(255, 215, 0, 0.22);
     background: rgba(255, 215, 0, 0.045);
     overflow: hidden;
     cursor: pointer;
     transition: transform 0.18s, border-color 0.18s;
+}
+
+/* cuando usa el marco del kit (banner genérico vip_specials), el
+   corte de esquina lo da el clip-path de hud-panel-cut, no un
+   border-radius rectangular */
+.vip-promo-banner.hud-panel-cut {
+    border-radius: 0;
 }
 
 .vip-promo-banner:hover {
@@ -3157,6 +3489,512 @@ body.is-touch-device .vip-emoji-orb img {
     width: 100%;
     height: 100%;
     object-fit: cover;
+}
+
+/* =====================================================
+   RULETA VIP (Fase 2.4) — botón fijo que aparece mientras
+   la tienda VIP está abierta. Cada tanto hace un wiggle tipo
+   "snake" + brillo para invitar a tocarlo. Sin funcionalidad
+   real adentro todavía (a propósito, pedido de Felix) — el
+   modal solo muestra un panel vacío por ahora.
+   Posición: abajo a la derecha, arriba de los íconos de
+   sistema (sonido/config). Si no queda bien ahí, se ajusta
+   moviendo right/bottom en .vip-roulette-btn — son 2 valores.
+   ===================================================== */
+.vip-roulette-btn {
+    position: fixed;
+    right: 24px;
+    bottom: 128px;
+    width: 60px;
+    height: 60px;
+    z-index: 32;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    border-radius: 50%;
+    background: transparent;
+    filter: drop-shadow(0 6px 14px rgba(0, 0, 0, .5)) drop-shadow(0 0 10px color-mix(in srgb, var(--cfg-hud-accent) 45%, transparent));
+    user-select: none;
+}
+
+.vip-roulette-wheel {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    position: relative;
+    background-size: cover;
+    background-position: center;
+}
+
+/* rueda grande dentro del modal (Fase 2.5) — mismo PNG real, más grande,
+   con los 8 íconos de premio superpuestos alrededor (ver
+   renderWheelSegmentIcons() en shop.js). No gira sincronizada con el
+   premio real; es la "vidriera" de lo que se puede ganar, el premio
+   real lo decide rollWeightedTable() aparte. */
+.roulette-wheel-big-wrap {
+    position: relative;
+    width: 300px;
+    height: 300px;
+    margin: 6px auto 0;
+}
+
+.roulette-wheel-big-wrap::before {
+    content: "";
+    position: absolute;
+    inset: -16px;
+    border-radius: 50%;
+    background: conic-gradient(from 0deg, transparent, color-mix(in srgb, var(--cfg-hud-accent) 40%, transparent) 25%, transparent 55%);
+    filter: blur(7px);
+    opacity: .55;
+    z-index: 0;
+    animation: roulette-halo-spin 6s linear infinite;
+}
+
+@keyframes roulette-halo-spin {
+    to { transform: rotate(360deg); }
+}
+
+body.reduced-motion .roulette-wheel-big-wrap::before,
+body.performance-mode .roulette-wheel-big-wrap::before {
+    animation: none;
+}
+
+.roulette-wheel-big {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    background-size: cover;
+    background-position: center;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, .55), 0 0 0 6px rgba(0, 0, 0, .25);
+}
+
+.roulette-wheel-pointer {
+    position: absolute;
+    top: -11px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 0;
+    height: 0;
+    border-left: 10px solid transparent;
+    border-right: 10px solid transparent;
+    border-top: 17px solid var(--cfg-hud-accent);
+    filter: drop-shadow(0 2px 5px rgba(0, 0, 0, .55));
+    z-index: 3;
+}
+
+.roulette-segment-icon {
+    position: absolute;
+    width: 54px;
+    height: 54px;
+    transform: translate(-50%, -50%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none;
+}
+
+.roulette-segment-icon img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    filter: drop-shadow(0 2px 5px rgba(0, 0, 0, .75)) drop-shadow(0 0 3px rgba(0, 0, 0, .6));
+}
+
+.roulette-segment-icon.is-skin img {
+    filter: drop-shadow(0 0 10px color-mix(in srgb, var(--cfg-hud-accent) 85%, transparent)) drop-shadow(0 2px 5px rgba(0, 0, 0, .75));
+}
+
+/* ── chispas al aterrizar (spawnRouletteSparks) ── */
+.roulette-spark {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--cfg-hud-accent);
+    box-shadow: 0 0 7px 2px color-mix(in srgb, var(--cfg-hud-accent) 85%, white 15%);
+    pointer-events: none;
+    z-index: 4;
+    animation: roulette-spark-burst .7s ease-out forwards;
+}
+
+@keyframes roulette-spark-burst {
+    0% { transform: translate(-50%, -50%) translate(0, 0) scale(1); opacity: 1; }
+    100% { transform: translate(-50%, -50%) translate(var(--sx), var(--sy)) scale(.2); opacity: 0; }
+}
+
+/* ── flash de luz al aterrizar (glow de la rueda + del wrap) ── */
+.roulette-wheel-big-wrap.roulette-landed-glow::after {
+    content: "";
+    position: absolute;
+    inset: -24px;
+    border-radius: 50%;
+    background: radial-gradient(circle, color-mix(in srgb, var(--cfg-hud-accent) 55%, transparent) 0%, transparent 70%);
+    animation: roulette-landed-flash .75s ease-out;
+    pointer-events: none;
+    z-index: 1;
+}
+
+@keyframes roulette-landed-flash {
+    0% { opacity: 0; transform: scale(.7); }
+    30% { opacity: 1; transform: scale(1.05); }
+    100% { opacity: 0; transform: scale(1.35); }
+}
+
+.roulette-wheel-big.roulette-glowing {
+    animation: vip-roulette-wheel-glow .75s ease-in-out;
+}
+
+/* ── mensaje "GIRANDO…" mientras corre la rueda ── */
+.roulette-spinning-msg {
+    text-align: center;
+    color: rgba(255, 255, 255, .45);
+    font-size: 12px;
+    letter-spacing: 3px;
+    padding: 18px 0 6px;
+    animation: roulette-spinning-pulse 1.1s ease-in-out infinite;
+}
+
+@keyframes roulette-spinning-pulse {
+    0%, 100% { opacity: .35; }
+    50% { opacity: .85; }
+}
+
+body.reduced-motion .roulette-spinning-msg,
+body.performance-mode .roulette-spinning-msg {
+    animation: none;
+    opacity: .6;
+}
+
+/* ── texto de ayuda + botón de girar ── */
+.roulette-footer {
+    width: 100%;
+}
+
+.roulette-hint-text {
+    color: rgba(255, 255, 255, .6);
+    font-size: 12px;
+    line-height: 1.6;
+    margin: 16px 0 18px;
+    text-align: center;
+}
+
+.roulette-cant-pay {
+    text-align: center;
+    color: #ff9ab0;
+    font-size: 11px;
+    margin-top: 14px;
+}
+
+.roulette-spin-btn {
+    position: relative;
+    display: block;
+    margin: 0 auto;
+    padding: 15px 34px;
+    border-radius: 10px;
+    border: 1px solid var(--cfg-hud-accent);
+    background: linear-gradient(180deg, color-mix(in srgb, var(--cfg-hud-accent) 88%, white 12%), var(--cfg-hud-accent));
+    color: #1c0d05;
+    font-family: 'Cinzel', serif;
+    font-weight: 700;
+    font-size: 14px;
+    letter-spacing: 1.5px;
+    cursor: pointer;
+    overflow: hidden;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, .5), 0 0 18px color-mix(in srgb, var(--cfg-hud-accent) 45%, transparent);
+    transition: transform .15s ease, box-shadow .15s ease, filter .15s ease;
+}
+
+/* la Diaria usa la fuente de marca del juego (Geom), la VIP se queda con
+   el look elegante (Cinzel) — mismo patrón que ya usa el título del modal */
+.shop-roulette-overlay .roulette-spin-btn {
+    font-family: var(--font-principal);
+}
+
+.roulette-spin-btn::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: -60%;
+    width: 40%;
+    height: 100%;
+    background: linear-gradient(120deg, transparent, rgba(255, 255, 255, .4), transparent);
+    transform: skewX(-20deg);
+    transition: left .5s ease;
+}
+
+.roulette-spin-btn:hover:not(:disabled)::before {
+    left: 120%;
+}
+
+.roulette-spin-btn:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, .55), 0 0 26px color-mix(in srgb, var(--cfg-hud-accent) 65%, transparent);
+    filter: brightness(1.08);
+
+}
+
+.roulette-spin-btn:active:not(:disabled) {
+    transform: translateY(0) scale(.97);
+}
+
+.roulette-spin-btn:disabled {
+    cursor: not-allowed;
+    opacity: .45;
+    filter: grayscale(.3);
+}
+
+.roulette-spin-again-btn {
+    margin-top: 4px;
+}
+
+/* ── tarjeta de resultado ── */
+.roulette-result-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 0 4px;
+    animation: roulette-result-in .4s ease;
+}
+
+@keyframes roulette-result-in {
+    from { opacity: 0; transform: translateY(10px) scale(.96); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.roulette-result-img {
+    width: 76px;
+    height: 76px;
+    object-fit: contain;
+    filter: drop-shadow(0 4px 10px rgba(0, 0, 0, .5));
+}
+
+.roulette-result-label {
+    font-family: var(--font-title, serif);
+    font-weight: 700;
+    font-size: 17px;
+    text-align: center;
+}
+
+.roulette-result-flavor {
+    font-size: 12.5px;
+    color: rgba(255, 255, 255, .55);
+    text-align: center;
+    letter-spacing: .3px;
+}
+
+.roulette-result-card.is-legendary .roulette-result-img {
+    filter: drop-shadow(0 0 16px color-mix(in srgb, var(--cfg-hud-accent) 85%, transparent)) drop-shadow(0 4px 10px rgba(0, 0, 0, .5));
+}
+
+.roulette-result-card.is-legendary .roulette-result-flavor {
+    color: var(--cfg-hud-accent);
+    font-weight: 600;
+}
+
+.vip-roulette-label {
+    position: absolute;
+    bottom: -16px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-family: 'Cinzel', serif;
+    font-size: 8px;
+    letter-spacing: 1px;
+    color: rgba(255, 255, 255, .55);
+    white-space: nowrap;
+}
+
+/* ábreme: snake hacia los lados + brillo del botón y de la rueda */
+@keyframes vip-roulette-wiggle {
+    0%, 100% { transform: rotate(0deg) translateX(0); }
+    10% { transform: rotate(-11deg) translateX(-3px); }
+    22% { transform: rotate(10deg) translateX(3px); }
+    34% { transform: rotate(-8deg) translateX(-2px); }
+    46% { transform: rotate(7deg) translateX(2px); }
+    58% { transform: rotate(-5deg) translateX(-1px); }
+    70% { transform: rotate(3deg) translateX(1px); }
+    82% { transform: rotate(-1.5deg) translateX(0); }
+}
+
+@keyframes vip-roulette-glow {
+    0%, 100% { box-shadow: 0 6px 18px rgba(0, 0, 0, .5), 0 0 14px color-mix(in srgb, var(--cfg-hud-accent) 30%, transparent); }
+    40% { box-shadow: 0 6px 18px rgba(0, 0, 0, .5), 0 0 30px color-mix(in srgb, var(--cfg-hud-accent) 90%, transparent), 0 0 46px color-mix(in srgb, var(--cfg-hud-accent) 45%, transparent); }
+}
+
+@keyframes vip-roulette-wheel-glow {
+    0%, 100% { filter: brightness(1) saturate(1); }
+    40% { filter: brightness(1.7) saturate(1.4); }
+}
+
+/* Giro real (Fase 2.6) — ahora lo controla performRouletteSpin() en JS
+   directo sobre transform, con duración y ángulo random (6-8 vueltas),
+   así que no hace falta un keyframe fijo. Ver .roulette-wheel-big-wrap,
+   .roulette-spark, .roulette-landed-glow y .roulette-result-card abajo. */
+
+.vip-roulette-btn.inviting {
+    animation: vip-roulette-wiggle 1.1s ease-in-out, vip-roulette-glow 1.1s ease-in-out;
+}
+
+.vip-roulette-btn.inviting .vip-roulette-wheel {
+    animation: vip-roulette-wheel-glow 1.1s ease-in-out;
+}
+
+body.reduced-motion .vip-roulette-btn.inviting,
+body.performance-mode .vip-roulette-btn.inviting {
+    animation: none;
+}
+
+.vip-roulette-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 200;
+    background: rgba(6, 5, 4, .7);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    /* dorado quemado, más apagado que el --cfg-hud-accent brillante del botón */
+    --cfg-hud-accent: #c9922e;
+}
+
+.vip-roulette-overlay.open {
+    display: flex;
+}
+
+/* Ruleta Diaria (tienda normal, Fase 2.5) — mismo componente que
+   la de VIP, pero con el acento rosa/rojo de marca de la tienda
+   normal en vez del dorado, y el título en la fuente normal del
+   juego (monospace) en vez de Cinzel Decorative, porque la tienda
+   normal no usa la tipografía elegante que sí tiene VIP. */
+.shop-roulette-overlay {
+    --cfg-hud-accent: #ff4d6d;
+}
+
+.shop-roulette-overlay .vip-roulette-modal-title {
+    font-family: var(--font-principal);
+}
+
+.vip-roulette-modal {
+    position: relative;
+    width: 660px;
+    max-width: 92vw;
+    min-height: 0;
+    background: linear-gradient(180deg, rgba(16, 20, 30, .88), rgba(8, 9, 14, .92));
+    backdrop-filter: blur(22px);
+    -webkit-backdrop-filter: blur(22px);
+    padding: 36px;
+    border-radius: 22px;
+    border: 1px solid rgba(90, 170, 255, .45);
+    box-shadow:
+        0 24px 70px rgba(0, 0, 0, .65),
+        inset 0 0 0 1px rgba(90, 170, 255, .08),
+        0 0 50px rgba(70, 150, 255, .18);
+    overflow: hidden;
+}
+
+.vip-roulette-modal::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background:
+        repeating-linear-gradient(115deg, rgba(255, 255, 255, .022) 0px, rgba(255, 255, 255, .022) 1px, transparent 1px, transparent 5px),
+        linear-gradient(135deg, rgba(90, 170, 255, .10), transparent 45%);
+    pointer-events: none;
+}
+
+.vip-roulette-modal-close,
+.vip-roulette-modal-title,
+.vip-roulette-modal-body {
+    position: relative;
+}
+
+.vip-roulette-modal-title {
+    font-family: 'Cinzel Decorative', serif;
+    font-size: 22px;
+    letter-spacing: 2px;
+    color: #f5efe0;
+    margin-bottom: 18px;
+    padding-bottom: 12px;
+}
+
+.vip-roulette-modal-title::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 64px;
+    height: 2px;
+    background: linear-gradient(90deg, var(--cfg-hud-accent), transparent);
+    box-shadow: 0 0 8px var(--cfg-hud-accent);
+}
+
+.vip-roulette-modal-body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 480px;
+}
+
+.vip-roulette-modal-close {
+    position: absolute;
+    top: 14px;
+    right: 14px;
+    width: 30px;
+    height: 30px;
+    cursor: pointer;
+    border: 1px solid rgba(90, 170, 255, .5);
+    border-radius: 50%;
+    background: rgba(255, 255, 255, .03);
+    transition: background .15s ease, border-color .15s ease;
+}
+
+.vip-roulette-modal-close:hover {
+    background: rgba(255, 90, 90, .15);
+    border-color: #ff6b6b;
+}
+
+.vip-roulette-modal-close::before,
+.vip-roulette-modal-close::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 12px;
+    height: 1.4px;
+    background: var(--cfg-hud-accent);
+}
+
+.vip-roulette-modal-close::before { transform: translate(-50%, -50%) rotate(45deg); }
+.vip-roulette-modal-close::after { transform: translate(-50%, -50%) rotate(-45deg); }
+
+@media (max-width: 820px) {
+    .vip-roulette-btn {
+        right: 14px;
+        bottom: 110px;
+        width: 50px;
+        height: 50px;
+    }
+    .vip-roulette-modal {
+        padding: 22px;
+        border-radius: 16px;
+    }
+    .vip-roulette-modal-body {
+        min-height: 0;
+    }
+    .roulette-wheel-big-wrap {
+        width: 220px;
+        height: 220px;
+    }
+    .roulette-segment-icon {
+        width: 30px;
+        height: 30px;
+    }
+    .roulette-spin-btn {
+        padding: 13px 26px;
+        font-size: 13px;
+    }
 }
 
 .vip-powerup-promo-banner {
@@ -3290,6 +4128,13 @@ body.is-touch-device .vip-emoji-orb img {
     padding: 14px;
     display: grid;
     gap: 10px;
+}
+
+/* la bandera de rareza (piezas 08/11) va antes en el DOM que la
+   imagen del item, así que sin z-index la imagen la tapa */
+.vip-mini-item .hud-flag,
+.vip-mini-item .hud-flag-shine {
+    z-index: 3;
 }
 
 .vip-mini-image {
@@ -4050,8 +4895,8 @@ body.is-touch-device .vip-emoji-orb img {
 }
 
 .vip-station-card {
-    flex: 0 0 250px;
-    aspect-ratio: 2.15 / 1;
+    flex: 0 0 340px;
+    aspect-ratio: 2.6 / 1;
     min-height: 0;
     padding: 0;
     display: block;
@@ -4082,7 +4927,7 @@ body.is-touch-device .vip-emoji-orb img {
     flex: none;
     width: 100%;
     min-width: 0;
-    aspect-ratio: 2.6 / 1;
+    height: 170px;
 }
 
 .vip-station-card.owned {
@@ -4354,12 +5199,15 @@ body.is-touch-device .vip-emoji-orb img {
         grid-template-columns: 36px minmax(0, 1fr) 36px;
     }
 
-    .vip-feature,
     .vip-detail-head {
         grid-template-columns: 1fr;
     }
 
-    .vip-feature-cover,
+    .vip-feature {
+        min-height: 220px;
+        padding: 18px;
+    }
+
     .vip-detail-cover {
         min-height: 190px;
     }
@@ -5481,72 +6329,8 @@ body.is-touch-device .vip-emoji-orb img {
 }
 
 /* =====================================================
-/* BOTON PLAY */
-
-.ls-play-btn {
-    position: relative;
-
-    width: 260px;
-    height: 58px;
-
-    border: none;
-
-    border-radius: 18px;
-
-    overflow: hidden;
-
-    cursor: pointer;
-
-    background:
-        url('assets/Imagenes/Boton Play/Play_Button.png') center/cover no-repeat;
-
-    box-shadow:
-        0 0 35px rgba(0, 255, 231, 0.2);
-
-    transition: 0.22s;
-}
-
-.ls-play-btn span {
-    position: relative;
-    z-index: 2;
-
-    color: #000000;
-
-    font-family: var(--font-secundaria);
-    font-size: 16px;
-    font-weight: bold;
-    letter-spacing: 6px;
-
-    text-shadow:
-        0 0 12px var(--color-cian);
-}
-
-.ls-play-glow {
-    position: absolute;
-    inset: 0;
-
-    background:
-        linear-gradient(90deg,
-            transparent,
-            rgba(255, 255, 255, 0.16),
-            transparent);
-
-    transform: translateX(-120%);
-}
-
-.ls-play-btn:hover .ls-play-glow {
-    animation: playShine 0.8s linear;
-}
-
-@keyframes playShine {
-    0% {
-        transform: translateX(-120%);
-    }
-
-    100% {
-        transform: translateX(120%);
-    }
-}
+/* BOTON PLAY — consolidado más abajo, ver sección
+   "PLAY BUTTON — estilo unificado con el resto del juego" */
 
 #levelSelect {
     position: fixed;
@@ -5592,29 +6376,31 @@ HEADER
 
 .ls-header {
     position: absolute;
-    top: var(--ls-header-top, 28px);
-    left: 50%;
-    transform: translateX(-50%);
-    width: var(--ls-header-width, 92%);
+    top: var(--ls-header-top, 20px);
+    left: var(--ls-header-left, calc(var(--lsc-list-width, clamp(160px, 22vw, 240px)) + 20px));
+    right: var(--ls-header-right, 20px);
+    width: auto;
+    transform: none;
     display: flex;
     justify-content: space-between;
     align-items: center;
+    gap: 12px;
     z-index: 5;
 }
 
 .ls-title-zone {
     display: var(--ls-title-box-display, inline-flex);
     flex-direction: column;
-    gap: 6px;
+    gap: 3px;
     width: var(--ls-title-box-width, auto);
     min-height: var(--ls-title-box-height, auto);
-    padding: var(--ls-title-box-padding, 10px 20px);
-    border-radius: var(--ls-title-box-radius, 14px);
-    background: var(--ls-title-box-bg, rgba(0, 0, 0, 0.38));
-    border: var(--ls-title-box-border, 1px solid rgba(0, 255, 231, 0.15));
+    padding: var(--ls-title-box-padding, 8px 18px);
+    border-radius: var(--ls-title-box-radius, 12px);
+    background: var(--ls-title-box-bg, rgba(0, 0, 0, 0.4));
+    border: var(--ls-title-box-border, 1px solid rgba(0, 255, 231, 0.18));
     backdrop-filter: var(--ls-title-box-blur, blur(8px));
     -webkit-backdrop-filter: var(--ls-title-box-blur, blur(8px));
-    align-items: center;
+    align-items: flex-start;
     justify-content: center;
     box-sizing: border-box;
     transform: translate(var(--ls-title-box-x, 0px), var(--ls-title-box-y, 0px));
@@ -5629,12 +6415,12 @@ HEADER
 .ls-title {
     color: var(--ls-title-color, #ffffff);
     font-family: var(--ls-title-font, var(--font-principal));
-    font-size: var(--ls-font-large, 42px);
+    font-size: var(--ls-font-large, 22px);
     font-weight: 900;
-    letter-spacing: 3px;
+    letter-spacing: 2px;
     text-shadow:
-        0 0 var(--ls-title-glow-size-1, 18px) var(--ls-title-glow-color, rgba(0, 255, 231, .55)),
-        0 0 var(--ls-title-glow-size-2, 40px) var(--ls-title-glow-color, rgba(0, 255, 231, .55));
+        0 0 var(--ls-title-glow-size-1, 10px) var(--ls-title-glow-color, rgba(0, 255, 231, .55)),
+        0 0 var(--ls-title-glow-size-2, 22px) var(--ls-title-glow-color, rgba(0, 255, 231, .55));
 }
 
 .ls-header::before {
@@ -5699,6 +6485,20 @@ VOLVER
 .ls-back-btn:hover {
     background: rgba(255, 255, 255, .1);
     transform: translateY(-2px);
+}
+
+/* Desktop (no táctil): el botón vuelve queda anclado fijo en la esquina
+   superior derecha, fuera del flujo del header (así nunca se pierde ni
+   se aplasta). La barra de jugador se ubica justo a su izquierda. */
+@media (min-width: 761px) {
+    body:not(.is-touch-device) .ls-back-btn {
+        position: absolute;
+        top: var(--ls-header-top, 20px);
+        right: var(--ls-header-right, 20px);
+        width: 132px;
+        text-align: center;
+        z-index: 12;
+    }
 }
 
 /* =========================
@@ -5814,52 +6614,51 @@ FOOTER
 }
 
 /* =========================
-PLAY BUTTON
+PLAY BUTTON — estilo unificado con el resto del juego
 ========================= */
 
 .ls-play-btn {
     position: relative;
-    width: 220px;
-    height: 64px;
-    border: none;
+    width: 240px;
+    height: 60px;
+    border: 1px solid rgba(255, 255, 255, 0.14);
     overflow: hidden;
-    border-radius: 18px;
-    background: linear-gradient(135deg, var(--color-cian), var(--color-azul));
+    border-radius: 14px;
+    background: linear-gradient(145deg, rgba(0, 255, 231, 0.28), rgba(0, 136, 255, 0.14));
     color: white;
     cursor: pointer;
     font-family: var(--font-principal), sans-serif;
-    font-size: 22px;
-    letter-spacing: 2px;
+    font-size: 18px;
+    font-weight: bold;
+    letter-spacing: 4px;
     transition: .25s;
 }
 
 .ls-play-btn span {
     position: relative;
     z-index: 2;
+    text-shadow: 0 0 10px rgba(0, 255, 231, 0.5);
 }
 
 .ls-play-glow {
     position: absolute;
-    inset: -20%;
-    background: radial-gradient(circle,
-            rgba(255, 255, 255, .35),
-            transparent 60%);
-    animation: lsGlow 3s linear infinite;
+    inset: 0;
+    background:
+        linear-gradient(90deg,
+            transparent,
+            rgba(255, 255, 255, 0.18),
+            transparent);
+    transform: translateX(-100%);
+}
+
+.ls-play-btn:hover .ls-play-glow {
+    animation: shine 0.8s linear;
 }
 
 .ls-play-btn:hover {
-    transform: translateY(-3px) scale(1.03);
-    box-shadow: 0 0 30px rgba(0, 255, 231, .35);
-}
-
-@keyframes lsGlow {
-    from {
-        transform: translateX(-30%);
-    }
-
-    to {
-        transform: translateX(30%);
-    }
+    transform: scale(1.04);
+    box-shadow: 0 0 24px rgba(0, 255, 231, .35);
+    border-color: rgba(0, 255, 231, 0.5);
 }
 
 .ls-system-bar {
@@ -5988,6 +6787,18 @@ PLAY BUTTON
     z-index: 10;
 }
 
+/* Desktop (no táctil): el botón JUGAR se integra al cuadro de contenido
+   (debajo de las stats/badges), alineado con el resto del texto, en vez
+   de quedar flotando pegado en la esquina inferior derecha. */
+@media (min-width: 761px) {
+    body:not(.is-touch-device) .ls-play-btn {
+        position: relative;
+        right: auto;
+        bottom: auto;
+        margin-top: clamp(10px, 2vh, 18px);
+    }
+}
+
 .ls-player-bar {
     position: absolute;
 
@@ -6039,6 +6850,16 @@ PLAY BUTTON
     object-fit: contain;
 }
 
+/* Desktop (no táctil): la barra de jugador queda en la misma fila que
+   el botón volver, pegada a su izquierda. En móvil/táctil se respeta
+   el posicionamiento original. */
+@media (min-width: 761px) {
+    body:not(.is-touch-device) .ls-player-bar {
+        top: var(--ls-header-top, 20px);
+        right: calc(var(--ls-header-right, 20px) + 132px + 12px);
+    }
+}
+
 @media (max-width: 820px) {
 
     .vip-topbar,
@@ -6060,12 +6881,15 @@ PLAY BUTTON
         grid-template-columns: 36px minmax(0, 1fr) 36px;
     }
 
-    .vip-feature,
     .vip-detail-head {
         grid-template-columns: 1fr;
     }
 
-    .vip-feature-cover,
+    .vip-feature {
+        min-height: 220px;
+        padding: 18px;
+    }
+
     .vip-detail-cover {
         min-height: 190px;
     }
@@ -6119,26 +6943,389 @@ PLAY BUTTON
     }
 }
 
-/* Ajuste final de organización de Store/UI */
-.store-panel-grid {
+/* ============================================================
+   REMODELACIÓN TIENDA NORMAL — Idea 5 "Catálogo Real" (confirmada)
+   El hero pasa de fila fija (VIP + Ruby Pass) + Temporadas metido
+   en el grid de categorías, a UN SOLO carrusel que rota entre los
+   tres (uno a la vez, tamaño mediano — Felix pidió que no ocupe
+   todo el espacio). El grid de categorías baja de 4x3 con hueco a
+   4x2 parejo, ya que Temporadas ya no vive ahí.
+   ============================================================ */
+
+.shop-hero-carousel {
+    position: relative;
+    height: 150px;
+    border-radius: 8px;
+    overflow: hidden;
+    margin-bottom: 20px;
+    border: 1px solid rgba(176, 75, 255, 0.25);
+    cursor: grab;
+    touch-action: pan-y;
+}
+
+.shop-hero-carousel:active {
+    cursor: grabbing;
+}
+
+.shop-hero-track {
+    display: flex;
+    height: 100%;
+    width: 200%;
+    transition: transform 0.55s cubic-bezier(0.65, 0, 0.35, 1);
+}
+
+.shop-hero-slide {
+    position: relative;
+    width: 50%;
+    height: 100%;
+    flex-shrink: 0;
+    border: none;
+    cursor: pointer;
+    padding: 22px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    align-items: flex-start;
+    background-size: cover;
+    background-position: center;
+    text-align: left;
+    overflow: hidden;
+}
+
+.shop-hero-scrim {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    background: linear-gradient(90deg, rgba(6, 4, 14, 0.82) 0%, rgba(6, 4, 14, 0.3) 55%, rgba(6, 4, 14, 0.05) 100%);
+}
+
+.shop-hero-vip { background-color: #1a0f3d; }
+.shop-hero-ruby { background-color: #1a0508; }
+
+.shop-hero-seasons {
+    background: linear-gradient(150deg, #1c2450 0%, #241a4a 55%, #0a0e28 100%);
+}
+
+.shop-hero-seasons-bg {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    background-image: radial-gradient(rgba(180, 190, 255, 0.5) 1px, transparent 1px);
+    background-size: 26px 26px;
+    opacity: 0.16;
+}
+
+.shop-hero-kicker {
+    position: relative;
+    z-index: 1;
+    font-size: 9.5px;
+    letter-spacing: 2.5px;
+    color: #d9c9ff;
+    opacity: 0.85;
+    margin-bottom: 6px;
+}
+
+.shop-hero-title {
+    position: relative;
+    z-index: 1;
+    font-weight: 700;
+    font-size: 24px;
+    letter-spacing: 2px;
+    margin: 0 0 10px;
+    background: linear-gradient(90deg, #cfa6ff, #7c9bff);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+}
+
+.shop-hero-go {
+    position: relative;
+    z-index: 1;
+    display: inline-flex;
+    align-items: center;
+    height: 26px;
+    padding: 0 16px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.14);
+    font-size: 9.5px;
+    letter-spacing: 1.5px;
+    color: #fff;
+}
+
+.shop-hero-claim-hint {
+    position: relative;
+    z-index: 1;
+    font-size: 9.5px;
+    letter-spacing: 1px;
+    color: #00ff88;
+    text-shadow: 0 0 8px rgba(0, 255, 136, 0.5);
+}
+
+.shop-hero-slide.has-ruby-claim {
+    box-shadow: inset 0 0 40px rgba(0, 255, 136, 0.12);
+}
+
+.shop-hero-dots {
+    position: absolute;
+    z-index: 2;
+    bottom: 14px;
+    right: 18px;
+    display: flex;
+    gap: 6px;
+}
+
+.shop-hero-dots span {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.3);
+    cursor: pointer;
+    transition: width 0.2s ease, background 0.2s ease;
+}
+
+.shop-hero-dots span.active {
+    background: #fff;
+    width: 18px;
+    border-radius: 3px;
+}
+
+/* Scrollbar delgada y a juego con el tema, en vez de la barra blanca por
+   defecto del navegador — mismo patrón ya usado en .opt-scroll / rs-map-scroll */
+.shop-content-scroll {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(0, 255, 231, 0.3) transparent;
+}
+
+.shop-content-scroll::-webkit-scrollbar {
+    width: 6px;
+}
+
+.shop-content-scroll::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.shop-content-scroll::-webkit-scrollbar-thumb {
+    background: rgba(0, 255, 231, 0.3);
+    border-radius: 4px;
+}
+
+/* ── Textos "hechos de gema/oro" con brillo animado — Tienda Ruby.
+   Nota de rendimiento: usamos text-shadow en vez de filter:drop-shadow
+   (mucho más barato de repintar en cada frame de la animación) y una
+   animación más lenta, pensado para el hardware más limitado. ── */
+.ruby-shop-gem-title {
+    font-family: var(--font-secundaria);
+    font-weight: 900;
+    font-size: 20px;
+    letter-spacing: 3px;
+    background: linear-gradient(100deg, #7a0f22 0%, #ff4d6d 25%, #ffd0da 50%, #ff4d6d 75%, #7a0f22 100%);
+    background-size: 220% auto;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    text-shadow: 0 0 6px rgba(255, 77, 109, 0.45);
+    animation: rubyShine 6s linear infinite;
+    white-space: nowrap;
+}
+
+.ruby-shop-label-gold,
+.ruby-shop-label-ruby {
+    font-family: var(--font-secundaria);
+    font-weight: 700;
+    font-size: 11px;
+    letter-spacing: 2px;
+    background-size: 220% auto;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    display: inline-block;
+    animation: rubyShine 6s linear infinite;
+}
+
+.ruby-shop-label-gold {
+    background-image: linear-gradient(100deg, #8a6a1f 0%, #ffee00 25%, #fff6c9 50%, #ffee00 75%, #8a6a1f 100%);
+    text-shadow: 0 0 4px rgba(255, 238, 0, 0.35);
+}
+
+.ruby-shop-label-ruby {
+    background-image: linear-gradient(100deg, #7a0f22 0%, #ff4d6d 25%, #ffd0da 50%, #ff4d6d 75%, #7a0f22 100%);
+    text-shadow: 0 0 4px rgba(255, 77, 109, 0.35);
+}
+
+@keyframes rubyShine {
+    0% { background-position: 200% center; }
+    100% { background-position: -200% center; }
+}
+
+body.performance-mode .ruby-shop-gem-title,
+body.performance-mode .ruby-shop-label-gold,
+body.performance-mode .ruby-shop-label-ruby,
+body.is-touch-device .ruby-shop-gem-title,
+body.is-touch-device .ruby-shop-label-gold,
+body.is-touch-device .ruby-shop-label-ruby {
+    animation: none !important;
+    text-shadow: none !important;
+}
+
+/* Retícula de la tienda — reorganizada en 3 grupos con aire real entre
+   ellos (pedido de Felipe: "no quiero que se vea todo pegado como
+   tetris"). Cada grupo tiene su propio label + línea, en vez de un solo
+   grid-template-areas monolítico. */
+.store-group {
+    margin-bottom: 28px;
+}
+
+.store-group-label {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 12px;
+}
+
+.store-group-label .txt {
+    font-family: var(--font-secundaria);
+    font-weight: 700;
+    font-size: 11px;
+    letter-spacing: 3px;
+    color: rgba(255, 255, 255, 0.35);
+    white-space: nowrap;
+}
+
+.store-group-label .ln {
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(90deg, rgba(255, 255, 255, 0.14), transparent);
+}
+
+.store-grid-main {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
-    gap: 16px;
+    grid-template-columns: repeat(2, 1fr);
+    grid-auto-rows: 210px;
+    gap: 18px;
+}
+
+.store-grid-quick {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    grid-auto-rows: 132px;
+    gap: 18px;
+}
+
+.store-grid-foot {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-auto-rows: 168px;
+    gap: 18px;
 }
 
 .store-category-panel {
     cursor: pointer;
     background: rgba(255, 255, 255, 0.03);
-    border: 1px solid rgba(255, 255, 255, 0.08);
     border-radius: 8px;
     overflow: hidden;
     padding: 0;
     transition: transform 0.18s ease, border-color 0.18s ease;
-    aspect-ratio: 16 / 9;
+    aspect-ratio: auto;
+    height: 100%;
+    width: 100%;
+}
+
+/* Línea de "scan" al pasar el mouse — barata en rendimiento, se ve cara.
+   Se apaga en modo rendimiento / táctil, igual que el resto de brillos
+   decorativos de esta hoja (ver reglas .performance-mode más arriba). */
+.store-category-panel::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: -60%;
+    height: 60%;
+    background: linear-gradient(180deg, transparent, color-mix(in srgb, var(--cfg-hud-accent, #fff) 55%, transparent), transparent);
+    opacity: 0;
+    pointer-events: none;
+    z-index: 3;
+    transition: opacity 0.2s;
+}
+
+.store-category-panel:hover::after {
+    opacity: 0.55;
+    animation: storeScan 1.1s linear infinite;
+}
+
+@keyframes storeScan {
+    from { top: -60%; }
+    to { top: 100%; }
+}
+
+body.performance-mode .store-category-panel::after,
+body.is-touch-device .store-category-panel::after {
+    display: none !important;
+}
+
+/* Esquinas HUD más marcadas específicamente en la tienda (el resto de la
+   app sigue usando el tamaño chico por defecto de --cfg-hud-corner-size) */
+.store-category-panel .hud-frame-c {
+    width: 26px;
+    height: 26px;
+}
+
+.store-category-panel .hud-frame-c.tl::before,
+.store-category-panel .hud-frame-c.tr::before,
+.store-category-panel .hud-frame-c.bl::before,
+.store-category-panel .hud-frame-c.br::before {
+    height: 3px;
+}
+
+.store-category-panel .hud-frame-c.tl::after,
+.store-category-panel .hud-frame-c.tr::after,
+.store-category-panel .hud-frame-c.bl::after,
+.store-category-panel .hud-frame-c.br::after {
+    width: 3px;
+}
+
+.store-panel-seasons {
+    aspect-ratio: auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    align-items: flex-start;
+    padding: 18px;
+    text-align: left;
+    background: linear-gradient(150deg, #1c2450 0%, #241a4a 55%, #0a0e28 100%);
+}
+
+.store-panel-seasons-bg {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    background-image: radial-gradient(rgba(180, 190, 255, 0.5) 1px, transparent 1px);
+    background-size: 26px 26px;
+    opacity: 0.16;
+}
+
+.store-panel-seasons .shop-hero-kicker,
+.store-panel-seasons .shop-hero-title {
+    position: relative;
+    z-index: 1;
+}
+
+.store-panel-daily {
+    aspect-ratio: auto;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 16px;
+    padding: 0 24px;
+}
+
+.store-category-spacer {
+    background: transparent;
+    border: none;
+    cursor: default;
+    pointer-events: none;
 }
 
 .store-category-panel:hover {
-    border-color: rgba(255, 255, 255, 0.22);
     transform: translateY(-2px);
 }
 
@@ -9540,6 +10727,32 @@ h1 {
     display: flex;
     flex-direction: column;
     padding: 0;
+    /* Corte diagonal en la esquina inferior derecha — cae justo en la zona
+       vacía del spacer flex:1 al final del sidebar, así nunca tapa contenido
+       real. Le da forma sin arriesgar el scroll de las secciones de arriba. */
+    clip-path: polygon(0 0, 100% 0, 100% calc(100% - 52px), calc(100% - 52px) 100%, 0 100%);
+}
+
+.shop-sidebar::after {
+    content: "";
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    width: 90px;
+    height: 90px;
+    background: radial-gradient(circle at 100% 100%, color-mix(in srgb, var(--color-rosa) 30%, transparent), transparent 70%);
+    pointer-events: none;
+}
+
+/* En móvil el sidebar se angosta y puede llenarse de contenido hasta abajo
+   (scroll interno) — ahí el corte se desactiva para no arriesgar recortar
+   nada real. */
+body.is-touch-device .shop-sidebar {
+    clip-path: none;
+}
+
+body.is-touch-device .shop-sidebar::after {
+    display: none;
 }
 
 /* ── Header: zona de TIENDA + VOLVER ── */
@@ -9609,6 +10822,12 @@ h1 {
     overflow: hidden;
     position: relative;
     margin-bottom: 10px;
+}
+
+/* Puntas menos redondeadas específicamente en el banner del sidebar de la
+   tienda (el del menú principal se queda igual) */
+#shop-profile-banner {
+    border-radius: 6px;
 }
 
 /* ── Banner de perfil del MENÚ PRINCIPAL (mismo diseño, variables propias) ── */
@@ -9942,7 +11161,9 @@ article.vip-mini-item.trophy-skin .skin-name {
     overflow-y: auto;
     padding: var(--lsc-list-padding-top, calc(86px + env(safe-area-inset-top))) 0 var(--lsc-list-padding-bottom, 10px);
     border-right: 1px solid rgba(255, 255, 255, 0.06);
-    background-image: url("assets/Imagenes/Barra lateral izquierda SL/Barra_lat_LevelSelect.png");
+    background-image:
+        linear-gradient(180deg, rgba(4, 6, 10, 0.62), rgba(4, 6, 10, 0.8)),
+        url("assets/Imagenes/Barra lateral izquierda SL/Barra_lat_LevelSelect.png");
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
@@ -10176,12 +11397,12 @@ article.vip-mini-item.trophy-skin .skin-name {
     border: 1px solid rgba(255, 68, 68, 0.25);
 }
 
-/* System bar reposicionada */
+/* System bar reposicionada — encajada en el ancho real del sidebar */
 #levelSelect .ls-system-bar {
     position: absolute;
-    left: clamp(10px, 2vw, 24px);
-    bottom: clamp(10px, 2vh, 20px);
-    width: clamp(200px, 30vw, 400px);
+    left: 14px;
+    bottom: 14px;
+    width: calc(var(--lsc-list-width, clamp(160px, 22vw, 240px)) - 28px);
     z-index: 10;
 }
 
@@ -11488,6 +12709,7 @@ body.is-touch-device .inv-chest-icon img {
    ================================================================ */
 
 @media (max-width: 900px) {
+
     #overlay,
     #levelSelect,
     #shopPanel,
@@ -11745,6 +12967,11 @@ body.is-touch-device .inv-chest-icon img {
         overflow-x: hidden !important;
         overscroll-behavior: contain !important;
         box-sizing: border-box !important;
+        clip-path: none !important;
+    }
+
+    #shopPanel .shop-sidebar::after {
+        display: none !important;
     }
 
     #shopPanel .shop-sidebar-header,
@@ -11813,15 +13040,53 @@ body.is-touch-device .inv-chest-icon img {
         padding: 14px 12px calc(22px + env(safe-area-inset-bottom)) !important;
     }
 
-    .shop-home-banner-row,
     .vip-banner-row {
         grid-template-columns: 1fr !important;
         flex-direction: column !important;
     }
 
-    .store-panel-grid {
-        grid-template-columns: repeat(auto-fit, minmax(132px, 1fr)) !important;
+    .shop-hero-carousel {
+        height: 110px !important;
+        margin-bottom: 14px !important;
+    }
+
+    .shop-hero-slide {
+        padding: 14px !important;
+    }
+
+    .shop-hero-title {
+        font-size: 19px !important;
+    }
+
+    .store-group {
+        margin-bottom: 18px !important;
+    }
+
+    .store-grid-main {
+        grid-template-columns: repeat(2, 1fr) !important;
+        grid-auto-rows: 150px !important;
         gap: 10px !important;
+    }
+
+    .store-grid-quick {
+        grid-template-columns: repeat(2, 1fr) !important;
+        grid-auto-rows: 110px !important;
+        gap: 10px !important;
+    }
+
+    .store-grid-foot {
+        grid-template-columns: 1fr !important;
+        grid-auto-rows: auto !important;
+        gap: 10px !important;
+    }
+
+    .store-panel-seasons {
+        min-height: 140px !important;
+    }
+
+    .store-panel-daily {
+        min-height: 90px !important;
+        padding: 14px 16px !important;
     }
 
     .store-category-label {
@@ -11831,12 +13096,6 @@ body.is-touch-device .inv-chest-icon img {
         padding: 6px 7px !important;
         font-size: 9px !important;
         letter-spacing: 1px !important;
-    }
-
-    .shop-vip-access-banner {
-        min-height: 104px !important;
-        padding: 12px !important;
-        gap: 12px !important;
     }
 
     .vip-content {
@@ -11855,8 +13114,7 @@ body.is-touch-device .inv-chest-icon img {
         gap: 10px !important;
     }
 
-    .vip-mini-image,
-    .vip-pack-cover {
+    .vip-mini-image {
         height: clamp(92px, 26vw, 128px) !important;
     }
 }
@@ -11967,7 +13225,8 @@ body.is-touch-device .inv-chest-icon img {
     }
 }
 
-@media (max-width: 760px), (max-height: 430px) {
+@media (max-width: 760px),
+(max-height: 430px) {
     #inventoryPanel.inv-panel {
         height: 100dvh !important;
         overflow: hidden !important;
@@ -12083,23 +13342,28 @@ body.is-touch-device .inv-chest-icon img {
         height: 44px !important;
     }
 }
+
 @keyframes gem-exclusive-rgb-glow {
     0% {
         color: #ff3b6b;
         text-shadow: 0 0 6px #ff3b6b, 0 0 14px #ff3b6b;
     }
+
     25% {
         color: #ffd33b;
         text-shadow: 0 0 6px #ffd33b, 0 0 14px #ffd33b;
     }
+
     50% {
         color: #35ff8f;
         text-shadow: 0 0 6px #35ff8f, 0 0 14px #35ff8f;
     }
+
     75% {
         color: #39b9ff;
         text-shadow: 0 0 6px #39b9ff, 0 0 14px #39b9ff;
     }
+
     100% {
         color: #d946ff;
         text-shadow: 0 0 6px #d946ff, 0 0 14px #d946ff;
@@ -12109,4 +13373,2034 @@ body.is-touch-device .inv-chest-icon img {
 .gem-rarity-exclusive {
     animation: gem-exclusive-rgb-glow 1.6s linear infinite;
     color: #fff !important;
+}
+
+/* ============================================================
+   ============================================================
+   KIT DE DECORACIONES HUD — FASE 1 (piezas base confirmadas)
+   Referencia visual: gem_decor_kit.html (piezas 01-10)
+                       gem_decor_kit_part2.html (piezas 11-22)
+   Namespace: todas las clases empiezan con "hud-" para no
+   pisar nada existente. Cero lógica acá, solo presentación.
+   ============================================================
+   ============================================================ */
+
+/* ── Variables configurables de esta sección.
+      Mover a layoutconfig.js cuando se conecten con JS. ── */
+:root {
+    --cfg-hud-accent: var(--color-cian);
+    /* color por defecto de toda pieza HUD, se puede
+       sobreescribir puntualmente con style="--cfg-hud-accent:..."
+       o heredando var(--inv-rarity-color) en cards de ítems */
+    --cfg-hud-border-w: 1px;
+    --cfg-hud-corner-size: 20px;
+    --cfg-hud-radius-cut: 10px;
+}
+
+/* =====================================================
+   01 · MARCO DE ESQUINAS HUD
+   Envoltorio universal. Requiere 4 hijos .hud-frame-c
+   (tl/tr/bl/br). Usar en botones, cards, paneles.
+   ===================================================== */
+.hud-frame {
+    position: relative;
+    border: 1px solid rgba(255, 255, 255, .08);
+}
+
+.hud-frame-c {
+    position: absolute;
+    z-index: 2;
+    width: var(--cfg-hud-corner-size);
+    height: var(--cfg-hud-corner-size);
+    pointer-events: none;
+}
+
+.hud-frame-c::before,
+.hud-frame-c::after {
+    content: "";
+    position: absolute;
+    background: var(--cfg-hud-accent);
+    box-shadow: 0 0 6px var(--cfg-hud-accent);
+}
+
+.hud-frame-c.tl { top: -1px; left: -1px; }
+.hud-frame-c.tl::before { width: 100%; height: 2px; top: 0; left: 0; }
+.hud-frame-c.tl::after { width: 2px; height: 100%; top: 0; left: 0; }
+
+.hud-frame-c.tr { top: -1px; right: -1px; }
+.hud-frame-c.tr::before { width: 100%; height: 2px; top: 0; right: 0; }
+.hud-frame-c.tr::after { width: 2px; height: 100%; top: 0; right: 0; }
+
+.hud-frame-c.bl { bottom: -1px; left: -1px; }
+.hud-frame-c.bl::before { width: 100%; height: 2px; bottom: 0; left: 0; }
+.hud-frame-c.bl::after { width: 2px; height: 100%; bottom: 0; left: 0; }
+
+.hud-frame-c.br { bottom: -1px; right: -1px; }
+.hud-frame-c.br::before { width: 100%; height: 2px; bottom: 0; right: 0; }
+.hud-frame-c.br::after { width: 2px; height: 100%; bottom: 0; right: 0; }
+
+/* =====================================================
+   02 · TAG ANGULAR ◀ TEXTO ▶
+   Etiqueta suelta: "NUEVO", "LIMITADO", nombre de sección
+   ===================================================== */
+.hud-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 7px 18px;
+    font-family: var(--font-especial);
+    font-size: 11px;
+    letter-spacing: 3px;
+    color: var(--cfg-hud-accent);
+    border: var(--cfg-hud-border-w) solid var(--cfg-hud-accent);
+    clip-path: polygon(10px 0, 100% 0, calc(100% - 10px) 100%, 0 100%);
+    background: linear-gradient(90deg, color-mix(in srgb, var(--cfg-hud-accent) 18%, transparent), transparent);
+}
+
+.hud-tag .arrow { font-size: 9px; opacity: .7; }
+
+/* =====================================================
+   03 · SOCKET HEXAGONAL / OCTOGONAL
+   SOLO para botones de sistema: sonido, monedas infinitas,
+   opciones. No usar en grillas grandes de ítems.
+   Borde en doble capa (evita el bug de border+clip-path
+   que deja el contorno desparejo en los vértices).
+   ===================================================== */
+.hud-socket {
+    position: relative;
+    width: 54px;
+    height: 54px;
+    clip-path: polygon(50% 0, 100% 25%, 100% 75%, 50% 100%, 0 75%, 0 25%);
+    background: var(--cfg-hud-accent);
+    box-shadow: 0 0 14px color-mix(in srgb, var(--cfg-hud-accent) 35%, transparent);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.hud-socket::before {
+    content: "";
+    position: absolute;
+    inset: 2.5px;
+    clip-path: polygon(50% 0, 100% 25%, 100% 75%, 50% 100%, 0 75%, 0 25%);
+    background: linear-gradient(160deg, #1c1f2c, #0c0e16);
+}
+
+.hud-socket.oct {
+    clip-path: polygon(30% 0, 70% 0, 100% 30%, 100% 70%, 70% 100%, 30% 100%, 0 70%, 0 30%);
+}
+
+.hud-socket.oct::before {
+    clip-path: polygon(30% 0, 70% 0, 100% 30%, 100% 70%, 70% 100%, 30% 100%, 0 70%, 0 30%);
+}
+
+.hud-socket>* {
+    position: relative;
+    z-index: 1;
+}
+
+/* =====================================================
+   04 · PANEL ESQUINA CORTADA
+   Superficie base tranquila. Ponerle encima un .hud-tag,
+   .hud-flag o ícono para darle personalidad puntual.
+   ===================================================== */
+.hud-panel-cut {
+    position: relative;
+    background: rgba(255, 255, 255, .035);
+    border: var(--cfg-hud-border-w) solid var(--cfg-hud-accent);
+    clip-path: polygon(0 0, calc(100% - var(--cfg-hud-radius-cut)) 0, 100% var(--cfg-hud-radius-cut), 100% 100%, 0 100%);
+}
+
+/* =====================================================
+   05 · BARRA DE ENCABEZADO CON MUESCAS
+   Título de sección DENTRO de un panel (ej: "BANNERS VIP"
+   arriba de un grid). No es para envolver todo el panel.
+   ===================================================== */
+.hud-header-bar {
+    position: relative;
+    display: flex;
+    align-items: center;
+    padding-left: 16px;
+    height: 38px;
+    background: linear-gradient(90deg, color-mix(in srgb, var(--cfg-hud-accent) 18%, transparent), transparent 70%);
+    border-left: 3px solid var(--cfg-hud-accent);
+    font-family: var(--font-especial);
+    letter-spacing: 2px;
+    font-size: 14px;
+    overflow: hidden;
+}
+
+.hud-header-bar::after {
+    content: "";
+    position: absolute;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    width: 60%;
+    background-image: repeating-linear-gradient(115deg, var(--cfg-hud-accent) 0 2px, transparent 2px 9px);
+    -webkit-mask-image: linear-gradient(90deg, transparent, black 40%, black 60%, transparent);
+    mask-image: linear-gradient(90deg, transparent, black 40%, black 60%, transparent);
+    opacity: .5;
+}
+
+/* =====================================================
+   06 · DIVISOR CON NODO
+   Separador entre bloques. El rombo es un acento chico,
+   NUNCA protagonista (evitar el error de sobreusarlo).
+   ===================================================== */
+.hud-divider {
+    position: relative;
+    height: 20px;
+    width: 100%;
+}
+
+.hud-divider::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 50%;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, color-mix(in srgb, var(--cfg-hud-accent) 60%, transparent), var(--cfg-hud-accent), color-mix(in srgb, var(--cfg-hud-accent) 60%, transparent), transparent);
+}
+
+.hud-divider-node {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 8px;
+    height: 8px;
+    background: #05070a;
+    border: 1.5px solid var(--cfg-hud-accent);
+    transform: translate(-50%, -50%) rotate(45deg);
+}
+
+/* =====================================================
+   08 · BANDERA DE ESQUINA (rareza genérica)
+   Para rareza que no sea VIP, usa esta con --cfg-hud-accent.
+   Para VIP/NEW específicamente, usar .hud-flag--vip /
+   .hud-flag--new de abajo (pieza 11), que tienen degradé real.
+   ===================================================== */
+.hud-flag {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 46px;
+    height: 46px;
+    clip-path: polygon(0 0, 100% 0, 0 100%);
+    background: var(--cfg-hud-accent);
+}
+
+.hud-flag-txt {
+    position: absolute;
+    top: 5px;
+    left: 4px;
+    font-size: 9px;
+    font-weight: 700;
+    color: #05070a;
+    transform: rotate(-45deg);
+    transform-origin: left top;
+    letter-spacing: .5px;
+    z-index: 1;
+}
+
+/* =====================================================
+   11 · BANDERA DORADA VIP + variante NUEVO
+   Degradé real + brillo animado. Misma forma que .hud-flag,
+   pero con su propio gradiente (no depende de --cfg-hud-accent
+   porque el dorado VIP debe ser siempre dorado, sin importar
+   la rareza del item que tenga adentro).
+   ===================================================== */
+.hud-flag--vip {
+    background: linear-gradient(135deg, #fff6d9 0%, #ffd76a 35%, #c99a2e 65%, #8a6a1f 100%);
+}
+
+.hud-flag--new {
+    background: linear-gradient(135deg, #baf8ff 0%, var(--color-cian) 45%, #0891a3 100%);
+}
+
+.hud-flag-shine {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 46px;
+    height: 46px;
+    clip-path: polygon(0 0, 100% 0, 0 100%);
+    overflow: hidden;
+    pointer-events: none;
+}
+
+.hud-flag-shine::after {
+    content: "";
+    position: absolute;
+    top: -16px;
+    left: -34px;
+    width: 16px;
+    height: 100px;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, .85), transparent);
+    transform: rotate(35deg);
+    animation: hud-flag-shine-sweep 3.2s ease-in-out infinite;
+}
+
+@keyframes hud-flag-shine-sweep {
+    0% { left: -34px; }
+    35% { left: 50px; }
+    100% { left: 50px; }
+}
+
+body.reduced-motion .hud-flag-shine::after,
+body.performance-mode .hud-flag-shine::after {
+    animation: none;
+    display: none;
+}
+
+/* =====================================================
+   14 · PILLS DE FILTRO DE CATEGORÍA
+   ===================================================== */
+.hud-filter-pill {
+    padding: 8px 18px;
+    font-size: 12px;
+    letter-spacing: .5px;
+    background: rgba(255, 255, 255, .03);
+    border: 1px solid rgba(255, 255, 255, .08);
+    color: #7c869c;
+    clip-path: polygon(8px 0, 100% 0, calc(100% - 8px) 100%, 0 100%);
+    cursor: pointer;
+}
+
+.hud-filter-pill.active {
+    color: #05070a;
+    background: var(--cfg-hud-accent);
+    border-color: var(--cfg-hud-accent);
+    box-shadow: 0 0 10px color-mix(in srgb, var(--cfg-hud-accent) 45%, transparent);
+}
+
+/* =====================================================
+   15 · CHIP DE PRECIO
+   ===================================================== */
+.hud-price-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 16px;
+    background: var(--cfg-hud-accent);
+    color: #241a05;
+    clip-path: polygon(8px 0, 100% 0, calc(100% - 8px) 100%, 0 100%);
+    font-weight: 700;
+    font-size: 13px;
+}
+
+.hud-price-chip .ico { color: inherit; }
+
+/* =====================================================
+   16 · BADGE DE TEMPORIZADOR
+   Reloj dibujado en CSS (sin emoji).
+   ===================================================== */
+.hud-timer {
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+    padding: 7px 14px;
+    background: rgba(255, 59, 92, .08);
+    border: 1px solid var(--color-rojo);
+    clip-path: polygon(0 0, calc(100% - 8px) 0, 100% 50%, calc(100% - 8px) 100%, 0 100%);
+    font-size: 12px;
+    color: var(--color-rosa-claro);
+    font-weight: 700;
+    letter-spacing: 1px;
+}
+
+.hud-timer-clock {
+    position: relative;
+    width: 13px;
+    height: 13px;
+    border: 1.5px solid var(--color-rosa-claro);
+    border-radius: 50%;
+}
+
+.hud-timer-clock::before {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 4px;
+    height: 1.5px;
+    background: var(--color-rosa-claro);
+    transform-origin: left center;
+    transform: translate(0, -50%) rotate(-35deg);
+}
+
+.hud-timer-clock::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 3px;
+    height: 1.5px;
+    background: var(--color-rosa-claro);
+    transform-origin: left center;
+    transform: translate(0, -50%) rotate(90deg);
+}
+
+/* =====================================================
+   17 · OVERLAY DE BLOQUEADO
+   Candado dibujado en CSS (sin emoji).
+   ===================================================== */
+.hud-lock-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(5, 7, 10, .72);
+    -webkit-backdrop-filter: blur(1px);
+    backdrop-filter: blur(1px);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.hud-padlock {
+    position: relative;
+    width: 26px;
+    height: 22px;
+}
+
+.hud-padlock::before {
+    content: "";
+    position: absolute;
+    top: -11px;
+    left: 5px;
+    width: 16px;
+    height: 16px;
+    border: 3px solid var(--cfg-hud-accent);
+    border-bottom: none;
+    border-radius: 10px 10px 0 0;
+}
+
+.hud-padlock::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 26px;
+    height: 18px;
+    background: var(--cfg-hud-accent);
+    border-radius: 2px;
+}
+
+.hud-padlock-keyhole {
+    position: absolute;
+    bottom: 5px;
+    left: 50%;
+    width: 4px;
+    height: 7px;
+    background: #05070a;
+    transform: translateX(-50%);
+    border-radius: 0 0 2px 2px;
+}
+
+.hud-padlock-keyhole::before {
+    content: "";
+    position: absolute;
+    top: -3px;
+    left: -1px;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #05070a;
+}
+
+.hud-lock-level {
+    font-size: 11px;
+    letter-spacing: 1px;
+    color: #e8ecf5;
+}
+
+/* =====================================================
+   19 · BADGE DE NIVEL / RANGO
+   Hexágono en doble capa (contorno parejo garantizado).
+   ===================================================== */
+.hud-level-badge {
+    position: relative;
+    width: 52px;
+    height: 52px;
+    clip-path: polygon(50% 0, 100% 25%, 100% 75%, 50% 100%, 0 75%, 0 25%);
+    background: var(--cfg-hud-accent);
+    box-shadow: 0 0 12px color-mix(in srgb, var(--cfg-hud-accent) 40%, transparent);
+}
+
+.hud-level-badge::before {
+    content: "";
+    position: absolute;
+    inset: 2.5px;
+    clip-path: polygon(50% 0, 100% 25%, 100% 75%, 50% 100%, 0 75%, 0 25%);
+    background: linear-gradient(160deg, #232838, #12141f);
+}
+
+.hud-level-badge span {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font-especial);
+    font-weight: 700;
+    font-size: 17px;
+    color: #e8ecf5;
+}
+
+/* =====================================================
+   20 · PUNTO DE NOTIFICACIÓN
+   ===================================================== */
+.hud-notify-dot {
+    position: absolute;
+    top: -4px;
+    right: -4px;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: var(--cfg-hud-accent);
+    animation: hud-pulse-dot 1.8s ease-out infinite;
+}
+
+@keyframes hud-pulse-dot {
+    0% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--cfg-hud-accent) 55%, transparent); }
+    70% { box-shadow: 0 0 0 9px color-mix(in srgb, var(--cfg-hud-accent) 0%, transparent); }
+    100% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--cfg-hud-accent) 0%, transparent); }
+}
+
+body.reduced-motion .hud-notify-dot,
+body.performance-mode .hud-notify-dot {
+    animation: none;
+}
+
+/* =====================================================
+   21 · HEADER DE SECCIÓN CON ORNAMENTO LATERAL
+   ===================================================== */
+.hud-section-header {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+.hud-section-header .num {
+    font-family: var(--font-especial);
+    font-weight: 700;
+    font-size: 20px;
+    color: var(--cfg-hud-accent);
+    opacity: .5;
+}
+
+.hud-section-header .line {
+    flex: 0 0 26px;
+    height: 1px;
+    background: var(--cfg-hud-accent);
+}
+
+.hud-section-header .txt {
+    font-family: var(--font-especial);
+    font-weight: 700;
+    font-size: 16px;
+    letter-spacing: 2px;
+}
+
+.hud-section-header .fade {
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(90deg, color-mix(in srgb, var(--cfg-hud-accent) 60%, transparent), transparent);
+}
+
+/* =====================================================
+   22 · MARCO DE MODAL CON CIERRE ANGULAR
+   ===================================================== */
+.hud-modal-frame {
+    position: relative;
+    background: #11141f;
+    border: 1px solid var(--cfg-hud-accent);
+    clip-path: polygon(0 0, calc(100% - 30px) 0, 100% 30px, 100% 100%, 0 100%);
+}
+
+.hud-modal-close {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    width: 24px;
+    height: 24px;
+    border: 1px solid var(--cfg-hud-accent);
+    clip-path: polygon(6px 0, 100% 0, 100% calc(100% - 6px), calc(100% - 6px) 100%, 0 100%, 0 6px);
+    cursor: pointer;
+}
+
+.hud-modal-close::before,
+.hud-modal-close::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 10px;
+    height: 1.4px;
+    background: var(--cfg-hud-accent);
+}
+
+.hud-modal-close::before { transform: translate(-50%, -50%) rotate(45deg); }
+.hud-modal-close::after { transform: translate(-50%, -50%) rotate(-45deg); }
+
+/* =====================================================
+   RUBY PASS — RIEL HORIZONTAL (Fase 3, Parte 1)
+   Demolición del círculo giratorio (.ruby-pass-gear-shell /
+   .ruby-pass-lane-* / .ruby-pass-node-*) — TODAS esas clases
+   quedan sin uso (el JS ya no las genera) pero no se borraron
+   del archivo para no arriesgar romper algo a ciegas; se pueden
+   limpiar en una pasada aparte una vez confirmado que el riel
+   nuevo funciona bien. Clases nuevas con prefijo .ruby-rail-*
+   para garantizar cero choque con lo viejo.
+
+   v2 de este bloque (ajustes pedidos por Felipe sobre la v1):
+   - Se probó con una <img> real (width:100% + height:auto) para
+     poder sobresalir del cuadro a futuro, pero con 30 niveles el
+     riel mide miles de px de ancho y el alto proporcional se
+     disparaba, tapando el header (bug real visto en pantalla).
+     Se volvió a border-image (ver .ruby-rail-bar-slot más abajo)
+     con border-image-repeat:stretch — sin costuras, y el alto lo
+     define la caja (fijo), no la imagen, así que no importa cuán
+     ancho sea el riel completo.
+   - Los nodos de recompensa ya NO se superponen centrados sobre
+     la barra: los premium van en su propia fila ARRIBA de la
+     barra VIP, los free en su propia fila DEBAJO de la barra
+     free — pedido explícito de Felipe.
+   - Se sacó el fill que iba pegado dentro de la barra (tapaba la
+     textura). El progreso ahora es una línea de "recorrido"
+     aparte, angosta y brillante, entre las 2 barras.
+   - Scrollbar del riel oculta (queda solo el swipe/drag, como
+     Free Fire / COD Mobile) — antes se veía la barra gris nativa
+     del navegador.
+   ===================================================== */
+
+.ruby-rail-stage {
+    position: relative;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    padding: 24px 0 200px;
+    /* deja hueco abajo para el panel .ruby-pass-focus, que en esta
+       parte 1 todavía vive en flujo normal debajo del riel — se
+       rediseña como banner de premium en la parte 4 */
+}
+
+.ruby-rail-scroll {
+    width: 100%;
+    overflow-x: auto;
+    overflow-y: visible;   /* para que los picos de las barras (si algún día sobresalen) no se corten por acá */
+    padding: 44px 5vw 26px;
+    /* Oculta la scrollbar nativa (queda solo el swipe). */
+    scrollbar-width: none;         /* Firefox */
+    -ms-overflow-style: none;      /* Edge viejo */
+}
+.ruby-rail-scroll::-webkit-scrollbar {
+    display: none;                 /* Chrome / WebView de Android (el que usa el APK) */
+}
+
+.ruby-rail-group {
+    display: grid;
+    grid-template-columns: max-content;
+    width: max-content;
+    min-width: 100%;
+}
+
+.ruby-rail-group.is-premium-locked .ruby-rail-nodes.is-premium,
+.ruby-rail-group.is-premium-locked .ruby-rail-bar-slot.is-premium {
+    opacity: .4;
+    filter: grayscale(.6);
+}
+
+/* ── Barra: border-image (no <img> suelta). Se intentó con una
+   <img> real (width:100% + height:auto) para permitir overflow
+   libre a futuro, pero con 30 niveles el riel completo mide miles
+   de px de ancho — al estirar la imagen a ese ancho, el alto
+   proporcional también se disparaba y tapaba el header (bug real
+   visto en pantalla). border-image no tiene ese problema: el alto
+   lo define esta caja (fijo), no la proporción de la imagen, así
+   que funciona igual sea el riel angosto o gigante.
+   border-image-repeat:stretch (no "round") = sin costuras, porque
+   estira el tramo central de un tirón en vez de repetirlo en
+   mosaico — evita el desajuste de bordes que mencionaba el plan.
+   Si el día de mañana Felipe hace una barra temática con picos que
+   sobresalen (ej. agua), esa versión puntual va a necesitar una
+   capa decorativa aparte superpuesta — este mecanismo base no lo
+   soporta, y forzarlo rompe el riel como pasó acá. */
+.ruby-rail-bar-slot {
+    position: relative;
+    pointer-events: none;
+    border-style: solid;
+    /* round en vez de stretch: la imagen fuente mide 1774px / 1536px de
+       ancho, pero el riel completo (30 niveles) mide varios miles de px.
+       "stretch" toma la franja decorativa (rombos/filigrana) y la estira
+       de un tirón para cubrir ese ancho total -> los rombos se ven
+       alargados/deformados (el "estirado" feo). "round" en cambio repite
+       el motivo en copias completas, ajustando la cantidad de copias para
+       que no se corten a la mitad -> se ve como un patrón tileado, sin
+       deformar el dibujo original. */
+    border-image-repeat: round;
+}
+.ruby-rail-bar-slot.is-premium {
+    height: 46px;
+    border-image-source: url('assets/UI/Store/RubyPass/Arcs/ruby_pass_premium_track.png');
+    border-image-slice: 109 fill;
+    border-image-width: 23px;
+    filter: drop-shadow(0 4px 16px rgba(232, 180, 80, 0.35));
+}
+.ruby-rail-bar-slot.is-free {
+    height: 28px;
+    border-image-source: url('assets/UI/Store/RubyPass/Arcs/ruby_pass_free_track.png');
+    border-image-slice: 78 fill;
+    border-image-width: 14px;
+    filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.5));
+}
+
+/* ── Línea de recorrido entre las 2 barras (reemplaza al fill
+   que iba pegado dentro de la barra y la tapaba). ── */
+.ruby-rail-path {
+    position: relative;
+    height: 5px;
+    margin: 10px 24px;
+}
+.ruby-rail-path-track {
+    position: absolute;
+    inset: 0;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.06);
+    overflow: hidden;
+}
+.ruby-rail-path-fill {
+    position: absolute;
+    top: 0; bottom: 0; left: 0;
+    border-radius: 999px;
+    background: linear-gradient(90deg, #7a4fd6, #e8c86b);
+    box-shadow: 0 0 6px rgba(232, 200, 107, 0.6), 0 0 3px rgba(122, 79, 214, 0.6);
+    transition: width .4s ease;
+}
+.ruby-rail-path-spark {
+    position: absolute;
+    top: 50%;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: #fff2c2;
+    transform: translate(-50%, -50%);
+    box-shadow: 0 0 10px 3px rgba(255, 242, 194, 0.8);
+    transition: left .4s ease;
+}
+
+/* ── Banner de temporada (la "vidriera") — imagen pura, sin
+   texto quemado encima; el kicker/título los sigue poniendo el
+   HTML alrededor si hace falta. Si el PNG no existe todavía,
+   renderBattlePassPage() lo oculta solo vía onerror. ── */
+.ruby-rail-showcase-banner {
+    width: 100%;
+    border-radius: 16px;
+    overflow: hidden;
+    margin-bottom: 6px;
+    box-shadow: 0 10px 26px rgba(0, 0, 0, 0.4);
+}
+.ruby-rail-showcase-banner img {
+    width: 100%;
+    height: auto;
+    display: block;
+}
+
+/* ── Parte #2: vidriera de "próxima recompensa" ──
+   Usa free_marco como marco (reasignado, ver plan): da sensación
+   industrial/resistente, deja el dorado del VIP reservado para el
+   banner de premium más abajo, así no compiten entre sí. */
+.ruby-rail-next-showcase {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 10px 16px;
+    margin-bottom: 10px;
+    width: max-content;
+    max-width: 100%;
+}
+.ruby-rail-next-showcase-frame {
+    position: relative;
+    flex: 0 0 auto;
+    width: 74px;
+    height: 74px;
+    border-style: solid;
+    border-image-source: url('assets/UI/Store/RubyPass/Arcs/ruby_pass_free_marco.png');
+    border-image-slice: 90 fill;
+    border-image-width: 18px;
+    border-image-repeat: round;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(10, 8, 6, 0.85);
+}
+.ruby-rail-next-showcase-icon {
+    width: 62%;
+    height: 62%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.ruby-rail-next-showcase-icon img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+.ruby-rail-next-showcase-icon.is-future {
+    filter: blur(3px) brightness(0.7) saturate(1.2);
+}
+.ruby-rail-next-showcase-mark {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: monospace;
+    font-weight: 700;
+    font-size: 22px;
+    color: rgba(255, 255, 255, 0.85);
+    text-shadow: 0 0 10px rgba(0, 0, 0, 0.9);
+}
+.ruby-rail-next-showcase-text {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+.ruby-rail-next-showcase-text span {
+    font-size: 11px;
+    letter-spacing: 1.5px;
+    color: rgba(255, 255, 255, 0.5);
+    text-transform: uppercase;
+}
+.ruby-rail-next-showcase-text b {
+    font-size: 18px;
+    color: #fff2c2;
+    letter-spacing: 0.5px;
+}
+
+.ruby-rail-nodes {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    gap: 58px;
+    padding: 0 70px;
+}
+.ruby-rail-nodes.is-premium { margin-bottom: 8px; }
+.ruby-rail-nodes.is-free { margin-top: 8px; }
+
+.ruby-rail-node {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    flex: 0 0 auto;
+}
+/* Free primero (recompensa) y nivel abajo; en premium el nivel va
+   arriba, pegado a la barra, para que la recompensa "flote" lejos
+   de ella — jerarquía visual: lo dorado pesa más. */
+.ruby-rail-nodes.is-premium .ruby-rail-node {
+    flex-direction: column-reverse;
+}
+
+.ruby-rail-node-icon {
+    all: unset;
+    box-sizing: border-box;
+    width: 46px;
+    height: 46px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(10, 8, 6, 0.85);
+    border: 2px solid rgba(255, 255, 255, 0.18);
+    cursor: default;
+    transition: transform 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease;
+    overflow: hidden;
+}
+
+/* Los nodos VIP pesan más que los free — a propósito, mismo
+   criterio de jerarquía que las barras (ver PLAN_RUBY_PASS.md). */
+.ruby-rail-nodes.is-premium .ruby-rail-node-icon {
+    width: 52px;
+    height: 52px;
+    border-color: rgba(232, 200, 107, 0.35);
+    background: rgba(36, 23, 8, 0.9);
+}
+.ruby-rail-nodes.is-free .ruby-rail-node-icon {
+    width: 40px;
+    height: 40px;
+}
+
+.ruby-rail-node-icon img {
+    width: 72%;
+    height: 72%;
+    object-fit: contain;
+}
+
+.ruby-rail-node-icon.is-unlocked {
+    border-color: rgba(255, 255, 255, 0.4);
+}
+.ruby-rail-nodes.is-premium .ruby-rail-node-icon.is-unlocked {
+    border-color: rgba(232, 200, 107, 0.6);
+}
+
+.ruby-rail-node-icon.is-claimable {
+    cursor: pointer;
+    border-color: #ffee00;
+    box-shadow: 0 0 0 3px rgba(255, 238, 0, 0.18), 0 0 16px rgba(255, 238, 0, 0.35);
+    animation: ruby-rail-claimable-pulse 1.6s ease-in-out infinite;
+}
+
+.ruby-rail-node-icon.is-claimable:hover {
+    transform: scale(1.08);
+}
+
+@keyframes ruby-rail-claimable-pulse {
+    0%, 100% { box-shadow: 0 0 0 3px rgba(255, 238, 0, 0.18), 0 0 16px rgba(255, 238, 0, 0.35); }
+    50% { box-shadow: 0 0 0 6px rgba(255, 238, 0, 0.1), 0 0 24px rgba(255, 238, 0, 0.55); }
+}
+
+.ruby-rail-node-icon.is-claimed {
+    border-color: rgba(120, 255, 160, 0.6);
+    opacity: .7;
+    cursor: default;
+    animation: none;
+}
+
+.ruby-rail-node-icon.is-locked {
+    opacity: .35;
+    cursor: default;
+}
+
+.ruby-rail-node.is-current .ruby-rail-node-icon {
+    width: 60px;
+    height: 60px;
+    border-width: 3px;
+    border-color: #fff;
+    box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.15), 0 0 22px rgba(255, 255, 255, 0.4);
+}
+.ruby-rail-nodes.is-premium .ruby-rail-node.is-current .ruby-rail-node-icon {
+    width: 66px;
+    height: 66px;
+    border-color: #fff2c2;
+    box-shadow: 0 0 0 4px rgba(232, 200, 107, 0.25), 0 0 26px rgba(232, 200, 107, 0.6);
+}
+
+.ruby-rail-node-level {
+    font-family: monospace;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    color: rgba(255, 255, 255, 0.55);
+}
+
+.ruby-rail-node.is-current .ruby-rail-node-level {
+    color: white;
+}
+
+body.reduced-motion .ruby-rail-node-icon.is-claimable,
+body.performance-mode .ruby-rail-node-icon.is-claimable {
+    animation: none;
+}
+
+/* ── Countdown de temporada (Parte #3 del plan) — vive en el
+   topbar, al lado del botón VOLVER. Solo aparece si Felipe cargó
+   settings.seasonEndsAt en rubypass.config.js; si no, el JS ni
+   siquiera manda el div (ver getRubyPassSeasonCountdown()). ── */
+.ruby-rail-countdown {
+    background: rgba(0, 0, 0, 0.35);
+    border: 1px solid rgba(232, 200, 107, 0.3);
+    border-radius: 12px;
+    padding: 8px 16px;
+    text-align: right;
+    font-size: 10px;
+    letter-spacing: .5px;
+    color: rgba(255, 255, 255, 0.6);
+    flex-shrink: 0;
+    white-space: nowrap;
+}
+.ruby-rail-countdown b {
+    display: block;
+    font-size: 14px;
+    color: #ff9a6a;
+    letter-spacing: 0;
+}
+.ruby-rail-countdown.is-expired b {
+    color: #ff5a5a;
+}
+
+/* ── Banner de Premium (Parte #4 del plan) — el MISMO espacio
+   cambia de contenido según el estado, nunca queda vacío:
+   sin comprar = CTA con preview de lo que se pierde; ya comprado
+   = estado "PREMIUM ACTIVO" con dato útil (recompensas pendientes
+   de reclamar). Vive arriba del panel .ruby-pass-focus (que sigue
+   mostrando solo % de progreso + botones DEV, sin tocarlo). ── */
+.ruby-rail-premium-banner {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
+    margin: 16px 0 0;
+    padding: 16px 20px;
+    border-radius: 16px;
+    background: linear-gradient(120deg, rgba(232, 180, 80, 0.16), rgba(232, 180, 80, 0.02));
+    border: 1px solid rgba(232, 200, 107, 0.35);
+}
+.ruby-rail-premium-banner.is-owned {
+    background: linear-gradient(120deg, rgba(120, 255, 160, 0.12), rgba(120, 255, 160, 0.02));
+    border-color: rgba(120, 255, 160, 0.35);
+}
+
+.ruby-rail-premium-banner-text {
+    flex: 1;
+    min-width: 200px;
+}
+.ruby-rail-premium-banner-text b {
+    display: block;
+    font-size: 15px;
+    color: #e8c86b;
+    margin-bottom: 4px;
+}
+.ruby-rail-premium-banner.is-owned .ruby-rail-premium-banner-text b {
+    color: #78ffa0;
+}
+.ruby-rail-premium-banner-text span {
+    font-size: 11.5px;
+    color: rgba(255, 255, 255, 0.65);
+}
+
+.ruby-rail-premium-previews {
+    display: flex;
+    gap: 8px;
+}
+.ruby-rail-premium-preview-icon {
+    width: 42px;
+    height: 42px;
+    border-radius: 10px;
+    background: rgba(0, 0, 0, 0.35);
+    border: 1px solid rgba(232, 200, 107, 0.35);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    flex-shrink: 0;
+}
+.ruby-rail-premium-preview-icon img {
+    width: 72%;
+    height: 72%;
+    object-fit: contain;
+}
+
+.ruby-rail-premium-banner-btn {
+    all: unset;
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: linear-gradient(145deg, #f2d488, #c98f2e);
+    color: #2a1a05;
+    font-weight: 800;
+    font-size: 12.5px;
+    letter-spacing: .3px;
+    padding: 11px 22px;
+    border-radius: 999px;
+    cursor: pointer;
+    box-shadow: 0 4px 14px rgba(232, 180, 80, 0.4);
+    flex-shrink: 0;
+    transition: transform 0.15s ease;
+}
+.ruby-rail-premium-banner-btn:hover {
+    transform: scale(1.04);
+}
+.ruby-rail-premium-banner-btn img {
+    width: 16px;
+    height: 16px;
+    object-fit: contain;
+}
+
+/* ── Fix "no debe haber scroll" ──
+   Causa raíz: .ruby-pass-stage tenía altura fija (calc(100vh - 76px))
+   pero sus hijos (vidriera + riel + banner premium + misiones + focus)
+   se apilaban en flujo normal sin repartirse esa altura -> el conjunto
+   quedaba más alto que el stage, y como .ruby-pass-screen tiene
+   overflow:hidden, todo lo que no entraba se cortaba invisible (no
+   aparecía scroll, directamente desaparecía). Sumado a que
+   .ruby-rail-stage tenía un padding-bottom de 200px que sobraba de
+   cuando el panel focus vivía posicionado encima del círculo viejo.
+
+   Fix: el stage pasa a flex-column. El riel (que es lo único que de
+   verdad necesita más espacio, por los 30 niveles) se lleva el alto
+   sobrante con flex:1 + min-height:0; todo lo demás (vidriera, banner
+   premium, misiones, focus) queda con su alto natural comprimido. */
+.ruby-pass-stage {
+    display: flex;
+    flex-direction: column;
+    padding: 6px 5vw 8px;
+    gap: 6px;
+    overflow: hidden;
+}
+.ruby-rail-showcase-banner,
+.ruby-rail-top-row,
+.ruby-rail-bottom-row,
+.ruby-pass-focus {
+    flex: 0 0 auto;
+}
+.ruby-rail-stage {
+    height: auto;
+    flex: 1 1 auto;
+    min-height: 0;
+    padding: 4px 0;
+}
+.ruby-rail-scroll {
+    height: 100%;
+    padding: 10px 5vw 6px;
+}
+.ruby-rail-next-showcase {
+    margin-bottom: 0;
+    padding: 6px 12px;
+}
+.ruby-rail-next-showcase-frame {
+    width: 52px;
+    height: 52px;
+}
+
+/* Fila superior: vidriera + botón "VER TODO" (Parte #6), en la misma
+   línea para no sumar alto vertical extra. */
+.ruby-rail-top-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+.ruby-rail-viewall-btn {
+    all: unset;
+    box-sizing: border-box;
+    cursor: pointer;
+    padding: 8px 16px;
+    border-radius: 999px;
+    border: 1px solid rgba(232, 200, 107, 0.4);
+    background: rgba(232, 200, 107, 0.08);
+    color: #e8c86b;
+    font: 900 10.5px/1 monospace;
+    letter-spacing: 1px;
+    flex-shrink: 0;
+}
+.ruby-rail-viewall-btn:hover {
+    background: rgba(232, 200, 107, 0.16);
+}
+
+/* Banner premium + resumen de misiones lado a lado en vez de apilados
+   (ahorra alto vertical, que es lo que estaba faltando). Se apilan de
+   nuevo solo en pantallas angostas (ver media query abajo). */
+.ruby-rail-bottom-row {
+    display: flex;
+    align-items: stretch;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+.ruby-rail-premium-banner {
+    flex: 1 1 320px;
+    margin: 0;
+    padding: 8px 14px;
+    gap: 10px;
+}
+.ruby-rail-premium-preview-icon {
+    width: 32px;
+    height: 32px;
+}
+.ruby-rail-premium-banner-btn {
+    padding: 8px 16px;
+}
+
+.ruby-pass-focus {
+    padding: 10px 16px !important;
+    gap: 6px !important;
+}
+.ruby-pass-focus h3 {
+    font-size: 15px !important;
+    letter-spacing: 3px !important;
+    margin: 0 !important;
+}
+.ruby-pass-focus p {
+    font-size: 10px !important;
+    margin: 0 !important;
+}
+.ruby-pass-xpbar {
+    height: 6px !important;
+    margin-top: 6px !important;
+}
+.ruby-pass-dev {
+    padding: 6px 10px;
+}
+
+/* ── Parte #5: resumen de misiones al lado del riel ──
+   Mismo lenguaje visual que .mission-card del panel completo (acento
+   #ffda3a, barra cyan→amarillo, monospace) para que se sienta parte
+   del mismo sistema. No reclama nada acá: cada fila y el link "VER
+   TODAS" abren openMissionsPanel(), que es donde vive la lógica real
+   de reclamo — cero lógica nueva. */
+.ruby-rail-missions-summary {
+    flex: 0 0 280px;
+    max-width: 280px;
+    margin: 0;
+    padding: 10px 14px;
+    border-radius: 14px;
+    background: rgba(255, 255, 255, 0.045);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    display: grid;
+    gap: 6px;
+}
+.ruby-rail-missions-summary-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+.ruby-rail-missions-summary-head span {
+    font: 900 11px/1 Geom, monospace;
+    letter-spacing: 1px;
+    color: rgba(255, 255, 255, 0.7);
+}
+.ruby-rail-missions-summary-badge {
+    background: rgba(255, 218, 58, 0.16);
+    color: #ffda3a;
+    border: 1px solid rgba(255, 218, 58, 0.4);
+    border-radius: 999px;
+    font: 900 10px/1 monospace;
+    padding: 3px 7px;
+}
+.ruby-rail-missions-summary-row {
+    all: unset;
+    box-sizing: border-box;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 10px;
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.03);
+    cursor: pointer;
+    transition: background 0.15s ease;
+}
+.ruby-rail-missions-summary-row:hover {
+    background: rgba(255, 255, 255, 0.07);
+}
+.ruby-rail-missions-summary-row.is-ready {
+    background: rgba(255, 218, 58, 0.1);
+    box-shadow: 0 0 0 1px rgba(255, 218, 58, 0.35) inset;
+}
+.ruby-rail-missions-summary-row-text {
+    flex: 1;
+    min-width: 0;
+    display: grid;
+    gap: 5px;
+}
+.ruby-rail-missions-summary-row-text span {
+    font: 700 11.5px/1.2 monospace;
+    color: rgba(255, 255, 255, 0.85);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.ruby-rail-missions-summary-row-bar {
+    height: 4px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.08);
+    overflow: hidden;
+}
+.ruby-rail-missions-summary-row-bar i {
+    display: block;
+    height: 100%;
+    border-radius: inherit;
+    background: linear-gradient(90deg, #5fe7ff, #ffda3a);
+}
+.ruby-rail-missions-summary-row small {
+    font: 900 10.5px/1 monospace;
+    color: rgba(255, 255, 255, 0.5);
+    white-space: nowrap;
+}
+.ruby-rail-missions-summary-empty {
+    margin: 0;
+    font: 11px/1.5 monospace;
+    color: rgba(255, 255, 255, 0.55);
+}
+.ruby-rail-missions-summary-link {
+    all: unset;
+    box-sizing: border-box;
+    display: block;
+    cursor: pointer;
+    text-align: right;
+    font: 900 10.5px/1 monospace;
+    letter-spacing: 0.6px;
+    color: #ffda3a;
+}
+.ruby-rail-missions-summary-link:hover {
+    text-decoration: underline;
+}
+
+/* ── Parte #6: galería completa "ver todo" ──
+   Mismo patrón de modal que .missions-modal/.missions-panel (fixed,
+   backdrop blur, panel centrado con scroll propio), pero con la
+   paleta dorada del Ruby Pass en vez de la cyan/amarilla de misiones,
+   para que se sienta parte de este apartado y no del otro sistema. */
+.ruby-gallery-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 38000;
+    display: none;
+    place-items: center;
+    padding: 24px;
+    background: rgba(0, 0, 0, 0.74);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+}
+.ruby-gallery-panel {
+    position: relative;
+    width: min(760px, calc(100vw - 32px));
+    max-height: min(760px, calc(100vh - 32px));
+    overflow: auto;
+    border-radius: 16px;
+    border: 1px solid rgba(232, 200, 107, 0.28);
+    background: linear-gradient(180deg, rgba(20, 12, 6, 0.98), rgba(6, 2, 8, 0.98));
+    padding: 24px;
+    color: white;
+    box-shadow: 0 24px 90px rgba(0, 0, 0, 0.72);
+    scrollbar-width: thin;
+    scrollbar-color: rgba(232, 200, 107, 0.55) rgba(255, 255, 255, 0.05);
+}
+.ruby-gallery-panel::-webkit-scrollbar {
+    width: 6px;
+}
+.ruby-gallery-panel::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 999px;
+}
+.ruby-gallery-panel::-webkit-scrollbar-thumb {
+    background: rgba(232, 200, 107, 0.55);
+    border-radius: 999px;
+}
+.ruby-gallery-panel::-webkit-scrollbar-thumb:hover {
+    background: rgba(232, 200, 107, 0.8);
+}
+.ruby-gallery-close {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    background: rgba(255, 255, 255, 0.06);
+    color: white;
+    font: 900 12px/1 monospace;
+    cursor: pointer;
+}
+.ruby-gallery-header {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    margin: 0 40px 18px 0;
+}
+.ruby-gallery-header span {
+    color: rgba(255, 255, 255, 0.46);
+    font: 900 10px/1 monospace;
+    letter-spacing: 3px;
+}
+.ruby-gallery-header strong {
+    color: #e8c86b;
+    font: 900 16px/1 monospace;
+    letter-spacing: 1.5px;
+}
+.ruby-gallery-columns {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+}
+.ruby-gallery-column-head {
+    font: 900 11px/1 monospace;
+    letter-spacing: 2px;
+    color: rgba(255, 255, 255, 0.5);
+    margin-bottom: 8px;
+    padding-left: 2px;
+}
+.ruby-gallery-column.is-premium .ruby-gallery-column-head {
+    color: #e8c86b;
+}
+.ruby-gallery-column.is-locked {
+    opacity: 0.6;
+}
+.ruby-gallery-column-rows {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    max-height: 520px;
+    overflow-y: auto;
+    padding-right: 4px;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(232, 200, 107, 0.55) rgba(255, 255, 255, 0.05);
+}
+.ruby-gallery-column-rows::-webkit-scrollbar {
+    width: 6px;
+}
+.ruby-gallery-column-rows::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 999px;
+}
+.ruby-gallery-column-rows::-webkit-scrollbar-thumb {
+    background: rgba(232, 200, 107, 0.55);
+    border-radius: 999px;
+}
+.ruby-gallery-column-rows::-webkit-scrollbar-thumb:hover {
+    background: rgba(232, 200, 107, 0.8);
+}
+.ruby-gallery-row {
+    all: unset;
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    padding: 7px 10px;
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    cursor: pointer;
+    position: relative;
+}
+.ruby-gallery-row:hover {
+    background: rgba(255, 255, 255, 0.07);
+}
+.ruby-gallery-row.is-claimable {
+    border-color: rgba(232, 200, 107, 0.5);
+    background: rgba(232, 200, 107, 0.1);
+}
+.ruby-gallery-row.is-locked {
+    opacity: 0.5;
+    cursor: default;
+}
+.ruby-gallery-row-level {
+    flex: 0 0 auto;
+    width: 20px;
+    text-align: center;
+    font: 900 10px/1 monospace;
+    color: rgba(255, 255, 255, 0.5);
+}
+.ruby-gallery-row-icon {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    height: 28px;
+}
+.ruby-gallery-row-icon img,
+.ruby-gallery-row-icon .ruby-pass-placeholder {
+    width: 28px;
+    height: 28px;
+    object-fit: contain;
+}
+.ruby-gallery-row-icon.is-future {
+    filter: blur(2px) brightness(0.7);
+}
+.ruby-gallery-row-check {
+    flex: 0 0 auto;
+    color: #78ffa0;
+    font: 900 13px/1 monospace;
+}
+
+@media (max-width: 560px) {
+    .ruby-gallery-columns {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 820px) {
+    .ruby-rail-bottom-row {
+        flex-direction: column;
+    }
+    .ruby-rail-missions-summary {
+        max-width: 100%;
+        flex-basis: auto;
+    }
+    .ruby-rail-countdown {
+        padding: 6px 12px;
+        font-size: 9px;
+    }
+    .ruby-rail-countdown b { font-size: 12px; }
+    .ruby-rail-next-showcase-frame {
+        width: 58px;
+        height: 58px;
+    }
+    .ruby-rail-next-showcase-text b { font-size: 15px; }
+    .ruby-rail-premium-banner {
+        padding: 14px 16px;
+    }
+    .ruby-rail-premium-previews {
+        order: 3;
+        width: 100%;
+    }
+    .ruby-rail-premium-banner-btn {
+        order: 2;
+        width: 100%;
+        justify-content: center;
+    }
+}
+
+/* Saca el panel focus de la posición absoluta que tenía centrada
+   sobre el círculo (ver .ruby-pass-focus original en el archivo,
+   con position:absolute + top:22%/10% + transform) — ahora vive en
+   flujo normal debajo del riel. Se rediseña del todo en la parte 4
+   (banner de Premium), esto es solo para que no quede roto mientras
+   tanto. Necesita !important porque hay 3 definiciones viejas de
+   .ruby-pass-focus con !important compitiendo — como este bloque va
+   al final del archivo, gana por orden de cascada sin tener que
+   cazar cada una. */
+.ruby-pass-focus {
+    position: static !important;
+    top: auto !important;
+    left: auto !important;
+    transform: none !important;
+    width: min(360px, calc(100vw - 40px)) !important;
+    margin: 0 auto !important;
+}
+
+@media (max-width: 820px) {
+    .ruby-rail-nodes {
+        gap: 40px;
+        padding: 0 40px;
+    }
+    .ruby-rail-node-icon {
+        width: 38px;
+        height: 38px;
+    }
+    .ruby-rail-nodes.is-premium .ruby-rail-node-icon {
+        width: 44px;
+        height: 44px;
+    }
+    .ruby-rail-nodes.is-free .ruby-rail-node-icon {
+        width: 34px;
+        height: 34px;
+    }
+    .ruby-rail-node.is-current .ruby-rail-node-icon {
+        width: 50px;
+        height: 50px;
+    }
+    .ruby-rail-nodes.is-premium .ruby-rail-node.is-current .ruby-rail-node-icon {
+        width: 56px;
+        height: 56px;
+    }
+    .ruby-rail-bar-slot.is-premium { height: 26px; }
+    .ruby-rail-bar-slot.is-free { height: 16px; }
+}
+
+/* =====================================================
+   LLAVE DE CARONTE — Parte A del plan (PLAN_LLAVES_CARONTE.md)
+   Icono dibujado 100% en CSS (sin emoji, sin SVG), tema
+   bronce/hueso envejecido, coherente con Caronte/inframundo.
+   ===================================================== */
+.caronte-key-canvas{position:relative;width:64px;height:176px}
+.caronte-key--sm{width:calc(64px*0.18);height:calc(176px*0.18);position:relative}
+.caronte-key--sm .caronte-key-canvas{transform:scale(0.18);transform-origin:top left}
+.caronte-key--lg{width:64px;height:176px;position:relative}
+.caronte-key-skull{position:absolute;left:12px;top:5px;width:40px;height:34px;border-radius:50%;background:linear-gradient(135deg,#D8CBA8,#8A7A54);border:1px solid #241708;box-shadow:inset 0 -5px 6px rgba(36,23,8,0.45),inset 0 3px 3px rgba(255,255,255,0.25)}
+.caronte-key-eye{position:absolute;top:13px;width:9px;height:11px;border-radius:50%;background:radial-gradient(circle at 50% 35%,#3a2c14,#0d0803 75%);box-shadow:inset 0 2px 2px rgba(0,0,0,0.7)}
+.caronte-key-eye--l{left:8px}
+.caronte-key-eye--r{left:23px}
+.caronte-key-crack{position:absolute;left:29px;top:6px;width:1.5px;height:14px;background:#241708;opacity:0.5;transform:rotate(18deg);border-radius:1px}
+.caronte-key-jaw{position:absolute;left:26px;top:27px;width:0;height:0;border-left:6px solid transparent;border-right:6px solid transparent;border-top:6px solid #241708;opacity:0.55}
+.caronte-key-connector{position:absolute;left:25px;top:40px;width:14px;height:8px;background:linear-gradient(180deg,#C9BC98,#8A7A54);border:1px solid #241708}
+.caronte-key-vertebra{position:absolute;left:14px;width:36px;height:14px;border-radius:7px;background:linear-gradient(135deg,#D8CBA8,#8A7A54);border:1px solid #241708;box-shadow:inset 0 -3px 4px rgba(36,23,8,0.4)}
+.caronte-key-vertebra--1{top:48px}
+.caronte-key-vertebra--2{top:64px}
+.caronte-key-shaft{position:absolute;left:25px;top:78px;width:14px;height:98px;background:linear-gradient(90deg,#8A7A54,#D8CBA8,#8A7A54);border:1px solid #241708}
+.caronte-key-tooth{position:absolute;width:14px;height:9px;background:linear-gradient(135deg,#D8CBA8,#8A7A54);border:1px solid #241708}
+.caronte-key-tooth--l1{left:11px;top:152px}
+.caronte-key-tooth--r1{left:39px;top:152px}
+.caronte-key-tooth--l2{left:11px;top:167px}
+.caronte-key-tooth--r2{left:39px;top:167px}
+
+/* Línea de drop de llave dentro del modal de recompensa de cofre (Parte C) */
+.caronte-key-drop-line{display:flex;align-items:center;gap:8px;justify-content:center;margin-top:10px;padding-top:10px;border-top:1px solid rgba(216,203,168,0.25)}
+.caronte-key-drop-line .caronte-key--sm{flex-shrink:0}
+.caronte-key-drop-line span{color:#D8CBA8;font-weight:700;font-size:13px;letter-spacing:.02em}
+
+/* Píldora de contador de Llaves de Caronte en la barra superior VIP (Parte E) */
+/* Contador de Llaves de Caronte en el panel de INVENTARIO (Parte F).
+   Mismo look que .inv-gem-counter pero en tono hueso/bronce, no dorado. */
+.inv-key-counter {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    font-family: var(--font-secundaria);
+    font-size: 12px;
+    font-weight: bold;
+    color: #D8CBA8;
+    background: rgba(216, 203, 168, 0.08);
+    border: 1px solid rgba(216, 203, 168, 0.3);
+    padding: 8px 14px;
+    border-radius: 20px;
+    flex-shrink: 0;
+    margin-left: 8px;
+}
+
+@media (max-width: 760px) {
+    .inv-key-counter {
+        order: 3;
+        margin-left: 0;
+        padding: 6px 12px;
+        font-size: 11px;
+    }
+}
+
+body.is-touch-device .inv-key-counter {
+    order: 3;
+    margin-left: 0 !important;
+    padding: 6px 12px !important;
+    font-size: 11px !important;
+}
+
+/* Contador de Llaves de Caronte DENTRO de la Ruleta VIP (Parte F) */
+.vip-roulette-keys-display {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    color: #D8CBA8;
+    font-family: var(--font-secundaria);
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: .03em;
+    margin-bottom: 10px;
+}
+.vip-roulette-keys-display .caronte-key--sm { flex-shrink: 0; }
+
+/* Los 2 botones de girar (x1 / x12) uno al lado del otro */
+.vip-roulette-spin-options {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+.vip-roulette-spin-options .roulette-spin-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    justify-content: center;
+}
+.vip-roulette-spin-options .caronte-key--sm { flex-shrink: 0; }
+
+/* Resumen de resultados del giro x12 (sin animación de rueda, solo lista) */
+.roulette-bulk-list {
+    max-height: 160px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    margin: 10px 0;
+    font-size: 13px;
+    color: rgba(255, 255, 255, 0.85);
+}
+
+/* =====================================================
+   LLAVE DE CARONTE — óbolo chico (rediseño de .caronte-key--sm).
+   La llave completa escalada a tamaño chico no se veía (quedaba una
+   rayita), así que para íconos inline se usa esta moneda compacta con
+   la calavera grabada. Tamaño fijo, sin transform:scale.
+   ===================================================== */
+.caronte-key-mini {
+    position: relative;
+    display: inline-block;
+    width: 20px;
+    height: 18px;
+    flex-shrink: 0;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #D8CBA8, #8A7A54);
+    border: 1px solid #241708;
+    box-shadow: inset 0 -3px 4px rgba(36, 23, 8, 0.45), inset 0 2px 2px rgba(255, 255, 255, 0.25);
+}
+.caronte-key-mini-eye {
+    position: absolute;
+    top: 32%;
+    width: 22%;
+    height: 34%;
+    border-radius: 50%;
+    background: radial-gradient(circle at 50% 35%, #3a2c14, #0d0803 75%);
+    box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.7);
+}
+.caronte-key-mini-eye--l { left: 20%; }
+.caronte-key-mini-eye--r { right: 20%; }
+.caronte-key-mini-crack {
+    position: absolute;
+    right: 26%;
+    top: 8%;
+    width: 1.2px;
+    height: 40%;
+    background: #241708;
+    opacity: 0.5;
+    transform: rotate(18deg);
+}
+
+/* =====================================================================
+   RUBY PASS — REDISEÑO PRO · TEMPORADA BLANCO / ROJO / DORADO
+   -----------------------------------------------------------------
+   Bloque agregado al final del archivo a propósito: en CSS, con la
+   misma especificidad, gana la regla definida más tarde en la cascada.
+   Reutiliza EXACTAMENTE las mismas clases que ya genera
+   renderBattlePassPage() en shop.js — no se tocó ni una línea de JS,
+   así que el reclamo de recompensas, el XP, el desbloqueo premium y
+   la lógica de missions summary siguen funcionando igual.
+   Si algún día querés volver al look anterior, borrá este bloque
+   completo (todo lo de arriba queda intacto).
+   ===================================================================== */
+
+.ruby-pass-screen {
+    --rp-gold: #f0c860;
+    --rp-gold-soft: rgba(240, 200, 96, 0.16);
+    --rp-gold-dark: #8a6a1f;
+    --rp-red: var(--color-rojo, #ff2d55);
+    --rp-red-dim: rgba(255, 45, 85, 0.35);
+    --rp-white: #f5f7fc;
+    --rp-silver-dim: rgba(255, 255, 255, 0.22);
+    --rp-bg: #07080d;
+    --rp-line: rgba(255, 255, 255, 0.09);
+    --rp-txt-dim: #8890a1;
+
+    background:
+        radial-gradient(circle at 12% -10%, var(--rp-gold-soft), transparent 40%),
+        radial-gradient(circle at 90% 8%, rgba(255, 45, 85, 0.10), transparent 42%),
+        linear-gradient(90deg, rgba(5, 0, 8, 0.98), rgba(12, 2, 8, 0.88)),
+        var(--rp-bg) !important;
+}
+
+/* ── Topbar / perfil / temporada ── */
+.ruby-pass-screen .ruby-pass-profile {
+    border: 1px solid var(--rp-line);
+    box-shadow: none;
+}
+.ruby-pass-screen .ruby-pass-profile-avatar {
+    border: 2px solid var(--rp-gold);
+    box-shadow: 0 0 10px rgba(240, 200, 96, 0.4);
+}
+.ruby-pass-screen .ruby-pass-season {
+    color: var(--rp-txt-dim);
+    font-family: 'Rajdhani', var(--font-secundaria);
+    font-weight: 600;
+}
+.ruby-pass-screen .ruby-pass-season strong {
+    color: var(--rp-gold) !important;
+    font-family: 'Rajdhani', var(--font-secundaria);
+    font-weight: 700;
+}
+.ruby-pass-screen .ruby-pass-back {
+    border: 1px solid var(--rp-line);
+    background: rgba(255, 255, 255, 0.03);
+    color: var(--rp-white);
+    clip-path: polygon(9px 0, 100% 0, 100% calc(100% - 9px), calc(100% - 9px) 100%, 0 100%, 0 9px);
+    border-radius: 0;
+}
+.ruby-pass-screen .ruby-pass-back:hover {
+    border-color: var(--rp-gold);
+    color: var(--rp-gold);
+}
+
+/* Countdown de temporada — badge angular rojo (urgencia) */
+.ruby-pass-screen .ruby-rail-countdown {
+    background: rgba(255, 45, 85, 0.08);
+    border: 1px solid var(--rp-red);
+    border-radius: 0;
+    clip-path: polygon(0 0, calc(100% - 9px) 0, 100% 50%, calc(100% - 9px) 100%, 0 100%);
+    padding: 8px 18px 8px 14px;
+    color: rgba(255, 255, 255, 0.75);
+    font-family: 'Rajdhani', var(--font-secundaria);
+    letter-spacing: 1.5px;
+}
+.ruby-pass-screen .ruby-rail-countdown b {
+    color: var(--rp-red) !important;
+    font-family: 'Rajdhani', var(--font-secundaria);
+    font-weight: 700;
+}
+.ruby-pass-screen .ruby-rail-countdown.is-expired b {
+    color: #ff5a5a !important;
+}
+
+/* ── Vidriera "próxima recompensa" (hero) — marco HUD dorado con
+   esquinas en L, sin border-image de textura vieja. ── */
+.ruby-pass-screen .ruby-rail-next-showcase {
+    position: relative;
+    padding: 14px 22px 14px 16px;
+    background: linear-gradient(120deg, rgba(240, 200, 96, 0.08), transparent 65%);
+    background-repeat: no-repeat, no-repeat, no-repeat, no-repeat, no-repeat, no-repeat, no-repeat, no-repeat, no-repeat;
+    background-image:
+        linear-gradient(120deg, rgba(240, 200, 96, 0.08), transparent 65%),
+        linear-gradient(to right, var(--rp-gold) 0 20px, transparent 20px),
+        linear-gradient(to bottom, var(--rp-gold) 0 20px, transparent 20px),
+        linear-gradient(to left, var(--rp-gold) 0 20px, transparent 20px),
+        linear-gradient(to bottom, var(--rp-gold) 0 20px, transparent 20px),
+        linear-gradient(to right, var(--rp-gold) 0 20px, transparent 20px),
+        linear-gradient(to top, var(--rp-gold) 0 20px, transparent 20px),
+        linear-gradient(to left, var(--rp-gold) 0 20px, transparent 20px),
+        linear-gradient(to top, var(--rp-gold) 0 20px, transparent 20px);
+    background-size:
+        100% 100%,
+        100% 2px, 2px 100%,
+        100% 2px, 2px 100%,
+        100% 2px, 2px 100%,
+        100% 2px, 2px 100%;
+    background-position:
+        0 0,
+        top left, top left,
+        top right, top right,
+        bottom right, bottom right,
+        bottom left, bottom left;
+}
+.ruby-pass-screen .ruby-rail-next-showcase-frame {
+    border-style: none;
+    border-image: none;
+    clip-path: polygon(30% 0, 70% 0, 100% 30%, 100% 70%, 70% 100%, 30% 100%, 0 70%, 0 30%);
+    background: linear-gradient(160deg, rgba(255, 255, 255, 0.07), rgba(0, 0, 0, 0.4));
+    border: 2px solid var(--rp-gold);
+    box-shadow: 0 0 18px rgba(240, 200, 96, 0.35), inset 0 0 12px rgba(240, 200, 96, 0.12);
+}
+.ruby-pass-screen .ruby-rail-next-showcase-mark {
+    color: var(--rp-gold);
+}
+.ruby-pass-screen .ruby-rail-next-showcase-text span {
+    color: var(--rp-gold);
+    font-family: 'Rajdhani', var(--font-secundaria);
+    font-weight: 700;
+    letter-spacing: 3px;
+}
+.ruby-pass-screen .ruby-rail-next-showcase-text b {
+    color: var(--rp-white) !important;
+    font-family: 'Rajdhani', var(--font-secundaria);
+    font-weight: 700;
+    letter-spacing: 1px;
+}
+.ruby-pass-screen .ruby-rail-viewall-btn {
+    border: 1px solid var(--rp-gold);
+    background: transparent;
+    color: var(--rp-gold);
+    border-radius: 0;
+    clip-path: polygon(9px 0, 100% 0, 100% calc(100% - 9px), calc(100% - 9px) 100%, 0 100%, 0 9px);
+    font-family: 'Rajdhani', var(--font-secundaria);
+    letter-spacing: 2px;
+}
+.ruby-pass-screen .ruby-rail-viewall-btn:hover {
+    background: var(--rp-gold-soft);
+}
+
+/* ── Nodos del riel (VIP dorado protagonista, Free blanco discreto) ── */
+.ruby-pass-screen .ruby-rail-node-icon {
+    position: relative;
+    border-radius: 0;
+    clip-path: polygon(22% 0, 78% 0, 100% 22%, 100% 78%, 78% 100%, 22% 100%, 0 78%, 0 22%);
+    background: rgba(10, 10, 14, 0.85);
+    border-width: 2px;
+    border-style: solid;
+    border-color: var(--rp-silver-dim);
+}
+.ruby-pass-screen .ruby-rail-nodes.is-premium .ruby-rail-node-icon {
+    border-color: var(--rp-gold-dark);
+    background: rgba(30, 22, 8, 0.9);
+}
+.ruby-pass-screen .ruby-rail-nodes.is-free .ruby-rail-node-icon {
+    border-color: var(--rp-silver-dim);
+}
+.ruby-pass-screen .ruby-rail-node-icon.is-unlocked {
+    border-color: rgba(255, 255, 255, 0.55);
+}
+.ruby-pass-screen .ruby-rail-nodes.is-premium .ruby-rail-node-icon.is-unlocked {
+    border-color: var(--rp-gold);
+    box-shadow: 0 0 12px rgba(240, 200, 96, 0.3);
+}
+.ruby-pass-screen .ruby-rail-node-icon.is-claimable {
+    border-color: var(--rp-gold) !important;
+    box-shadow: 0 0 0 3px rgba(240, 200, 96, 0.18), 0 0 16px rgba(240, 200, 96, 0.4) !important;
+}
+@keyframes ruby-rail-claimable-pulse {
+    0%, 100% { box-shadow: 0 0 0 3px rgba(240, 200, 96, 0.18), 0 0 16px rgba(240, 200, 96, 0.4); }
+    50%      { box-shadow: 0 0 0 6px rgba(240, 200, 96, 0.10), 0 0 24px rgba(240, 200, 96, 0.6); }
+}
+.ruby-pass-screen .ruby-rail-node-icon.is-claimed {
+    border-color: var(--rp-gold-dark) !important;
+    opacity: .8;
+}
+.ruby-pass-screen .ruby-rail-node-icon.is-claimed::after {
+    content: "✓";
+    position: absolute;
+    top: -7px; right: -7px;
+    width: 17px; height: 17px;
+    border-radius: 50%;
+    background: var(--rp-gold);
+    color: #241a03;
+    font-size: 10px; font-weight: 900;
+    display: flex; align-items: center; justify-content: center;
+    border: 2px solid var(--rp-bg);
+}
+.ruby-pass-screen .ruby-rail-node-icon.is-locked {
+    opacity: .4;
+}
+.ruby-pass-screen .ruby-rail-node-icon.is-locked::after {
+    content: "";
+    position: absolute;
+    top: -6px; right: -6px;
+    width: 15px; height: 12px;
+    background: var(--rp-txt-dim);
+    border-radius: 1px;
+}
+.ruby-pass-screen .ruby-rail-node.is-current .ruby-rail-node-icon {
+    border-color: var(--rp-white) !important;
+    box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.18), 0 0 20px rgba(255, 255, 255, 0.4) !important;
+    animation: rp-current-pulse 1.6s ease-in-out infinite;
+}
+.ruby-pass-screen .ruby-rail-nodes.is-premium .ruby-rail-node.is-current .ruby-rail-node-icon {
+    border-color: var(--rp-gold) !important;
+    box-shadow: 0 0 0 3px rgba(240, 200, 96, 0.25), 0 0 26px rgba(240, 200, 96, 0.65) !important;
+}
+@keyframes rp-current-pulse {
+    0%, 100% { filter: brightness(1); }
+    50%      { filter: brightness(1.25); }
+}
+.ruby-pass-screen .ruby-rail-node-level {
+    font-family: 'Rajdhani', var(--font-secundaria);
+    font-weight: 700;
+    color: rgba(255, 255, 255, 0.5);
+}
+.ruby-pass-screen .ruby-rail-node.is-current .ruby-rail-node-level {
+    color: var(--rp-gold);
+}
+
+/* ── Barras del riel y línea de progreso ── */
+.ruby-pass-screen .ruby-rail-bar-slot.is-premium {
+    filter: drop-shadow(0 4px 14px rgba(240, 200, 96, 0.3));
+}
+.ruby-pass-screen .ruby-rail-bar-slot.is-free {
+    filter: drop-shadow(0 4px 8px rgba(255, 255, 255, 0.08)) grayscale(0.3);
+}
+.ruby-pass-screen .ruby-rail-path-track {
+    background: rgba(255, 255, 255, 0.05);
+    background-image: repeating-linear-gradient(90deg, rgba(7, 8, 13, 0.9) 0 2px, transparent 2px 26px);
+}
+.ruby-pass-screen .ruby-rail-path-fill {
+    background: linear-gradient(90deg, var(--rp-red), var(--rp-gold));
+    box-shadow: 0 0 8px rgba(240, 200, 96, 0.55);
+}
+.ruby-pass-screen .ruby-rail-path-spark {
+    background: var(--rp-gold);
+    box-shadow: 0 0 10px 3px rgba(240, 200, 96, 0.7);
+}
+
+/* ── Banner premium (CTA de compra / estado activo) — panel esquina
+   cortada dorado, con variante blanca cuando ya está comprado. ── */
+.ruby-pass-screen .ruby-rail-premium-banner {
+    border-radius: 0;
+    clip-path: polygon(0 0, calc(100% - 20px) 0, 100% 20px, 100% 100%, 0 100%);
+    background: linear-gradient(120deg, rgba(240, 200, 96, 0.10), rgba(240, 200, 96, 0.01));
+    border: 1px solid var(--rp-gold-dark);
+}
+.ruby-pass-screen .ruby-rail-premium-banner.is-owned {
+    background: linear-gradient(120deg, rgba(245, 247, 252, 0.08), rgba(245, 247, 252, 0.01));
+    border-color: rgba(245, 247, 252, 0.35);
+}
+.ruby-pass-screen .ruby-rail-premium-banner-text b {
+    color: var(--rp-gold) !important;
+    font-family: 'Rajdhani', var(--font-secundaria);
+    letter-spacing: .5px;
+}
+.ruby-pass-screen .ruby-rail-premium-banner.is-owned .ruby-rail-premium-banner-text b {
+    color: var(--rp-white) !important;
+}
+.ruby-pass-screen .ruby-rail-premium-preview-icon {
+    border-radius: 0;
+    clip-path: polygon(20% 0, 80% 0, 100% 20%, 100% 80%, 80% 100%, 20% 100%, 0 80%, 0 20%);
+    background: rgba(0, 0, 0, 0.4);
+    border: 1px solid var(--rp-gold-dark);
+}
+.ruby-pass-screen .ruby-rail-premium-banner-btn {
+    background: linear-gradient(90deg, #fff6d9, var(--rp-gold) 45%, #c99a2e);
+    color: #241a03;
+    border-radius: 0;
+    clip-path: polygon(9px 0, 100% 0, 100% calc(100% - 9px), calc(100% - 9px) 100%, 0 100%, 0 9px);
+    box-shadow: 0 0 20px rgba(240, 200, 96, 0.4);
+    font-family: 'Rajdhani', var(--font-secundaria);
+    letter-spacing: .5px;
+}
+
+/* ── Resumen de misiones — header con muesca roja + esquinas HUD ── */
+.ruby-pass-screen .ruby-rail-missions-summary {
+    position: relative;
+    border-radius: 0;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid var(--rp-line);
+    border-left: 3px solid var(--rp-red);
+}
+.ruby-pass-screen .ruby-rail-missions-summary-head span {
+    font-family: 'Rajdhani', monospace;
+    color: rgba(255, 255, 255, 0.8);
+    letter-spacing: 2px;
+}
+.ruby-pass-screen .ruby-rail-missions-summary-badge {
+    background: rgba(255, 45, 85, 0.14);
+    color: var(--rp-red);
+    border: 1px solid var(--rp-red-dim);
+    border-radius: 50%;
+}
+.ruby-pass-screen .ruby-rail-missions-summary-row {
+    border-radius: 0;
+    clip-path: polygon(6px 0, 100% 0, calc(100% - 6px) 100%, 0 100%);
+}
+.ruby-pass-screen .ruby-rail-missions-summary-row.is-ready {
+    background: rgba(240, 200, 96, 0.10);
+    box-shadow: 0 0 0 1px rgba(240, 200, 96, 0.4) inset;
+}
+.ruby-pass-screen .ruby-rail-missions-summary-row-bar i {
+    background: linear-gradient(90deg, var(--rp-red), var(--rp-gold));
+}
+.ruby-pass-screen .ruby-rail-missions-summary-link {
+    color: var(--rp-gold) !important;
+}
+
+/* ── Panel focus (progreso % + botones dev) ── */
+.ruby-pass-screen .ruby-pass-focus {
+    background: rgba(255, 255, 255, 0.03) !important;
+    border: 1px solid var(--rp-line);
+    border-radius: 0 !important;
+    clip-path: polygon(14px 0, 100% 0, 100% calc(100% - 14px), calc(100% - 14px) 100%, 0 100%, 0 14px);
+}
+.ruby-pass-screen .ruby-pass-kicker {
+    color: var(--rp-gold) !important;
+    font-family: 'Rajdhani', var(--font-secundaria);
+    letter-spacing: 3px;
+}
+.ruby-pass-screen .ruby-pass-focus h3 {
+    color: var(--rp-white) !important;
+    font-family: 'Rajdhani', var(--font-secundaria);
+    font-weight: 700 !important;
+}
+.ruby-pass-screen .ruby-pass-focus p {
+    color: var(--rp-txt-dim) !important;
+}
+.ruby-pass-screen .ruby-pass-xpbar {
+    background: rgba(255, 255, 255, 0.06) !important;
+    border-radius: 0 !important;
+    background-image: repeating-linear-gradient(90deg, rgba(7, 8, 13, 0.9) 0 2px, transparent 2px 22px) !important;
+}
+.ruby-pass-screen .ruby-pass-xpbar span {
+    background: linear-gradient(90deg, var(--rp-red), var(--rp-gold)) !important;
+    box-shadow: 0 0 8px rgba(240, 200, 96, 0.5);
+}
+.ruby-pass-screen .ruby-pass-dev {
+    border-radius: 0;
+    border: 1px dashed var(--rp-line);
+    background: transparent;
+    color: var(--rp-txt-dim);
+    opacity: .55;
+}
+.ruby-pass-screen .ruby-pass-dev:hover {
+    opacity: 1;
+    border-color: var(--rp-red);
+    color: var(--rp-red);
 }

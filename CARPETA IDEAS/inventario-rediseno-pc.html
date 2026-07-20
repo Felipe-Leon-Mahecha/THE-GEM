@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>THE GEM — Inventario (Rediseño total · PC)</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Inter:wght@400;500;600;700;800&display=swap');
+
+  :root{
+    --bg: #060a10;
+    --panel: #10161f;
+    --panel-2: #141b26;
+    --line: #1e2733;
+    --text: #e8ecf1;
+    --muted: #5b6472;
+
+    --cyan: #22d3ee;   /* basica */
+    --cyan-dim: #22d3ee55;
+    --gold: #eab308;   /* vip */
+    --gold-dim: #eab30855;
+    --violet: #a78bfa; /* epica */
+    --violet-dim: #a78bfa55;
+    --rose: #f472b6;   /* especial */
+    --rose-dim: #f472b655;
+    --crimson: #ef4444;/* demon */
+    --crimson-dim: #ef444455;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  body{
+    background: radial-gradient(1300px 650px at 50% -12%, #0f1c22 0%, var(--bg) 55%), var(--bg);
+    color: var(--text);
+    font-family:'Inter',sans-serif;
+    min-height:100vh;
+  }
+  .mono{ font-family:'Space Mono',monospace; }
+
+  /* ---------- Top nav (replaces sidebar entirely) ---------- */
+  .topnav{
+    display:flex; align-items:center; justify-content:space-between;
+    padding:22px 48px; border-bottom:1px solid var(--line);
+    background: linear-gradient(180deg, #0a1017 0%, transparent);
+    position:sticky; top:0; z-index:10; backdrop-filter: blur(6px);
+  }
+  .topnav-left{ display:flex; align-items:center; gap:14px; }
+  .back-btn{
+    width:36px; height:36px; border-radius:10px; background:var(--panel);
+    border:1px solid var(--line); display:flex; align-items:center; justify-content:center;
+    color:var(--muted); cursor:pointer; font-size:16px;
+  }
+  .back-btn:hover{ color:var(--text); border-color:var(--cyan-dim); }
+  .brand{ display:flex; flex-direction:column; }
+  .brand-title{ font-family:'Space Mono',monospace; font-weight:700; font-size:16px; letter-spacing:2px; color:#fff; }
+  .brand-sub{ font-family:'Space Mono',monospace; font-size:9px; letter-spacing:3px; color:var(--muted); }
+
+  .cat-rail{ display:flex; gap:8px; }
+  .cat-pill{
+    display:flex; align-items:center; gap:8px;
+    padding:9px 16px; border-radius:22px; border:1px solid var(--line);
+    font-family:'Space Mono',monospace; font-size:11px; letter-spacing:1.5px;
+    color:var(--muted); background:var(--panel); cursor:pointer; transition:.15s;
+  }
+  .cat-pill:hover{ color:var(--text); }
+  .cat-pill.active{ color:#04141a; background:var(--cyan); border-color:var(--cyan); font-weight:700; }
+
+  .gem-counter{
+    display:flex; align-items:center; gap:6px;
+    font-family:'Space Mono',monospace; font-size:12px; color:var(--gold);
+    background:#eab30812; border:1px solid var(--gold-dim); padding:8px 14px; border-radius:20px;
+  }
+
+  /* ---------- Main ---------- */
+  main{ max-width:1280px; margin:0 auto; padding:40px 48px 70px; }
+
+  /* ---------- Loadout hero ---------- */
+  .hero{
+    display:flex; align-items:center; gap:52px;
+    background: linear-gradient(160deg, #12191f 0%, #0c1319 100%);
+    border:1px solid var(--line); border-radius:22px; padding:40px 44px;
+    position:relative; overflow:hidden;
+  }
+  .hero::before{
+    content:''; position:absolute; inset:0;
+    background: radial-gradient(480px 260px at 12% 25%, #eab3080f 0%, transparent 70%);
+  }
+  .equip-stage{ flex-shrink:0; width:196px; height:196px; position:relative; display:flex; align-items:center; justify-content:center; }
+  .ring{ position:absolute; inset:0; border-radius:50%; border:1.5px dashed var(--gold); opacity:.55; animation:spin 22s linear infinite; }
+  .ring.r2{ inset:14px; opacity:.28; animation-duration:16s; animation-direction:reverse; }
+  @keyframes spin{ to{ transform:rotate(360deg); } }
+  .equip-core{
+    width:148px; height:148px; border-radius:50%;
+    background: radial-gradient(circle at 35% 30%, #2a3d2a, #0f1a12 70%);
+    border:2px solid var(--gold); box-shadow: 0 0 0 6px #eab30812, 0 0 40px -6px var(--gold-dim);
+    display:flex; align-items:center; justify-content:center; font-size:62px; position:relative; z-index:1;
+  }
+
+  .equip-info{ flex-shrink:0; position:relative; }
+  .equip-label{ font-family:'Space Mono',monospace; font-size:11px; letter-spacing:3px; color:var(--muted); }
+  .equip-name{ font-size:32px; font-weight:800; color:#fff; margin-top:6px; }
+  .equip-rarity{
+    display:inline-flex; align-items:center; gap:6px; margin-top:10px;
+    padding:4px 10px; border-radius:6px; font-family:'Space Mono',monospace;
+    font-size:11px; letter-spacing:2px; color:var(--gold);
+    background:#eab30814; border:1px solid var(--gold-dim);
+  }
+  .slots{ display:flex; gap:12px; margin-top:26px; }
+  .slot{
+    width:64px; height:64px; border-radius:14px; background:var(--bg);
+    border:1px solid var(--line); display:flex; align-items:center; justify-content:center;
+    font-size:24px; position:relative; cursor:pointer; transition:.15s;
+  }
+  .slot:hover{ border-color:var(--cyan-dim); transform:translateY(-2px); }
+  .slot .tag{ position:absolute; bottom:-17px; left:0; right:0; text-align:center; font-family:'Space Mono',monospace; font-size:8px; letter-spacing:1px; color:var(--muted); }
+  .slot.empty{ color:var(--line); border-style:dashed; font-size:18px; }
+
+  /* progress block inside hero, right side */
+  .hero-progress{ margin-left:auto; flex-shrink:0; display:flex; gap:26px; position:relative; }
+  .p-item{ text-align:center; }
+  .p-num{ font-family:'Space Mono',monospace; font-size:18px; font-weight:700; color:#fff; }
+  .p-lbl{ font-family:'Space Mono',monospace; font-size:8.5px; letter-spacing:1.5px; color:var(--muted); margin-top:4px; }
+  .p-bar-track{ width:70px; height:4px; border-radius:3px; background:var(--line); margin-top:8px; overflow:hidden; }
+  .p-bar-fill{ height:100%; border-radius:3px; }
+
+  /* ---------- Filters ---------- */
+  .filters-row{
+    display:flex; align-items:center; justify-content:space-between; margin-top:44px; gap:20px;
+  }
+  .section-title{ font-family:'Space Mono',monospace; font-size:12px; letter-spacing:3px; color:var(--muted); white-space:nowrap; }
+  .filters{ display:flex; gap:8px; flex-wrap:wrap; justify-content:flex-end; }
+  .chip{
+    font-family:'Space Mono',monospace; font-size:10.5px; letter-spacing:1.5px;
+    padding:8px 15px; border-radius:20px; border:1px solid var(--line);
+    color:var(--muted); cursor:pointer; transition:.15s; background:transparent;
+  }
+  .chip:hover{ color:var(--text); }
+  .chip.active{ color:#04141a; background:var(--cyan); border-color:var(--cyan); font-weight:700; }
+  .chip[data-r="vip"].active{ background:var(--gold); border-color:var(--gold); }
+  .chip[data-r="demon"].active{ background:var(--crimson); border-color:var(--crimson); color:#1a0505; }
+  .chip[data-r="epica"].active{ background:var(--violet); border-color:var(--violet); color:#160c2e; }
+  .chip[data-r="especial"].active{ background:var(--rose); border-color:var(--rose); color:#2e0c1e; }
+  .chip[data-r="basica"].active{ background:var(--cyan); border-color:var(--cyan); color:#04141a; }
+
+  /* ---------- Grid ---------- */
+  .grid{ margin-top:22px; display:grid; grid-template-columns: repeat(6,1fr); gap:16px; }
+  .item-card{
+    background:var(--panel); border:1px solid var(--line); border-radius:16px;
+    padding:20px 10px 16px; text-align:center; cursor:pointer; transition:.18s; position:relative;
+  }
+  .item-card:hover{ transform:translateY(-3px); }
+  .item-icon{
+    width:60px; height:60px; margin:0 auto 12px; border-radius:50%;
+    background:var(--bg); display:flex; align-items:center; justify-content:center; font-size:26px;
+    border:1.5px solid var(--line);
+  }
+  .item-card.basica .item-icon{ border-color:var(--cyan-dim); box-shadow:0 0 16px -4px var(--cyan-dim); }
+  .item-card.basica:hover{ border-color:var(--cyan-dim); }
+  .item-card.vip .item-icon{ border-color:var(--gold-dim); box-shadow:0 0 16px -4px var(--gold-dim); }
+  .item-card.vip:hover{ border-color:var(--gold-dim); }
+  .item-card.epica .item-icon{ border-color:var(--violet-dim); box-shadow:0 0 16px -4px var(--violet-dim); }
+  .item-card.epica:hover{ border-color:var(--violet-dim); }
+  .item-card.especial .item-icon{ border-color:var(--rose-dim); box-shadow:0 0 16px -4px var(--rose-dim); }
+  .item-card.especial:hover{ border-color:var(--rose-dim); }
+  .item-card.demon .item-icon{ border-color:var(--crimson-dim); box-shadow:0 0 16px -4px var(--crimson-dim); }
+  .item-card.demon:hover{ border-color:var(--crimson-dim); }
+
+  .item-name{ font-size:12.5px; font-weight:600; color:var(--text); }
+  .item-rarity{ font-family:'Space Mono',monospace; font-size:9px; letter-spacing:1.5px; margin-top:5px; }
+  .item-card.basica .item-rarity{ color:var(--cyan); }
+  .item-card.vip .item-rarity{ color:var(--gold); }
+  .item-card.epica .item-rarity{ color:var(--violet); }
+  .item-card.especial .item-rarity{ color:var(--rose); }
+  .item-card.demon .item-rarity{ color:var(--crimson); }
+
+  .check{
+    position:absolute; top:10px; right:10px; width:18px; height:18px; border-radius:50%;
+    background:var(--gold); color:#0a0e14; font-size:10px; font-weight:900;
+    display:flex; align-items:center; justify-content:center;
+  }
+  .new-badge{
+    position:absolute; top:10px; left:10px; font-family:'Space Mono',monospace;
+    font-size:7.5px; letter-spacing:1px; color:#04141a; background:var(--cyan);
+    padding:2px 6px; border-radius:4px; font-weight:700;
+  }
+</style>
+</head>
+<body>
+
+<div class="topnav">
+  <div class="topnav-left">
+    <div class="back-btn">←</div>
+    <div class="brand">
+      <div class="brand-title">INVENTARIO</div>
+      <div class="brand-sub">THE GEM</div>
+    </div>
+    <div class="cat-rail" style="margin-left:28px;">
+      <div class="cat-pill active">SKINS</div>
+      <div class="cat-pill">TRAILS</div>
+      <div class="cat-pill">BANNERS</div>
+      <div class="cat-pill">EMOTES</div>
+      <div class="cat-pill">BOOSTS</div>
+      <div class="cat-pill">COFRES</div>
+    </div>
+  </div>
+  <div class="gem-counter">◆ 1,240</div>
+</div>
+
+<main>
+
+  <section class="hero">
+    <div class="equip-stage">
+      <div class="ring"></div>
+      <div class="ring r2"></div>
+      <div class="equip-core">🧟</div>
+    </div>
+
+    <div class="equip-info">
+      <div class="equip-label">SKIN EQUIPADA</div>
+      <div class="equip-name">Zombie</div>
+      <div class="equip-rarity">★ VIP</div>
+
+      <div class="slots">
+        <div class="slot">🌈<span class="tag">TRAIL</span></div>
+        <div class="slot">🏷️<span class="tag">BANNER</span></div>
+        <div class="slot empty">+<span class="tag">EMOTE</span></div>
+        <div class="slot empty">+<span class="tag">BOOST</span></div>
+      </div>
+    </div>
+
+    <div class="hero-progress">
+      <div class="p-item">
+        <div class="p-num">27/150</div><div class="p-lbl">SKINS</div>
+        <div class="p-bar-track"><div class="p-bar-fill" style="width:18%; background:linear-gradient(90deg,#0891b2,var(--cyan));"></div></div>
+      </div>
+      <div class="p-item">
+        <div class="p-num">4/20</div><div class="p-lbl">TRAILS</div>
+        <div class="p-bar-track"><div class="p-bar-fill" style="width:20%; background:linear-gradient(90deg,#a16207,var(--gold));"></div></div>
+      </div>
+      <div class="p-item">
+        <div class="p-num">30%</div><div class="p-lbl">TOTAL</div>
+        <div class="p-bar-track"><div class="p-bar-fill" style="width:30%; background:linear-gradient(90deg,#6d28d9,var(--violet));"></div></div>
+      </div>
+    </div>
+  </section>
+
+  <div class="filters-row">
+    <div class="section-title">SKINS OBTENIDAS — 27</div>
+    <div class="filters">
+      <div class="chip active">TODAS</div>
+      <div class="chip" data-r="vip">VIP</div>
+      <div class="chip" data-r="demon">DEMON</div>
+      <div class="chip" data-r="epica">ÉPICA</div>
+      <div class="chip" data-r="especial">ESPECIAL</div>
+      <div class="chip" data-r="basica">BÁSICA</div>
+      <div class="chip">RECIENTE</div>
+      <div class="chip">MÁS ANTIGUO</div>
+    </div>
+  </div>
+
+  <div class="grid">
+    <div class="item-card demon">
+      <span class="new-badge">NUEVO</span>
+      <div class="item-icon">😈</div><div class="item-name">Diablillo</div><div class="item-rarity">DEMON</div>
+    </div>
+    <div class="item-card epica"><div class="item-icon">🔮</div><div class="item-name">Oráculo</div><div class="item-rarity">ÉPICA</div></div>
+    <div class="item-card especial"><div class="item-icon">🎆</div><div class="item-name">Fuegos</div><div class="item-rarity">ESPECIAL</div></div>
+    <div class="item-card vip equipped">
+      <div class="check">✓</div>
+      <div class="item-icon">🧟</div><div class="item-name">Zombie</div><div class="item-rarity">VIP</div>
+    </div>
+    <div class="item-card vip"><div class="item-icon">🍕</div><div class="item-name">Pizza</div><div class="item-rarity">VIP</div></div>
+    <div class="item-card vip"><div class="item-icon">🍔</div><div class="item-name">Hamburguesa</div><div class="item-rarity">VIP</div></div>
+
+    <div class="item-card basica"><div class="item-icon">🔵</div><div class="item-name">Pelota Cian</div><div class="item-rarity">BASICA</div></div>
+    <div class="item-card basica"><div class="item-icon">🔵</div><div class="item-name">Pelota Azul</div><div class="item-rarity">BASICA</div></div>
+    <div class="item-card basica"><div class="item-icon">🟡</div><div class="item-name">Pelota Amarillo</div><div class="item-rarity">BASICA</div></div>
+    <div class="item-card vip"><div class="item-icon">🍋</div><div class="item-name">Limon</div><div class="item-rarity">VIP</div></div>
+    <div class="item-card vip"><div class="item-icon">🐦‍⬛</div><div class="item-name">Cuervo</div><div class="item-rarity">VIP</div></div>
+    <div class="item-card vip"><div class="item-icon">🃏</div><div class="item-name">Bufón Diurno</div><div class="item-rarity">VIP</div></div>
+  </div>
+
+</main>
+
+</body>
+</html>

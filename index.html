@@ -14,9 +14,9 @@
     <!-- Preconexión a Google Fonts para mejor rendimiento -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <!-- Fuentes del juego (Geom, Orbitron, Cinzel) — consolidadas en una sola petición -->
+    <!-- Fuentes del juego (Geom, Orbitron, Cinzel) + Cinzel Decorative/Rajdhani (Tienda VIP, Fase 2.4) — consolidadas en una sola petición -->
     <link
-        href="https://fonts.googleapis.com/css2?family=Geom:ital,wght@0,300..900;1,300..900&family=Orbitron:wght@700;900&family=Cinzel:wght@600;700&display=swap"
+        href="https://fonts.googleapis.com/css2?family=Geom:ital,wght@0,300..900;1,300..900&family=Orbitron:wght@700;900&family=Cinzel:wght@500;600;700&family=Cinzel+Decorative:wght@700;900&family=Rajdhani:wght@500;600;700&display=swap"
         rel="stylesheet">
     <link rel="stylesheet" href="responsive.css">
     <!-- Hoja de estilos principal -->
@@ -171,7 +171,7 @@
         const _origSet = localStorage.setItem.bind(localStorage);
         localStorage.setItem = function (key, value) {
             _origSet(key, value);
-            if (window._firebaseUID && ['deadCoins', 'gems', 'totalXP', 'gamesWon', 'playerName', 'playerAvatar'].includes(key)) {
+            if (window._firebaseUID && ['deadCoins', 'gems', 'totalXP', 'gamesWon', 'playerName', 'playerAvatar', 'caronteKeys'].includes(key)) {
                 window.subirDatosFirebase(window._firebaseUID);
             }
         };
@@ -266,6 +266,9 @@
     <div id="mute-btn" onclick="toggleMute()">
         <img id="mute-icon" src="assets/UI/Common/Icons/Music_On.png" style="width:100%;height:100%;">
     </div>
+
+    <!-- Botón de pausa (visible solo durante el gameplay, la clase .is-playing ya la agrega main.js automáticamente) -->
+    <div id="pause-btn" onclick="window.pauseGame()"><span class="pause-btn-icon"></span>PAUSA</div>
 
     <!-- Botón flotante de opciones -->
     <div id="options-float-btn" onclick="openOptionsPanel()">
@@ -439,7 +442,8 @@
         <div style="position:absolute; inset:0; box-shadow:inset 0 0 120px rgba(0,0,0,0.8);"></div>
 
         <!-- Sidebar de la tienda -->
-        <div class="shop-sidebar">
+        <div class="shop-sidebar" style="--cfg-hud-accent:#ff4d6d;">
+            <div class="hud-frame-c tl"></div><div class="hud-frame-c tr"></div>
 
             <!-- Header de la tienda -->
             <div class="shop-sidebar-header">
@@ -447,6 +451,7 @@
                     TIENDA</div>
                 <button onclick="closeShop()" class="shop-sidebar-back" id="txt-shop-btn-volver">← VOLVER</button>
             </div>
+
 
             <!-- Banner de perfil en tienda -->
             <div class="shop-sidebar-profile-section">
@@ -512,7 +517,7 @@
         <!-- Contenido principal de la tienda -->
         <div style="position:relative; z-index:2; flex:1; display:flex; flex-direction:column; overflow:hidden;">
 
-            <div id="shopContent" style="flex:1; overflow-y:auto; padding:22px 24px;">
+            <div id="shopContent" class="shop-content-scroll" style="flex:1; overflow-y:auto; padding:22px 24px;">
             </div>
         </div>
     </div>
@@ -617,6 +622,14 @@
             <div class="inv-gem-counter">
                 <img src="assets/UI/Common/Currency/Rubies.png" alt="">
                 <span id="inv-gems-value">0</span>
+            </div>
+            <div class="inv-key-counter">
+                <div class="caronte-key-mini">
+                    <div class="caronte-key-mini-eye caronte-key-mini-eye--l"></div>
+                    <div class="caronte-key-mini-eye caronte-key-mini-eye--r"></div>
+                    <div class="caronte-key-mini-crack"></div>
+                </div>
+                <span id="inv-keys-value">0</span>
             </div>
         </div>
 
@@ -733,6 +746,20 @@
 
         <button class="popup-close" id="txt-opt-btn-cerrar" onclick="closePanels()">CERRAR</button>
 
+    </div>
+
+    <!-- Panel de pausa (cajón deslizante) -->
+    <div id="pausePanel">
+        <div class="pause-dim" onclick="window.resumeGame()"></div>
+        <div class="pause-drawer">
+            <div class="pause-kicker">JUEGO PAUSADO</div>
+            <h2>PAUSA</h2>
+            <button id="pause-continue">CONTINUAR</button>
+            <button id="pause-restart">REINICIAR NIVEL</button>
+            <button id="pause-options">OPCIONES</button>
+            <button id="pause-levels">NIVELES</button>
+            <button id="pause-menu">MENÚ PRINCIPAL</button>
+        </div>
     </div>
 
     <!-- Perfil de jugador y estadísticas -->
@@ -1017,6 +1044,7 @@
     <script src="prices.config.js"></script>
     <script src="rubypass.config.js"></script>
     <script src="rarities.override.js"></script>
+    <script src="seasons.config.js"></script>
     <script src="assets/Imagenes/Banners/banners.catalog.js"></script>
     <script src="shop.js"></script>
     <script src="skins-side.js"></script>

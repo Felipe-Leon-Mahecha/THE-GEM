@@ -1,0 +1,347 @@
+THE GEM — LISTA COMPLETA DE ITEMS Y RAREZA
+(Revisa y ajusta lo que no te cuadre. Lo que dice "SIN CONFIRMAR" quedó pendiente.)
+
+===================================
+SKINS
+===================================
+
+-- BASICO --
+cyan
+red
+blue
+yellow
+orange
+green
+purple
+white
+black
+dona_cyan
+dona_red
+dona_blue
+dona_yellow
+dona_orange
+dona_green
+dona_purple
+dona_white
+dona_black
+cool
+contorno_red
+contorno_purple
+contorno_cyan
+contorno_orange
+contorno_white
+contorno_black
+controlador
+metalman
+pichos
+
+-- ESPECIAL --
+skin_helado
+skin_limon_toxico
+skin_sandia
+skin_cafe
+skin_papas_fritas
+skin_sandwich
+skin_manzana
+skin_palomitas
+skin_cupcake
+skin_jugo
+skin_galleta
+skin_torta
+skin_pina
+skin_pancakes
+skin_dona
+skin_planeta_marte
+skin_planeta_saturno
+skin_planeta_tierra
+skin_meteorito
+skin_alien
+skin_agujero_negro
+skin_galaxia
+skin_chef
+skin_cerdo
+skin_elefante
+
+-- EPICA --
+skin_chocolate
+skin_sol
+skin_luna
+skin_hamburguesa
+skin_pizza
+frank
+shield
+skin_ninja
+skin_pirata
+skin_cientifico
+skin_hacker
+skin_cebra
+skin_tiburon
+skin_cuervo
+skin_escorpion
+
+skin_serpiente
+
+-- DEMON (puente, sigue siendo tienda normal/premium) --
+brifon
+kenji
+demon_ember
+daxor
+skin_fantasma
+skin_lobo_monstruo
+skin_calabaza
+skin_bruja
+skin_nocturna
+skin_samurai
+
+-- VIP: Bundle Realeza --
+skin_rey
+skin_reina
+skin_caballero_bronce (ESTE HACE PARTE DE UN TROFEO DEL MAPA 1 DE CAMINO DE REYES SOLO SE OBTIENE EN ESE LUGAR)
+skin_caballero_plata(ESTE HACE PARTE DE UN TROFEO DEL MAPA 1 DE CAMINO DE REYES SOLO SE OBTIENE EN ESE LUGAR)
+skin_caballero_dorado(ESTE HACE PARTE DE UN TROFEO DEL MAPA 1 DE CAMINO DE REYES SOLO SE OBTIENE EN ESE LUGAR)
+skin_bufon
+skin_emperador_oscuro
+skin_principe_helado
+skin_mago
+skin_arquera
+skin_noble
+
+-- VIP: Bundle Dioses -- Este es muy corto ahora q me acuerdo, me das ideas o los esparcimos entre los demás y quitamos su bundle
+skin_zeus
+skin_hades
+skin_poseidon
+skin_ares
+skin_medusa
+
+-- VIP: Bundle Egipto --
+skin_faraon
+skin_reina_nilo
+skin_guardian_dorado -- este decirle a devin que cambie el nombre a "Moneda egipcia" y cambair su Id también a "moneda_egipcia para que todo tenga coherencia 
+skin_momia
+skin_momia_malvada
+skin_sarcofago
+skin_escarabajo
+
+-- VIP: Bundle Criaturas Miticas --
+skin_dragon
+skin_hydra
+skin_fenix -- eliminar no tengo creatividad apra hacer una skin de ese. imagínate un fénix en bolita o un fénix de frente eso no quedaría bien aunque me gustaria añadirlo, si tienes una idea de como lo hacemos skin dime para no eliminarlo
+skin_quimera -- lo mimso
+skin_leviatan -- lo mismo xd
+skin_grifo -- igual
+skin_minotauro
+skin_gargola
+skin_manticora
+skin_serpiente_marina
+skin_ciclope
+
+-- VIP: Bundle Circo --
+skin_bufon_diurno
+skin_bufon_nocturno
+skin_bufon_maldito
+skin_payaso_oscuro -- cambiar nombre e ID por uno de el senor que dirige el circo pero malvado xd dame un nombre creativo
+skin_marioneta
+skin_mascara_sonriente
+skin_titiritero -- eliminar del juego todo rastro de el
+skin_arlequin -- lo mismo q el anterior
+skin_mascara_veneciana -- también kill
+skin_sonrisa_rota
+
+-- VIP: Bundle Vampiros/Zombies (ESTACIONAL - Halloween) --
+skin_conde_dracula
+skin_zombie
+
+-- VIP: Bundle Navidad (ESTACIONAL) --
+skin_santa_claus
+skin_mama_claus
+skin_reno
+skin_duende
+skin_regalo
+skin_arbol_navidad
+skin_baston_cristal
+skin_esfera_navidad
+skin_galleta_navidad
+Caramelo_de_Navidad
+
+-- VIP: Bundle Salvaje --
+skin_leon
+skin_tigre
+skin_lobo_salvaje
+skin_aguila
+skin_ciervo
+mas ideas? queda corto asi
+
+-- LEGENDARIO (SOLO TROFEO, no se compra) --
+skin_hamburguesa_trofeo_oro
+skin_sandia_trofeo_plata
+skin_chocolate_trofeo_cobre
+ok
+
+
+===================================
+TRAILS
+===================================
+
+-- BASICO --
+none
+basic
+
+-- ESPECIAL --
+hielo
+toxico
+
+-- EPICA --
+ghost
+fractura
+spark
+
+-- EPICA (van con bundle Espacio) [SIN CONFIRMAR] --
+trail_estrellas
+trail_auroras
+
+-- VIP (ESTACIONAL - Halloween) -- estos dos eliminar del juego en definitiva, luego cuando cree lso trails ahi si se agregan de nuevo
+trail_vampiro
+trail_zombie
+
+-- VIP (ESTACIONAL - rotativo Elemental, 1 por mes) --
+trail_fire
+trail_water
+trail_wind
+trail_ice
+trail_lava
+trail_nature
+
+-- VIP (permanente) --
+trail_custom_text
+
+-- VIP: Bundle Egipto -- lo mismo que halloween
+trail_faraon
+trail_nilo
+
+-- VIP: Bundle Circo -- lo mismo que halloween
+trail_sonrisa_malvada
+trail_circo
+
+-- VIP: Bundle Navidad (ESTACIONAL) -- lo mismo quen halloween
+trail_santa
+trail_mama_claus
+
+esto por que no están hechos y prefiero hacerlo bien uno por uno
+o si algo dejarlo en código pero invisile en el juego
+
+
+===================================
+EMOTES
+===================================
+
+Aquí tener en cuenta a DAXOR y KENJI crear un set de emotes para cada uno asi como a brifon 
+
+-- BASICO --
+emote_normal cambiar nombre e id a "brifon_emote_normal"
+emote_saludo cambiar nombre e id a "brifon_emote_saludo"
+emote_enojado cambiar nombre e id a "brifon_emote_enojado"
+emote_Llorando cambiar nombre e id a "brifon_emote_llorando"
+emote_sorprendido cambiar nombre e id a "brifon_emote_sorprendido"
+emote_mudo
+
+-- ESPECIAL --
+emote_risa -- eliminar definitivamente
+
+-- EPICA --
+emote_risa_malvada -- eliminar definitivamente
+
+-- VIP: Paquete Emoji (permanente) -- ESTOS NO SON EMOTES SON SKINS!!!!
+emoji_fachero
+emoji_enamorado
+emoji_asustado
+emoji_skull_pack
+emoji_derretido
+emoji_serio
+emoji_llorando
+emoji_enojado
+emoji_triste
+emoji_feliz
+emoji_guino
+emoji_sonriente
+emoji_bomito
+
+-- EXCLUSIVO (Pase Rubi) --
+emote_ruby_pass_01 -- cambair nombre a "Daxor power" y su id
+crear también Brifon power y Kenji Power y poner  DAXOR POWER en el pase creo q ya esta
+
+Los emotes no tendrán calidad ha que quitársela de todo el juego
+lo único que se diferenciara es que el marco de los emotes exclusivos serán dorados y los que no sean exclusivos pss no abajo de ellos no tendrán descripción nada de básico o vip o exclusivo, simplemente sabes que es exclisivo por su marco
+
+===================================
+BANNERS
+===================================
+
+-- DEFAULT --
+Banner_Deafult
+
+-- BASICO --
+Speed_Color_Green
+Speed_Color_Gold
+Speed_Color_Gray
+Speed_Color_Blue
+Speed_Color_Oranje
+Speed_Color_Red
+Speed_Color_Rgb
+Speed_Color_Black
+
+-- ESPECIAL --
+Speed_Color_Red_Animado
+Abstracto_Fuego_Rojo
+Abstracto_Lineas_Yellow
+Abstracto_Rayos_Az_Rd
+Abstracto_Rayos_Morados
+Abstracto_Rayos_Rojos
+Dark_Lineas_Blue
+Dark_Ondas_Blue
+Neon_Grid_Motion
+Ondas_Blue
+
+-- EPICA --
+Dark_Lineas_Or_Bck
+Dark_Aurora_Blue
+Dark_Ondas_PrAz
+Speed_Color_Yellow_Animado
+
+-- DEMON (permanente por ahora) --
+El_Dragon_Chino
+Un_poco_de_nieve
+Vacaciones_en_la_playa
+
+-- VIP (ESTACIONAL - Halloween) --
+Dracula_Edition
+Jack_o_lantern
+Zombies_Edition
+
+-- VIP (permanente por ahora) --
+El_Dragon_Chino_VIP (agregar al bundle de criaturas mitológicas)
+Un_poco_de_hielo_VIP
+La_playa_relajante_VIP
+
+-- VIP Placeholder (reservados para bundles futuros: Realeza, Dioses, Egipto, Circo, etc) -- cambiar los nombres e ID
+VIP_Placeholder_PNG_1 cambiar a nombre "Poder de la realeza"
+VIP_Placeholder_PNG_2 cambiar a nombre "El gran olimpo"
+VIP_Placeholder_PNG_3 cambiar a nombre "Nuestro mejor amigo"
+VIP_Placeholder_PNG_4 cambiar a nombre "El antiguo Egipto"
+VIP_Placeholder_PNG_5 cambiar a nombre "Un circo tenebroso"
+VIP_Placeholder_GIF_1 cambiar a nombre "Mucha risa?"
+VIP_Placeholder_GIF_2 cambiar a nombre "Espacio exterior"
+VIP_Placeholder_GIF_3 cambiar a nombre "Un lugar tranquilo"
+VIP_Placeholder_GIF_4 cambiar a nombre "Corta unas sandias"
+VIP_Placeholder_GIF_5 cambiar a nombre "Personalízame" este es super caro calidad VIP 10000 gemas xd en este el usuario puede cargar una imagen propia para su baner
+
+como viste anadi unos baners de algunas temáticas que ay hay como el antiguo Egipto que ya sabes donde va, decirle a devin que meta  "..." en "..." correspondientemente cada uno
+
+
+===================================
+PENDIENTE DE CREAR (arte nuevo)
+===================================
+- Banner tematico de Navidad (no existe ninguno hoy) --- se llamara "Feliz navidad" y sera calidad DEMON
+- Skin y banner propios del Pase Rubi (EXCLUSIVO) - hoy solo hay 1 emote --- Crear un baner llamado "La leyenda" y sera calidad DEMON y pss ponerlo en sus carpetas correspondientes
+- Revisar contenido faltante en bundles: Realeza, Dioses, Egipto, Circo, Salvaje, Profesional, Espacio
+
+crear palceholders y añadirlos a sus carpetas correspondientes

@@ -4,12 +4,9 @@
 // Este archivo se carga después de main.js para integrar
 // el sistema de keybinds y combo con el juego
 
-// Integración de Keybinds - Sobrescribir event listeners originales
+// Integración de Keybinds - Reemplaza el listener de teclado de main.js
+// (main.js ya no registra su propio listener de keydown/keyup; este es el único)
 setTimeout(() => {
-    // Remover event listeners originales
-    const originalKeydownHandler = window.addEventListener.toString();
-
-    // Agregar nuevo event listener con keybinds personalizados
     const newKeydownHandler = (e) => {
         const tag = document.activeElement?.tagName;
         if (tag === "INPUT" || tag === "TEXTAREA" || document.activeElement?.isContentEditable) return;
