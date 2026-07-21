@@ -13017,6 +13017,254 @@ body.performance-mode .hud-notify-dot {
    criterio de jerarquía que las barras (ver PLAN_RUBY_PASS.md). */
 
 
+/* =====================================================
+   TEMPORADAS — Estilos para la página de temporadas de la tienda normal
+   Basado en temporadas_idea_1_v2.html
+   ===================================================== */
+
+/* ============ HERO — borde a borde, multi-capa ============ */
+.season-portal{
+  position:relative;
+  width:100%; height:520px;
+  border-radius:8px;
+  overflow:hidden;
+  background:
+    radial-gradient(circle at 25% 15%, rgba(162,89,255,.4), transparent 55%),
+    radial-gradient(circle at 85% 75%, rgba(255,61,140,.22), transparent 50%),
+    linear-gradient(160deg, #1c1130, #08050f 75%);
+}
+
+.season-portal-bg {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: 0;
+}
+
+/* capa 1: patrón hex de fondo */
+.layer-hexgrid{
+  position:absolute; inset:0;
+  background:
+    linear-gradient(90deg, rgba(162,89,255,.14) 0 1px, transparent 1px 100%),
+    linear-gradient(0deg, rgba(255,61,140,.10) 0 1px, transparent 1px 100%);
+  background-size:38px 38px;
+  mask-image:radial-gradient(circle at 30% 40%, black, transparent 70%);
+  opacity:.65;
+}
+
+/* capa 2: rayos de luz diagonales */
+.layer-beams{
+  position:absolute; inset:0;
+  background-image:repeating-linear-gradient(115deg, rgba(162,89,255,.10) 0 2px, transparent 2px 26px);
+  mask-image:linear-gradient(100deg, transparent, black 30%, black 55%, transparent 80%);
+  opacity:.5;
+}
+
+/* capa 3: partículas flotantes */
+.particle{
+  position:absolute; border-radius:50%;
+  background:#a259ff;
+  box-shadow:0 0 8px #a259ff;
+  animation:float 6s ease-in-out infinite;
+}
+@keyframes float{
+  0%,100%{ transform:translateY(0); opacity:.5; }
+  50%{ transform:translateY(-18px); opacity:1; }
+}
+
+/* scanlines sutiles */
+.season-portal .scanlines{
+  position:absolute; inset:0;
+  background:repeating-linear-gradient(0deg, rgba(255,255,255,.02) 0 1px, transparent 1px 3px);
+  mix-blend-mode:overlay;
+  pointer-events:none;
+}
+
+/* viñeta para legibilidad */
+.scrim{
+  position:absolute; inset:0;
+  background:
+    linear-gradient(180deg, rgba(3,2,8,.1) 0%, rgba(3,2,8,.15) 45%, rgba(3,2,8,.95) 100%),
+    linear-gradient(90deg, rgba(3,2,8,.8) 0%, transparent 50%);
+}
+
+/* marco de esquinas HUD más grueso y con doble línea */
+.season-hud-corner{ position:absolute; width:34px; height:34px; z-index:4; pointer-events:none; }
+.season-hud-corner::before,.season-hud-corner::after{ content:""; position:absolute; background:#a259ff; box-shadow:0 0 10px #a259ff; }
+.season-hud-corner.tl{ top:14px; left:14px; } .season-hud-corner.tl::before{width:100%;height:3px;top:0;left:0;} .season-hud-corner.tl::after{width:3px;height:100%;top:0;left:0;}
+.season-hud-corner.tr{ top:14px; right:14px; } .season-hud-corner.tr::before{width:100%;height:3px;top:0;right:0;} .season-hud-corner.tr::after{width:3px;height:100%;top:0;right:0;}
+.season-hud-corner.bl{ bottom:14px; left:14px; } .season-hud-corner.bl::before{width:100%;height:3px;bottom:0;left:0;} .season-hud-corner.bl::after{width:3px;height:100%;bottom:0;left:0;}
+.season-hud-corner.br{ bottom:14px; right:14px; } .season-hud-corner.br::before{width:100%;height:3px;bottom:0;right:0;} .season-hud-corner.br::after{width:3px;height:100%;bottom:0;right:0;}
+
+/* medallón octogonal — insignia de temporada, arriba a la derecha */
+.season-badge{
+  position:absolute; top:36px; right:48px; z-index:4;
+  width:104px; height:104px;
+  display:flex; align-items:center; justify-content:center;
+  clip-path:polygon(30% 0,70% 0,100% 30%,100% 70%,70% 100%,30% 100%,0 70%,0 30%);
+  background:linear-gradient(160deg, rgba(255,255,255,.1), rgba(0,0,0,.4));
+  border:2px solid #ffd76a;
+  box-shadow:0 0 22px rgba(255,215,106,.35), inset 0 0 16px rgba(255,215,106,.15);
+}
+.season-badge::before{
+  content:""; position:absolute; inset:6px;
+  clip-path:polygon(30% 0,70% 0,100% 30%,100% 70%,70% 100%,30% 100%,0 70%,0 30%);
+  border:1px solid rgba(255,215,106,.4);
+}
+.season-badge .num{
+  font-family:'Rajdhani', sans-serif; font-weight:700; font-size:30px; color:#ffd76a;
+  text-shadow:0 0 14px rgba(255,215,106,.6);
+}
+
+.season-content{
+  position:relative; z-index:2; height:100%;
+  display:flex; flex-direction:column; justify-content:flex-end;
+  padding:34px 44px;
+}
+
+.status-tag{
+  display:inline-flex; align-items:center; gap:8px; width:fit-content;
+  padding:7px 18px; font-size:10px; letter-spacing:3px; color:#a259ff;
+  border:1px solid #a259ff;
+  clip-path:polygon(9px 0,100% 0,calc(100% - 9px) 100%,0 100%);
+  background:linear-gradient(90deg, rgba(162,89,255,.2), transparent);
+  margin-bottom:16px;
+}
+.status-tag .arrow{ font-size:8px; opacity:.7; }
+
+.season-title{
+  font-family:'Rajdhani', sans-serif; font-weight:700; font-size:56px; letter-spacing:2px; line-height:0.95;
+  text-shadow:0 0 36px rgba(162,89,255,.55);
+  margin-bottom:12px;
+}
+.season-lore{ max-width:520px; font-size:13.5px; color:rgba(255,255,255,.64); line-height:1.65; margin-bottom:20px; }
+
+/* fila de chips de info */
+.info-chips{ display:flex; gap:10px; flex-wrap:wrap; margin-bottom:22px; }
+.info-chip{
+  display:inline-flex; align-items:center; gap:8px;
+  padding:7px 14px;
+  background:rgba(255,255,255,.04);
+  border:1px solid rgba(255,255,255,.08);
+  clip-path:polygon(7px 0,100% 0,calc(100% - 7px) 100%,0 100%);
+  font-size:11px; color:rgba(255,255,255,.7); letter-spacing:.5px;
+}
+.info-chip .ico{ color:#a259ff; font-weight:700; }
+
+.hero-foot{ display:flex; align-items:center; gap:24px; flex-wrap:wrap; }
+
+.timer-badge{
+  display:inline-flex; align-items:center; gap:9px; padding:9px 18px;
+  background:rgba(255,59,92,.12); border:1px solid #ff3b5c;
+  clip-path:polygon(0 0,calc(100% - 9px) 0,100% 50%,calc(100% - 9px) 100%,0 100%);
+  font-size:13px; color:#ff8fa3; font-weight:700; letter-spacing:1px;
+}
+.timer-clock{ position:relative; width:14px; height:14px; border:1.5px solid #ff8fa3; border-radius:50%; flex:none; }
+.timer-clock::before{ content:""; position:absolute; top:50%; left:50%; width:4.5px; height:1.5px; background:#ff8fa3; transform-origin:left center; transform:translate(0,-50%) rotate(-35deg); }
+.timer-clock::after{ content:""; position:absolute; top:50%; left:50%; width:3.5px; height:1.5px; background:#ff8fa3; transform-origin:left center; transform:translate(0,-50%) rotate(90deg); }
+
+.season-progress{ flex:1; min-width:260px; max-width:420px; }
+.season-progress-label{ display:flex; justify-content:space-between; font-size:9px; letter-spacing:2px; color:rgba(124,134,156,1); margin-bottom:7px; }
+.season-progress-label b{ color:#ffd76a; }
+.season-progress-bar{ height:16px; display:flex; gap:2px; padding:2px; background:rgba(255,255,255,.03); border:1px solid rgba(255,255,255,.08); clip-path:polygon(5px 0,100% 0,calc(100% - 5px) 100%,0 100%); }
+.season-progress-seg{ flex:1; background:rgba(255,255,255,.06); }
+.season-progress-seg.on{ background:linear-gradient(90deg, #6b3bb0, #a259ff); box-shadow:0 0 7px rgba(162,89,255,.2); }
+
+/* ============ SECCIONES ============ */
+.section-header{ display:flex; align-items:center; gap:14px; margin:38px 0 18px; }
+.section-header .num{ font-family:'Rajdhani', sans-serif; font-weight:700; font-size:22px; color:#a259ff; opacity:.5; }
+.section-header .line{ flex:0 0 26px; height:1px; background:#a259ff; }
+.section-header .txt{ font-family:'Rajdhani', sans-serif; font-weight:700; font-size:16px; letter-spacing:3px; }
+.section-header .fade{ flex:1; height:1px; background:linear-gradient(90deg, #6b3bb0, transparent); }
+
+/* ---- Bento de categorías: 1 grande + 3 chicas, no 4 iguales ---- */
+.category-bento{
+  display:grid;
+  grid-template-columns:1.6fr 1fr 1fr 1fr;
+  gap:14px;
+}
+.cat-card{
+  position:relative; overflow:hidden;
+  border-radius:8px; border:1px solid rgba(255,255,255,.08);
+  background:rgba(255,255,255,.03);
+  padding:20px;
+  display:flex; flex-direction:column; justify-content:flex-end;
+  min-height:170px;
+  cursor:pointer;
+  transition:transform .18s ease, border-color .18s ease;
+}
+.cat-card:hover{ transform:translateY(-3px); border-color:#a259ff; }
+.cat-card::before{
+  content:""; position:absolute; inset:0;
+  background:radial-gradient(circle at 80% 0%, var(--cc-glow, rgba(162,89,255,.22)), transparent 60%);
+  opacity:.9;
+}
+.cat-card.main{ background:linear-gradient(150deg, rgba(162,89,255,.14), rgba(255,255,255,.02)); }
+.cat-icon-big{
+  position:relative; z-index:1;
+  width:64px; height:64px; margin-bottom:14px;
+  display:flex; align-items:center; justify-content:center;
+  clip-path:polygon(30% 0,70% 0,100% 30%,100% 70%,70% 100%,30% 100%,0 70%,0 30%);
+  background:linear-gradient(160deg, rgba(255,255,255,.08), rgba(0,0,0,.35));
+  border:2px solid var(--cc, #a259ff);
+  box-shadow:0 0 16px var(--cc-soft, rgba(162,89,255,.35)), inset 0 0 10px var(--cc-soft, rgba(162,89,255,.35));
+}
+.cat-icon-big .ph{ width:26px; height:26px; background:var(--cc, #a259ff); }
+.cat-icon-big .ph.skin{ border-radius:50%; }
+.cat-icon-big .ph.trail{ clip-path:polygon(0 40%,60% 40%,60% 0,100% 50%,60% 100%,60% 60%,0 60%); }
+.cat-name{ position:relative; z-index:1; font-family:'Rajdhani', sans-serif; font-weight:700; font-size:16px; letter-spacing:1px; }
+.cat-count{ position:relative; z-index:1; font-size:10.5px; color:rgba(124,134,156,1); margin-top:3px; }
+
+.cat-card.small{ min-height:170px; padding:16px; }
+.cat-icon-small{
+  width:46px; height:46px; margin-bottom:12px;
+  display:flex; align-items:center; justify-content:center;
+  clip-path:polygon(30% 0,70% 0,100% 30%,100% 70%,70% 100%,30% 100%,0 70%,0 30%);
+  background:linear-gradient(160deg, rgba(255,255,255,.08), rgba(0,0,0,.35));
+  border:2px solid var(--cc, #a259ff);
+  box-shadow:0 0 12px var(--cc-soft, rgba(162,89,255,.35));
+  position:relative; z-index:1;
+}
+.cat-icon-small .ph{ width:18px; height:18px; background:var(--cc, #a259ff); }
+.cat-icon-small .ph.banner{ clip-path:polygon(15% 0,85% 0,85% 80%,50% 100%,15% 80%); }
+.cat-icon-small .ph.emote{ clip-path:polygon(50% 0,100% 50%,50% 100%,0 50%); }
+
+/* ---- Vitrina de recompensas: filas escalonadas, no todas iguales ---- */
+.showcase-grid{
+  display:grid;
+  grid-template-columns:1.3fr 1fr 1fr;
+  gap:14px;
+}
+.showcase-card{
+  position:relative; border-radius:8px; overflow:hidden;
+  border:1px solid rgba(255,255,255,.08); background:rgba(255,255,255,.03);
+}
+.showcase-card.featured{ grid-row:span 2; }
+.showcase-card .img-area{
+  height:180px;
+  background:
+    radial-gradient(circle at 30% 20%, rgba(162,89,255,.28), transparent 60%),
+    linear-gradient(160deg, rgba(255,255,255,.05), rgba(0,0,0,.35));
+  display:flex; align-items:center; justify-content:center;
+  color:rgba(124,134,156,1); font-size:11px; letter-spacing:1px;
+  position:relative;
+}
+.showcase-card.featured .img-area{ height:100%; min-height:280px; }
+.showcase-card .info{ padding:12px 14px; }
+.showcase-card .info .name{ font-family:'Rajdhani', sans-serif; font-weight:700; font-size:14px; }
+.showcase-card .info .rarity{ font-size:10px; color:#ffd76a; letter-spacing:1px; margin-top:3px; }
+
+.rarity-flag{ position:absolute; top:0; left:0; width:44px; height:44px; clip-path:polygon(0 0, 100% 0, 0 100%); background:linear-gradient(135deg, #fff6d9 0%, #a259ff 55%, #6b3bb0 100%); z-index:2;}
+.rarity-flag-txt{ position:absolute; top:5px; left:3px; font-size:8.5px; font-weight:700; color:#1a0530; transform:rotate(-45deg); transform-origin:left top; letter-spacing:.5px; z-index:3;}
+
+.empty-showcase{
+  grid-column:1 / -1;
+  padding:30px; border:1px dashed rgba(255,255,255,.08); border-radius:8px;
+  text-align:center; color:rgba(124,134,156,1); font-size:12px; letter-spacing:1px;
+}
+
 
 
 

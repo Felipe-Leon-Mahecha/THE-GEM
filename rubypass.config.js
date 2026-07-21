@@ -193,6 +193,14 @@ const RUBY_PASS_CONFIG = {
 // ============================================================
 window.RUBY_PASS_CONFIG = RUBY_PASS_CONFIG;
 
+// Función auxiliar para obtener la fecha de fin de la temporada activa
+function getActiveSeasonEndDate() {
+    if (typeof window.getActiveSeasons !== 'function') return null;
+    const activeSeasons = window.getActiveSeasons();
+    if (!activeSeasons || activeSeasons.length === 0) return null;
+    return activeSeasons[0].expiresAt;
+}
+
 window.getRubyPassAmount = function (level, currencyType) {
     const override = RUBY_PASS_CONFIG.levelOverrides[level];
     if (override && override[currencyType] !== undefined) {

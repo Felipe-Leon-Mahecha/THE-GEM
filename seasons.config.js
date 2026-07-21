@@ -13,6 +13,7 @@ const GEM_SEASONS = {
         startsAt: '2026-07-01',
         expiresAt: '2027-02-28',
         portadaPath: 'assets/Imagenes/Temporadas/Temp_Leyendas/Portada/portada_leyendas.png',
+        lore: 'Los héroes olvidados del reino regresan. Nuevas skins, trails y recompensas exclusivas te esperan mientras dure el evento.',
         contains: {
             skins: [],
             trails: [],
@@ -26,6 +27,7 @@ const GEM_SEASONS = {
         startsAt: '2027-03-01',
         expiresAt: '2027-04-30',
         portadaPath: 'assets/Imagenes/Temporadas/Temp_Raices/Portada/portada_raices.png',
+        lore: 'Descubre los orígenes del mundo. Cosméticos inspirados en la naturaleza y los antiguos guardianes de la tierra.',
         contains: {
             skins: [],
             trails: [],
@@ -39,6 +41,7 @@ const GEM_SEASONS = {
         startsAt: '2027-05-01',
         expiresAt: '2027-06-30',
         portadaPath: 'assets/Imagenes/Temporadas/Temp_Oceanica/Portada/portada_oceanica.png',
+        lore: 'Sumérgete en las profundidades. Colecciona cosméticos de las criaturas y misterios del océano infinito.',
         contains: {
             skins: [],
             trails: [],

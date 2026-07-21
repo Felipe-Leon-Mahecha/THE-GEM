@@ -2097,10 +2097,171 @@ function showShopSection(section) {
     else if (section === 'emotes') renderEmotesPage(content);
     else if (section === 'daily') renderDailyGiftPage(content);
     else if (section === 'conversion') renderRubyShopPage(content);
+    else if (section === 'seasons') renderShopSeasonsPage(content);
     else {
         content.innerHTML = `<div style="display:flex; align-items:center; gap:16px; margin-bottom:24px;">${shopBotonVolverHtml()}</div><div style="color:rgba(255,255,255,0.2); font-family:monospace; font-size:14px; letter-spacing:4px; height:300px; display:grid; place-items:center;">${shopTextos('comun').proximamente ?? 'PRÓXIMAMENTE'}</div>`;
     }
     optimizeShopMedia(content);
+}
+
+// Renderizar la página de temporadas
+// container: Elemento contenedor
+function renderShopSeasonsPage(container) {
+    const activeSeasons = window.getActiveSeasons?.() || [];
+    
+    // Si no hay temporada activa, mostrar estado vacío
+    if (!activeSeasons || activeSeasons.length === 0) {
+        container.innerHTML = `
+            <div style="display:flex; align-items:center; gap:16px; margin-bottom:24px;">
+                ${shopBotonVolverHtml()}
+                <div style="color:rgba(255,255,255,0.4); font-family:monospace; font-size:11px; letter-spacing:4px;">TEMPORADAS</div>
+            </div>
+            <div style="color:rgba(255,255,255,0.2); font-family:monospace; font-size:14px; letter-spacing:4px; height:300px; display:grid; place-items:center;">PRÓXIMAMENTE</div>
+        `;
+        return;
+    }
+
+    const season = activeSeasons[0];
+    const seasonIndex = Object.values(window.GEM_SEASONS).findIndex(s => s.id === season.id) + 1;
+    const seasonNumber = String(seasonIndex).padStart(2, '0');
+    const now = new Date();
+    const expiresAt = new Date(`${season.expiresAt}T23:59:59`);
+    const startsAt = new Date(`${season.startsAt}T00:00:00`);
+    
+    // Calcular días restantes
+    const daysRemaining = Math.max(0, Math.ceil((expiresAt - now) / (1000 * 60 * 60 * 24)));
+    
+    // Calcular progreso de temporada (porcentaje)
+    const totalDuration = expiresAt - startsAt;
+    const elapsed = now - startsAt;
+    const progressPercent = Math.max(0, Math.min(100, Math.round((elapsed / totalDuration) * 100)));
+    
+    // Generar segmentos de barra de progreso (30 segmentos totales)
+    const totalSegments = 30;
+    const filledSegments = Math.round((progressPercent / 100) * totalSegments);
+    
+    // Verificar si hay contenido en la temporada
+    const hasContent = season.contains.skins.length > 0 || 
+                       season.contains.trails.length > 0 || 
+                       season.contains.banners.length > 0 || 
+                       season.contains.emotes.length > 0;
+    
+    // Generar items para la vitrina de destacados (placeholder por ahora)
+    let showcaseHTML = '';
+    if (!hasContent) {
+        showcaseHTML = `<div class="empty-showcase">LOS DEMÁS COSMÉTICOS DE ESTA TEMPORADA SE REVELARÁN PRÓXIMAMENTE</div>`;
+    } else {
+        // Placeholder: combinar primeros 3 IDs de skins/trails/emotes
+        const allItems = [
+            ...season.contains.skins.map(id => ({id, type: 'SKIN', name: 'Cosmético de Temporada', rarity: 'EXCLUSIVO'})),
+            ...season.contains.trails.map(id => ({id, type: 'TRAIL', name: 'Trail de Temporada', rarity: 'EXCLUSIVO'})),
+            ...season.contains.emotes.map(id => ({id, type: 'EMOTE', name: 'Emote de Temporada', rarity: 'EXCLUSIVO'}))
+        ].slice(0, 3);
+        
+        showcaseHTML = allItems.map((item, index) => {
+            const isFeatured = index === 0;
+            return `
+                <div class="showcase-card ${isFeatured ? 'featured' : ''}">
+                    <div class="rarity-flag"></div><span class="rarity-flag-txt">${isFeatured ? 'LEGEND.' : 'ÉPICA'}</span>
+                    <div class="img-area">${item.type}</div>
+                    <div class="info"><div class="name">${item.name}</div><div class="rarity">EXCLUSIVO DE TEMPORADA</div></div>
+                </div>
+            `;
+        }).join('');
+        
+        if (allItems.length < 3) {
+            showcaseHTML += `<div class="empty-showcase">LOS DEMÁS COSMÉTICOS DE ESTA TEMPORADA SE REVELARÁN PRÓXIMAMENTE</div>`;
+        }
+    }
+
+    container.innerHTML = `
+        <div style="display:flex; align-items:center; gap:16px; margin-bottom:16px;">
+            ${shopBotonVolverHtml()}
+        </div>
+
+        <div class="season-portal">
+            <img src="${season.portadaPath}"
+                 alt="${season.displayName}"
+                 class="season-portal-bg"
+                 onerror="this.onerror=null; this.src='${SHOP_PLACEHOLDER_IMAGE}';">
+            <div class="layer-hexgrid"></div>
+            <div class="layer-beams"></div>
+            <div class="particle" style="top:20%; left:15%; width:4px; height:4px; animation-delay:0s;"></div>
+            <div class="particle" style="top:55%; left:8%; width:3px; height:3px; animation-delay:1.2s;"></div>
+            <div class="particle" style="top:35%; left:40%; width:5px; height:5px; animation-delay:2.1s;"></div>
+            <div class="particle" style="top:70%; left:25%; width:3px; height:3px; animation-delay:3s;"></div>
+            <div class="particle" style="top:15%; left:60%; width:4px; height:4px; animation-delay:.6s;"></div>
+            <div class="scanlines"></div>
+            <div class="scrim"></div>
+            <div class="season-hud-corner tl"></div><div class="season-hud-corner tr"></div>
+            <div class="season-hud-corner bl"></div><div class="season-hud-corner br"></div>
+
+            <div class="season-badge"><span class="num">${seasonNumber}</span></div>
+
+            <div class="season-content">
+                <span class="status-tag"><span class="arrow">◀</span>TEMPORADA ACTIVA<span class="arrow">▶</span></span>
+                <h1 class="season-title">${season.displayName}</h1>
+                <p class="season-lore">${season.lore || ''}</p>
+
+                <div class="info-chips">
+                    <span class="info-chip"><span class="ico">◆</span> ${Math.round(totalDuration / (1000 * 60 * 60 * 24))} días de duración</span>
+                    <span class="info-chip"><span class="ico">◆</span> ${season.contains.skins.length + season.contains.trails.length + season.contains.banners.length + season.contains.emotes.length} recompensas exclusivas</span>
+                    <span class="info-chip"><span class="ico">◆</span> Sin nivel mínimo</span>
+                </div>
+
+                <div class="hero-foot">
+                    <span class="timer-badge"><span class="timer-clock"></span>QUEDAN ${daysRemaining} DÍAS</span>
+                    <div class="season-progress">
+                        <div class="season-progress-label"><span>PROGRESO DE TEMPORADA</span><b>${progressPercent}%</b></div>
+                        <div class="season-progress-bar" id="seasonBar">
+                            ${Array.from({length: totalSegments}, (_, i) => 
+                                `<div class="season-progress-seg${i < filledSegments ? ' on' : ''}"></div>`
+                            ).join('')}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section-header">
+            <span class="num">01</span><span class="line"></span>
+            <span class="txt">CONTENIDO DE LA TEMPORADA</span>
+            <span class="fade"></span>
+        </div>
+
+        <div class="category-bento">
+            <div class="cat-card main" style="--cc:#a259ff; --cc-soft:rgba(162,89,255,.35); --cc-glow:rgba(162,89,255,.3);">
+                <div class="cat-icon-big"><div class="ph skin"></div></div>
+                <div class="cat-name">SKINS</div>
+                <div class="cat-count">${season.contains.skins.length} disponibles esta temporada</div>
+            </div>
+            <div class="cat-card small" style="--cc:#00e5ff; --cc-soft:rgba(0,229,255,.3); --cc-glow:rgba(0,229,255,.25);">
+                <div class="cat-icon-small"><div class="ph trail"></div></div>
+                <div class="cat-name">TRAILS</div>
+                <div class="cat-count">${season.contains.trails.length} disponibles</div>
+            </div>
+            <div class="cat-card small" style="--cc:#ff5d8f; --cc-soft:rgba(255,93,143,.3); --cc-glow:rgba(255,93,143,.25);">
+                <div class="cat-icon-small"><div class="ph banner"></div></div>
+                <div class="cat-name">BANNERS</div>
+                <div class="cat-count">${season.contains.banners.length} disponibles</div>
+            </div>
+            <div class="cat-card small" style="--cc:#ffd76a; --cc-soft:rgba(255,215,106,.3); --cc-glow:rgba(255,215,106,.25);">
+                <div class="cat-icon-small"><div class="ph emote"></div></div>
+                <div class="cat-name">EMOTES</div>
+                <div class="cat-count">${season.contains.emotes.length} disponibles</div>
+            </div>
+        </div>
+
+        <div class="section-header">
+            <span class="num">02</span><span class="line"></span>
+            <span class="txt">DESTACADOS DE LA TEMPORADA</span>
+            <span class="fade"></span>
+        </div>
+
+        <div class="showcase-grid">
+            ${showcaseHTML}
+        </div>
+    `;
 }
 
 // Renderizar la página de skins
@@ -4275,7 +4436,6 @@ function renderVIPCarouselDetail(id) {
 
 function renderVIPPromoBanner(banner) {
     if (banner.id === 'vip_powerups') return renderVIPPowerupPromoBanner(banner);
-    if (banner.id === 'vip_seasons') return renderVIPSeasonsBanner(banner);
 
     return `
         <article class="vip-promo-banner hud-frame hud-panel-cut" style="--cfg-hud-accent:#e0b563;" onclick="renderVIPPromoDetail('${banner.id}')">
@@ -4293,69 +4453,14 @@ function renderVIPPromoDetail(id) {
     if (!content) return;
     window.currentVIPDetailRenderer = () => renderVIPPromoDetail(id);
     const isBannerShop = id === 'vip_specials';
-    const isSeasons = id === 'vip_seasons';
     content.innerHTML = `
         <button class="vip-back" onclick="renderVIPHome()" type="button">VOLVER A VIP</button>
         ${isBannerShop
             ? renderVIPLegendRoom(banner)
-            : isSeasons
-                ? renderVIPSeasonsDetail(banner)
-                : renderVIPGameplayLab(banner)}
+            : renderVIPGameplayLab(banner)}
     `;
     optimizeShopMedia(content);
     if (isBannerShop) initVIPBannerShelfLoops(content);
-}
-
-// Renderizar banner promocional de Temporadas VIP
-// banner: Objeto del banner
-// Retorna HTML del banner con carrusel de temporadas
-function renderVIPSeasonsBanner(banner) {
-    const seasons = window.GEM_SEASONS ? Object.values(window.GEM_SEASONS) : [];
-    const activeSeasons = seasons.filter(s => window.isSeasonActive?.(s.id));
-
-    return `
-        <article class="vip-promo-banner vip-seasons-promo-banner" onclick="renderVIPPromoDetail('${banner.id}')">
-            <div class="vip-seasons-promo-backdrop"></div>
-            <div class="vip-seasons-promo-copy">
-                <span>TEMPORADAS</span>
-                <strong>EXCLUSIVAS</strong>
-            </div>
-            <div class="vip-seasons-promo-grid">
-                ${seasons.slice(0, 4).map((season, index) => `
-                    <div class="vip-season-card season-${index + 1}" style="--season-active:${window.isSeasonActive?.(season.id) ? '1' : '0'};" onclick="event.stopPropagation(); renderVIPSeasonDetail('${season.id}');">
-                        <div class="vip-season-cover">
-                            <img src="${SHOP_PLACEHOLDER_IMAGE}" alt="${season.displayName}" draggable="false">
-                        </div>
-                        <div class="vip-season-info">
-                            <span>${season.displayName}</span>
-                        </div>
-                    </div>
-                `).join('')}
-            </div>
-        </article>
-    `;
-}
-
-// Renderizar detalle de Temporadas VIP
-// banner: Objeto del banner
-// Retorna HTML de la página de detalle de temporadas
-function renderVIPSeasonsDetail(banner) {
-    const seasons = window.GEM_SEASONS ? Object.values(window.GEM_SEASONS) : [];
-    const activeSeasons = seasons.filter(s => window.isSeasonActive?.(s.id));
-
-    return `
-        <section class="vip-seasons-hero" style="background-image:linear-gradient(90deg, rgba(2,5,12,0.82), rgba(4,10,16,0.58)), url('${banner.detailBackground || banner.cover}');">
-            <div class="vip-seasons-hero-content">
-                <div class="vip-kicker">TEMPORADAS</div>
-                <h2>${banner.title}</h2>
-                <p>${banner.subtitle}</p>
-                <div class="vip-seasons-count">${activeSeasons.length} temporadas activas</div>
-            </div>
-        </section>
-        <section class="vip-seasons-grid">
-            ${seasons.map(season => renderVIPSeasonCard(season)).join('')}
-        </section>
-    `;
 }
 
 // Renderizar tarjeta de temporada
@@ -4384,7 +4489,7 @@ function renderVIPSeasonCard(season) {
     return `
         <article class="vip-season-detail-card" onclick="renderVIPSeasonDetail('${season.id}')">
             <div class="vip-season-detail-cover">
-                <img src="${SHOP_PLACEHOLDER_IMAGE}" alt="${season.displayName}" draggable="false">
+                <img src="${season.portadaPath || SHOP_PLACEHOLDER_IMAGE}" alt="${season.displayName}" draggable="false" onerror="this.onerror=null; this.src='${SHOP_PLACEHOLDER_IMAGE}';">
                 <div class="vip-season-status" style="color:${statusColor}; border-color:${statusColor};">${statusText}</div>
             </div>
             <div class="vip-season-detail-body">
@@ -4397,41 +4502,6 @@ function renderVIPSeasonCard(season) {
             </div>
         </article>
     `;
-}
-
-// Renderizar detalle individual de una temporada
-// seasonId: ID de la temporada
-// Retorna HTML de la página de detalle de la temporada
-function renderVIPSeasonDetail(seasonId) {
-    const season = window.getSeasonById?.(seasonId);
-    if (!season) return renderVIPSeasonsDetail(VIP_PROMO_BANNERS.find(b => b.id === 'vip_seasons'));
-
-    const content = document.getElementById('vipContent');
-    if (!content) return;
-
-    window.currentVIPDetailRenderer = () => renderVIPSeasonDetail(seasonId);
-
-    content.innerHTML = `
-        <button class="vip-back" onclick="renderVIPPromoDetail('vip_seasons')" type="button">VOLVER A TEMPORADAS</button>
-        <section class="vip-season-detail-hero" style="background-image:linear-gradient(90deg, rgba(2,5,12,0.82), rgba(4,10,16,0.58));">
-            <div class="vip-season-detail-hero-cover">
-                <img src="${SHOP_PLACEHOLDER_IMAGE}" alt="${season.displayName}" draggable="false">
-            </div>
-            <div class="vip-season-detail-hero-content">
-                <div class="vip-kicker">TEMPORADA</div>
-                <h2>${season.displayName}</h2>
-                <p>Del ${season.startsAt} al ${season.expiresAt}</p>
-            </div>
-        </section>
-        <section class="vip-season-detail-content">
-            <div class="vip-season-empty-state">
-                <div style="color:rgba(255,255,255,0.3); font-family:monospace; font-size:14px; letter-spacing:2px; text-align:center; padding:40px;">
-                    CONTENIDO DE TEMPORADA
-                </div>
-            </div>
-        </section>
-    `;
-    optimizeShopMedia(content);
 }
 
 function renderVIPGameplayPlaceholder(item) {
@@ -7111,12 +7181,11 @@ function getRubyPassClaimablePremiumCount(state) {
 }
 
 // ── Countdown de temporada (Parte #3 del plan) ──
-// Lee settings.seasonEndsAt de rubypass.config.js (fecha 'YYYY-MM-DD').
-// Si Felipe todavía no cargó la fecha real, devuelve null y el HTML
-// no muestra el countdown (no inventa datos falsos).
+// Lee la fecha de fin de la temporada activa usando getActiveSeasonEndDate().
+// Si no hay temporada activa, devuelve null y el HTML no muestra el countdown
+// (no inventa datos falsos).
 function getRubyPassSeasonCountdown() {
-    const cfg = window.RUBY_PASS_CONFIG;
-    const endsAt = cfg && cfg.settings && cfg.settings.seasonEndsAt;
+    const endsAt = typeof getActiveSeasonEndDate === 'function' ? getActiveSeasonEndDate() : null;
     if (!endsAt) return null;
     const end = new Date(endsAt + 'T23:59:59');
     const now = new Date();

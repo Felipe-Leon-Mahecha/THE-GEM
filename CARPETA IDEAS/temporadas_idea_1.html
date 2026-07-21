@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>THE GEM — Temporadas · Idea 1: Portal Cinemático</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=Chakra+Petch:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#070910;
+  --line:rgba(255,255,255,.08);
+  --txt:#e8ecf5;
+  --txt-dim:#7c869c;
+
+  /* acento de temporada — cambia esto por temporada (morado = Leyendas) */
+  --rc:#a259ff;
+  --rc-soft:#a259ff33;
+  --rc-dim:#6b3bb0;
+}
+*{box-sizing:border-box; margin:0; padding:0;}
+body{
+  background:var(--bg);
+  color:var(--txt);
+  font-family:'Chakra Petch', sans-serif;
+  padding:28px;
+}
+.note{
+  max-width:900px;
+  margin:0 auto 22px;
+  color:var(--txt-dim);
+  font-size:12px;
+  line-height:1.6;
+  border-left:2px solid var(--rc);
+  padding-left:14px;
+}
+.note b{color:var(--txt);}
+
+.screen{
+  max-width:900px;
+  margin:0 auto;
+}
+
+/* ============ VOLVER ============ */
+.topbar{
+  display:flex; align-items:center; gap:16px; margin-bottom:20px;
+}
+.back-btn{
+  padding:8px 16px;
+  background:none;
+  border:1px solid rgba(255,255,255,0.12);
+  border-radius:8px;
+  color:rgba(255,255,255,0.5);
+  font-family:'Chakra Petch';
+  font-size:11px;
+  letter-spacing:2px;
+  cursor:pointer;
+}
+
+/* ============ HERO — PORTAL DE TEMPORADA ============ */
+.season-portal{
+  position:relative;
+  width:100%;
+  height:480px;
+  border-radius:6px;
+  overflow:hidden;
+  background:
+    radial-gradient(circle at 30% 20%, rgba(162,89,255,.35), transparent 55%),
+    radial-gradient(circle at 80% 80%, rgba(255,61,140,.18), transparent 50%),
+    linear-gradient(160deg, #1a1030, #0a0712 70%);
+  /* AQUÍ VA TU PNG: background-image: url('tu_portada.png'); background-size:cover; background-position:center; */
+}
+
+/* silueta decorativa mientras no hay PNG puesto — simula composición de personaje */
+.season-portal .art-placeholder{
+  position:absolute; inset:0;
+  display:flex; align-items:flex-end; justify-content:center;
+  opacity:.9;
+}
+.art-placeholder svg{ height:92%; }
+
+/* scanlines HUD sutiles encima de la imagen */
+.season-portal::before{
+  content:"";
+  position:absolute; inset:0;
+  background:repeating-linear-gradient(0deg, rgba(255,255,255,.025) 0 1px, transparent 1px 3px);
+  pointer-events:none;
+  mix-blend-mode:overlay;
+}
+
+/* viñeta para que el texto siempre sea legible sobre cualquier PNG */
+.season-portal .scrim{
+  position:absolute; inset:0;
+  background:
+    linear-gradient(180deg, rgba(4,3,10,.15) 0%, rgba(4,3,10,.1) 40%, rgba(4,3,10,.92) 100%),
+    linear-gradient(90deg, rgba(4,3,10,.75) 0%, transparent 45%);
+}
+
+/* marco de esquinas HUD (pieza 01 del kit) */
+.hud-corner{position:absolute; width:28px; height:28px; z-index:3; pointer-events:none;}
+.hud-corner::before,.hud-corner::after{content:"";position:absolute;background:var(--rc); box-shadow:0 0 8px var(--rc);}
+.hud-corner.tl{top:10px;left:10px;}
+.hud-corner.tl::before{width:100%;height:2px;top:0;left:0;}
+.hud-corner.tl::after{width:2px;height:100%;top:0;left:0;}
+.hud-corner.tr{top:10px;right:10px;}
+.hud-corner.tr::before{width:100%;height:2px;top:0;right:0;}
+.hud-corner.tr::after{width:2px;height:100%;top:0;right:0;}
+.hud-corner.bl{bottom:10px;left:10px;}
+.hud-corner.bl::before{width:100%;height:2px;bottom:0;left:0;}
+.hud-corner.bl::after{width:2px;height:100%;bottom:0;left:0;}
+.hud-corner.br{bottom:10px;right:10px;}
+.hud-corner.br::before{width:100%;height:2px;bottom:0;right:0;}
+.hud-corner.br::after{width:2px;height:100%;bottom:0;right:0;}
+
+/* contenido de texto sobre el hero */
+.season-content{
+  position:relative; z-index:2;
+  height:100%;
+  display:flex; flex-direction:column; justify-content:flex-end;
+  padding:30px 36px;
+}
+
+/* tag angular ◀ ACTIVA ▶ (pieza 02) */
+.status-tag{
+  display:inline-flex; align-items:center; gap:8px;
+  width:fit-content;
+  padding:6px 16px;
+  font-size:10px; letter-spacing:3px;
+  color:var(--rc);
+  border:1px solid var(--rc);
+  clip-path:polygon(8px 0,100% 0,calc(100% - 8px) 100%,0 100%);
+  background:linear-gradient(90deg, var(--rc-soft), transparent);
+  margin-bottom:14px;
+}
+.status-tag .arrow{font-size:8px; opacity:.7;}
+
+.season-title{
+  font-family:'Rajdhani'; font-weight:700;
+  font-size:46px; letter-spacing:2px;
+  line-height:1;
+  text-shadow:0 0 30px rgba(162,89,255,.5);
+  margin-bottom:10px;
+}
+.season-lore{
+  max-width:480px;
+  font-size:13px;
+  color:rgba(255,255,255,.62);
+  line-height:1.6;
+  margin-bottom:20px;
+}
+
+/* fila inferior del hero: countdown + progreso */
+.hero-foot{
+  display:flex; align-items:center; gap:22px; flex-wrap:wrap;
+}
+
+/* badge de temporizador (pieza 16, recoloreado) */
+.timer-badge{
+  display:inline-flex; align-items:center; gap:9px;
+  padding:8px 16px;
+  background:rgba(255,59,92,.1);
+  border:1px solid #ff3b5c;
+  clip-path:polygon(0 0,calc(100% - 8px) 0,100% 50%,calc(100% - 8px) 100%,0 100%);
+  font-size:12px; color:#ff8fa3; font-weight:700; letter-spacing:1px;
+}
+.timer-clock{ position:relative; width:13px; height:13px; border:1.5px solid #ff8fa3; border-radius:50%; flex:none;}
+.timer-clock::before{content:"";position:absolute;top:50%;left:50%;width:4px;height:1.5px;background:#ff8fa3;transform-origin:left center;transform:translate(0,-50%) rotate(-35deg);}
+.timer-clock::after{content:"";position:absolute;top:50%;left:50%;width:3px;height:1.5px;background:#ff8fa3;transform-origin:left center;transform:translate(0,-50%) rotate(90deg);}
+
+/* barra segmentada de progreso de temporada (pieza 10) */
+.season-progress{
+  flex:1;
+  min-width:220px;
+  max-width:340px;
+}
+.season-progress-label{
+  font-size:9px; letter-spacing:2px; color:var(--txt-dim); margin-bottom:6px;
+}
+.season-progress-bar{
+  height:14px; display:flex; gap:2px; padding:2px;
+  background:rgba(255,255,255,.03); border:1px solid var(--line);
+  clip-path:polygon(4px 0,100% 0,calc(100% - 4px) 100%,0 100%);
+}
+.season-progress-seg{ flex:1; background:rgba(255,255,255,.06); }
+.season-progress-seg.on{ background:linear-gradient(90deg, var(--rc-dim), var(--rc)); box-shadow:0 0 6px var(--rc-soft); }
+
+/* ============ CATEGORÍAS DE CONTENIDO ============ */
+.section-header{
+  display:flex; align-items:center; gap:14px;
+  margin:34px 0 18px;
+}
+.section-header .num{ font-family:'Rajdhani'; font-weight:700; font-size:20px; color:var(--rc); opacity:.5; }
+.section-header .line{ flex:0 0 24px; height:1px; background:var(--rc); }
+.section-header .txt{ font-family:'Rajdhani'; font-weight:700; font-size:15px; letter-spacing:3px; }
+.section-header .fade{ flex:1; height:1px; background:linear-gradient(90deg, var(--rc-dim), transparent); }
+
+.category-row{
+  display:flex; gap:14px; flex-wrap:wrap;
+}
+.category-card{
+  flex:1; min-width:130px;
+  padding:18px 14px;
+  background:rgba(255,255,255,.03);
+  border:1px solid var(--line);
+  border-radius:8px;
+  display:flex; flex-direction:column; align-items:center; gap:10px;
+  cursor:pointer;
+  transition:transform .18s ease, border-color .18s ease;
+}
+.category-card:hover{ transform:translateY(-3px); border-color:var(--rc); }
+.category-oct{
+  position:relative; width:56px; height:56px;
+  display:flex; align-items:center; justify-content:center;
+  clip-path:polygon(30% 0,70% 0,100% 30%,100% 70%,70% 100%,30% 100%,0 70%,0 30%);
+  background:linear-gradient(160deg, rgba(255,255,255,.06), rgba(0,0,0,.3));
+  border:2px solid var(--rc);
+  box-shadow:0 0 14px var(--rc-soft), inset 0 0 10px var(--rc-soft);
+}
+.category-oct .ph{ width:20px; height:20px; background:var(--rc); }
+.category-oct .ph.skin{ border-radius:50%; }
+.category-oct .ph.trail{ clip-path:polygon(0 40%,60% 40%,60% 0,100% 50%,60% 100%,60% 60%,0 60%); }
+.category-oct .ph.banner{ clip-path:polygon(15% 0,85% 0,85% 80%,50% 100%,15% 80%); }
+.category-oct .ph.emote{ clip-path:polygon(50% 0,100% 50%,50% 100%,0 50%); }
+.category-name{ font-family:'Rajdhani'; font-weight:600; font-size:13px; letter-spacing:1px; }
+.category-count{ font-size:10px; color:var(--txt-dim); }
+
+/* ============ VITRINA DE RECOMPENSAS ============ */
+.showcase-row{
+  display:flex; gap:14px; overflow-x:auto; padding-bottom:6px;
+}
+.showcase-card{
+  position:relative;
+  flex:0 0 140px; height:170px;
+  background:rgba(255,255,255,.03);
+  border:1px solid var(--line);
+  border-radius:8px;
+  overflow:hidden;
+}
+.showcase-card .img-area{
+  height:70%;
+  background:linear-gradient(160deg, rgba(162,89,255,.14), rgba(0,0,0,.3));
+  display:flex; align-items:center; justify-content:center;
+  color:var(--txt-dim); font-size:10px; letter-spacing:1px;
+}
+.showcase-card .info{ padding:8px 10px; }
+.showcase-card .info .name{ font-family:'Rajdhani'; font-weight:600; font-size:12px; }
+.showcase-card .info .rarity{ font-size:9px; color:var(--rc); letter-spacing:1px; margin-top:2px;}
+
+/* bandera de rareza (pieza 08) esquina */
+.rarity-flag{
+  position:absolute; top:0; left:0; width:40px; height:40px;
+  clip-path:polygon(0 0, 100% 0, 0 100%);
+  background:linear-gradient(135deg, #fff6d9 0%, #a259ff 55%, #6b3bb0 100%);
+}
+.rarity-flag-txt{
+  position:absolute; top:4px; left:3px;
+  font-size:8px; font-weight:700; color:#1a0530;
+  transform:rotate(-45deg); transform-origin:left top;
+  letter-spacing:.5px;
+}
+
+/* estado vacío (cuando aún no hay cosméticos cargados) */
+.empty-showcase{
+  padding:26px;
+  border:1px dashed var(--line);
+  border-radius:8px;
+  text-align:center;
+  color:var(--txt-dim);
+  font-size:12px;
+  letter-spacing:1px;
+}
+</style>
+</head>
+<body>
+
+<div class="note">
+  <b>Idea 1 — Portal Cinemático.</b> El banner ocupa casi toda la pantalla (ahí reemplazas el fondo por tu PNG real:
+  buscá el comentario <code>AQUÍ VA TU PNG</code> en el CSS). Solo se muestra LA temporada activa, nada de grid con las 3.
+  Debajo del banner: categorías de contenido y una vitrina de recompensas (con estado vacío de ejemplo, ya que
+  tus arrays de cosméticos siguen vacíos por ahora).
+</div>
+
+<div class="screen">
+
+  <div class="topbar">
+    <button class="back-btn">← VOLVER</button>
+  </div>
+
+  <!-- HERO / PORTAL DE TEMPORADA -->
+  <div class="season-portal">
+    <div class="art-placeholder">
+      <!-- silueta de ejemplo, se reemplaza por tu PNG en background-image del .season-portal -->
+      <svg viewBox="0 0 200 300" fill="none">
+        <path d="M100 40 C130 40 150 70 150 110 C150 150 130 180 100 300 C70 180 50 150 50 110 C50 70 70 40 100 40 Z"
+              fill="rgba(162,89,255,0.12)" stroke="rgba(162,89,255,0.4)" stroke-width="1"/>
+      </svg>
+    </div>
+    <div class="scrim"></div>
+    <div class="hud-corner tl"></div><div class="hud-corner tr"></div>
+    <div class="hud-corner bl"></div><div class="hud-corner br"></div>
+
+    <div class="season-content">
+      <span class="status-tag"><span class="arrow">◀</span>TEMPORADA ACTIVA<span class="arrow">▶</span></span>
+      <h1 class="season-title">TEMPORADA DE LEYENDAS</h1>
+      <p class="season-lore">Los héroes olvidados del reino regresan. Nuevas skins, trails y recompensas exclusivas te esperan mientras dure el evento.</p>
+
+      <div class="hero-foot">
+        <span class="timer-badge"><span class="timer-clock"></span>QUEDAN 224 DÍAS</span>
+        <div class="season-progress">
+          <div class="season-progress-label">PROGRESO DE TEMPORADA</div>
+          <div class="season-progress-bar" id="seasonBar"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CATEGORÍAS DE CONTENIDO -->
+  <div class="section-header">
+    <span class="num">01</span><span class="line"></span>
+    <span class="txt">CONTENIDO DE LA TEMPORADA</span>
+    <span class="fade"></span>
+  </div>
+  <div class="category-row">
+    <div class="category-card">
+      <div class="category-oct"><div class="ph skin"></div></div>
+      <div class="category-name">SKINS</div>
+      <div class="category-count">0 disponibles</div>
+    </div>
+    <div class="category-card">
+      <div class="category-oct"><div class="ph trail"></div></div>
+      <div class="category-name">TRAILS</div>
+      <div class="category-count">0 disponibles</div>
+    </div>
+    <div class="category-card">
+      <div class="category-oct"><div class="ph banner"></div></div>
+      <div class="category-name">BANNERS</div>
+      <div class="category-count">0 disponibles</div>
+    </div>
+    <div class="category-card">
+      <div class="category-oct"><div class="ph emote"></div></div>
+      <div class="category-name">EMOTES</div>
+      <div class="category-count">0 disponibles</div>
+    </div>
+  </div>
+
+  <!-- VITRINA DE RECOMPENSAS -->
+  <div class="section-header">
+    <span class="num">02</span><span class="line"></span>
+    <span class="txt">DESTACADOS DE LA TEMPORADA</span>
+    <span class="fade"></span>
+  </div>
+
+  <!-- variante CON items (ejemplo de cómo se vería más adelante) -->
+  <div class="showcase-row">
+    <div class="showcase-card">
+      <div class="rarity-flag"></div><span class="rarity-flag-txt">ÉPICA</span>
+      <div class="img-area">SKIN</div>
+      <div class="info"><div class="name">Caballero Olvidado</div><div class="rarity">EXCLUSIVO</div></div>
+    </div>
+    <div class="showcase-card">
+      <div class="rarity-flag"></div><span class="rarity-flag-txt">ÉPICA</span>
+      <div class="img-area">TRAIL</div>
+      <div class="info"><div class="name">Estela Ancestral</div><div class="rarity">EXCLUSIVO</div></div>
+    </div>
+    <div class="showcase-card">
+      <div class="rarity-flag"></div><span class="rarity-flag-txt">ÉPICA</span>
+      <div class="img-area">EMOTE</div>
+      <div class="info"><div class="name">Saludo Real</div><div class="rarity">EXCLUSIVO</div></div>
+    </div>
+  </div>
+
+  <!-- variante VACÍA (tu estado real ahorita, arrays sin contenido) -->
+  <div class="empty-showcase" style="margin-top:14px;">
+    AÚN NO HAY COSMÉTICOS CARGADOS PARA ESTA TEMPORADA — PRÓXIMAMENTE
+  </div>
+
+</div>
+
+<script>
+  const bar = document.getElementById('seasonBar');
+  const totalSegments = 24;
+  const filled = 3; // ejemplo: temporada recién empezando
+  for (let i = 0; i < totalSegments; i++) {
+    const seg = document.createElement('div');
+    seg.className = 'season-progress-seg' + (i < filled ? ' on' : '');
+    bar.appendChild(seg);
+  }
+</script>
+
+</body>
+</html>
