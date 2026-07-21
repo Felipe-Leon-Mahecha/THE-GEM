@@ -974,6 +974,18 @@
         <!-- BODY CINEMATOGRÁFICO -->
         <div class="lsc-body">
 
+            <!-- Mini perfil (avatar + rango), va ANTES/aparte de lsc-list
+                 a propósito: lsc-list se borra con innerHTML='' cada vez
+                 que se re-renderiza la lista, así que esto no puede vivir
+                 adentro o desaparecería al primer click. -->
+            <div class="lsc-mini-profile" id="lsc-mini-profile">
+                <div class="lsc-mini-avatar" id="lsc-mini-avatar"></div>
+                <div class="lsc-mini-info">
+                    <div class="lsc-mini-name" id="lsc-mini-name">Jugador</div>
+                    <div class="lsc-mini-rank" id="lsc-mini-rank">Hierro</div>
+                </div>
+            </div>
+
             <!-- Lista izquierda -->
             <div class="lsc-list" id="lsc-list">
                 <!-- Fondo animado (canvas con estrellas), contenido solo en esta barra -->
@@ -1042,9 +1054,9 @@
     <script src="rank-system.js"></script>
     <script src="levelselect.js"></script>
     <script src="prices.config.js"></script>
-    <script src="seasons.config.js"></script>
-    <script src="rarities.override.js"></script>
     <script src="rubypass.config.js"></script>
+    <script src="rarities.override.js"></script>
+    <script src="seasons.config.js"></script>
     <script src="assets/Imagenes/Banners/banners.catalog.js"></script>
     <script src="shop.js"></script>
     <script src="skins-side.js"></script>

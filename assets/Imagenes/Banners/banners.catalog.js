@@ -4,7 +4,7 @@ window.GEM_BANNERS_CATALOG = {
     paths: {
         tienda_normal: 'assets/Imagenes/Banners/tienda_normal/',
         tienda_vip: 'assets/Imagenes/Banners/tienda_vip/',
-        banners_temporada: 'assets/Imagenes/Banners/banners_temporada/',
+        banners_temporada: 'assets/Imagenes/Temporadas/Temp_Leyendas/Banners/',
         banners_nuevos: 'assets/Imagenes/Banners/banners_nuevos/'
     },
     rules: {
@@ -90,9 +90,11 @@ window.GEM_BANNERS_CATALOG = {
         { id: 'vip_placeholder_09', name: 'VIP Placeholder 09', autoIdFromName: true, file: 'banner_vip_placeholder_09.png', category: 'tienda_vip', price: 430, rarity: 'VIP', exclusive: true },
         { id: 'vip_placeholder_10', name: 'VIP Placeholder 10', autoIdFromName: true, file: 'banner_vip_placeholder_10.png', category: 'tienda_vip', price: 430, rarity: 'VIP', exclusive: true },
 
-        { id: 'temporada_placeholder_01', name: 'Temporada Placeholder 01', autoIdFromName: true, file: 'banner_temporada_placeholder_01.png', category: 'banners_temporada', price: 260, rarity: 'ESPECIAL', exclusive: false, startsAt: '2026-07-08', expiresAt: '2026-08-08' },
-        { id: 'temporada_placeholder_02', name: 'Temporada Placeholder 02', autoIdFromName: true, file: 'banner_temporada_placeholder_02.png', category: 'banners_temporada', price: 260, rarity: 'ESPECIAL', exclusive: false, startsAt: '2026-07-08', expiresAt: '2026-08-08' },
-        { id: 'temporada_placeholder_03', name: 'Temporada Placeholder 03', autoIdFromName: true, file: 'banner_temporada_placeholder_03.png', category: 'banners_temporada', price: 260, rarity: 'ESPECIAL', exclusive: false, startsAt: '2026-07-08', expiresAt: '2026-08-08' },
+        { id: 'banner_leyendas_exclusivo', name: 'Exclusivo de Leyendas', file: 'banner_leyendas_exclusivo.png', category: 'banners_temporada', price: 2000, priceGems: 140, rarity: 'ESPECIAL', exclusive: false, startsAt: '2026-07-01', expiresAt: '2027-02-28' },
+        { id: 'banner_leyendas_perla', name: 'Perla de Leyendas', file: 'banner_leyendas_perla.png', category: 'banners_temporada', price: 1800, priceGems: 120, rarity: 'ESPECIAL', exclusive: false, startsAt: '2026-07-01', expiresAt: '2027-02-28' },
+        { id: 'banner_leyendas_rosaceo', name: 'Rosáceo de Leyendas', file: 'banner_leyendas_rosaceo.png', category: 'banners_temporada', price: 1800, priceGems: 120, rarity: 'ESPECIAL', exclusive: false, startsAt: '2026-07-01', expiresAt: '2027-02-28' },
+        { id: 'banner_leyendas_campeones', name: 'Campeones de Leyendas', file: 'banner_leyendas_campeones.png', category: 'banners_temporada', price: 0, missionOnly: true, rarity: 'DEMON', exclusive: false, startsAt: '2026-07-01', expiresAt: '2027-02-28' },
+        { id: 'banner_leyendas_racha_ganadora', name: 'Racha Ganadora de Leyendas', file: 'banner_leyendas_racha_ganadora.png', category: 'banners_temporada', price: 0, missionOnly: true, rarity: 'DEMON', exclusive: false, startsAt: '2026-07-01', expiresAt: '2027-02-28' },
 
         { id: 'nuevo_placeholder_01', name: 'Nuevo Placeholder 01', autoIdFromName: true, file: 'banner_nuevo_placeholder_01.png', category: 'banners_nuevos', finalCategory: 'tienda_normal', price: 220, rarity: 'BASICO', exclusive: false, addedAt: '2026-07-08', movesAt: '2026-09-08' },
         { id: 'nuevo_placeholder_02', name: 'Nuevo Placeholder 02', autoIdFromName: true, file: 'banner_nuevo_placeholder_02.png', category: 'banners_nuevos', finalCategory: 'tienda_normal', price: 220, rarity: 'BASICO', exclusive: false, addedAt: '2026-07-08', movesAt: '2026-09-08' },

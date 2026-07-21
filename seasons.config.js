@@ -17,7 +17,7 @@ const GEM_SEASONS = {
         contains: {
             skins: [],
             trails: [],
-            banners: [],
+            banners: ['banner_leyendas_exclusivo', 'banner_leyendas_perla', 'banner_leyendas_rosaceo', 'banner_leyendas_campeones', 'banner_leyendas_racha_ganadora'],
             emotes: []
         }
     },

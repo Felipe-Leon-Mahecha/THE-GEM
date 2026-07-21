@@ -340,6 +340,30 @@ window.showLevelSelect = function () {
 
     }
 
+    // Mini perfil del sidebar (avatar + rango)
+    const miniAvatarEl = document.getElementById("lsc-mini-avatar");
+    const miniNameEl = document.getElementById("lsc-mini-name");
+    const miniRankEl = document.getElementById("lsc-mini-rank");
+
+    const rankName = localStorage.getItem("rankName") || "Hierro";
+    const rankColor = localStorage.getItem("rankColor") || "#00ffe7";
+
+    if (miniAvatarEl) {
+        if (window.player && window.player.avatar) {
+            miniAvatarEl.style.backgroundImage = `url(${window.player.avatar})`;
+        }
+        miniAvatarEl.style.borderColor = `${rankColor}59`;
+        miniAvatarEl.style.boxShadow = `0 0 12px ${rankColor}40`;
+    }
+
+    if (miniNameEl)
+        miniNameEl.textContent = (window.player && window.player.name) || "Jugador";
+
+    if (miniRankEl) {
+        miniRankEl.textContent = rankName;
+        miniRankEl.style.color = rankColor;
+    }
+
     ls.style.opacity = "1";
     ls.style.transition = "none";
     ls.style.display = "flex";

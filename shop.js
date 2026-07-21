@@ -995,10 +995,13 @@ function mapBannerCatalogItem(item) {
         aliases: getBannerCatalogAliases(item, id),
         name: item.name,
         price: item.price ?? 0,
+        priceGems: item.priceGems ?? null,
         exclusive: movedToVip || (item.exclusive === true && !pendingNewVip),
         cover: getBannerCatalogCover(item, activeCategory),
         rarity: pendingNewVip ? (item.previewRarity || 'ESPECIAL') : (movedToVip ? 'VIP' : (item.rarity || 'BASICO')),
         animated: item.animated === true || String(item.file || '').toLowerCase().endsWith('.gif'),
+        passOnly: item.passOnly === true,
+        missionOnly: item.missionOnly === true,
         category: item.category,
         activeCategory,
         finalCategory: item.finalCategory || null,
@@ -1057,6 +1060,32 @@ if (Array.isArray(BANNERS_CATALOG_CONFIG?.items)) {
     VIP_BANNER_PLACEHOLDERS.length = 0;
     VIP_BANNER_PLACEHOLDERS.push(...getVipBannerCatalogFromConfig());
 }
+
+// Agregar banners del Ruby Pass que no están en el catálogo de configuración
+BANNERS_DATA.push(
+    {
+        id: 'Banner_RubyPass_Temporada_VIP',
+        name: 'Temporada · Ruby Pass VIP',
+        price: 0,
+        exclusive: true,
+        passOnly: true,
+        rubyPassLane: 'premium',
+        rubyPassLevel: 15,
+        cover: 'assets/Imagenes/Temporadas/Temp_Leyendas/Banners/banner_rubypass_vip_leyendas.png',
+        rarity: 'VIP'
+    },
+    {
+        id: 'Banner_RubyPass_Temporada_Free',
+        name: 'Temporada · Ruby Pass',
+        price: 0,
+        exclusive: true,
+        passOnly: true,
+        rubyPassLane: 'free',
+        rubyPassLevel: 25,
+        cover: 'assets/Imagenes/Temporadas/Temp_Leyendas/Banners/banner_rubypass_free_leyendas.png',
+        rarity: 'ESPECIAL'
+    }
+);
 
 // Verificar si un banner es exclusivamente VIP
 // banner: Objeto del banner
@@ -2106,6 +2135,55 @@ function showShopSection(section) {
 
 // Renderizar la página de temporadas
 // container: Elemento contenedor
+function openSeasonBannersModal() {
+    const activeSeasons = window.getActiveSeasons?.() || [];
+    const season = activeSeasons[0];
+    if (!season) return;
+
+    const ids = season.contains?.banners || [];
+    const items = BANNERS_DATA.filter(b => ids.includes(b.id));
+    const equipped = localStorage.getItem('equippedBanner') || 'Banner_Deafult';
+    const visible = items.filter(b => !b.missionOnly || ownsBanner(b));
+
+    const existing = document.querySelector('.season-banners-modal-overlay');
+    if (existing) existing.remove();
+
+    const overlay = document.createElement('div');
+    overlay.className = 'season-banners-modal-overlay';
+    overlay.onclick = (e) => { if (e.target === overlay) overlay.remove(); };
+    overlay.innerHTML = `
+        <div class="season-banners-modal">
+            <div class="season-banners-modal-header">
+                <span>BANNERS DE ${season.displayName.toUpperCase()}</span>
+                <button type="button" onclick="this.closest('.season-banners-modal-overlay').remove()">✕</button>
+            </div>
+            <div class="season-banners-modal-grid">
+                ${visible.length > 0
+                    ? visible.map(b => renderBannerCard(b, equipped)).join('')
+                    : `<div class="empty-showcase">AÚN NO HAY BANNERS DISPONIBLES</div>`}
+            </div>
+        </div>
+    `;
+    document.body.appendChild(overlay);
+}
+
+function toggleSeasonInfo(e) {
+    e.stopPropagation();
+    const panel = document.getElementById('seasonInfoPanel');
+    if (!panel) return;
+    const willOpen = panel.style.display !== 'block';
+    panel.style.display = willOpen ? 'block' : 'none';
+    if (willOpen) {
+        const closeOnOutsideClick = (evt) => {
+            if (!panel.contains(evt.target)) {
+                panel.style.display = 'none';
+                document.removeEventListener('click', closeOnOutsideClick);
+            }
+        };
+        setTimeout(() => document.addEventListener('click', closeOnOutsideClick), 0);
+    }
+}
+
 function renderShopSeasonsPage(container) {
     const activeSeasons = window.getActiveSeasons?.() || [];
     
@@ -2181,6 +2259,10 @@ function renderShopSeasonsPage(container) {
 
         <div class="season-portal">
             <img src="${season.portadaPath}"
+                 alt=""
+                 class="season-portal-bg-blur"
+                 onerror="this.style.display='none';">
+            <img src="${season.portadaPath}"
                  alt="${season.displayName}"
                  class="season-portal-bg"
                  onerror="this.onerror=null; this.src='${SHOP_PLACEHOLDER_IMAGE}';">
@@ -2196,20 +2278,18 @@ function renderShopSeasonsPage(container) {
             <div class="season-hud-corner tl"></div><div class="season-hud-corner tr"></div>
             <div class="season-hud-corner bl"></div><div class="season-hud-corner br"></div>
 
-            <div class="season-badge"><span class="num">${seasonNumber}</span></div>
-
-            <div class="season-content">
-                <span class="status-tag"><span class="arrow">◀</span>TEMPORADA ACTIVA<span class="arrow">▶</span></span>
-                <h1 class="season-title">${season.displayName}</h1>
+            <button class="season-info-btn" onclick="toggleSeasonInfo(event)" type="button" aria-label="Info de la temporada">i</button>
+            <div class="season-info-panel" id="seasonInfoPanel">
                 <p class="season-lore">${season.lore || ''}</p>
-
                 <div class="info-chips">
                     <span class="info-chip"><span class="ico">◆</span> ${Math.round(totalDuration / (1000 * 60 * 60 * 24))} días de duración</span>
                     <span class="info-chip"><span class="ico">◆</span> ${season.contains.skins.length + season.contains.trails.length + season.contains.banners.length + season.contains.emotes.length} recompensas exclusivas</span>
                     <span class="info-chip"><span class="ico">◆</span> Sin nivel mínimo</span>
                 </div>
+            </div>
 
-                <div class="hero-foot">
+            <div class="season-content">
+                <div class="hero-foot-backdrop">
                     <span class="timer-badge"><span class="timer-clock"></span>QUEDAN ${daysRemaining} DÍAS</span>
                     <div class="season-progress">
                         <div class="season-progress-label"><span>PROGRESO DE TEMPORADA</span><b>${progressPercent}%</b></div>
@@ -2240,7 +2320,7 @@ function renderShopSeasonsPage(container) {
                 <div class="cat-name">TRAILS</div>
                 <div class="cat-count">${season.contains.trails.length} disponibles</div>
             </div>
-            <div class="cat-card small" style="--cc:#ff5d8f; --cc-soft:rgba(255,93,143,.3); --cc-glow:rgba(255,93,143,.25);">
+            <div class="cat-card small" onclick="openSeasonBannersModal()" style="--cc:#ff5d8f; --cc-soft:rgba(255,93,143,.3); --cc-glow:rgba(255,93,143,.25);">
                 <div class="cat-icon-small"><div class="ph banner"></div></div>
                 <div class="cat-name">BANNERS</div>
                 <div class="cat-count">${season.contains.banners.length} disponibles</div>
@@ -2623,9 +2703,18 @@ function unlockFoodAchievement(id) {
 
 function renderBannersPage(container) {
     const equipped = localStorage.getItem('equippedBanner') || 'Banner_Deafult';
-    // Los banners passOnly (exclusivos del Ruby Pass) no se muestran acá
-    // hasta que el jugador los tenga — se ganan en el pase, no se compran.
-    const visibleBanners = BANNERS_DATA.filter(b => ownsBanner(b) || !b.passOnly);
+    // Los banners passOnly (exclusivos del Ruby Pass) y missionOnly (solo
+    // por misión) no se muestran acá hasta que el jugador los tenga.
+    const rubyBanner = BANNERS_DATA.find(b => b.id === 'Banner_RubyPass_Temporada_VIP');
+    console.log('[Banners Page] Ruby Pass banner in BANNERS_DATA:', !!rubyBanner);
+    if (rubyBanner) {
+        console.log('[Banners Page] Ruby Pass banner passOnly:', rubyBanner.passOnly);
+        console.log('[Banners Page] Ruby Pass banner ownsBanner:', ownsBanner(rubyBanner));
+    }
+    const visibleBanners = BANNERS_DATA.filter(b => ownsBanner(b) || (!b.passOnly && !b.missionOnly));
+    console.log('[Banners Page] Total banners:', BANNERS_DATA.length, 'Visible banners:', visibleBanners.length);
+    const filteredBanners = BANNERS_DATA.filter(b => !ownsBanner(b) && (b.passOnly || b.missionOnly));
+    console.log('[Banners Page] Filtered out (not owned + passOnly/missionOnly):', filteredBanners.map(b => b.id));
     container.innerHTML = `
         <div style="display:flex; align-items:center; gap:16px; margin-bottom:24px;">
             ${shopBotonVolverHtml()}
@@ -2644,6 +2733,10 @@ function renderBannerCard(b, equipped) {
     const vipOnly = isVIPBannerOnly(b);
     const canBuy = !vipOnly && parseInt(localStorage.getItem('deadCoins') || '0') >= b.price;
     const bannerBg = b.cover ? `url('${b.cover}')` : `linear-gradient(135deg, rgba(0,255,231,0.18), rgba(255,77,109,0.14))`;
+
+    if (b.id === 'Banner_RubyPass_Temporada_VIP') {
+        console.log('[renderBannerCard] Rendering Ruby Pass VIP banner. Owned:', owned, 'IsVIP:', isVIP, 'VipOnly:', vipOnly);
+    }
 
     let borderStyle = '';
     let boxShadow = '';
@@ -2671,7 +2764,7 @@ function renderBannerCard(b, equipped) {
 
     const bt = shopTextos('banners');
 
-    return `
+    const html = `
         <div style="background:${isVIP && isEquipped ? 'rgb(18,18,24)' : 'rgba(255,255,255,0.03)'}; border:${borderStyle}; border-radius:14px; padding:14px; display:flex; flex-direction:column; gap:12px; box-shadow:${boxShadow}; ${extraStyle}">
             <div style="height:104px; border-radius:10px; border:1px solid rgba(0,0,0,0.45); background:${bannerBg}; background-size:cover; background-position:center; display:flex; align-items:center; justify-content:center; color:rgba(255,255,255,0.48); font-family:monospace; font-size:10px; letter-spacing:3px;">
                 ${b.cover ? '' : (bt.labelPortada ?? 'PORTADA')}
@@ -2690,12 +2783,19 @@ function renderBannerCard(b, equipped) {
             </div>
         </div>
     `;
+
+    if (b.id === 'Banner_RubyPass_Temporada_VIP') {
+        console.log('[renderBannerCard] Generated HTML length:', html.length);
+    }
+
+    return html;
 }
 
 
 function buyBanner(id) {
     const banner = BANNERS_DATA.find(b => b.id === id);
     if (!banner) return;
+    if (banner.passOnly || banner.missionOnly) return;
     if (isVIPBannerOnly(banner)) return openVIP();
     let coins = parseInt(localStorage.getItem('deadCoins') || '0');
     if (coins < banner.price) return;
@@ -3915,7 +4015,7 @@ function performRouletteSpin(opts) {
     const n = segments.length;
     const half = 360 / n / 2;
     const targetIndex = matchRouletteSegmentIndex(segments, entry);
-    const segAngle = (360 / n) * targetIndex - 90 + half;
+    const segAngle = (360 / n) * targetIndex + half;
 
     // El puntero está fijo arriba (ángulo -90). Un poco de jitter dentro
     // del propio gajo para que no caiga siempre justo en el centro.
@@ -7333,9 +7433,19 @@ function claimRubyPassReward(lane, level, rewardType) {
         // pero el banner nunca se guardaba, así que nunca aparecía en
         // el inventario del jugador. Se busca por bannerId si está
         // definido en la recompensa, o por lane+level como respaldo.
+        console.log('[Ruby Pass Banner] BANNERS_DATA length:', BANNERS_DATA.length);
+        console.log('[Ruby Pass Banner] BANNERS_CATALOG_CONFIG exists:', !!BANNERS_CATALOG_CONFIG);
+        console.log('[Ruby Pass Banner] BANNERS_CATALOG_CONFIG items:', BANNERS_CATALOG_CONFIG?.items?.length);
         const passBanner = (rewardData.bannerId && BANNERS_DATA.find(b => b.id === rewardData.bannerId))
             || BANNERS_DATA.find(b => b.passOnly && b.rubyPassLane === lane && b.rubyPassLevel === level);
-        if (passBanner) setBannerOwned(passBanner);
+        console.log('[Ruby Pass Banner] Lane:', lane, 'Level:', level, 'BannerId:', rewardData.bannerId, 'Found:', passBanner);
+        if (passBanner) {
+            console.log('[Ruby Pass Banner] Setting banner owned:', passBanner.id);
+            setBannerOwned(passBanner);
+        } else {
+            console.error('[Ruby Pass Banner] Banner not found in BANNERS_DATA. Total banners:', BANNERS_DATA.length);
+            console.log('[Ruby Pass Banner] All banner IDs:', BANNERS_DATA.map(b => b.id));
+        }
     }
     if (rewardData?.type === 'chest') {
         showChestClaimOptions(getChestFromReward(rewardData), `${lane === 'premium' ? 'PREMIUM' : 'FREE'} NIVEL ${level}`);

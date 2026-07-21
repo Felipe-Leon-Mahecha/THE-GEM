@@ -158,7 +158,7 @@ const RUBY_PASS_CONFIG = {
             // ── MODO PNG ──
             // Cambia la ruta para cada temporada.
             // Pon null para usar modo texto.
-            bannerImg: 'assets/Imagenes/Temporadas/Temp_Leyendas/Banners/banner_topbar_leyendas.png',
+            bannerImg: 'assets/Imagenes/Temporadas/Temp_Leyendas/Banners/banner_leyendas_racha_ganadora.png',
             bannerWidth: { mobile: '0px', desktop: '220px' },
             bannerHeight: { mobile: '0px', desktop: '54px' },
 
