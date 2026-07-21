@@ -7,11 +7,12 @@
 
 // Objeto central de temporadas
 const GEM_SEASONS = {
-    halloween: {
-        id: 'halloween',
-        displayName: 'Halloween',
-        startsAt: '2024-10-01',
-        expiresAt: '2024-11-30',
+    leyendas: {
+        id: 'leyendas',
+        displayName: 'Temporada de Leyendas',
+        startsAt: '2026-07-01',
+        expiresAt: '2027-02-28',
+        portadaPath: 'assets/Imagenes/Temporadas/Temp_Leyendas/Portada/portada_leyendas.png',
         contains: {
             skins: [],
             trails: [],
@@ -19,11 +20,12 @@ const GEM_SEASONS = {
             emotes: []
         }
     },
-    navidad: {
-        id: 'navidad',
-        displayName: 'Navidad',
-        startsAt: '2024-12-01',
-        expiresAt: '2025-01-15',
+    raices: {
+        id: 'raices',
+        displayName: 'A las Raíces',
+        startsAt: '2027-03-01',
+        expiresAt: '2027-04-30',
+        portadaPath: 'assets/Imagenes/Temporadas/Temp_Raices/Portada/portada_raices.png',
         contains: {
             skins: [],
             trails: [],
@@ -31,11 +33,12 @@ const GEM_SEASONS = {
             emotes: []
         }
     },
-    elemental_fuego: {
-        id: 'elemental_fuego',
-        displayName: 'Elemental Fuego',
-        startsAt: '2024-06-01',
-        expiresAt: '2024-08-31',
+    oceanica: {
+        id: 'oceanica',
+        displayName: 'Temporada Oceánica',
+        startsAt: '2027-05-01',
+        expiresAt: '2027-06-30',
+        portadaPath: 'assets/Imagenes/Temporadas/Temp_Oceanica/Portada/portada_oceanica.png',
         contains: {
             skins: [],
             trails: [],
@@ -46,7 +49,7 @@ const GEM_SEASONS = {
 };
 
 // Función para verificar si una temporada está activa
-// seasonId: ID de la temporada (ej: 'halloween', 'navidad')
+// seasonId: ID de la temporada (ej: 'leyendas', 'raices', 'oceanica')
 // now: Fecha actual (opcional, por defecto usa la fecha actual)
 // Retorna true si la temporada está activa, false en caso contrario
 function isSeasonActive(seasonId, now = new Date()) {
