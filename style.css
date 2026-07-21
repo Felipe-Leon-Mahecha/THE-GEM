@@ -72,14 +72,13 @@ body.is-touch-device .shop-modal-card,
 body.is-touch-device .profile-card,
 body.is-touch-device .settings-card,
 body.is-touch-device .vip-shell,
-body.is-touch-device .ruby-pass-shell {
+body.is-touch-device .ruby-pass-screen {
     backdrop-filter: none !important;
     -webkit-backdrop-filter: none !important;
 }
 
 /* Desactivar filtros en dispositivos táctiles para mejor rendimiento */
 body.is-touch-device .ruby-pass-focus,
-body.is-touch-device .ruby-pass-arc,
 body.is-touch-device .vip-pack-cover,
 body.is-touch-device .vip-feature-cover,
 body.is-touch-device .shop-card,
@@ -1316,163 +1315,32 @@ body.is-touch-device .active-emote-bubble {
 }
 
 /* Anulación final del diseño de Ruby Pass */
-.ruby-pass-screen {
-    background-size: cover;
-    background-position: center;
-}
 
-.ruby-pass-topbar {
-    position: relative;
-    z-index: 20;
-    height: 76px;
-    display: flex;
-    align-items: center;
-    gap: 16px;
-    padding: 12px 22px;
-}
 
-.ruby-pass-profile {
-    min-width: min(360px, 48vw);
-    height: 54px;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 8px 12px;
-    border-radius: 8px;
-    border: 1px solid rgba(255, 255, 255, 0.12);
-    background: rgba(8, 10, 16, 0.72) center / cover no-repeat;
-}
 
-.ruby-pass-profile-avatar {
-    width: 38px;
-    height: 38px;
-    border-radius: 50%;
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    background: rgba(255, 255, 255, 0.08) center / cover no-repeat;
-    flex: 0 0 auto;
-}
 
-.ruby-pass-profile-name {
-    color: white;
-    font: 900 12px/1.15 monospace;
-    letter-spacing: 1px;
-}
 
-.ruby-pass-profile-sub {
-    margin-top: 3px;
-    color: rgba(255, 255, 255, 0.55);
-    font: 9px/1.1 monospace;
-    letter-spacing: 1px;
-}
 
-.ruby-pass-back {
-    margin-left: 0;
-}
 
-.ruby-pass-season {
-    margin-left: auto;
-}
 
-.ruby-pass-stage {
-    height: calc(100vh - 76px);
-}
 
-.ruby-pass-arc-window {
-    inset: 0 !important;
-    right: 0 !important;
-    top: 0 !important;
-    bottom: 0 !important;
-    height: auto !important;
-    pointer-events: none;
-}
 
-.ruby-pass-gear-shell {
-    left: 50% !important;
-    top: calc(100% + min(54vw, 520px)) !important;
-    width: min(2300px, 190vw, 245vh) !important;
-    height: min(2300px, 190vw, 245vh) !important;
-    pointer-events: auto;
-}
 
-.ruby-pass-track-premium {
-    inset: 0 !important;
-}
 
-.ruby-pass-track-free {
-    width: 58% !important;
-    height: 58% !important;
-}
 
-.ruby-pass-node-premium {
-    transform: rotate(var(--node-angle)) translateX(min(810px, 68vw, 88vh)) !important;
-}
 
-.ruby-pass-node-free {
-    transform: rotate(var(--node-angle)) translateX(min(620px, 52vw, 67vh)) !important;
-}
 
-.ruby-pass-reward {
-    transform: rotate(calc(-1 * (var(--node-angle) + var(--lane-rotation, 0deg) + var(--ruby-drag-rotation, 0deg)))) !important;
-}
 
-.ruby-pass-level-number,
-.ruby-pass-level-marker {
-    transform: rotate(calc(-1 * (var(--node-angle) + var(--lane-rotation, 0deg) + var(--ruby-drag-rotation, 0deg)))) !important;
-}
 
-.ruby-pass-focus {
-    top: 10% !important;
-    left: 50% !important;
-    width: min(360px, calc(100vw - 40px)) !important;
-    padding: 0 !important;
-    border: 0 !important;
-    border-radius: 0 !important;
-    background: transparent !important;
-    backdrop-filter: none !important;
-    box-shadow: none !important;
-    gap: 10px !important;
-}
 
-.ruby-pass-focus h3 {
-    font-size: 22px !important;
-    letter-spacing: 5px;
-}
 
-.ruby-pass-focus p {
-    margin: 0;
-    color: rgba(255, 255, 255, 0.7);
-    font: 11px/1.2 monospace;
-    letter-spacing: 2px;
-}
 
-.ruby-pass-focus .ruby-pass-logo-slot {
-    display: none !important;
-}
 
 @media (max-width: 820px) {
-    .ruby-pass-topbar {
-        height: 92px;
-        align-items: flex-start;
-    }
 
-    .ruby-pass-profile {
-        min-width: 0;
-        width: calc(100vw - 130px);
-    }
 
-    .ruby-pass-season {
-        display: none;
-    }
 
-    .ruby-pass-stage {
-        height: calc(100vh - 92px);
-    }
 
-    .ruby-pass-gear-shell {
-        top: calc(100% + 340px) !important;
-        width: 210vw !important;
-        height: 210vw !important;
-    }
 }
 
 #pausePanel {
@@ -5217,29 +5085,7 @@ body.performance-mode .vip-roulette-btn.inviting {
         grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 
-    .ruby-pass-arc-window {
-        right: 18px;
-        top: 130px;
-        bottom: 160px;
-    }
 
-    .ruby-pass-focus {
-        position: absolute;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        top: 50%;
-        width: 300px;
-        display: grid;
-        gap: 14px;
-        z-index: 6;
-        background: rgba(6, 2, 8, 0.72);
-        border: 1px solid rgba(255, 45, 85, 0.18);
-        border-radius: 18px;
-        padding: 20px 22px;
-        backdrop-filter: blur(12px);
-        pointer-events: auto;
-        text-align: center;
-    }
 }
 
 #rubyPassPanel.entering {
@@ -5255,119 +5101,18 @@ body.performance-mode .vip-roulette-btn.inviting {
     min-height: 100%;
 }
 
-.ruby-pass-access {
-    position: relative;
-    min-height: 140px;
-    border: 1px solid rgba(255, 45, 85, 0.36);
-    border-radius: 12px;
-    background: linear-gradient(135deg, rgba(70, 0, 16, 0.72), rgba(8, 6, 10, 0.92));
-    overflow: hidden;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    gap: 16px;
-    padding: 18px 22px;
-    text-align: left;
-    box-shadow: 0 0 34px rgba(255, 45, 85, 0.11);
-}
 
-.ruby-pass-access:hover {
-    border-color: rgba(255, 77, 109, 0.72);
-    transform: translateY(-2px);
-}
 
-.ruby-pass-access.has-ruby-claim {
-    border-color: rgba(0, 255, 136, 0.72);
-    box-shadow: 0 0 26px rgba(0, 255, 136, 0.2), inset 0 0 28px rgba(0, 255, 136, 0.08);
-}
 
-.ruby-pass-claim-hint {
-    margin-top: 8px;
-    color: #00ff88;
-    font-size: 10px;
-    letter-spacing: 2px;
-}
 
-.ruby-pass-access-bg {
-    position: absolute;
-    inset: 0;
-    background:
-        linear-gradient(90deg, rgba(255, 45, 85, 0.18), transparent 62%),
-        radial-gradient(circle at 82% 30%, rgba(255, 0, 64, 0.22), transparent 40%);
-}
 
-.ruby-pass-lock-slot,
-.ruby-pass-logo-slot {
-    position: relative;
-    flex: none;
-    width: 68px;
-    height: 68px;
-    border-radius: 50%;
-    border: 1px dashed rgba(255, 255, 255, 0.24);
-    background: rgba(0, 0, 0, 0.38);
-    display: grid;
-    place-items: center;
-    box-shadow: inset 0 0 22px rgba(255, 45, 85, 0.18);
-}
 
-.ruby-pass-lock-slot span,
-.ruby-pass-logo-slot span {
-    width: 24px;
-    height: 30px;
-    border: 3px solid var(--color-rojo);
-    border-radius: 6px;
-    position: relative;
-}
 
-.ruby-pass-lock-slot span::before,
-.ruby-pass-logo-slot span::before {
-    content: "";
-    position: absolute;
-    left: 50%;
-    top: -20px;
-    width: 28px;
-    height: 24px;
-    border: 3px solid var(--color-rojo);
-    border-bottom: 0;
-    border-radius: 18px 18px 0 0;
-    transform: translateX(-50%);
-}
 
-.ruby-pass-lock-slot img,
-.ruby-pass-logo-slot img {
-    width: 100%;
-    height: 100%;
-    object-fit: contain;
-}
 
-.ruby-pass-access-copy {
-    position: relative;
-    min-width: 0;
-}
 
-.ruby-pass-access-kicker,
-.ruby-pass-kicker {
-    color: rgba(255, 95, 128, 0.78);
-    font-size: 10px;
-    letter-spacing: 4px;
-}
 
-.ruby-pass-access-title {
-    margin-top: 8px;
-    color: #fff;
-    font-size: 24px;
-    font-weight: 900;
-    letter-spacing: 4px;
-    text-shadow: 0 0 18px rgba(255, 45, 85, 0.62);
-}
 
-.ruby-pass-access-arrow {
-    position: relative;
-    margin-left: auto;
-    color: var(--color-rojo);
-    font-size: 22px;
-    font-weight: 900;
-}
 
 /* =====================================================
    RUBY PASS — CSS PATCH
@@ -5376,248 +5121,42 @@ body.performance-mode .vip-roulette-btn.inviting {
    ===================================================== */
 
 /* Pantalla raíz: sin cambios */
-.ruby-pass-screen {
-    position: relative;
-    width: 100%;
-    height: 100vh;
-    overflow: hidden;
-    user-select: none;
-    -webkit-user-select: none;
-    background:
-        linear-gradient(90deg, rgba(5, 0, 8, 0.98), rgba(12, 2, 8, 0.84)),
-        #080208;
-}
 
 /* Stage: referencia para posicionar arco e info */
-.ruby-pass-stage {
-    position: relative;
-    height: calc(100vh - 76px);
-}
 
 /* ── ARCO: ocupa TODO el stage ── */
-.ruby-pass-arc-window {
-    position: absolute;
-    inset: 0;
-    /* left:0 right:0 top:0 bottom:0 */
-    overflow: hidden;
-    pointer-events: none;
-    /* los nodos tienen pointer-events:auto */
-}
 
 /* Shell más grande y bajo para que solo se vea la cúpula */
-.ruby-pass-gear-shell {
-    position: absolute;
-    --ruby-drag-rotation: 0deg;
-    left: 50%;
-    /* Bajamos el centro del círculo a ~85% del stage para ver más arco */
-    top: calc(100% + 180px);
-    /* Tamaño generoso: 160vw o 200vh el que sea menor */
-    width: min(1700px, 160vw, 200vh);
-    height: min(1700px, 160vw, 200vh);
-    border-radius: 50%;
-    transform: translate(-50%, -50%);
-    touch-action: none;
-    cursor: grab;
-    pointer-events: auto;
-}
 
-.ruby-pass-gear-shell:active {
-    cursor: grabbing;
-}
 
 /* Carriles sin cambio de lógica, solo radio de los nodos ajustado */
-.ruby-pass-lane {
-    position: absolute;
-    inset: 0;
-    border-radius: 50%;
-    transform-origin: center;
-}
 
-.ruby-pass-lane-free {
-    --free-rotation: 0deg;
-    transform: rotate(calc(var(--free-rotation) + var(--ruby-drag-rotation, 0deg)));
-    transition: transform 1.05s cubic-bezier(0.18, 0.92, 0.24, 1);
-}
 
-.ruby-pass-lane-premium {
-    --premium-rotation: 0deg;
-    transform: rotate(calc(var(--premium-rotation) + var(--ruby-drag-rotation, 0deg)));
-    transition: transform 1.05s cubic-bezier(0.18, 0.92, 0.24, 1);
-}
 
-.ruby-pass-lane-premium.is-catching-up {
-    transition-duration: 1.2s;
-}
 
 /* Tracks (texturas) */
-.ruby-pass-track {
-    position: absolute;
-    border-radius: 50%;
-    pointer-events: none;
-    background-size: contain;
-    background-position: center;
-    background-repeat: no-repeat;
-}
 
-.ruby-pass-track-premium {
-    inset: 0;
-    box-shadow: 0 0 42px rgba(0, 0, 0, 0.18);
-}
 
-.ruby-pass-track-free {
-    left: 50%;
-    top: 50%;
-    width: 58.2%;
-    height: 58.2%;
-    transform: translate(-50%, -50%);
-    box-shadow: 0 0 35px rgba(255, 45, 85, 0.14);
-}
 
 /* Barra de progreso líquido */
-.ruby-pass-liquid {
-    position: absolute;
-    inset: 0;
-    border-radius: 50%;
-    background:
-        conic-gradient(from 110deg,
-            rgba(255, 45, 85, 0) 0 2%,
-            rgba(255, 45, 85, 0.92) 2% var(--ruby-fill),
-            rgba(255, 45, 85, 0.035) var(--ruby-fill) 100%);
-    -webkit-mask: radial-gradient(circle, transparent 72.4%, #000 73.1% 75.2%, transparent 76%);
-    mask: radial-gradient(circle, transparent 72.4%, #000 73.1% 75.2%, transparent 76%);
-    filter: drop-shadow(0 0 8px rgba(255, 45, 85, 0.84));
-    transition: --ruby-fill 1.05s cubic-bezier(0.18, 0.92, 0.24, 1);
-}
 
-.ruby-pass-liquid-tip {
-    --ruby-tip-angle: 110deg;
-    position: absolute;
-    left: 50%;
-    top: 50%;
-    width: 16px;
-    height: 16px;
-    margin: -8px 0 0 -8px;
-    border-radius: 50%;
-    background: var(--color-rosa-claro);
-    box-shadow:
-        0 0 18px rgba(255, 45, 85, 0.95),
-        0 0 38px rgba(255, 45, 85, 0.55);
-    transform: rotate(var(--ruby-tip-angle)) translateX(min(430px, 36vw));
-    transform-origin: center;
-    transition: transform 1.05s cubic-bezier(0.18, 0.92, 0.24, 1);
-}
 
 /* Punto indicador de posición actual */
-.ruby-pass-current-point {
-    position: absolute;
-    left: 50%;
-    /* 21% desde la parte superior del gear-shell  */
-    top: 21%;
-    width: 82px;
-    height: 82px;
-    transform: translate(-50%, -50%);
-    z-index: 5;
-    pointer-events: none;
-    display: grid;
-    place-items: center;
-    filter: drop-shadow(0 0 18px rgba(255, 60, 110, 0.9));
-}
 
-.ruby-pass-current-point img {
-    width: 100%;
-    height: 100%;
-    object-fit: contain;
-    user-select: none;
-    -webkit-user-drag: none;
-}
 
 /* ── NODOS: radio ajustado para 30 recompensas ── */
-.ruby-pass-node {
-    position: absolute;
-    left: 50%;
-    top: 50%;
-    width: 1px;
-    height: 1px;
-    transform-origin: 0 0;
-    pointer-events: none;
-}
 
 /* Carril premium: más exterior */
-.ruby-pass-node-premium {
-    transform: rotate(var(--node-angle)) translateX(min(600px, 52vw, 73vh));
-}
 
 /* Carril free: más interior */
-.ruby-pass-node-free {
-    transform: rotate(var(--node-angle)) translateX(min(460px, 40vw, 57vh));
-}
 
-.ruby-pass-level-number {
-    position: absolute;
-    left: -14px;
-    top: 34px;
-    width: 28px;
-    color: rgba(255, 255, 255, 0.42);
-    font-size: 10px;
-    text-align: center;
-    letter-spacing: 1px;
-}
 
 /* Recompensa: un poco más grande (64×64 free, 74×74 premium) */
-.ruby-pass-reward {
-    position: absolute;
-    left: -32px;
-    top: -32px;
-    width: 64px;
-    height: 64px;
-    border-radius: 50%;
-    display: grid;
-    place-items: center;
-    background: rgba(0, 0, 0, 0.66);
-    border: 1px solid rgba(255, 255, 255, 0.16);
-    overflow: hidden;
-    pointer-events: auto;
-    cursor: pointer;
-    /* contra-rotación para que la imagen quede siempre vertical */
-    transform: rotate(calc(-1 * (var(--node-angle) + var(--lane-rotation, 0deg) + var(--ruby-drag-rotation, 0deg))));
-    transform-origin: center;
-    transition: transform 0s;
-    /* sin transición propia: la del carril la maneja */
-}
 
-.ruby-pass-reward img {
-    width: 100%;
-    height: 100%;
-    object-fit: contain;
-    user-select: none;
-    -webkit-user-drag: none;
-}
 
-.ruby-pass-reward-premium {
-    border-color: rgba(255, 45, 85, 0.64);
-    width: 74px;
-    height: 74px;
-    left: -37px;
-    top: -37px;
-    box-shadow: inset 0 0 18px rgba(255, 45, 85, 0.12);
-}
 
-.ruby-pass-reward-free {
-    border-color: rgba(255, 95, 128, 0.38);
-}
 
-.ruby-pass-reward.is-lit {
-    box-shadow: 0 0 24px rgba(255, 45, 85, 0.45);
-}
 
-.ruby-pass-reward.is-claimable,
-.ruby-pass-level-marker.is-claimable {
-    border-color: rgba(0, 255, 136, 0.92);
-    box-shadow:
-        0 0 20px rgba(0, 255, 136, 0.55),
-        inset 0 0 18px rgba(0, 255, 136, 0.16);
-    animation: rubyPulse 1.6s ease-in-out infinite;
-}
 
 @keyframes rubyPulse {
 
@@ -5631,564 +5170,78 @@ body.performance-mode .vip-roulette-btn.inviting {
     }
 }
 
-.ruby-pass-reward.is-claimed {
-    opacity: 0.54;
-}
 
-.ruby-pass-reward.is-claimed::after {
-    content: "";
-    position: absolute;
-    right: 5px;
-    bottom: 5px;
-    width: 13px;
-    height: 13px;
-    border-radius: 50%;
-    background: #00ff88;
-    box-shadow: 0 0 10px rgba(0, 255, 136, 0.7);
-}
 
-.ruby-pass-reward.is-claiming {
-    animation: rubyClaim 0.52s ease;
-}
 
-.ruby-pass-reward.is-locked,
-.ruby-pass-level-marker.is-locked {
-    filter: grayscale(1) brightness(0.48);
-    opacity: 0.62;
-    border-color: rgba(255, 255, 255, 0.12);
-    box-shadow: none;
-    animation: none;
-}
 
 /* Marcador de nivel */
-.ruby-pass-level-marker {
-    position: absolute;
-    left: -8px;
-    top: -8px;
-    width: 16px;
-    height: 16px;
-    border-radius: 50%;
-    background: rgba(255, 255, 255, 0.28);
-    box-shadow: 0 0 12px rgba(255, 255, 255, 0.14);
-    overflow: hidden;
-    pointer-events: none;
-    transform: rotate(calc(-1 * (var(--node-angle) + var(--lane-rotation, 0deg) + var(--ruby-drag-rotation, 0deg))));
-}
 
-.ruby-pass-level-marker.is-unlocked {
-    background: var(--color-rojo);
-    box-shadow: 0 0 18px rgba(255, 45, 85, 0.9);
-}
 
-.ruby-pass-level-marker img {
-    width: 100%;
-    height: 100%;
-    object-fit: contain;
-}
 
 /* Placeholder para assets pendientes */
-.ruby-pass-placeholder {
-    width: 36px;
-    height: 36px;
-    border: 1px dashed rgba(255, 255, 255, 0.34);
-    border-radius: 8px;
-    background: rgba(255, 255, 255, 0.06);
-}
 
-.ruby-pass-skin {
-    border-radius: 50%;
-}
 
-.ruby-pass-chest {
-    border-radius: 4px;
-}
 
 /* ── PANEL INFO: CENTRADO en el hueco del arco ── */
-.ruby-pass-focus {
-    position: absolute;
-    /* centrado horizontal sobre el arco */
-    left: 50%;
-    transform: translateX(-50%);
-    /* vertically: queda en el hueco del arco (aprox. 30–55% del stage) */
-    top: 22%;
-    width: 300px;
-    display: grid;
-    gap: 14px;
-    /* z-index alto para no quedar detrás del arco */
-    z-index: 6;
-    /* fondo semitransparente para legibilidad */
-    background: rgba(6, 2, 8, 0.72);
-    border: 1px solid rgba(255, 45, 85, 0.18);
-    border-radius: 18px;
-    padding: 20px 22px;
-    backdrop-filter: blur(12px);
-    pointer-events: auto;
-    text-align: center;
-}
 
-.ruby-pass-focus .ruby-pass-logo-slot {
-    width: 74px;
-    height: 74px;
-    margin: 0 auto;
-}
 
-.ruby-pass-focus-copy {
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-    align-items: center;
-}
 
-.ruby-pass-focus h3 {
-    margin: 4px 0 0;
-    color: white;
-    letter-spacing: 5px;
-    font-size: 15px;
-}
 
-.ruby-pass-xpbar {
-    width: 100%;
-    height: 10px;
-    margin-top: 10px;
-    border-radius: 999px;
-    background: rgba(255, 255, 255, 0.08);
-    overflow: hidden;
-}
 
-.ruby-pass-xpbar span {
-    display: block;
-    height: 100%;
-    border-radius: inherit;
-    background: linear-gradient(90deg, #7a0019, var(--color-rojo), var(--color-rosa-claro));
-    box-shadow: 0 0 18px rgba(255, 45, 85, 0.7);
-    transition: width 1.05s cubic-bezier(0.18, 0.92, 0.24, 1);
-}
 
-.ruby-pass-buy {
-    width: 100%;
-    height: 40px;
-    border-radius: 8px;
-    border: 1px solid rgba(255, 45, 85, 0.44);
-    background: rgba(255, 45, 85, 0.1);
-    color: #ff7a96;
-    font-family: var(--font-secundaria);
-    font-size: 11px;
-    letter-spacing: 2px;
-    cursor: pointer;
-}
 
-.ruby-pass-buy.is-owned {
-    border-color: rgba(0, 255, 136, 0.38);
-    background: rgba(0, 255, 136, 0.08);
-    color: #00ff88;
-    cursor: default;
-}
 
-.ruby-pass-dev {
-    width: 100%;
-    height: 34px;
-    border-radius: 8px;
-    border: 1px solid rgba(0, 255, 231, 0.32);
-    background: rgba(0, 255, 231, 0.08);
-    color: var(--color-cian);
-    font-family: var(--font-secundaria);
-    font-size: 10px;
-    letter-spacing: 2px;
-    cursor: pointer;
-}
 
 /* Responsive: en pantallas pequeñas el panel baja */
 @media (max-width: 820px) {
-    .ruby-pass-focus {
-        top: auto;
-        bottom: 18px;
-        left: 50%;
-        transform: translateX(-50%);
-        width: calc(100vw - 36px);
-    }
 
-    .ruby-pass-arc-window {
-        inset: 0;
-    }
 }
 
-.ruby-pass-back,
-.ruby-pass-buy {
-    height: 40px;
-    padding: 0 18px;
-    border-radius: 8px;
-    border: 1px solid rgba(255, 255, 255, 0.14);
-    background: rgba(255, 255, 255, 0.04);
-    color: rgba(255, 255, 255, 0.7);
-    font-family: var(--font-secundaria);
-    font-size: 11px;
-    letter-spacing: 2px;
-    cursor: pointer;
-}
 
-.ruby-pass-season {
-    margin-left: auto;
-    display: flex;
-    gap: 12px;
-    align-items: center;
-    color: rgba(255, 255, 255, 0.42);
-    letter-spacing: 2px;
-}
 
-.ruby-pass-season strong {
-    color: #ff5f80;
-}
 
-.ruby-pass-stage {
-    position: relative;
-    height: calc(100vh - 76px);
-}
 
-.ruby-pass-arc-window {
-    position: absolute;
-    left: 0;
-    right: 330px;
-    top: 78px;
-    bottom: 0;
-    height: auto;
-    overflow: hidden;
-}
 
-.ruby-pass-gear-shell {
-    position: absolute;
-    --ruby-drag-rotation: 0deg;
-    left: 50%;
-    top: calc(100% + 180px);
-    width: min(1700px, 160vw, 200vh);
-    height: min(1700px, 160vw, 200vh);
-    border-radius: 50%;
-    transform: translate(-50%, -50%);
-    background-size: cover;
-    background-position: center;
-    touch-action: none;
-    cursor: grab;
-}
 
-.ruby-pass-gear-shell:active {
-    cursor: grabbing;
-}
 
-.ruby-pass-lane {
-    position: absolute;
-    inset: 0;
-    border-radius: 50%;
-    transform-origin: center;
-}
 
-.ruby-pass-lane-free {
-    --free-rotation: 0deg;
-    --lane-rotation: var(--free-rotation);
-    transform: rotate(calc(var(--free-rotation) + var(--ruby-drag-rotation, 0deg)));
-    transition: transform 1.05s cubic-bezier(0.18, 0.92, 0.24, 1);
-}
 
-.ruby-pass-lane-premium {
-    --premium-rotation: 0deg;
-    --lane-rotation: var(--premium-rotation);
-    transform: rotate(calc(var(--premium-rotation) + var(--ruby-drag-rotation, 0deg)));
-    transition: transform 1.05s cubic-bezier(0.18, 0.92, 0.24, 1);
-}
 
-.ruby-pass-lane-premium.is-catching-up {
-    transition-duration: 1.2s;
-}
 
-.ruby-pass-track {
-    position: absolute;
-    border-radius: 50%;
-    pointer-events: none;
-    background-size: contain;
-    background-position: center;
-    background-repeat: no-repeat;
-}
 
-.ruby-pass-track-premium {
-    inset: 0;
-    border: 0;
-    box-shadow: 0 0 42px rgba(0, 0, 0, 0.18);
-}
 
-.ruby-pass-track-free {
-    left: 50%;
-    top: 50%;
-    width: 58.2%;
-    height: 58.2%;
-    border: 0;
-    transform: translate(-50%, -50%);
-    box-shadow: 0 0 35px rgba(255, 45, 85, 0.14);
-}
 
-.ruby-pass-screen.is-premium-owned .ruby-pass-track-premium {
-    border-color: rgba(255, 45, 85, 0.42);
-    box-shadow: 0 0 44px rgba(255, 45, 85, 0.2);
-}
 
-.ruby-pass-liquid {
-    position: absolute;
-    inset: 0;
-    border-radius: 50%;
-    background:
-        conic-gradient(from 110deg, rgba(255, 45, 85, 0) 0 2%, rgba(255, 45, 85, 0.92) 2% var(--ruby-fill), rgba(255, 45, 85, 0.035) var(--ruby-fill) 100%);
-    -webkit-mask: radial-gradient(circle, transparent 72.4%, #000 73.1% 75.2%, transparent 76%);
-    mask: radial-gradient(circle, transparent 72.4%, #000 73.1% 75.2%, transparent 76%);
-    filter: drop-shadow(0 0 8px rgba(255, 45, 85, 0.84));
-    transition: --ruby-fill 1.05s cubic-bezier(0.18, 0.92, 0.24, 1);
-}
 
-.ruby-pass-liquid-tip {
-    --ruby-tip-angle: 110deg;
-    position: absolute;
-    left: 50%;
-    top: 50%;
-    width: 13px;
-    height: 13px;
-    margin: -6.5px 0 0 -6.5px;
-    border-radius: 50%;
-    background: var(--color-rosa-claro);
-    box-shadow:
-        0 0 16px rgba(255, 45, 85, 0.95),
-        0 0 34px rgba(255, 45, 85, 0.55);
-    transform: rotate(var(--ruby-tip-angle)) translateX(min(400px, 34vw));
-    transform-origin: center;
-    transition: transform 1.05s cubic-bezier(0.18, 0.92, 0.24, 1);
-}
 
-.ruby-pass-current-point {
-    position: absolute;
-    left: 50%;
-    top: 21%;
-    width: 74px;
-    height: 74px;
-    transform: translate(-50%, -50%);
-    z-index: 5;
-    pointer-events: none;
-    display: grid;
-    place-items: center;
-    filter: drop-shadow(0 0 18px rgba(255, 60, 110, 0.9));
-}
 
-.ruby-pass-current-point img {
-    width: 100%;
-    height: 100%;
-    object-fit: contain;
-    user-select: none;
-    -webkit-user-drag: none;
-}
 
-.ruby-pass-node {
-    position: absolute;
-    left: 50%;
-    top: 50%;
-    width: 1px;
-    height: 1px;
-    transform: rotate(var(--node-angle)) translateX(min(500px, 45vw, 62vh));
-    transform-origin: 0 0;
-    pointer-events: none;
-}
 
-.ruby-pass-node-premium {
-    transform: rotate(var(--node-angle)) translateX(min(580px, 51vw, 71vh));
-}
 
-.ruby-pass-node-free {
-    transform: rotate(var(--node-angle)) translateX(min(455px, 39vw, 56vh));
-}
 
-.ruby-pass-level-number {
-    position: absolute;
-    left: -12px;
-    top: 30px;
-    width: 24px;
-    color: rgba(255, 255, 255, 0.42);
-    font-size: 10px;
-    text-align: center;
-    letter-spacing: 1px;
-}
 
-.ruby-pass-reward {
-    position: absolute;
-    left: -29px;
-    top: -29px;
-    width: 58px;
-    height: 58px;
-    border-radius: 50%;
-    display: grid;
-    place-items: center;
-    background: rgba(0, 0, 0, 0.66);
-    border: 1px solid rgba(255, 255, 255, 0.16);
-    overflow: hidden;
-    pointer-events: auto;
-    transform: rotate(calc(-1 * (var(--node-angle) + var(--lane-rotation, 0deg) + var(--ruby-drag-rotation, 0deg))));
-    transform-origin: center;
-}
 
-.ruby-pass-reward img {
-    width: 100%;
-    height: 100%;
-    object-fit: contain;
-    user-select: none;
-    -webkit-user-drag: none;
-}
 
-.ruby-pass-reward-premium {
-    border-color: rgba(255, 45, 85, 0.64);
-    width: 68px;
-    height: 68px;
-    left: -34px;
-    top: -34px;
-    box-shadow: inset 0 0 18px rgba(255, 45, 85, 0.12);
-}
 
-.ruby-pass-reward-free {
-    border-color: rgba(255, 95, 128, 0.38);
-}
 
-.ruby-pass-reward.is-lit {
-    box-shadow: 0 0 24px rgba(255, 45, 85, 0.45);
-    cursor: pointer;
-}
 
-.ruby-pass-reward.is-claimable,
-.ruby-pass-level-marker.is-claimable {
-    border-color: rgba(0, 255, 136, 0.92);
-    box-shadow: 0 0 20px rgba(0, 255, 136, 0.55), inset 0 0 18px rgba(0, 255, 136, 0.16);
-}
 
-.ruby-pass-reward.is-claimed {
-    opacity: 0.54;
-}
 
-.ruby-pass-reward.is-claimed::after {
-    content: "";
-    position: absolute;
-    right: 5px;
-    bottom: 5px;
-    width: 12px;
-    height: 12px;
-    border-radius: 50%;
-    background: #00ff88;
-    box-shadow: 0 0 10px rgba(0, 255, 136, 0.7);
-}
 
-.ruby-pass-reward.is-claiming {
-    animation: rubyClaim 0.52s ease;
-}
 
-.ruby-pass-reward.is-locked,
-.ruby-pass-level-marker.is-locked {
-    filter: grayscale(1) brightness(0.48);
-    opacity: 0.62;
-    border-color: rgba(255, 255, 255, 0.12);
-    box-shadow: none;
-}
 
-.ruby-pass-level-marker {
-    position: absolute;
-    left: -7px;
-    top: -7px;
-    width: 14px;
-    height: 14px;
-    border-radius: 50%;
-    background: rgba(255, 255, 255, 0.28);
-    box-shadow: 0 0 12px rgba(255, 255, 255, 0.14);
-    overflow: hidden;
-    pointer-events: none;
-    transform: rotate(calc(-1 * (var(--node-angle) + var(--lane-rotation, 0deg) + var(--ruby-drag-rotation, 0deg))));
-}
 
-.ruby-pass-level-marker.is-unlocked {
-    background: var(--color-rojo);
-    box-shadow: 0 0 18px rgba(255, 45, 85, 0.9);
-}
 
-.ruby-pass-level-marker img {
-    width: 100%;
-    height: 100%;
-    object-fit: contain;
-}
 
-.ruby-pass-placeholder {
-    width: 34px;
-    height: 34px;
-    border: 1px dashed rgba(255, 255, 255, 0.34);
-    border-radius: 8px;
-    background: rgba(255, 255, 255, 0.06);
-}
 
-.ruby-pass-skin {
-    border-radius: 50%;
-}
 
-.ruby-pass-chest {
-    border-radius: 4px;
-}
 
-.ruby-pass-focus .ruby-pass-logo-slot {
-    width: 84px;
-    height: 84px;
-}
 
-.ruby-pass-xpbar {
-    height: 10px;
-    margin-top: 18px;
-    border-radius: 999px;
-    background: rgba(255, 255, 255, 0.08);
-    overflow: hidden;
-}
 
-.ruby-pass-xpbar span {
-    display: block;
-    height: 100%;
-    border-radius: inherit;
-    background: linear-gradient(90deg, #7a0019, var(--color-rojo), var(--color-rosa-claro));
-    box-shadow: 0 0 18px rgba(255, 45, 85, 0.7);
-    transition: width 1.05s cubic-bezier(0.18, 0.92, 0.24, 1);
-}
 
-.ruby-pass-buy {
-    border-color: rgba(255, 45, 85, 0.44);
-    background: rgba(255, 45, 85, 0.1);
-    color: #ff7a96;
-}
 
-.ruby-pass-dev {
-    height: 34px;
-    border-radius: 8px;
-    border: 1px solid rgba(0, 255, 231, 0.32);
-    background: rgba(0, 255, 231, 0.08);
-    color: var(--color-cian);
-    font-family: var(--font-secundaria);
-    font-size: 10px;
-    letter-spacing: 2px;
-    cursor: pointer;
-}
 
-#ruby-pass-toast {
-    position: fixed;
-    left: 50%;
-    bottom: 34px;
-    z-index: 10050;
-    padding: 12px 22px;
-    border-radius: 8px;
-    border: 1px solid rgba(255, 45, 85, 0.42);
-    background: rgba(12, 0, 5, 0.86);
-    color: white;
-    font-family: var(--font-secundaria);
-    font-size: 12px;
-    letter-spacing: 3px;
-    opacity: 0;
-    transform: translate(-50%, 18px);
-    pointer-events: none;
-}
 
-#ruby-pass-toast.showing {
-    animation: rubyToast 1.3s ease forwards;
-}
 
 .chest-open-result {
     animation: chestOpenPop 0.42s ease both;
@@ -6899,21 +5952,7 @@ PLAY BUTTON — estilo unificado con el resto del juego
         grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 
-    .ruby-pass-arc-window {
-        right: 18px;
-        top: 130px;
-        bottom: 160px;
-    }
 
-    .ruby-pass-focus {
-        left: 18px;
-        right: 18px;
-        bottom: 18px;
-        top: auto;
-        width: auto;
-        transform: none;
-        grid-template-columns: 70px 1fr;
-    }
 }
 
 @media (max-width: 900px) {
@@ -7369,73 +6408,17 @@ body.is-touch-device .store-category-panel::after {
 }
 
 /* Anulaciones finales de Ruby Pass: un arco libre visible mientras está bloqueado, dos arcos solo con pase. */
-.ruby-pass-screen .ruby-pass-arc-window {
-    left: 0 !important;
-    right: 0 !important;
-    top: 0 !important;
-    bottom: 0 !important;
-    overflow: hidden !important;
-}
 
-.ruby-pass-screen .ruby-pass-gear-shell {
-    left: 50% !important;
-    top: calc(100% + min(12vw, 150px)) !important;
-    width: min(1380px, 132vw, 210vh) !important;
-    height: min(1380px, 132vw, 210vh) !important;
-    will-change: transform;
-    contain: layout paint;
-}
 
-.ruby-pass-screen .ruby-pass-lane-premium.is-locked {
-    display: none;
-}
 
-.ruby-pass-screen .ruby-pass-track,
-.ruby-pass-screen .ruby-pass-reward,
-.ruby-pass-screen .ruby-pass-current-point {
-    backface-visibility: hidden;
-}
 
-.ruby-pass-screen .ruby-pass-track-free {
-    width: 60% !important;
-    height: 60% !important;
-}
 
-.ruby-pass-screen .ruby-pass-node-premium {
-    transform: rotate(var(--node-angle)) translateX(min(565px, 46vw, 66vh)) !important;
-}
 
-.ruby-pass-screen .ruby-pass-node-free {
-    transform: rotate(var(--node-angle)) translateX(min(405px, 33vw, 48vh)) !important;
-}
 
-body.is-touch-device .ruby-pass-screen .ruby-pass-gear-shell {
-    top: calc(100% + min(6vw, 56px)) !important;
-    width: min(1040px, 112vw, 220vh) !important;
-    height: min(1040px, 112vw, 220vh) !important;
-}
 
-body.is-touch-device .ruby-pass-screen .ruby-pass-node-premium {
-    transform: rotate(var(--node-angle)) translateX(min(440px, 37vw, 58vh)) !important;
-}
 
-body.is-touch-device .ruby-pass-screen .ruby-pass-node-free {
-    transform: rotate(var(--node-angle)) translateX(min(318px, 27vw, 42vh)) !important;
-}
 
-body.is-touch-device .ruby-pass-reward {
-    width: 48px !important;
-    height: 48px !important;
-    left: -24px !important;
-    top: -24px !important;
-}
 
-body.is-touch-device .ruby-pass-reward-premium {
-    width: 56px !important;
-    height: 56px !important;
-    left: -28px !important;
-    top: -28px !important;
-}
 
 
 
@@ -7446,22 +6429,9 @@ body.is-touch-device .menu-btn {
 }
 
 /* Ajustes de diseño táctil */
-.ruby-pass-lane-premium {
-    z-index: 1;
-}
 
-.ruby-pass-lane-free {
-    z-index: 2;
-}
 
-.ruby-pass-current-point {
-    z-index: 5;
-}
 
-.ruby-pass-track-free {
-    opacity: 1;
-    filter: drop-shadow(0 0 18px rgba(0, 255, 231, 0.2));
-}
 
 body.is-touch-device #shopPanel {
     transform: none !important;
@@ -7761,10 +6731,6 @@ body.is-touch-device .ls-small {
     cursor: default;
 }
 
-.ruby-pass-reward img.ruby-pass-currency-img {
-    object-fit: cover;
-    border-radius: 50%;
-}
 
 body.is-touch-device .ls-title {
     font-size: var(--ls-font-large-mobile, clamp(25px, 5.2vw, 44px)) !important;
@@ -7918,108 +6884,23 @@ body.is-touch-device .ls-play-btn {
     pointer-events: auto;
 }
 
-body.is-touch-device .ruby-pass-stage {
-    height: calc(100dvh - 76px);
-}
 
-body.is-touch-device .ruby-pass-arc-window {
-    left: 0 !important;
-    right: 0 !important;
-    top: 86px !important;
-    bottom: 86px !important;
-    overflow: hidden;
-}
 
-body.is-touch-device .ruby-pass-gear-shell {
-    top: calc(100% + min(11vw, 92px)) !important;
-    width: min(1180px, 128vw, 245vh) !important;
-    height: min(1180px, 128vw, 245vh) !important;
-}
 
-body.is-touch-device .ruby-pass-lane-free {
-    z-index: 2;
-}
 
-body.is-touch-device .ruby-pass-lane-premium {
-    z-index: 1;
-}
 
-body.is-touch-device .ruby-pass-track-free {
-    width: 61% !important;
-    height: 61% !important;
-    opacity: 1;
-    filter: drop-shadow(0 0 18px rgba(0, 255, 231, 0.22));
-}
 
-body.is-touch-device .ruby-pass-track-premium {
-    opacity: 0.86;
-}
 
-body.is-touch-device .ruby-pass-node-premium {
-    transform: rotate(var(--node-angle)) translateX(min(560px, 47vw, 66vh));
-}
 
-body.is-touch-device .ruby-pass-node-free {
-    transform: rotate(var(--node-angle)) translateX(min(390px, 33vw, 48vh));
-}
 
-body.is-touch-device .ruby-pass-focus {
-    left: 50% !important;
-    right: auto !important;
-    top: auto !important;
-    bottom: calc(12px + env(safe-area-inset-bottom)) !important;
-    width: min(560px, 42vw) !important;
-    min-width: 300px;
-    transform: translateX(-50%) !important;
-    grid-template-columns: 1fr;
-    gap: 8px !important;
-    padding: 0 !important;
-    background: transparent !important;
-    border: 0 !important;
-    box-shadow: none !important;
-    backdrop-filter: none !important;
-}
 
-body.is-touch-device .ruby-pass-focus h3 {
-    font-size: 24px !important;
-}
 
-body.is-touch-device .ruby-pass-buy,
-body.is-touch-device .ruby-pass-dev {
-    height: 34px;
-}
 
 @media (orientation: landscape) {
-    body.is-touch-device .ruby-pass-arc-window {
-        right: min(300px, 36vw) !important;
-        top: 72px !important;
-        bottom: 0 !important;
-    }
 
-    body.is-touch-device .ruby-pass-gear-shell {
-        top: calc(100% + min(8vw, 70px)) !important;
-        width: min(1180px, 150vw, 245vh) !important;
-        height: min(1180px, 150vw, 245vh) !important;
-    }
 
-    body.is-touch-device .ruby-pass-focus {
-        left: auto !important;
-        right: calc(14px + env(safe-area-inset-right)) !important;
-        top: 132px !important;
-        bottom: auto !important;
-        width: min(268px, 31vw) !important;
-        min-width: 230px;
-        transform: none !important;
-    }
 
-    body.is-touch-device .ruby-pass-focus h3 {
-        font-size: 22px !important;
-    }
 
-    body.is-touch-device .ruby-pass-focus p,
-    body.is-touch-device .ruby-pass-kicker {
-        font-size: 10px !important;
-    }
 }
 
 @media (max-width: 900px) {
@@ -8094,6 +6975,18 @@ body.is-touch-device .ruby-pass-dev {
     border: 1px solid rgba(255, 255, 255, 0.12);
     border-radius: 8px;
     box-shadow: 0 24px 80px rgba(0, 0, 0, 0.45);
+    scrollbar-width: thin;
+    scrollbar-color: rgba(0, 255, 231, 0.35) transparent;
+}
+
+.powerup-selection-panel::-webkit-scrollbar { width: 7px; }
+.powerup-selection-panel::-webkit-scrollbar-track { background: transparent; }
+.powerup-selection-panel::-webkit-scrollbar-thumb {
+    background: linear-gradient(180deg, rgba(0, 255, 231, 0.5), rgba(255, 45, 85, 0.4));
+    border-radius: 4px;
+}
+.powerup-selection-panel::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(180deg, rgba(0, 255, 231, 0.75), rgba(255, 45, 85, 0.6));
 }
 
 .powerup-selection-head,
@@ -8311,6 +7204,7 @@ body.is-touch-device .ruby-pass-dev {
 
 .powerup-shop-card.rect,
 .powerup-pick-card {
+    position: relative;
     border-radius: 8px;
 }
 
@@ -8369,6 +7263,51 @@ body.is-touch-device .ruby-pass-dev {
     transform: translateY(-1px);
 }
 
+/* Botón "i" de cada carta — abre la descripción real del potenciador
+   (la guía que ya existía) en vez de dejar al jugador sin idea de qué
+   hace cada uno. */
+.powerup-pick-card .powerup-info-btn,
+.powerup-vip-feature .powerup-info-btn {
+    position: absolute;
+    top: 6px;
+    right: 6px;
+    width: 18px;
+    height: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: rgba(0, 0, 0, 0.55);
+    border: 1px solid rgba(255, 255, 255, 0.35);
+    color: rgba(255, 255, 255, 0.85);
+    font-family: var(--font-principal, serif);
+    font-style: italic;
+    font-size: 11px;
+    line-height: 1;
+    cursor: pointer;
+    z-index: 3;
+    transition: all 0.15s ease;
+}
+.powerup-pick-card .powerup-info-btn:hover,
+.powerup-vip-feature .powerup-info-btn:hover {
+    background: var(--powerup-color);
+    border-color: var(--powerup-color);
+    color: #0a0a0f;
+    transform: scale(1.12);
+    box-shadow: 0 0 10px var(--powerup-color);
+}
+
+/* Resaltado momentáneo cuando el botón "i" te trae directo a un
+   potenciador dentro de la guía completa. */
+.powerup-help-item.is-highlighted {
+    animation: powerup-help-highlight 1.6s ease;
+}
+@keyframes powerup-help-highlight {
+    0% { box-shadow: 0 0 0 rgba(255, 255, 255, 0); background: rgba(255, 255, 255, 0.02); }
+    20% { box-shadow: 0 0 22px var(--powerup-color); background: color-mix(in srgb, var(--powerup-color) 16%, rgba(255, 255, 255, 0.04)); }
+    100% { box-shadow: 0 0 0 rgba(255, 255, 255, 0); background: rgba(255, 255, 255, 0.02); }
+}
+
 .powerup-filter-buttons {
     display: flex;
     gap: 8px;
@@ -8407,6 +7346,7 @@ body.is-touch-device .ruby-pass-dev {
 
 .powerup-vip-feature {
     --powerup-color: #ffd700;
+    position: relative;
     display: flex;
     align-items: center;
     gap: 14px;
@@ -8910,16 +7850,165 @@ body.is-touch-device .ruby-pass-dev {
     opacity: 1;
 }
 
+/* ============================================================
+   LIBRO DE POTENCIADORES — inspirado en el libro de The Forest:
+   pestañas de categoría sobresaliendo a los dos lados, "lomo" al
+   centro, y páginas con look de pantalla de THE GEM (no de papel).
+   ============================================================ */
+.powerup-book {
+    position: relative;
+    width: min(1240px, 96vw);
+    max-height: 88vh;
+}
+
+.powerup-book-tabs {
+    position: absolute;
+    top: 64px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    z-index: 2;
+}
+
+.powerup-book-tabs.left { right: 100%; align-items: flex-end; }
+.powerup-book-tabs.right { left: 100%; align-items: flex-start; }
+
+.powerup-book-tab {
+    writing-mode: vertical-rl;
+    text-orientation: mixed;
+    padding: 16px 9px;
+    background: linear-gradient(135deg, rgba(20, 15, 35, 0.98), rgba(10, 8, 20, 0.99));
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    color: rgba(255, 255, 255, 0.55);
+    font-family: var(--font-principal);
+    font-size: 11px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    cursor: pointer;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.4);
+    transition: all 0.2s ease;
+}
+.powerup-book-tabs.left .powerup-book-tab { border-right: none; border-radius: 8px 0 0 8px; }
+.powerup-book-tabs.right .powerup-book-tab { border-left: none; border-radius: 0 8px 8px 0; }
+
+.powerup-book-tab:hover {
+    color: #fff;
+    background: linear-gradient(135deg, rgba(35, 25, 55, 0.98), rgba(15, 12, 28, 0.99));
+}
+
+.powerup-book-tab.active {
+    color: #4bc0eb;
+    border-color: #4bc0eb;
+    box-shadow: 0 0 16px rgba(75, 192, 235, 0.45);
+}
+.powerup-book-tabs.left .powerup-book-tab.active { transform: translateX(-6px); }
+.powerup-book-tabs.right .powerup-book-tab.active { transform: translateX(6px); }
+
 .powerup-help-content {
+    position: relative;
     background: linear-gradient(135deg, rgba(20, 15, 35, 0.98), rgba(10, 8, 20, 0.99));
     border: 2px solid rgba(255, 255, 255, 0.12);
     border-radius: 16px;
     padding: 32px;
-    max-width: 800px;
     width: 100%;
-    max-height: 80vh;
+    max-height: 88vh;
     overflow-y: auto;
-    box-shadow: 0 0 40px rgba(75, 192, 235, 0.25);
+    box-shadow:
+        0 0 40px rgba(75, 192, 235, 0.25),
+        8px 0 0 -4px rgba(20, 15, 35, 0.9),
+        14px 0 0 -8px rgba(20, 15, 35, 0.7),
+        -8px 0 0 -4px rgba(20, 15, 35, 0.9),
+        -14px 0 0 -8px rgba(20, 15, 35, 0.7);
+    scrollbar-width: thin;
+    scrollbar-color: rgba(75, 192, 235, 0.4) transparent;
+}
+.powerup-help-content::-webkit-scrollbar { width: 7px; }
+.powerup-help-content::-webkit-scrollbar-track { background: transparent; }
+.powerup-help-content::-webkit-scrollbar-thumb {
+    background: linear-gradient(180deg, rgba(75, 192, 235, 0.55), rgba(255, 45, 85, 0.4));
+    border-radius: 4px;
+}
+.powerup-help-content::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(180deg, rgba(75, 192, 235, 0.8), rgba(255, 45, 85, 0.6));
+}
+
+/* Lomo del libro: línea al centro de las dos "páginas" */
+.powerup-book-spine-line {
+    position: absolute;
+    left: 50%;
+    top: 88px;
+    bottom: 32px;
+    width: 1px;
+    background: linear-gradient(180deg, transparent, rgba(75, 192, 235, 0.35) 10%, rgba(75, 192, 235, 0.35) 90%, transparent);
+    box-shadow: 0 0 12px rgba(75, 192, 235, 0.25);
+    pointer-events: none;
+}
+
+/* Superficie de la "página": textura de panel tecnológico (líneas finas
+   tipo circuito + viñeta) en vez de textura de papel, para que combine
+   con el resto de THE GEM. Tiene el perspective para el flip 3D. */
+.powerup-book-page-surface {
+    position: relative;
+    perspective: 1800px;
+}
+
+.powerup-help-body {
+    position: relative;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px 48px;
+    align-content: start;
+    transform-style: preserve-3d;
+    transform-origin: center center;
+    backface-visibility: hidden;
+    background-image:
+        repeating-linear-gradient(0deg, rgba(75, 192, 235, 0.025) 0px, rgba(75, 192, 235, 0.025) 1px, transparent 1px, transparent 26px),
+        radial-gradient(ellipse at 50% 0%, rgba(75, 192, 235, 0.06), transparent 60%);
+    border-radius: 6px;
+}
+
+/* Flip: la página gira sobre el eje del lomo (centro), como si diera
+   vuelta. A la mitad del giro (90°, invisible de canto) se cambia el
+   contenido — por eso renderPage() corre en el setTimeout de la mitad. */
+.powerup-book-page-surface.is-flipping .powerup-help-body {
+    transition: transform 0.2s cubic-bezier(0.4, 0, 0.7, 1), opacity 0.2s ease;
+}
+.powerup-book-page-surface.flip-out .powerup-help-body {
+    transform: rotateY(-90deg);
+    opacity: 0.25;
+}
+.powerup-book-page-surface.flip-in .powerup-help-body {
+    animation: powerup-page-flip-in 0.23s cubic-bezier(0.2, 0.6, 0.4, 1) forwards;
+}
+@keyframes powerup-page-flip-in {
+    0% { transform: rotateY(90deg); opacity: 0.25; }
+    100% { transform: rotateY(0deg); opacity: 1; }
+}
+
+/* Sombra de "pliegue" que recorre el lomo mientras gira, para que el
+   giro se sienta con volumen y no como un simple slide. */
+.powerup-book-page-surface.is-flipping::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    left: 50%;
+    width: 50%;
+    background: linear-gradient(90deg, rgba(0, 0, 0, 0.35), transparent 60%);
+    pointer-events: none;
+    z-index: 5;
+}
+
+/* Esquina de página doblada — puro decorado, no interactúa */
+.powerup-help-content::before {
+    content: "";
+    position: absolute;
+    right: 14px;
+    bottom: 14px;
+    width: 26px;
+    height: 26px;
+    background: linear-gradient(135deg, transparent 50%, rgba(75, 192, 235, 0.18) 50%);
+    border-radius: 0 0 4px 0;
+    pointer-events: none;
 }
 
 .powerup-help-header {
@@ -8956,12 +8045,6 @@ body.is-touch-device .ruby-pass-dev {
 
 .powerup-help-close:hover {
     color: #fff;
-}
-
-.powerup-help-body {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: 16px;
 }
 
 .powerup-help-item {
@@ -9035,10 +8118,36 @@ body.is-touch-device .ruby-pass-dev {
     border-left: 2px solid var(--powerup-color);
 }
 
+@media (max-width: 980px) {
+    .powerup-book-tabs {
+        position: static;
+        flex-direction: row;
+        align-items: stretch;
+        overflow-x: auto;
+        gap: 6px;
+        margin-bottom: 10px;
+        transform: none !important;
+    }
+    .powerup-book-tabs.left { justify-content: flex-start; }
+    .powerup-book-tabs.right { display: none; } /* se unen todas a la fila de arriba en móvil */
+    .powerup-book-tab {
+        writing-mode: horizontal-tb;
+        padding: 8px 14px;
+        border-radius: 8px !important;
+        border: 1px solid rgba(255, 255, 255, 0.16) !important;
+        white-space: nowrap;
+        flex-shrink: 0;
+    }
+    .powerup-book-tabs.left .powerup-book-tab.active,
+    .powerup-book-tabs.right .powerup-book-tab.active { transform: none; }
+    .powerup-book-spine-line { display: none; }
+}
+
 @media (max-width: 720px) {
     .powerup-help-content {
         padding: 20px;
         max-height: 90vh;
+        box-shadow: 0 0 40px rgba(75, 192, 235, 0.25);
     }
 
     .powerup-help-body {
@@ -11435,167 +10544,52 @@ article.vip-mini-item.trophy-skin .skin-name {
    ============================================================ */
 
 /* ── Anillo giratorio ── */
-.ruby-pass-gear-shell {
-    top: calc(100% + var(--rp-gear-top-offset, min(20px, 54vw))) !important;
-    width: var(--rp-gear-size, min(2300px, 190vw, 245vh)) !important;
-    height: var(--rp-gear-size, min(2300px, 190vw, 245vh)) !important;
-}
 
 /* ── Ventana del arco ── */
-.ruby-pass-arc-window {
-    top: var(--rp-arc-top, 0) !important;
-    right: var(--rp-arc-right, 0) !important;
-    bottom: var(--rp-arc-bottom, 0) !important;
-    left: var(--rp-arc-left, 0) !important;
-    inset: unset !important;
-}
 
 /* ── Nodos ── */
-.ruby-pass-node-premium {
-    transform: rotate(var(--node-angle)) translateX(var(--rp-node-premium-x, min(810px, 68vw, 88vh))) !important;
-}
 
-.ruby-pass-node-free {
-    transform: rotate(var(--node-angle)) translateX(var(--rp-node-free-x, min(620px, 52vw, 67vh))) !important;
-}
 
 /* ── Carril gratuito ── */
-.ruby-pass-track-free {
-    width: var(--rp-free-track-size, 58%) !important;
-    height: var(--rp-free-track-size, 58%) !important;
-}
 
 /* ── Panel central (VIP ACTIVO / RUBY PASS / 0% PROGRESO) ── */
-.ruby-pass-focus {
-    top: var(--rp-focus-top, 10%) !important;
-    left: var(--rp-focus-left, 50%) !important;
-    width: var(--rp-focus-width, min(360px, calc(100vw - 40px))) !important;
-}
 
 /* ── Título "RUBY PASS" ── */
-.ruby-pass-focus h3 {
-    font-size: var(--rp-focus-title-font, 22px) !important;
-    letter-spacing: var(--rp-focus-title-spacing, 5px) !important;
-}
 
 /* ── Kicker "VIP ACTIVO" ── */
-.ruby-pass-kicker {
-    font-size: var(--rp-focus-kicker-font, 11px) !important;
-}
 
 /* ── Subtexto "0% PROGRESO" ── */
-.ruby-pass-focus p {
-    font-size: var(--rp-focus-sub-font, 11px) !important;
-}
 
 /* ── Barra de XP ── */
-.ruby-pass-xpbar {
-    height: var(--rp-xpbar-height, 10px) !important;
-    margin-top: var(--rp-xpbar-margin-top, 18px) !important;
-}
 
 /* ── Botón COMPRAR / PREMIUM ACTIVO ── */
-.ruby-pass-buy {
-    height: var(--rp-buy-height, 40px) !important;
-    font-size: var(--rp-buy-font, 11px) !important;
-}
 
 /* ── Botones DEV ── */
-.ruby-pass-dev {
-    height: var(--rp-dev-height, 34px) !important;
-    font-size: var(--rp-dev-font, 10px) !important;
-}
 
 /* ── Topbar ── */
-.ruby-pass-topbar {
-    height: var(--rp-topbar-height, 76px) !important;
-    padding: var(--rp-topbar-padding, 12px 22px) !important;
-    gap: var(--rp-topbar-gap, 16px) !important;
-}
 
 /* ── Perfil en topbar ── */
-.ruby-pass-profile {
-    height: var(--rp-profile-height, 54px) !important;
-    min-width: var(--rp-profile-minwidth, min(360px, 48vw)) !important;
-    padding: var(--rp-profile-padding, 8px 12px) !important;
-    border-radius: var(--rp-profile-radius, 8px) !important;
-    gap: var(--rp-profile-gap, 12px) !important;
-}
 
 /* ── Avatar ── */
-.ruby-pass-profile-avatar {
-    width: var(--rp-avatar-size, 38px) !important;
-    height: var(--rp-avatar-size, 38px) !important;
-}
 
 /* ── Nombre ── */
-.ruby-pass-profile-name {
-    font-size: var(--rp-name-font, 12px) !important;
-}
 
 /* ── Subtexto ── */
-.ruby-pass-profile-sub {
-    font-size: var(--rp-sub-font, 9px) !important;
-}
 
 /* ── Etiqueta NIVEL X / XP ── */
-.ruby-pass-season {
-    display: var(--rp-season-display, flex) !important;
-    font-size: var(--rp-season-font, 12px) !important;
-}
 
 /* ── Banner de temporada (esquina derecha del topbar) ── */
-.ruby-pass-season-banner {
-    margin-left: auto;
-    display: var(--rp-season-display, flex);
-    align-items: center;
-}
 
 /* Modo PNG */
-.ruby-pass-season-img {
-    width: var(--rp-season-banner-width, 220px);
-    height: var(--rp-season-banner-height, 54px);
-    object-fit: contain;
-    display: block;
-}
 
 /* Modo texto: cuadro decorativo */
-.ruby-pass-season-caja {
-    display: var(--rp-season-caja-display, inline-flex);
-    align-items: center;
-    justify-content: center;
-    background: var(--rp-season-caja-bg, rgba(0, 255, 231, 0.12));
-    border: var(--rp-season-caja-border, 1px solid rgba(0, 255, 231, 0.4));
-    border-radius: var(--rp-season-caja-radius, 10px);
-    padding: var(--rp-season-caja-padding, 6px 16px);
-}
 
 /* Modo texto: el texto en sí */
-.ruby-pass-season-texto {
-    color: var(--rp-season-color, #00ffe7);
-    font-size: var(--rp-season-font-size, 14px);
-    font-style: var(--rp-season-font-style, italic);
-    letter-spacing: var(--rp-season-spacing, 3px);
-    transform: rotate(var(--rp-season-rotate, -2deg));
-    font-family: var(--font-principal);
-    white-space: nowrap;
-}
 
 
 /* Forzamos a que el contenedor del pase y su fondo se adapten bien */
-.ruby-pass-container,
-[class*="ruby-pass"] {
-    background-size: cover !important;
-    background-position: center center !important;
-    background-repeat: no-repeat !important;
-}
 
 /* Si el fondo se inyecta como una etiqueta <img> dentro del pase */
-.ruby-pass-container img,
-[class*="ruby-pass"] img {
-    object-fit: cover !important;
-    object-position: center !important;
-}
 
 /*
 ============================================================
@@ -11653,7 +10647,9 @@ AÑADE ESTE BLOQUE al FINAL de style.css
     [class*="vipCapsule"],
     [class*="vipGloss"],
     [class*="vipSlow"],
-    .ruby-pass-arc {
+    .rp-tier.is-current,
+    .rp-node-icon.is-claimable,
+    .rp-path-spark {
         animation: none !important;
     }
 
@@ -13978,42 +12974,9 @@ body.performance-mode .hud-notify-dot {
      del navegador.
    ===================================================== */
 
-.ruby-rail-stage {
-    position: relative;
-    height: 100%;
-    display: flex;
-    align-items: center;
-    padding: 24px 0 200px;
-    /* deja hueco abajo para el panel .ruby-pass-focus, que en esta
-       parte 1 todavía vive en flujo normal debajo del riel — se
-       rediseña como banner de premium en la parte 4 */
-}
 
-.ruby-rail-scroll {
-    width: 100%;
-    overflow-x: auto;
-    overflow-y: visible;   /* para que los picos de las barras (si algún día sobresalen) no se corten por acá */
-    padding: 44px 5vw 26px;
-    /* Oculta la scrollbar nativa (queda solo el swipe). */
-    scrollbar-width: none;         /* Firefox */
-    -ms-overflow-style: none;      /* Edge viejo */
-}
-.ruby-rail-scroll::-webkit-scrollbar {
-    display: none;                 /* Chrome / WebView de Android (el que usa el APK) */
-}
 
-.ruby-rail-group {
-    display: grid;
-    grid-template-columns: max-content;
-    width: max-content;
-    min-width: 100%;
-}
 
-.ruby-rail-group.is-premium-locked .ruby-rail-nodes.is-premium,
-.ruby-rail-group.is-premium-locked .ruby-rail-bar-slot.is-premium {
-    opacity: .4;
-    filter: grayscale(.6);
-}
 
 /* ── Barra: border-image (no <img> suelta). Se intentó con una
    <img> real (width:100% + height:auto) para permitir overflow
@@ -14030,309 +12993,44 @@ body.performance-mode .hud-notify-dot {
    sobresalen (ej. agua), esa versión puntual va a necesitar una
    capa decorativa aparte superpuesta — este mecanismo base no lo
    soporta, y forzarlo rompe el riel como pasó acá. */
-.ruby-rail-bar-slot {
-    position: relative;
-    pointer-events: none;
-    border-style: solid;
-    /* round en vez de stretch: la imagen fuente mide 1774px / 1536px de
-       ancho, pero el riel completo (30 niveles) mide varios miles de px.
-       "stretch" toma la franja decorativa (rombos/filigrana) y la estira
-       de un tirón para cubrir ese ancho total -> los rombos se ven
-       alargados/deformados (el "estirado" feo). "round" en cambio repite
-       el motivo en copias completas, ajustando la cantidad de copias para
-       que no se corten a la mitad -> se ve como un patrón tileado, sin
-       deformar el dibujo original. */
-    border-image-repeat: round;
-}
-.ruby-rail-bar-slot.is-premium {
-    height: 46px;
-    border-image-source: url('assets/UI/Store/RubyPass/Arcs/ruby_pass_premium_track.png');
-    border-image-slice: 109 fill;
-    border-image-width: 23px;
-    filter: drop-shadow(0 4px 16px rgba(232, 180, 80, 0.35));
-}
-.ruby-rail-bar-slot.is-free {
-    height: 28px;
-    border-image-source: url('assets/UI/Store/RubyPass/Arcs/ruby_pass_free_track.png');
-    border-image-slice: 78 fill;
-    border-image-width: 14px;
-    filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.5));
-}
 
 /* ── Línea de recorrido entre las 2 barras (reemplaza al fill
    que iba pegado dentro de la barra y la tapaba). ── */
-.ruby-rail-path {
-    position: relative;
-    height: 5px;
-    margin: 10px 24px;
-}
-.ruby-rail-path-track {
-    position: absolute;
-    inset: 0;
-    border-radius: 999px;
-    background: rgba(255, 255, 255, 0.06);
-    overflow: hidden;
-}
-.ruby-rail-path-fill {
-    position: absolute;
-    top: 0; bottom: 0; left: 0;
-    border-radius: 999px;
-    background: linear-gradient(90deg, #7a4fd6, #e8c86b);
-    box-shadow: 0 0 6px rgba(232, 200, 107, 0.6), 0 0 3px rgba(122, 79, 214, 0.6);
-    transition: width .4s ease;
-}
-.ruby-rail-path-spark {
-    position: absolute;
-    top: 50%;
-    width: 10px;
-    height: 10px;
-    border-radius: 50%;
-    background: #fff2c2;
-    transform: translate(-50%, -50%);
-    box-shadow: 0 0 10px 3px rgba(255, 242, 194, 0.8);
-    transition: left .4s ease;
-}
 
 /* ── Banner de temporada (la "vidriera") — imagen pura, sin
    texto quemado encima; el kicker/título los sigue poniendo el
    HTML alrededor si hace falta. Si el PNG no existe todavía,
    renderBattlePassPage() lo oculta solo vía onerror. ── */
-.ruby-rail-showcase-banner {
-    width: 100%;
-    border-radius: 16px;
-    overflow: hidden;
-    margin-bottom: 6px;
-    box-shadow: 0 10px 26px rgba(0, 0, 0, 0.4);
-}
-.ruby-rail-showcase-banner img {
-    width: 100%;
-    height: auto;
-    display: block;
-}
 
 /* ── Parte #2: vidriera de "próxima recompensa" ──
    Usa free_marco como marco (reasignado, ver plan): da sensación
    industrial/resistente, deja el dorado del VIP reservado para el
    banner de premium más abajo, así no compiten entre sí. */
-.ruby-rail-next-showcase {
-    display: flex;
-    align-items: center;
-    gap: 14px;
-    padding: 10px 16px;
-    margin-bottom: 10px;
-    width: max-content;
-    max-width: 100%;
-}
-.ruby-rail-next-showcase-frame {
-    position: relative;
-    flex: 0 0 auto;
-    width: 74px;
-    height: 74px;
-    border-style: solid;
-    border-image-source: url('assets/UI/Store/RubyPass/Arcs/ruby_pass_free_marco.png');
-    border-image-slice: 90 fill;
-    border-image-width: 18px;
-    border-image-repeat: round;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: rgba(10, 8, 6, 0.85);
-}
-.ruby-rail-next-showcase-icon {
-    width: 62%;
-    height: 62%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-.ruby-rail-next-showcase-icon img {
-    width: 100%;
-    height: 100%;
-    object-fit: contain;
-}
-.ruby-rail-next-showcase-icon.is-future {
-    filter: blur(3px) brightness(0.7) saturate(1.2);
-}
-.ruby-rail-next-showcase-mark {
-    position: absolute;
-    inset: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-family: monospace;
-    font-weight: 700;
-    font-size: 22px;
-    color: rgba(255, 255, 255, 0.85);
-    text-shadow: 0 0 10px rgba(0, 0, 0, 0.9);
-}
-.ruby-rail-next-showcase-text {
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
-}
-.ruby-rail-next-showcase-text span {
-    font-size: 11px;
-    letter-spacing: 1.5px;
-    color: rgba(255, 255, 255, 0.5);
-    text-transform: uppercase;
-}
-.ruby-rail-next-showcase-text b {
-    font-size: 18px;
-    color: #fff2c2;
-    letter-spacing: 0.5px;
-}
 
-.ruby-rail-nodes {
-    position: relative;
-    z-index: 1;
-    display: flex;
-    align-items: center;
-    gap: 58px;
-    padding: 0 70px;
-}
-.ruby-rail-nodes.is-premium { margin-bottom: 8px; }
-.ruby-rail-nodes.is-free { margin-top: 8px; }
 
-.ruby-rail-node {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 6px;
-    flex: 0 0 auto;
-}
 /* Free primero (recompensa) y nivel abajo; en premium el nivel va
    arriba, pegado a la barra, para que la recompensa "flote" lejos
    de ella — jerarquía visual: lo dorado pesa más. */
-.ruby-rail-nodes.is-premium .ruby-rail-node {
-    flex-direction: column-reverse;
-}
 
-.ruby-rail-node-icon {
-    all: unset;
-    box-sizing: border-box;
-    width: 46px;
-    height: 46px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: rgba(10, 8, 6, 0.85);
-    border: 2px solid rgba(255, 255, 255, 0.18);
-    cursor: default;
-    transition: transform 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease;
-    overflow: hidden;
-}
 
 /* Los nodos VIP pesan más que los free — a propósito, mismo
    criterio de jerarquía que las barras (ver PLAN_RUBY_PASS.md). */
-.ruby-rail-nodes.is-premium .ruby-rail-node-icon {
-    width: 52px;
-    height: 52px;
-    border-color: rgba(232, 200, 107, 0.35);
-    background: rgba(36, 23, 8, 0.9);
-}
-.ruby-rail-nodes.is-free .ruby-rail-node-icon {
-    width: 40px;
-    height: 40px;
-}
 
-.ruby-rail-node-icon img {
-    width: 72%;
-    height: 72%;
-    object-fit: contain;
-}
 
-.ruby-rail-node-icon.is-unlocked {
-    border-color: rgba(255, 255, 255, 0.4);
-}
-.ruby-rail-nodes.is-premium .ruby-rail-node-icon.is-unlocked {
-    border-color: rgba(232, 200, 107, 0.6);
-}
 
-.ruby-rail-node-icon.is-claimable {
-    cursor: pointer;
-    border-color: #ffee00;
-    box-shadow: 0 0 0 3px rgba(255, 238, 0, 0.18), 0 0 16px rgba(255, 238, 0, 0.35);
-    animation: ruby-rail-claimable-pulse 1.6s ease-in-out infinite;
-}
 
-.ruby-rail-node-icon.is-claimable:hover {
-    transform: scale(1.08);
-}
 
-@keyframes ruby-rail-claimable-pulse {
-    0%, 100% { box-shadow: 0 0 0 3px rgba(255, 238, 0, 0.18), 0 0 16px rgba(255, 238, 0, 0.35); }
-    50% { box-shadow: 0 0 0 6px rgba(255, 238, 0, 0.1), 0 0 24px rgba(255, 238, 0, 0.55); }
-}
 
-.ruby-rail-node-icon.is-claimed {
-    border-color: rgba(120, 255, 160, 0.6);
-    opacity: .7;
-    cursor: default;
-    animation: none;
-}
 
-.ruby-rail-node-icon.is-locked {
-    opacity: .35;
-    cursor: default;
-}
 
-.ruby-rail-node.is-current .ruby-rail-node-icon {
-    width: 60px;
-    height: 60px;
-    border-width: 3px;
-    border-color: #fff;
-    box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.15), 0 0 22px rgba(255, 255, 255, 0.4);
-}
-.ruby-rail-nodes.is-premium .ruby-rail-node.is-current .ruby-rail-node-icon {
-    width: 66px;
-    height: 66px;
-    border-color: #fff2c2;
-    box-shadow: 0 0 0 4px rgba(232, 200, 107, 0.25), 0 0 26px rgba(232, 200, 107, 0.6);
-}
 
-.ruby-rail-node-level {
-    font-family: monospace;
-    font-size: 10px;
-    font-weight: 700;
-    letter-spacing: 1px;
-    color: rgba(255, 255, 255, 0.55);
-}
 
-.ruby-rail-node.is-current .ruby-rail-node-level {
-    color: white;
-}
 
-body.reduced-motion .ruby-rail-node-icon.is-claimable,
-body.performance-mode .ruby-rail-node-icon.is-claimable {
-    animation: none;
-}
 
 /* ── Countdown de temporada (Parte #3 del plan) — vive en el
    topbar, al lado del botón VOLVER. Solo aparece si Felipe cargó
    settings.seasonEndsAt en rubypass.config.js; si no, el JS ni
    siquiera manda el div (ver getRubyPassSeasonCountdown()). ── */
-.ruby-rail-countdown {
-    background: rgba(0, 0, 0, 0.35);
-    border: 1px solid rgba(232, 200, 107, 0.3);
-    border-radius: 12px;
-    padding: 8px 16px;
-    text-align: right;
-    font-size: 10px;
-    letter-spacing: .5px;
-    color: rgba(255, 255, 255, 0.6);
-    flex-shrink: 0;
-    white-space: nowrap;
-}
-.ruby-rail-countdown b {
-    display: block;
-    font-size: 14px;
-    color: #ff9a6a;
-    letter-spacing: 0;
-}
-.ruby-rail-countdown.is-expired b {
-    color: #ff5a5a;
-}
 
 /* ── Banner de Premium (Parte #4 del plan) — el MISMO espacio
    cambia de contenido según el estado, nunca queda vacío:
@@ -14340,88 +13038,9 @@ body.performance-mode .ruby-rail-node-icon.is-claimable {
    = estado "PREMIUM ACTIVO" con dato útil (recompensas pendientes
    de reclamar). Vive arriba del panel .ruby-pass-focus (que sigue
    mostrando solo % de progreso + botones DEV, sin tocarlo). ── */
-.ruby-rail-premium-banner {
-    display: flex;
-    align-items: center;
-    gap: 16px;
-    flex-wrap: wrap;
-    margin: 16px 0 0;
-    padding: 16px 20px;
-    border-radius: 16px;
-    background: linear-gradient(120deg, rgba(232, 180, 80, 0.16), rgba(232, 180, 80, 0.02));
-    border: 1px solid rgba(232, 200, 107, 0.35);
-}
-.ruby-rail-premium-banner.is-owned {
-    background: linear-gradient(120deg, rgba(120, 255, 160, 0.12), rgba(120, 255, 160, 0.02));
-    border-color: rgba(120, 255, 160, 0.35);
-}
 
-.ruby-rail-premium-banner-text {
-    flex: 1;
-    min-width: 200px;
-}
-.ruby-rail-premium-banner-text b {
-    display: block;
-    font-size: 15px;
-    color: #e8c86b;
-    margin-bottom: 4px;
-}
-.ruby-rail-premium-banner.is-owned .ruby-rail-premium-banner-text b {
-    color: #78ffa0;
-}
-.ruby-rail-premium-banner-text span {
-    font-size: 11.5px;
-    color: rgba(255, 255, 255, 0.65);
-}
 
-.ruby-rail-premium-previews {
-    display: flex;
-    gap: 8px;
-}
-.ruby-rail-premium-preview-icon {
-    width: 42px;
-    height: 42px;
-    border-radius: 10px;
-    background: rgba(0, 0, 0, 0.35);
-    border: 1px solid rgba(232, 200, 107, 0.35);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    overflow: hidden;
-    flex-shrink: 0;
-}
-.ruby-rail-premium-preview-icon img {
-    width: 72%;
-    height: 72%;
-    object-fit: contain;
-}
 
-.ruby-rail-premium-banner-btn {
-    all: unset;
-    box-sizing: border-box;
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    background: linear-gradient(145deg, #f2d488, #c98f2e);
-    color: #2a1a05;
-    font-weight: 800;
-    font-size: 12.5px;
-    letter-spacing: .3px;
-    padding: 11px 22px;
-    border-radius: 999px;
-    cursor: pointer;
-    box-shadow: 0 4px 14px rgba(232, 180, 80, 0.4);
-    flex-shrink: 0;
-    transition: transform 0.15s ease;
-}
-.ruby-rail-premium-banner-btn:hover {
-    transform: scale(1.04);
-}
-.ruby-rail-premium-banner-btn img {
-    width: 16px;
-    height: 16px;
-    object-fit: contain;
-}
 
 /* ── Fix "no debe haber scroll" ──
    Causa raíz: .ruby-pass-stage tenía altura fija (calc(100vh - 76px))
@@ -14437,107 +13056,14 @@ body.performance-mode .ruby-rail-node-icon.is-claimable {
    verdad necesita más espacio, por los 30 niveles) se lleva el alto
    sobrante con flex:1 + min-height:0; todo lo demás (vidriera, banner
    premium, misiones, focus) queda con su alto natural comprimido. */
-.ruby-pass-stage {
-    display: flex;
-    flex-direction: column;
-    padding: 6px 5vw 8px;
-    gap: 6px;
-    overflow: hidden;
-}
-.ruby-rail-showcase-banner,
-.ruby-rail-top-row,
-.ruby-rail-bottom-row,
-.ruby-pass-focus {
-    flex: 0 0 auto;
-}
-.ruby-rail-stage {
-    height: auto;
-    flex: 1 1 auto;
-    min-height: 0;
-    padding: 4px 0;
-}
-.ruby-rail-scroll {
-    height: 100%;
-    padding: 10px 5vw 6px;
-}
-.ruby-rail-next-showcase {
-    margin-bottom: 0;
-    padding: 6px 12px;
-}
-.ruby-rail-next-showcase-frame {
-    width: 52px;
-    height: 52px;
-}
 
 /* Fila superior: vidriera + botón "VER TODO" (Parte #6), en la misma
    línea para no sumar alto vertical extra. */
-.ruby-rail-top-row {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 10px;
-    flex-wrap: wrap;
-}
-.ruby-rail-viewall-btn {
-    all: unset;
-    box-sizing: border-box;
-    cursor: pointer;
-    padding: 8px 16px;
-    border-radius: 999px;
-    border: 1px solid rgba(232, 200, 107, 0.4);
-    background: rgba(232, 200, 107, 0.08);
-    color: #e8c86b;
-    font: 900 10.5px/1 monospace;
-    letter-spacing: 1px;
-    flex-shrink: 0;
-}
-.ruby-rail-viewall-btn:hover {
-    background: rgba(232, 200, 107, 0.16);
-}
 
 /* Banner premium + resumen de misiones lado a lado en vez de apilados
    (ahorra alto vertical, que es lo que estaba faltando). Se apilan de
    nuevo solo en pantallas angostas (ver media query abajo). */
-.ruby-rail-bottom-row {
-    display: flex;
-    align-items: stretch;
-    gap: 10px;
-    flex-wrap: wrap;
-}
-.ruby-rail-premium-banner {
-    flex: 1 1 320px;
-    margin: 0;
-    padding: 8px 14px;
-    gap: 10px;
-}
-.ruby-rail-premium-preview-icon {
-    width: 32px;
-    height: 32px;
-}
-.ruby-rail-premium-banner-btn {
-    padding: 8px 16px;
-}
 
-.ruby-pass-focus {
-    padding: 10px 16px !important;
-    gap: 6px !important;
-}
-.ruby-pass-focus h3 {
-    font-size: 15px !important;
-    letter-spacing: 3px !important;
-    margin: 0 !important;
-}
-.ruby-pass-focus p {
-    font-size: 10px !important;
-    margin: 0 !important;
-}
-.ruby-pass-xpbar {
-    height: 6px !important;
-    margin-top: 6px !important;
-}
-.ruby-pass-dev {
-    padding: 6px 10px;
-}
 
 /* ── Parte #5: resumen de misiones al lado del riel ──
    Mismo lenguaje visual que .mission-card del panel completo (acento
@@ -14545,109 +13071,340 @@ body.performance-mode .ruby-rail-node-icon.is-claimable {
    del mismo sistema. No reclama nada acá: cada fila y el link "VER
    TODAS" abren openMissionsPanel(), que es donde vive la lógica real
    de reclamo — cero lógica nueva. */
-.ruby-rail-missions-summary {
-    flex: 0 0 280px;
-    max-width: 280px;
-    margin: 0;
-    padding: 10px 14px;
-    border-radius: 14px;
-    background: rgba(255, 255, 255, 0.045);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    display: grid;
-    gap: 6px;
-}
-.ruby-rail-missions-summary-head {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-}
-.ruby-rail-missions-summary-head span {
-    font: 900 11px/1 Geom, monospace;
-    letter-spacing: 1px;
-    color: rgba(255, 255, 255, 0.7);
-}
-.ruby-rail-missions-summary-badge {
-    background: rgba(255, 218, 58, 0.16);
-    color: #ffda3a;
-    border: 1px solid rgba(255, 218, 58, 0.4);
-    border-radius: 999px;
-    font: 900 10px/1 monospace;
-    padding: 3px 7px;
-}
-.ruby-rail-missions-summary-row {
-    all: unset;
-    box-sizing: border-box;
-    width: 100%;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 8px 10px;
-    border-radius: 10px;
-    background: rgba(255, 255, 255, 0.03);
-    cursor: pointer;
-    transition: background 0.15s ease;
-}
-.ruby-rail-missions-summary-row:hover {
-    background: rgba(255, 255, 255, 0.07);
-}
-.ruby-rail-missions-summary-row.is-ready {
-    background: rgba(255, 218, 58, 0.1);
-    box-shadow: 0 0 0 1px rgba(255, 218, 58, 0.35) inset;
-}
-.ruby-rail-missions-summary-row-text {
-    flex: 1;
-    min-width: 0;
-    display: grid;
-    gap: 5px;
-}
-.ruby-rail-missions-summary-row-text span {
-    font: 700 11.5px/1.2 monospace;
-    color: rgba(255, 255, 255, 0.85);
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-.ruby-rail-missions-summary-row-bar {
-    height: 4px;
-    border-radius: 999px;
-    background: rgba(255, 255, 255, 0.08);
-    overflow: hidden;
-}
-.ruby-rail-missions-summary-row-bar i {
-    display: block;
-    height: 100%;
-    border-radius: inherit;
-    background: linear-gradient(90deg, #5fe7ff, #ffda3a);
-}
-.ruby-rail-missions-summary-row small {
-    font: 900 10.5px/1 monospace;
-    color: rgba(255, 255, 255, 0.5);
-    white-space: nowrap;
-}
-.ruby-rail-missions-summary-empty {
-    margin: 0;
-    font: 11px/1.5 monospace;
-    color: rgba(255, 255, 255, 0.55);
-}
-.ruby-rail-missions-summary-link {
-    all: unset;
-    box-sizing: border-box;
-    display: block;
-    cursor: pointer;
-    text-align: right;
-    font: 900 10.5px/1 monospace;
-    letter-spacing: 0.6px;
-    color: #ffda3a;
-}
-.ruby-rail-missions-summary-link:hover {
-    text-decoration: underline;
-}
 
 /* ── Parte #6: galería completa "ver todo" ──
    Mismo patrón de modal que .missions-modal/.missions-panel (fixed,
    backdrop blur, panel centrado con scroll propio), pero con la
    paleta dorada del Ruby Pass en vez de la cyan/amarilla de misiones,
    para que se sienta parte de este apartado y no del otro sistema. */
+/* ============================================================
+   RUBY PASS — Implementación 1:1 del diseño ruby_pass_pro.html
+   Reemplaza TODAS las capas viejas/parchadas anteriores (circular,
+   riel v1, riel v2 con overrides). Un solo bloque, sin duplicados.
+   Prefijo .rp- para todas las piezas nuevas → cero choque con CSS
+   vieja que pueda seguir viva en algún rincón del archivo.
+   ============================================================ */
+@import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=Chakra+Petch:wght@400;500;600;700&display=swap');
+
+.ruby-pass-screen {
+    --rp-bg: #07080d;
+    --rp-line: rgba(255, 255, 255, .09);
+    --rp-txt: #f2f4f9;
+    --rp-txt-dim: #8890a1;
+    --rp-gold: #ffd76a;
+    --rp-gold-dark: #8a6a1f;
+    --rp-red: #ff3b5c;
+    --rp-red-dim: #8a1f30;
+    --rp-white: #f5f7fc;
+
+    font-family: 'Chakra Petch', sans-serif;
+    color: var(--rp-txt);
+    background-color: var(--rp-bg);
+    background-image:
+        radial-gradient(circle at 12% -10%, rgba(255, 215, 106, .10), transparent 40%),
+        radial-gradient(circle at 90% 10%, rgba(255, 59, 92, .08), transparent 42%);
+    background-size: cover;
+    background-position: center;
+    height: 100vh;
+    overflow-y: auto;
+    padding: 20px 22px 32px;
+}
+
+.ruby-pass-screen h2,
+.ruby-pass-screen h3 { font-family: 'Rajdhani', sans-serif; }
+
+.ruby-pass-screen * { box-sizing: border-box; }
+
+.rp-wrap { max-width: 1180px; margin: 0 auto; }
+
+/* ===================== TOPBAR ===================== */
+.rp-topbar { display: flex; align-items: center; justify-content: space-between; gap: 14px; margin-bottom: 16px; flex-wrap: wrap; }
+.rp-season-id { display: flex; align-items: center; gap: 14px; min-width: 0; }
+.rp-ring { position: relative; width: 52px; height: 52px; border-radius: 50%; flex-shrink: 0; }
+.rp-ring svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+.rp-ring-fill {
+    position: absolute; inset: 7px; border-radius: 50%;
+    background: linear-gradient(160deg, #232635, #101219);
+    background-size: cover; background-position: center;
+    display: flex; align-items: center; justify-content: center;
+    overflow: hidden;
+}
+.rp-ring-fill img { width: 100%; height: 100%; object-fit: cover; }
+.rp-season-eyebrow { font-size: 10px; letter-spacing: 3px; color: var(--rp-gold); font-weight: 700; text-transform: uppercase; white-space: nowrap; }
+.rp-season-title { font-family: 'Rajdhani', sans-serif; font-weight: 700; font-size: 20px; letter-spacing: 1px; margin-top: 2px; color: var(--rp-white); white-space: nowrap; }
+
+.rp-timer {
+    display: inline-flex; align-items: center; gap: 8px; padding: 8px 16px;
+    background: rgba(255, 59, 92, .08); border: 1px solid var(--rp-red);
+    clip-path: polygon(0 0, calc(100% - 9px) 0, 100% 50%, calc(100% - 9px) 100%, 0 100%);
+    font-size: 12px; color: #ff8fa3; font-weight: 700; letter-spacing: 1.5px; white-space: nowrap;
+}
+.rp-timer-clock { position: relative; width: 12px; height: 12px; border: 1.5px solid #ff8fa3; border-radius: 50%; flex-shrink: 0; }
+.rp-timer-clock::before { content: ""; position: absolute; top: 50%; left: 50%; width: 4px; height: 1.5px; background: #ff8fa3; transform-origin: left center; transform: translate(0, -50%) rotate(-35deg); }
+.rp-timer-clock::after { content: ""; position: absolute; top: 50%; left: 50%; width: 3px; height: 1.5px; background: #ff8fa3; transform-origin: left center; transform: translate(0, -50%) rotate(90deg); }
+
+.rp-back {
+    padding: 8px 16px; background: none; border: 1px solid var(--rp-line);
+    color: var(--rp-txt-dim); font-family: 'Rajdhani', sans-serif; font-weight: 700;
+    font-size: 12px; letter-spacing: 2px; cursor: pointer;
+    clip-path: polygon(9px 0, 100% 0, 100% 100%, 0 100%);
+}
+.rp-back:hover { color: var(--rp-white); border-color: var(--rp-gold); }
+
+/* ===================== MARCO DE ESQUINAS ===================== */
+.rp-hud-frame { position: relative; border: 1px solid var(--rp-line); background: linear-gradient(135deg, rgba(255, 255, 255, .025), transparent); }
+.rp-corner { position: absolute; width: 20px; height: 20px; pointer-events: none; }
+.rp-corner::before, .rp-corner::after { content: ""; position: absolute; background: var(--rp-gold); }
+.rp-corner.tl { top: -1px; left: -1px; } .rp-corner.tl::before { width: 100%; height: 2px; top: 0; left: 0; box-shadow: 0 0 6px var(--rp-gold); } .rp-corner.tl::after { width: 2px; height: 100%; top: 0; left: 0; box-shadow: 0 0 6px var(--rp-gold); }
+.rp-corner.tr { top: -1px; right: -1px; } .rp-corner.tr::before { width: 100%; height: 2px; top: 0; right: 0; box-shadow: 0 0 6px var(--rp-gold); } .rp-corner.tr::after { width: 2px; height: 100%; top: 0; right: 0; box-shadow: 0 0 6px var(--rp-gold); }
+.rp-corner.bl { bottom: -1px; left: -1px; } .rp-corner.bl::before { width: 100%; height: 2px; bottom: 0; left: 0; box-shadow: 0 0 6px var(--rp-gold); } .rp-corner.bl::after { width: 2px; height: 100%; bottom: 0; left: 0; box-shadow: 0 0 6px var(--rp-gold); }
+.rp-corner.br { bottom: -1px; right: -1px; } .rp-corner.br::before { width: 100%; height: 2px; bottom: 0; right: 0; box-shadow: 0 0 6px var(--rp-gold); } .rp-corner.br::after { width: 2px; height: 100%; bottom: 0; right: 0; box-shadow: 0 0 6px var(--rp-gold); }
+
+/* ===================== HERO ===================== */
+.rp-hero { padding: 24px 28px; margin-bottom: 14px; display: flex; align-items: center; justify-content: space-between; gap: 20px; flex-wrap: wrap; }
+.rp-hero-left { flex: 1; min-width: 220px; }
+.rp-tag { display: inline-flex; align-items: center; gap: 8px; padding: 5px 14px; font-size: 10px; letter-spacing: 3px; color: var(--rp-gold); border: 1px solid var(--rp-gold); clip-path: polygon(9px 0, 100% 0, calc(100% - 9px) 100%, 0 100%); background: linear-gradient(90deg, rgba(255, 215, 106, .15), transparent); margin-bottom: 12px; }
+.rp-hero-title { font-family: 'Rajdhani', sans-serif; font-weight: 700; font-size: 30px; letter-spacing: 1px; color: var(--rp-white); line-height: 1.05; }
+.rp-hero-sub { font-size: 13px; color: var(--rp-txt-dim); max-width: 400px; margin-top: 8px; line-height: 1.55; }
+.rp-hero-buy-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-top: 16px; }
+.rp-buy-btn {
+    display: inline-flex; align-items: center; gap: 9px;
+    padding: 12px 24px; font-family: 'Rajdhani', sans-serif; font-weight: 700; font-size: 13.5px; letter-spacing: 1px;
+    color: #241a03; background: linear-gradient(135deg, #f3d489, var(--rp-gold) 45%, #c99a2e);
+    border: none; clip-path: polygon(9px 0, 100% 0, 100% calc(100% - 9px), calc(100% - 9px) 100%, 0 100%, 0 9px);
+    box-shadow: 0 0 24px rgba(255, 215, 106, .35); cursor: pointer;
+}
+.rp-buy-btn-money {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 12px 20px; font-family: 'Rajdhani', sans-serif; font-weight: 700; font-size: 12.5px; letter-spacing: .5px;
+    color: var(--rp-txt-dim); background: rgba(255, 255, 255, .03);
+    border: 1px dashed rgba(255, 255, 255, .25); clip-path: polygon(9px 0, 100% 0, 100% calc(100% - 9px), calc(100% - 9px) 100%, 0 100%, 0 9px);
+    cursor: pointer;
+}
+.rp-buy-btn-money:hover { color: var(--rp-txt); border-color: rgba(255, 255, 255, .4); }
+.rp-buy-btn:hover { filter: brightness(1.08); }
+.rp-buy-btn img { height: 14px; vertical-align: -2px; }
+.rp-hero-owned { margin-top: 16px; display: inline-flex; align-items: center; gap: 8px; color: var(--rp-gold); font-family: 'Rajdhani', sans-serif; font-weight: 700; font-size: 13px; letter-spacing: 1.5px; }
+
+.rp-hex {
+    position: relative; width: 118px; height: 118px; flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    clip-path: polygon(30% 0, 70% 0, 100% 30%, 100% 70%, 70% 100%, 30% 100%, 0 70%, 0 30%);
+    background: linear-gradient(160deg, rgba(255, 255, 255, .06), rgba(0, 0, 0, .35));
+    border: 2px solid var(--rp-gold);
+    box-shadow: 0 0 22px rgba(255, 215, 106, .35), inset 0 0 16px rgba(255, 215, 106, .15);
+    overflow: hidden;
+}
+.rp-hex img { width: 78%; height: 78%; object-fit: contain; }
+
+/* ===================== XP SEGMENTED BAR ===================== */
+.rp-xp-wrap { margin-bottom: 14px; }
+.rp-xp-label { display: flex; justify-content: space-between; font-size: 11.5px; color: var(--rp-txt-dim); font-weight: 600; margin-bottom: 7px; letter-spacing: .5px; gap: 10px; }
+.rp-xp-label b { color: var(--rp-gold); font-family: 'Rajdhani', sans-serif; font-weight: 700; letter-spacing: 1px; }
+.rp-xp-bar { height: 18px; display: flex; gap: 3px; padding: 3px; background: rgba(255, 255, 255, .03); border: 1px solid var(--rp-line); clip-path: polygon(6px 0, 100% 0, calc(100% - 6px) 100%, 0 100%); }
+.rp-xp-seg { flex: 1; background: rgba(255, 255, 255, .06); clip-path: polygon(3px 0, 100% 0, calc(100% - 3px) 100%, 0 100%); min-width: 3px; transition: background .35s ease, box-shadow .35s ease; }
+.rp-xp-seg.on { background: linear-gradient(90deg, var(--rp-gold-dark), var(--rp-gold)); box-shadow: 0 0 8px rgba(255, 215, 106, .4); }
+
+/* ===================== TRACK PANEL ===================== */
+.rp-track-panel { padding: 22px 24px 18px; margin-bottom: 14px; }
+.rp-track-head-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 4px; }
+.rp-viewall-btn {
+    padding: 7px 16px; background: none; border: 1px solid var(--rp-gold); color: var(--rp-gold);
+    font-family: 'Rajdhani', sans-serif; font-weight: 700; font-size: 11px; letter-spacing: 1.5px; cursor: pointer;
+    clip-path: polygon(8px 0, 100% 0, 100% 100%, 0 100%); flex-shrink: 0;
+}
+.rp-viewall-btn:hover { background: rgba(255, 215, 106, .12); }
+.rp-claimall-btn {
+    padding: 7px 16px; background: linear-gradient(90deg, rgba(255, 215, 106, .18), rgba(255, 215, 106, .06));
+    border: 1px solid var(--rp-gold); color: var(--rp-gold);
+    font-family: 'Rajdhani', sans-serif; font-weight: 700; font-size: 11px; letter-spacing: 1.5px; cursor: pointer;
+    clip-path: polygon(8px 0, 100% 0, 100% 100%, 0 100%);
+    animation: rp-claimallpulse 1.6s infinite;
+}
+.rp-claimall-btn:hover { background: rgba(255, 215, 106, .28); }
+@keyframes rp-claimallpulse { 0%, 100% { box-shadow: 0 0 0 rgba(255, 215, 106, 0); } 50% { box-shadow: 0 0 14px rgba(255, 215, 106, .4); } }
+
+.rp-lane-header { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; }
+.rp-lane-header .num { font-family: 'Rajdhani', sans-serif; font-weight: 700; font-size: 11px; color: var(--rp-gold); }
+.rp-lane-header .line { width: 16px; height: 1px; background: var(--rp-gold); }
+.rp-lane-header .txt { font-family: 'Rajdhani', sans-serif; font-weight: 700; font-size: 13px; letter-spacing: 2px; color: var(--rp-gold); }
+.rp-lane-header .fade { flex: 1; height: 1px; background: linear-gradient(90deg, var(--rp-line), transparent); }
+.rp-lane-header.silver .num { color: var(--rp-txt-dim); }
+.rp-lane-header.silver .line { background: var(--rp-txt-dim); }
+.rp-lane-header.silver .txt { color: var(--rp-txt-dim); }
+
+.rp-tiers-scroll { overflow-x: auto; padding-bottom: 4px; }
+.rp-tiers-scroll::-webkit-scrollbar { height: 6px; }
+.rp-tiers-scroll::-webkit-scrollbar-thumb { background: var(--rp-gold-dark); border-radius: 3px; }
+.rp-tiers { display: flex; gap: 6px; min-width: max-content; }
+.rp-tier {
+    width: 78px; height: 70px; position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px;
+    background: rgba(255, 255, 255, .035); border: 1px solid var(--rp-gold-dark);
+    clip-path: polygon(8px 0, 100% 0, calc(100% - 8px) 100%, 0 100%);
+    font-size: 22px; cursor: pointer; flex-shrink: 0;
+}
+.rp-tier img { width: 30px; height: 30px; object-fit: contain; }
+.rp-tier .rp-tnum { position: absolute; top: 4px; left: 7px; font-size: 9px; color: var(--rp-txt-dim); font-weight: 700; }
+.rp-tier.is-done { border-color: var(--rp-gold); box-shadow: 0 0 14px rgba(255, 215, 106, .25); }
+.rp-tier.is-done::after { content: "✓"; position: absolute; top: 4px; right: 7px; font-size: 10px; color: var(--rp-gold); font-weight: 900; }
+.rp-tier.is-current { border-color: var(--rp-gold); box-shadow: 0 0 22px rgba(255, 215, 106, .55); animation: rp-tglow 1.6s infinite; }
+@keyframes rp-tglow { 0%, 100% { filter: brightness(1); } 50% { filter: brightness(1.3); } }
+.rp-tier.is-locked { opacity: .55; }
+.rp-tier.is-claimable { animation: rp-claimpulse 1.3s infinite; }
+@keyframes rp-claimpulse { 0%, 100% { box-shadow: 0 0 14px rgba(255, 215, 106, .35); } 50% { box-shadow: 0 0 26px rgba(255, 215, 106, .7); } }
+.rp-tier.is-claiming { animation: rp-claimflash .5s ease; }
+@keyframes rp-claimflash { 0% { filter: brightness(1); } 40% { filter: brightness(1.9); } 100% { filter: brightness(1); } }
+.rp-mini-lock { position: absolute; top: 4px; right: 6px; width: 10px; height: 8px; }
+.rp-mini-lock::before { content: ""; position: absolute; top: -5px; left: 2px; width: 6px; height: 6px; border: 1.2px solid var(--rp-txt-dim); border-bottom: none; border-radius: 5px 5px 0 0; }
+.rp-mini-lock::after { content: ""; position: absolute; bottom: 0; left: 0; width: 10px; height: 7px; background: var(--rp-txt-dim); border-radius: 1px; }
+
+.rp-tier.is-free { border-color: rgba(255, 255, 255, .18); height: 54px; font-size: 17px; }
+.rp-tier.is-free.is-done { border-color: var(--rp-white); box-shadow: 0 0 10px rgba(255, 255, 255, .18); }
+.rp-tier.is-free.is-done::after { color: var(--rp-white); }
+.rp-tier.is-free.is-current { border-color: var(--rp-white); box-shadow: 0 0 16px rgba(255, 255, 255, .35); }
+
+.rp-divider { position: relative; height: 20px; margin: 4px 0; }
+.rp-divider::before { content: ""; position: absolute; left: 0; right: 0; top: 50%; height: 1px; background: linear-gradient(90deg, transparent, var(--rp-red-dim), var(--rp-red), var(--rp-red-dim), transparent); }
+.rp-divider-node { position: absolute; left: 24px; top: 50%; width: 8px; height: 8px; background: var(--rp-bg); border: 1.5px solid var(--rp-red); transform: translate(-50%, -50%) rotate(45deg); }
+
+/* ===================== BOTTOM ROW ===================== */
+.rp-bottom-grid { display: flex; gap: 0; flex-wrap: wrap; }
+.rp-panel-left {
+    flex: 1.25; min-width: 260px; position: relative; padding: 20px 24px;
+    background: rgba(255, 255, 255, .03); border: 1px solid var(--rp-gold-dark);
+    clip-path: polygon(0 0, calc(100% - 20px) 0, 100% 20px, 100% 100%, 0 100%);
+}
+.rp-panel-left::before { content: ""; position: absolute; top: 0; right: 0; width: 20px; height: 20px; background: var(--rp-gold); clip-path: polygon(100% 0, 0 0, 100% 100%); opacity: .5; }
+.rp-eyebrow { font-size: 10px; letter-spacing: 2.5px; color: var(--rp-gold); font-weight: 700; }
+.rp-panel-title { font-family: 'Rajdhani', sans-serif; font-weight: 700; font-size: 17px; margin: 4px 0 12px; color: var(--rp-white); }
+.rp-pct-row { display: flex; align-items: center; gap: 14px; }
+.rp-xp-bar.mini { height: 11px; flex: 1; }
+.rp-pct-num { font-family: 'Rajdhani', sans-serif; font-weight: 700; font-size: 18px; color: var(--rp-gold); min-width: 42px; text-align: right; }
+.rp-chip {
+    display: inline-flex; align-items: center; gap: 6px; padding: 8px 16px; margin-top: 14px;
+    background: rgba(255, 255, 255, .04); border: 1px solid var(--rp-gold);
+    clip-path: polygon(9px 0, 100% 0, calc(100% - 9px) 100%, 0 100%);
+    font-weight: 700; font-size: 12.5px; cursor: pointer; color: var(--rp-gold); font-family: 'Chakra Petch', sans-serif;
+}
+.rp-chip:hover { background: rgba(255, 215, 106, .1); }
+.rp-panel-note { font-size: 12px; color: var(--rp-txt-dim); margin-top: 10px; line-height: 1.5; }
+.rp-dev-row { display: flex; gap: 8px; margin-top: 14px; flex-wrap: wrap; }
+.rp-dev-btn { padding: 5px 10px; background: none; border: 1px dashed var(--rp-line); color: var(--rp-txt-dim); font-size: 9.5px; letter-spacing: 1px; cursor: pointer; font-family: monospace; }
+.rp-dev-btn:hover { color: var(--rp-txt); border-color: var(--rp-txt-dim); }
+
+.rp-rail { position: relative; width: 24px; flex-shrink: 0; }
+.rp-rail::before { content: ""; position: absolute; left: 50%; top: 12%; bottom: 12%; width: 1px; background: linear-gradient(180deg, transparent, var(--rp-line), var(--rp-line), transparent); }
+
+.rp-missions { flex: 1; min-width: 220px; padding: 20px 10px; }
+.rp-missions-bar { position: relative; display: flex; align-items: center; padding-left: 14px; height: 30px; background: linear-gradient(90deg, rgba(255, 59, 92, .10), transparent 70%); border-left: 3px solid var(--rp-red); font-family: 'Rajdhani', sans-serif; font-weight: 700; letter-spacing: 2px; font-size: 12px; margin-bottom: 14px; color: var(--rp-white); }
+.rp-dot-wrap { position: relative; width: 15px; height: 15px; margin-left: 8px; }
+.rp-dot { position: absolute; inset: 3px; border-radius: 50%; background: var(--rp-red); box-shadow: 0 0 8px var(--rp-red); }
+.rp-dot::after { content: ""; position: absolute; inset: -3px; border-radius: 50%; border: 1.5px solid var(--rp-red); animation: rp-ping 1.6s infinite; }
+@keyframes rp-ping { 0% { transform: scale(.6); opacity: 1; } 100% { transform: scale(1.6); opacity: 0; } }
+
+.rp-mission-item { display: flex; align-items: center; gap: 11px; margin-bottom: 13px; background: none; border: none; width: 100%; text-align: left; cursor: pointer; padding: 0; }
+.rp-mission-check { width: 24px; height: 24px; clip-path: polygon(5px 0, 100% 0, 100% calc(100% - 5px), calc(100% - 5px) 100%, 0 100%, 0 5px); display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 900; flex-shrink: 0; }
+.rp-mission-check.is-done { background: var(--rp-gold); color: #241a03; }
+.rp-mission-check.is-wip { border: 1px solid var(--rp-line); color: var(--rp-txt-dim); }
+.rp-mission-txt { flex: 1; min-width: 0; }
+.rp-mission-txt .name { font-size: 12.5px; font-weight: 600; color: var(--rp-txt); }
+.rp-mission-txt .sub { font-size: 10.5px; color: var(--rp-txt-dim); margin-top: 4px; }
+.rp-mm-bar { width: 100%; max-width: 130px; height: 4px; background: rgba(255, 255, 255, .06); margin-top: 5px; clip-path: polygon(2px 0, 100% 0, calc(100% - 2px) 100%, 0 100%); }
+.rp-mm-bar i { display: block; height: 100%; }
+.rp-mm-bar i.is-done { width: 100%; background: var(--rp-gold); }
+.rp-missions-empty { font-size: 12px; color: var(--rp-txt-dim); line-height: 1.5; }
+.rp-missions-link { margin-top: 6px; background: none; border: none; color: var(--rp-gold); font-size: 11px; font-weight: 700; letter-spacing: 1px; cursor: pointer; padding: 0; }
+.rp-missions-link:hover { text-decoration: underline; }
+
+/* ===================== RESPONSIVE ===================== */
+@media (max-width: 820px) {
+    .ruby-pass-screen { padding: 14px 12px 24px; }
+    .rp-hero { flex-direction: column; text-align: center; padding: 22px 20px; }
+    .rp-hero-sub { max-width: none; margin-left: auto; margin-right: auto; }
+    .rp-bottom-grid { flex-direction: column; }
+    .rp-rail { display: none; }
+    .rp-tier { width: 66px; height: 62px; font-size: 18px; }
+    .rp-tier img { width: 24px; height: 24px; }
+}
+
+/* ============================================================
+   Mini widget de progreso del Ruby Pass — vive en las pantallas de
+   victoria (#gw-pass-progress) y derrota (#go-pass-progress), FUERA
+   de .ruby-pass-screen, por eso tiene sus propios colores (no usa las
+   variables --rp-* que solo existen dentro del pase).
+   ============================================================ */
+.gwp-widget {
+    display: inline-flex; align-items: center; gap: 12px;
+    padding: 10px 18px; background: rgba(255, 255, 255, .04);
+    border: 1px solid rgba(255, 215, 106, .35); border-radius: 10px;
+    font-family: 'Chakra Petch', monospace;
+}
+.gwp-ring { position: relative; width: 46px; height: 46px; flex-shrink: 0; }
+.gwp-ring svg { width: 100%; height: 100%; }
+.gwp-ring-bg { fill: none; stroke: rgba(255, 255, 255, .14); stroke-width: 5; }
+.gwp-ring-fill { fill: none; stroke: #ffd76a; stroke-width: 5; stroke-linecap: round; transition: stroke-dasharray .4s ease; }
+.gwp-ring-label { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-family: 'Rajdhani', sans-serif; font-weight: 700; font-size: 15px; color: #ffd76a; }
+.gwp-info { text-align: left; }
+.gwp-title { font-size: 9.5px; letter-spacing: 2px; color: rgba(255, 215, 106, .85); margin-bottom: 4px; font-weight: 700; }
+.gwp-bar { width: 148px; height: 6px; background: rgba(255, 255, 255, .1); border-radius: 3px; overflow: hidden; margin-bottom: 4px; }
+.gwp-bar i { display: block; height: 100%; background: linear-gradient(90deg, #8a6a1f, #ffd76a); border-radius: 3px; }
+.gwp-sub { font-size: 11px; color: rgba(255, 255, 255, .6); }
+.gwp-widget.is-levelup { animation: gwp-pulse 1s ease; border-color: #ffd76a; box-shadow: 0 0 18px rgba(255, 215, 106, .45); }
+@keyframes gwp-pulse { 0% { transform: scale(1); } 35% { transform: scale(1.06); } 100% { transform: scale(1); } }
+@media (max-width: 480px) {
+    .gwp-bar { width: 110px; }
+}
+
+/* ============================================================
+   INICIO DEBUG RUBY PASS — bloque temporal para pruebas.
+   Borrá todo este bloque (hasta "FIN DEBUG RUBY PASS") cuando el
+   pase ya esté terminado al 100% y no lo necesites más.
+   ============================================================ */
+.rp-debug { position: fixed; top: 18px; right: 18px; z-index: 50; }
+.rp-debug-toggle {
+    width: 34px; height: 34px; border-radius: 50%; border: 1px solid var(--rp-red);
+    background: rgba(255, 59, 92, .14); color: #ff8fa3; font-size: 15px; cursor: pointer;
+}
+.rp-debug-toggle:hover { background: rgba(255, 59, 92, .25); }
+.rp-debug-panel {
+    display: none; flex-direction: column; gap: 6px; position: absolute; top: 42px; right: 0;
+    padding: 12px; min-width: 172px;
+    background: rgba(8, 6, 10, .96); border: 1px solid var(--rp-red);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, .55);
+}
+.rp-debug-panel.is-open { display: flex; }
+.rp-debug-label { font-size: 9px; letter-spacing: 2px; color: #ff8fa3; font-weight: 700; margin-bottom: 2px; }
+.rp-debug-btn {
+    padding: 7px 10px; background: rgba(255, 255, 255, .04); border: 1px dashed rgba(255, 255, 255, .22);
+    color: #ddd; font-size: 11px; letter-spacing: .5px; cursor: pointer; text-align: left; font-family: monospace;
+}
+.rp-debug-btn:hover { background: rgba(255, 255, 255, .1); color: #fff; }
+/* FIN DEBUG RUBY PASS */
+
+/* ============================================================
+   Iconos de recompensa compartidos — los usa renderRewardIcon()
+   tanto en el riel del pase como en la galería "VER TODO".
+   Van sin scope porque la galería vive fuera de .ruby-pass-screen.
+   ============================================================ */
+.ruby-pass-placeholder {
+    width: 30px;
+    height: 30px;
+    border: 1px dashed rgba(255, 255, 255, 0.34);
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.06);
+    flex-shrink: 0;
+}
+.ruby-pass-placeholder.ruby-pass-skin { border-radius: 50%; }
+.ruby-pass-placeholder.ruby-pass-chest { border-radius: 4px; }
+.ruby-pass-currency-img {
+    width: 30px;
+    height: 30px;
+    object-fit: contain;
+    flex-shrink: 0;
+}
+.rp-hex .ruby-pass-placeholder,
+.rp-hex .ruby-pass-currency-img { width: 60px; height: 60px; }
+
 .ruby-gallery-modal {
     position: fixed;
     inset: 0;
@@ -14818,35 +13575,6 @@ body.performance-mode .ruby-rail-node-icon.is-claimable {
 }
 
 @media (max-width: 820px) {
-    .ruby-rail-bottom-row {
-        flex-direction: column;
-    }
-    .ruby-rail-missions-summary {
-        max-width: 100%;
-        flex-basis: auto;
-    }
-    .ruby-rail-countdown {
-        padding: 6px 12px;
-        font-size: 9px;
-    }
-    .ruby-rail-countdown b { font-size: 12px; }
-    .ruby-rail-next-showcase-frame {
-        width: 58px;
-        height: 58px;
-    }
-    .ruby-rail-next-showcase-text b { font-size: 15px; }
-    .ruby-rail-premium-banner {
-        padding: 14px 16px;
-    }
-    .ruby-rail-premium-previews {
-        order: 3;
-        width: 100%;
-    }
-    .ruby-rail-premium-banner-btn {
-        order: 2;
-        width: 100%;
-        justify-content: center;
-    }
 }
 
 /* Saca el panel focus de la posición absoluta que tenía centrada
@@ -14858,42 +13586,8 @@ body.performance-mode .ruby-rail-node-icon.is-claimable {
    .ruby-pass-focus con !important compitiendo — como este bloque va
    al final del archivo, gana por orden de cascada sin tener que
    cazar cada una. */
-.ruby-pass-focus {
-    position: static !important;
-    top: auto !important;
-    left: auto !important;
-    transform: none !important;
-    width: min(360px, calc(100vw - 40px)) !important;
-    margin: 0 auto !important;
-}
 
 @media (max-width: 820px) {
-    .ruby-rail-nodes {
-        gap: 40px;
-        padding: 0 40px;
-    }
-    .ruby-rail-node-icon {
-        width: 38px;
-        height: 38px;
-    }
-    .ruby-rail-nodes.is-premium .ruby-rail-node-icon {
-        width: 44px;
-        height: 44px;
-    }
-    .ruby-rail-nodes.is-free .ruby-rail-node-icon {
-        width: 34px;
-        height: 34px;
-    }
-    .ruby-rail-node.is-current .ruby-rail-node-icon {
-        width: 50px;
-        height: 50px;
-    }
-    .ruby-rail-nodes.is-premium .ruby-rail-node.is-current .ruby-rail-node-icon {
-        width: 56px;
-        height: 56px;
-    }
-    .ruby-rail-bar-slot.is-premium { height: 26px; }
-    .ruby-rail-bar-slot.is-free { height: 16px; }
 }
 
 /* =====================================================
@@ -15056,351 +13750,25 @@ body.is-touch-device .inv-key-counter {
    completo (todo lo de arriba queda intacto).
    ===================================================================== */
 
-.ruby-pass-screen {
-    --rp-gold: #f0c860;
-    --rp-gold-soft: rgba(240, 200, 96, 0.16);
-    --rp-gold-dark: #8a6a1f;
-    --rp-red: var(--color-rojo, #ff2d55);
-    --rp-red-dim: rgba(255, 45, 85, 0.35);
-    --rp-white: #f5f7fc;
-    --rp-silver-dim: rgba(255, 255, 255, 0.22);
-    --rp-bg: #07080d;
-    --rp-line: rgba(255, 255, 255, 0.09);
-    --rp-txt-dim: #8890a1;
-
-    background:
-        radial-gradient(circle at 12% -10%, var(--rp-gold-soft), transparent 40%),
-        radial-gradient(circle at 90% 8%, rgba(255, 45, 85, 0.10), transparent 42%),
-        linear-gradient(90deg, rgba(5, 0, 8, 0.98), rgba(12, 2, 8, 0.88)),
-        var(--rp-bg) !important;
-}
 
 /* ── Topbar / perfil / temporada ── */
-.ruby-pass-screen .ruby-pass-profile {
-    border: 1px solid var(--rp-line);
-    box-shadow: none;
-}
-.ruby-pass-screen .ruby-pass-profile-avatar {
-    border: 2px solid var(--rp-gold);
-    box-shadow: 0 0 10px rgba(240, 200, 96, 0.4);
-}
-.ruby-pass-screen .ruby-pass-season {
-    color: var(--rp-txt-dim);
-    font-family: 'Rajdhani', var(--font-secundaria);
-    font-weight: 600;
-}
-.ruby-pass-screen .ruby-pass-season strong {
-    color: var(--rp-gold) !important;
-    font-family: 'Rajdhani', var(--font-secundaria);
-    font-weight: 700;
-}
-.ruby-pass-screen .ruby-pass-back {
-    border: 1px solid var(--rp-line);
-    background: rgba(255, 255, 255, 0.03);
-    color: var(--rp-white);
-    clip-path: polygon(9px 0, 100% 0, 100% calc(100% - 9px), calc(100% - 9px) 100%, 0 100%, 0 9px);
-    border-radius: 0;
-}
-.ruby-pass-screen .ruby-pass-back:hover {
-    border-color: var(--rp-gold);
-    color: var(--rp-gold);
-}
 
 /* Countdown de temporada — badge angular rojo (urgencia) */
-.ruby-pass-screen .ruby-rail-countdown {
-    background: rgba(255, 45, 85, 0.08);
-    border: 1px solid var(--rp-red);
-    border-radius: 0;
-    clip-path: polygon(0 0, calc(100% - 9px) 0, 100% 50%, calc(100% - 9px) 100%, 0 100%);
-    padding: 8px 18px 8px 14px;
-    color: rgba(255, 255, 255, 0.75);
-    font-family: 'Rajdhani', var(--font-secundaria);
-    letter-spacing: 1.5px;
-}
-.ruby-pass-screen .ruby-rail-countdown b {
-    color: var(--rp-red) !important;
-    font-family: 'Rajdhani', var(--font-secundaria);
-    font-weight: 700;
-}
-.ruby-pass-screen .ruby-rail-countdown.is-expired b {
-    color: #ff5a5a !important;
-}
 
 /* ── Vidriera "próxima recompensa" (hero) — marco HUD dorado con
    esquinas en L, sin border-image de textura vieja. ── */
-.ruby-pass-screen .ruby-rail-next-showcase {
-    position: relative;
-    padding: 14px 22px 14px 16px;
-    background: linear-gradient(120deg, rgba(240, 200, 96, 0.08), transparent 65%);
-    background-repeat: no-repeat, no-repeat, no-repeat, no-repeat, no-repeat, no-repeat, no-repeat, no-repeat, no-repeat;
-    background-image:
-        linear-gradient(120deg, rgba(240, 200, 96, 0.08), transparent 65%),
-        linear-gradient(to right, var(--rp-gold) 0 20px, transparent 20px),
-        linear-gradient(to bottom, var(--rp-gold) 0 20px, transparent 20px),
-        linear-gradient(to left, var(--rp-gold) 0 20px, transparent 20px),
-        linear-gradient(to bottom, var(--rp-gold) 0 20px, transparent 20px),
-        linear-gradient(to right, var(--rp-gold) 0 20px, transparent 20px),
-        linear-gradient(to top, var(--rp-gold) 0 20px, transparent 20px),
-        linear-gradient(to left, var(--rp-gold) 0 20px, transparent 20px),
-        linear-gradient(to top, var(--rp-gold) 0 20px, transparent 20px);
-    background-size:
-        100% 100%,
-        100% 2px, 2px 100%,
-        100% 2px, 2px 100%,
-        100% 2px, 2px 100%,
-        100% 2px, 2px 100%;
-    background-position:
-        0 0,
-        top left, top left,
-        top right, top right,
-        bottom right, bottom right,
-        bottom left, bottom left;
-}
-.ruby-pass-screen .ruby-rail-next-showcase-frame {
-    border-style: none;
-    border-image: none;
-    clip-path: polygon(30% 0, 70% 0, 100% 30%, 100% 70%, 70% 100%, 30% 100%, 0 70%, 0 30%);
-    background: linear-gradient(160deg, rgba(255, 255, 255, 0.07), rgba(0, 0, 0, 0.4));
-    border: 2px solid var(--rp-gold);
-    box-shadow: 0 0 18px rgba(240, 200, 96, 0.35), inset 0 0 12px rgba(240, 200, 96, 0.12);
-}
-.ruby-pass-screen .ruby-rail-next-showcase-mark {
-    color: var(--rp-gold);
-}
-.ruby-pass-screen .ruby-rail-next-showcase-text span {
-    color: var(--rp-gold);
-    font-family: 'Rajdhani', var(--font-secundaria);
-    font-weight: 700;
-    letter-spacing: 3px;
-}
-.ruby-pass-screen .ruby-rail-next-showcase-text b {
-    color: var(--rp-white) !important;
-    font-family: 'Rajdhani', var(--font-secundaria);
-    font-weight: 700;
-    letter-spacing: 1px;
-}
-.ruby-pass-screen .ruby-rail-viewall-btn {
-    border: 1px solid var(--rp-gold);
-    background: transparent;
-    color: var(--rp-gold);
-    border-radius: 0;
-    clip-path: polygon(9px 0, 100% 0, 100% calc(100% - 9px), calc(100% - 9px) 100%, 0 100%, 0 9px);
-    font-family: 'Rajdhani', var(--font-secundaria);
-    letter-spacing: 2px;
-}
-.ruby-pass-screen .ruby-rail-viewall-btn:hover {
-    background: var(--rp-gold-soft);
-}
 
 /* ── Nodos del riel (VIP dorado protagonista, Free blanco discreto) ── */
-.ruby-pass-screen .ruby-rail-node-icon {
-    position: relative;
-    border-radius: 0;
-    clip-path: polygon(22% 0, 78% 0, 100% 22%, 100% 78%, 78% 100%, 22% 100%, 0 78%, 0 22%);
-    background: rgba(10, 10, 14, 0.85);
-    border-width: 2px;
-    border-style: solid;
-    border-color: var(--rp-silver-dim);
-}
-.ruby-pass-screen .ruby-rail-nodes.is-premium .ruby-rail-node-icon {
-    border-color: var(--rp-gold-dark);
-    background: rgba(30, 22, 8, 0.9);
-}
-.ruby-pass-screen .ruby-rail-nodes.is-free .ruby-rail-node-icon {
-    border-color: var(--rp-silver-dim);
-}
-.ruby-pass-screen .ruby-rail-node-icon.is-unlocked {
-    border-color: rgba(255, 255, 255, 0.55);
-}
-.ruby-pass-screen .ruby-rail-nodes.is-premium .ruby-rail-node-icon.is-unlocked {
-    border-color: var(--rp-gold);
-    box-shadow: 0 0 12px rgba(240, 200, 96, 0.3);
-}
-.ruby-pass-screen .ruby-rail-node-icon.is-claimable {
-    border-color: var(--rp-gold) !important;
-    box-shadow: 0 0 0 3px rgba(240, 200, 96, 0.18), 0 0 16px rgba(240, 200, 96, 0.4) !important;
-}
-@keyframes ruby-rail-claimable-pulse {
-    0%, 100% { box-shadow: 0 0 0 3px rgba(240, 200, 96, 0.18), 0 0 16px rgba(240, 200, 96, 0.4); }
-    50%      { box-shadow: 0 0 0 6px rgba(240, 200, 96, 0.10), 0 0 24px rgba(240, 200, 96, 0.6); }
-}
-.ruby-pass-screen .ruby-rail-node-icon.is-claimed {
-    border-color: var(--rp-gold-dark) !important;
-    opacity: .8;
-}
-.ruby-pass-screen .ruby-rail-node-icon.is-claimed::after {
-    content: "✓";
-    position: absolute;
-    top: -7px; right: -7px;
-    width: 17px; height: 17px;
-    border-radius: 50%;
-    background: var(--rp-gold);
-    color: #241a03;
-    font-size: 10px; font-weight: 900;
-    display: flex; align-items: center; justify-content: center;
-    border: 2px solid var(--rp-bg);
-}
-.ruby-pass-screen .ruby-rail-node-icon.is-locked {
-    opacity: .4;
-}
-.ruby-pass-screen .ruby-rail-node-icon.is-locked::after {
-    content: "";
-    position: absolute;
-    top: -6px; right: -6px;
-    width: 15px; height: 12px;
-    background: var(--rp-txt-dim);
-    border-radius: 1px;
-}
-.ruby-pass-screen .ruby-rail-node.is-current .ruby-rail-node-icon {
-    border-color: var(--rp-white) !important;
-    box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.18), 0 0 20px rgba(255, 255, 255, 0.4) !important;
-    animation: rp-current-pulse 1.6s ease-in-out infinite;
-}
-.ruby-pass-screen .ruby-rail-nodes.is-premium .ruby-rail-node.is-current .ruby-rail-node-icon {
-    border-color: var(--rp-gold) !important;
-    box-shadow: 0 0 0 3px rgba(240, 200, 96, 0.25), 0 0 26px rgba(240, 200, 96, 0.65) !important;
-}
 @keyframes rp-current-pulse {
     0%, 100% { filter: brightness(1); }
     50%      { filter: brightness(1.25); }
 }
-.ruby-pass-screen .ruby-rail-node-level {
-    font-family: 'Rajdhani', var(--font-secundaria);
-    font-weight: 700;
-    color: rgba(255, 255, 255, 0.5);
-}
-.ruby-pass-screen .ruby-rail-node.is-current .ruby-rail-node-level {
-    color: var(--rp-gold);
-}
 
 /* ── Barras del riel y línea de progreso ── */
-.ruby-pass-screen .ruby-rail-bar-slot.is-premium {
-    filter: drop-shadow(0 4px 14px rgba(240, 200, 96, 0.3));
-}
-.ruby-pass-screen .ruby-rail-bar-slot.is-free {
-    filter: drop-shadow(0 4px 8px rgba(255, 255, 255, 0.08)) grayscale(0.3);
-}
-.ruby-pass-screen .ruby-rail-path-track {
-    background: rgba(255, 255, 255, 0.05);
-    background-image: repeating-linear-gradient(90deg, rgba(7, 8, 13, 0.9) 0 2px, transparent 2px 26px);
-}
-.ruby-pass-screen .ruby-rail-path-fill {
-    background: linear-gradient(90deg, var(--rp-red), var(--rp-gold));
-    box-shadow: 0 0 8px rgba(240, 200, 96, 0.55);
-}
-.ruby-pass-screen .ruby-rail-path-spark {
-    background: var(--rp-gold);
-    box-shadow: 0 0 10px 3px rgba(240, 200, 96, 0.7);
-}
 
 /* ── Banner premium (CTA de compra / estado activo) — panel esquina
    cortada dorado, con variante blanca cuando ya está comprado. ── */
-.ruby-pass-screen .ruby-rail-premium-banner {
-    border-radius: 0;
-    clip-path: polygon(0 0, calc(100% - 20px) 0, 100% 20px, 100% 100%, 0 100%);
-    background: linear-gradient(120deg, rgba(240, 200, 96, 0.10), rgba(240, 200, 96, 0.01));
-    border: 1px solid var(--rp-gold-dark);
-}
-.ruby-pass-screen .ruby-rail-premium-banner.is-owned {
-    background: linear-gradient(120deg, rgba(245, 247, 252, 0.08), rgba(245, 247, 252, 0.01));
-    border-color: rgba(245, 247, 252, 0.35);
-}
-.ruby-pass-screen .ruby-rail-premium-banner-text b {
-    color: var(--rp-gold) !important;
-    font-family: 'Rajdhani', var(--font-secundaria);
-    letter-spacing: .5px;
-}
-.ruby-pass-screen .ruby-rail-premium-banner.is-owned .ruby-rail-premium-banner-text b {
-    color: var(--rp-white) !important;
-}
-.ruby-pass-screen .ruby-rail-premium-preview-icon {
-    border-radius: 0;
-    clip-path: polygon(20% 0, 80% 0, 100% 20%, 100% 80%, 80% 100%, 20% 100%, 0 80%, 0 20%);
-    background: rgba(0, 0, 0, 0.4);
-    border: 1px solid var(--rp-gold-dark);
-}
-.ruby-pass-screen .ruby-rail-premium-banner-btn {
-    background: linear-gradient(90deg, #fff6d9, var(--rp-gold) 45%, #c99a2e);
-    color: #241a03;
-    border-radius: 0;
-    clip-path: polygon(9px 0, 100% 0, 100% calc(100% - 9px), calc(100% - 9px) 100%, 0 100%, 0 9px);
-    box-shadow: 0 0 20px rgba(240, 200, 96, 0.4);
-    font-family: 'Rajdhani', var(--font-secundaria);
-    letter-spacing: .5px;
-}
 
 /* ── Resumen de misiones — header con muesca roja + esquinas HUD ── */
-.ruby-pass-screen .ruby-rail-missions-summary {
-    position: relative;
-    border-radius: 0;
-    background: rgba(255, 255, 255, 0.03);
-    border: 1px solid var(--rp-line);
-    border-left: 3px solid var(--rp-red);
-}
-.ruby-pass-screen .ruby-rail-missions-summary-head span {
-    font-family: 'Rajdhani', monospace;
-    color: rgba(255, 255, 255, 0.8);
-    letter-spacing: 2px;
-}
-.ruby-pass-screen .ruby-rail-missions-summary-badge {
-    background: rgba(255, 45, 85, 0.14);
-    color: var(--rp-red);
-    border: 1px solid var(--rp-red-dim);
-    border-radius: 50%;
-}
-.ruby-pass-screen .ruby-rail-missions-summary-row {
-    border-radius: 0;
-    clip-path: polygon(6px 0, 100% 0, calc(100% - 6px) 100%, 0 100%);
-}
-.ruby-pass-screen .ruby-rail-missions-summary-row.is-ready {
-    background: rgba(240, 200, 96, 0.10);
-    box-shadow: 0 0 0 1px rgba(240, 200, 96, 0.4) inset;
-}
-.ruby-pass-screen .ruby-rail-missions-summary-row-bar i {
-    background: linear-gradient(90deg, var(--rp-red), var(--rp-gold));
-}
-.ruby-pass-screen .ruby-rail-missions-summary-link {
-    color: var(--rp-gold) !important;
-}
 
 /* ── Panel focus (progreso % + botones dev) ── */
-.ruby-pass-screen .ruby-pass-focus {
-    background: rgba(255, 255, 255, 0.03) !important;
-    border: 1px solid var(--rp-line);
-    border-radius: 0 !important;
-    clip-path: polygon(14px 0, 100% 0, 100% calc(100% - 14px), calc(100% - 14px) 100%, 0 100%, 0 14px);
-}
-.ruby-pass-screen .ruby-pass-kicker {
-    color: var(--rp-gold) !important;
-    font-family: 'Rajdhani', var(--font-secundaria);
-    letter-spacing: 3px;
-}
-.ruby-pass-screen .ruby-pass-focus h3 {
-    color: var(--rp-white) !important;
-    font-family: 'Rajdhani', var(--font-secundaria);
-    font-weight: 700 !important;
-}
-.ruby-pass-screen .ruby-pass-focus p {
-    color: var(--rp-txt-dim) !important;
-}
-.ruby-pass-screen .ruby-pass-xpbar {
-    background: rgba(255, 255, 255, 0.06) !important;
-    border-radius: 0 !important;
-    background-image: repeating-linear-gradient(90deg, rgba(7, 8, 13, 0.9) 0 2px, transparent 2px 22px) !important;
-}
-.ruby-pass-screen .ruby-pass-xpbar span {
-    background: linear-gradient(90deg, var(--rp-red), var(--rp-gold)) !important;
-    box-shadow: 0 0 8px rgba(240, 200, 96, 0.5);
-}
-.ruby-pass-screen .ruby-pass-dev {
-    border-radius: 0;
-    border: 1px dashed var(--rp-line);
-    background: transparent;
-    color: var(--rp-txt-dim);
-    opacity: .55;
-}
-.ruby-pass-screen .ruby-pass-dev:hover {
-    opacity: 1;
-    border-color: var(--rp-red);
-    color: var(--rp-red);
-}

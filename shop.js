@@ -611,6 +611,32 @@ const BANNERS_DATA = [
         rarity: 'DEFAULT'
     },
 
+    // ── Banners exclusivos del Ruby Pass (no se compran, se ganan
+    // subiendo de nivel). passOnly hace que renderBannersPage() los
+    // oculte de la tienda normal hasta que el jugador los tenga. ──
+    {
+        id: 'Banner_RubyPass_Temporada_VIP',
+        name: 'Temporada · Ruby Pass VIP',
+        price: 0,
+        exclusive: true,
+        passOnly: true,
+        rubyPassLane: 'premium',
+        rubyPassLevel: 15,
+        cover: 'assets/Imagenes/Temporadas/Temp_Leyendas/Banners/banner_rubypass_vip_leyendas.png',
+        rarity: 'VIP'
+    },
+    {
+        id: 'Banner_RubyPass_Temporada_Free',
+        name: 'Temporada · Ruby Pass',
+        price: 0,
+        exclusive: true,
+        passOnly: true,
+        rubyPassLane: 'free',
+        rubyPassLevel: 25,
+        cover: 'assets/Imagenes/Temporadas/Temp_Leyendas/Banners/banner_rubypass_free_leyendas.png',
+        rarity: 'ESPECIAL'
+    },
+
     // Banners Básicos
     {
         id: 'Speed_Color_Green',
@@ -1176,12 +1202,12 @@ const RUBY_PASS_ASSETS = {
     levelMarker: 'assets/UI/Store/RubyPass/Markers/ruby_pass_level_marker.png', // RUBY_PASS_ASSET_SLOT_LEVEL_MARKER
     freeSkin01: 'assets/UI/Store/RubyPass/Rewards/Free/Skins/skin_free_ruby_01.png', // RUBY_PASS_ASSET_SLOT_FREE_SKIN_01
     freeSkin02: 'assets/UI/Store/RubyPass/Rewards/Free/Skins/skin_free_ruby_02.png', // RUBY_PASS_ASSET_SLOT_FREE_SKIN_02
-    freeBanner01: 'assets/UI/Store/RubyPass/Rewards/Free/Banners/banner_free_ruby_01.png', // RUBY_PASS_ASSET_SLOT_FREE_BANNER_01
+    freeBanner01: 'assets/Imagenes/Temporadas/Temp_Leyendas/Banners/banner_rubypass_free_leyendas.png', // Banner de temporada FREE — nivel 25
     freeBanner02: 'assets/UI/Store/RubyPass/Rewards/Free/Banners/banner_free_ruby_02.png', // RUBY_PASS_ASSET_SLOT_FREE_BANNER_02
     freeTrail01: 'assets/UI/Store/RubyPass/Rewards/Free/Trails/trail_free_ruby_01.png', // RUBY_PASS_ASSET_SLOT_FREE_TRAIL_01
     premiumSkinDemon: 'assets/UI/Store/RubyPass/Rewards/Premium/Skins/skin_premium_demon.png', // RUBY_PASS_ASSET_SLOT_PREMIUM_SKIN_DEMON
     premiumSkinFinal: 'assets/UI/Store/RubyPass/Rewards/Premium/Skins/skin_premium_final.png', // RUBY_PASS_ASSET_SLOT_PREMIUM_SKIN_FINAL
-    premiumBanner01: 'assets/UI/Store/RubyPass/Rewards/Premium/Banners/banner_premium_ruby_01.png', // RUBY_PASS_ASSET_SLOT_PREMIUM_BANNER_01
+    premiumBanner01: 'assets/Imagenes/Temporadas/Temp_Leyendas/Banners/banner_rubypass_vip_leyendas.png', // Banner de temporada VIP — nivel 15
     premiumFrame01: 'assets/UI/Store/RubyPass/Rewards/Premium/Frames/frame_premium_ruby_01.png', // RUBY_PASS_ASSET_SLOT_PREMIUM_FRAME_01
     premiumFrame02: 'assets/UI/Store/RubyPass/Rewards/Premium/Frames/frame_premium_ruby_02.png', // RUBY_PASS_ASSET_SLOT_PREMIUM_FRAME_02
     premiumEmote01: 'assets/UI/Store/RubyPass/Rewards/Premium/Emotes/emote_premium_ruby_01.png', // RUBY_PASS_ASSET_SLOT_PREMIUM_EMOTE_01
@@ -1293,11 +1319,11 @@ const RUBY_PASS_REWARDS = [
         premium: { type: 'coins' }
     },
 
-    // ── Nivel 15: TERCER COFRE ────────────────────────
+    // ── Nivel 15: BANNER EXCLUSIVO VIP + cofre free ───
     {
         level: 15, xp: 4800,
         free: { type: 'chest', image: 'assets/Imagenes/Cofres Imagenes/Cofre ESPECIAL.png' },
-        premium: { type: 'chest', image: 'assets/Imagenes/Cofres Imagenes/Cofre EPICO.png' }
+        premium: { type: 'banner', bannerId: 'Banner_RubyPass_Temporada_VIP', slot: 'premium_banner_01', image: RUBY_PASS_ASSETS.premiumBanner01, vip: true }
     },
 
     // ── Nivel 16 ─────────────────────────────────────
@@ -1314,11 +1340,11 @@ const RUBY_PASS_REWARDS = [
         premium: { type: 'rubies' }
     },
 
-    // ── Nivel 18: BANNER EXCLUSIVO PREMIUM ───────────
+    // ── Nivel 18 ───────────────────────────────────────
     {
         level: 18, xp: 6570,
         free: { type: 'coins' },
-        premium: { type: 'banner', slot: 'premium_banner_01', image: RUBY_PASS_ASSETS.premiumBanner01, vip: true }
+        premium: { type: 'rubies' }
     },
 
     // ── Nivel 19 ─────────────────────────────────────
@@ -1342,10 +1368,10 @@ const RUBY_PASS_REWARDS = [
         premium: { type: 'rubies' }
     },
 
-    // ── Nivel 22: BANNER NORMAL FREE ──────────────────
+    // ── Nivel 22 ───────────────────────────────────────
     {
         level: 22, xp: 9350,
-        free: { type: 'banner', slot: 'free_banner_01', image: RUBY_PASS_ASSETS.freeBanner01 },
+        free: { type: 'rubies' },
         premium: { type: 'coins' }
     },
 
@@ -1363,10 +1389,10 @@ const RUBY_PASS_REWARDS = [
         premium: { type: 'coins' }
     },
 
-    // ── Nivel 25: QUINTO COFRE ────────────────────────
+    // ── Nivel 25: BANNER DE TEMPORADA FREE + cofre VIP ─
     {
         level: 25, xp: 11750,
-        free: { type: 'chest', image: 'assets/Imagenes/Cofres Imagenes/Cofre EPICO.png' },
+        free: { type: 'banner', bannerId: 'Banner_RubyPass_Temporada_Free', slot: 'free_banner_01', image: RUBY_PASS_ASSETS.freeBanner01 },
         premium: { type: 'chest', image: 'assets/Imagenes/Cofres Imagenes/Cofre DEMON.png' }
     },
 
@@ -2150,7 +2176,7 @@ function renderHome(container) {
                     <img src="assets/UI/Store/Panels/portada_panel_skins_tienda_normal.png" alt="" draggable="false">
                 </button>
 
-                <button class="store-category-panel store-panel-seasons hud-frame" onclick="showShopSection('seasons')" type="button" style="--cfg-hud-accent:#a259ff; background-image:linear-gradient(180deg, rgba(10,8,20,.1), rgba(10,8,20,.7)), url('assets/seasons/Portadas%20temporadas/Temporada_1.png'); background-size:cover; background-position:center;">
+                <button class="store-category-panel store-panel-seasons hud-frame" onclick="showShopSection('seasons')" type="button" style="--cfg-hud-accent:#a259ff; background-image:linear-gradient(180deg, rgba(10,8,20,.1), rgba(10,8,20,.7)), url('assets/Imagenes/Temporadas/Temp_Leyendas/Portada/portada_leyendas.png'); background-size:cover; background-position:center;">
                     <div class="hud-frame-c tl"></div><div class="hud-frame-c tr"></div>
                     <div class="hud-frame-c bl"></div><div class="hud-frame-c br"></div>
                     <div class="store-panel-seasons-bg"></div>
@@ -2436,13 +2462,16 @@ function unlockFoodAchievement(id) {
 
 function renderBannersPage(container) {
     const equipped = localStorage.getItem('equippedBanner') || 'Banner_Deafult';
+    // Los banners passOnly (exclusivos del Ruby Pass) no se muestran acá
+    // hasta que el jugador los tenga — se ganan en el pase, no se compran.
+    const visibleBanners = BANNERS_DATA.filter(b => ownsBanner(b) || !b.passOnly);
     container.innerHTML = `
         <div style="display:flex; align-items:center; gap:16px; margin-bottom:24px;">
             ${shopBotonVolverHtml()}
             <div style="color:rgba(255,255,255,0.4); font-family:monospace; font-size:11px; letter-spacing:4px;">${shopTextos('banners').titulo ?? 'BANNERS'}</div>
         </div>
         <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:16px;">
-            ${BANNERS_DATA.map(b => renderBannerCard(b, equipped)).join('')}
+            ${visibleBanners.map(b => renderBannerCard(b, equipped)).join('')}
         </div>
     `;
 }
@@ -6941,32 +6970,72 @@ function unlockRubyPassPremium() {
 
     const gems = parseInt(localStorage.getItem('gems') || '0');
     if (gems < RUBY_PASS_PREMIUM_COST_GEMS) {
-        alert('Necesitas ' + RUBY_PASS_PREMIUM_COST_GEMS + ' rubies para activar el carril premium.');
+        showShopModal({
+            kicker: 'RUBY PASS',
+            title: 'Rubies insuficientes',
+            image: getCurrencyPileAsset('gems', RUBY_PASS_PREMIUM_COST_GEMS),
+            body: `Necesitás ${RUBY_PASS_PREMIUM_COST_GEMS} rubies para activar el carril VIP. Te faltan ${RUBY_PASS_PREMIUM_COST_GEMS - gems}.`,
+            cancelText: null,
+            confirmText: 'ENTENDIDO'
+        });
         return;
     }
 
+    // Antes esto cobraba las rubies apenas se tocaba el botón, sin
+    // confirmar nada — un mal clic y las gastabas sin querer. Ahora
+    // pasa por el mismo modal de confirmación que el resto de la tienda.
+    showShopModal({
+        kicker: 'CONFIRMAR',
+        title: 'Activar Ruby Pass VIP',
+        image: getCurrencyPileAsset('gems', RUBY_PASS_PREMIUM_COST_GEMS),
+        body: `¿Gastar ${RUBY_PASS_PREMIUM_COST_GEMS} rubies para desbloquear el carril VIP? Vas a recibir de inmediato todas las recompensas VIP de los niveles que ya alcanzaste.`,
+        confirmText: 'SÍ, ACTIVAR',
+        cancelText: 'CANCELAR',
+        onConfirm: confirmUnlockRubyPassPremium
+    });
+}
+
+// Se ejecuta solo tras confirmar en el modal de arriba. Antes de esto
+// había una animación (.ruby-pass-lane-premium / --premium-rotation)
+// que pertenecía al diseño circular viejo del pase — ya no existe ese
+// elemento en el DOM nuevo, así que ese código no hacía nada (fallaba
+// en silencio). Se reemplaza por un catch-up directo: al activar VIP
+// subís de una el carril premium hasta el nivel free que ya tenías.
+function confirmUnlockRubyPassPremium() {
+    const state = getRubyPassState();
+    if (state.premiumOwned) return;
+    const gems = parseInt(localStorage.getItem('gems') || '0');
+    if (gems < RUBY_PASS_PREMIUM_COST_GEMS) return;
+
     localStorage.setItem('gems', gems - RUBY_PASS_PREMIUM_COST_GEMS);
     localStorage.setItem('rubyPassPremiumOwned', 'true');
-    localStorage.setItem('rubyPassPremiumLevel', '1');
+    localStorage.setItem('rubyPassPremiumLevel', String(state.freeLevel));
     updateMenuHUD();
+    refreshShopBalances?.();
 
     const content = document.getElementById('rubyPassContent');
-    renderBattlePassPage(content, { premiumCatchUpFrom: 1 });
-
-    requestAnimationFrame(() => {
-        const premiumLane = document.querySelector('.ruby-pass-lane-premium');
-        if (!premiumLane) return;
-        premiumLane.classList.add('is-catching-up');
-        premiumLane.style.setProperty('--premium-rotation', getRubyPassRotation(state.freeLevel) + 'deg');
-    });
-
-    setTimeout(() => {
-        localStorage.setItem('rubyPassPremiumLevel', String(state.freeLevel));
-        if (document.getElementById('rubyPassPanel')?.style.display !== 'none') {
-            renderBattlePassPage(content);
-        }
-    }, 1250);
+    if (content) renderBattlePassPage(content);
+    showRubyPassToast('¡Ruby Pass VIP activado!');
 }
+
+// ===================================================================
+// INICIO PLACEHOLDER: comprar el pase con dinero real
+// Todavía no hay pasarela de pago conectada. Este botón solo avisa que
+// viene pronto — NO cobra nada ni activa el pase gratis. Cuando tengas
+// la pasarela lista, wireá su callback de éxito a grantRubyPassPremiumFromPayment()
+// (ya existe más arriba, hecha justo para esto).
+// ===================================================================
+function showRubyPassRealMoneyComingSoon() {
+    showShopModal({
+        kicker: 'RUBY PASS',
+        title: 'Muy pronto',
+        body: 'La compra con dinero real todavía no está disponible. Por ahora podés activar el Ruby Pass VIP con rubies.',
+        cancelText: null,
+        confirmText: 'ENTENDIDO'
+    });
+}
+window.showRubyPassRealMoneyComingSoon = showRubyPassRealMoneyComingSoon;
+// FIN PLACEHOLDER dinero real
 
 function grantRubyPassPremiumFromPayment() {
     const state = getRubyPassState();
@@ -7019,6 +7088,18 @@ function getRubyPassUpcomingPremiumRewards(state, count) {
         .slice(0, count);
 }
 
+// Cuenta cuántas recompensas hay listas para reclamar en total (ambos
+// carriles), sin importar el tipo. Se usa solo para decidir si mostrar
+// el botón "RECLAMAR TODO" en el header del track panel.
+function getRubyPassTotalClaimableCount(state) {
+    let count = 0;
+    RUBY_PASS_REWARDS.forEach(reward => {
+        if (reward.level <= state.freeLevel && localStorage.getItem(`rubyPassClaimed_free_${reward.level}`) !== 'true') count++;
+        if (state.premiumOwned && reward.level <= state.premiumLevel && localStorage.getItem(`rubyPassClaimed_premium_${reward.level}`) !== 'true') count++;
+    });
+    return count;
+}
+
 // Cuando el jugador SÍ tiene premium: cuenta cuántas recompensas premium
 // ya desbloqueadas todavía no reclamó — ese es el dato útil que reemplaza
 // al CTA de compra en el mismo espacio (nunca queda vacío).
@@ -7049,6 +7130,109 @@ function getRubyPassSeasonCountdown() {
     return { expired: false, label };
 }
 
+// Reclama de una todo lo que esté listo en ambos carriles. Las monedas,
+// rubies, banners y emotes se entregan directo (no necesitan que el
+// jugador elija nada). Los cofres se dejan afuera a propósito: abrir un
+// cofre implica elegir cómo pagarlo/abrirlo, así que esos se reclaman
+// uno por uno como siempre.
+function claimAllRubyPassRewards() {
+    const state = getRubyPassState();
+    const totals = { coins: 0, gems: 0, banners: 0, emotes: 0, chestsPending: 0, claimedCount: 0 };
+
+    RUBY_PASS_REWARDS.forEach(reward => {
+        [['free', state.freeLevel, true], ['premium', state.premiumLevel, state.premiumOwned]].forEach(([lane, laneLevel, laneActive]) => {
+            if (!laneActive || reward.level > laneLevel) return;
+            const key = `rubyPassClaimed_${lane}_${reward.level}`;
+            if (localStorage.getItem(key) === 'true') return;
+            const rewardData = lane === 'premium' ? reward.premium : reward.free;
+            if (!rewardData) return;
+
+            if (rewardData.type === 'chest') {
+                totals.chestsPending++;
+                return; // se reclama a mano, no acá
+            }
+
+            localStorage.setItem(key, 'true');
+            totals.claimedCount++;
+            if (rewardData.type === 'coins') {
+                const amount = rewardData.amount || (window.getRubyPassAmount ? window.getRubyPassAmount(reward.level, 'coins') : 50);
+                addCurrency(amount, 'coins');
+                totals.coins += amount;
+            } else if (rewardData.type === 'rubies') {
+                const amount = rewardData.amount || (window.getRubyPassAmount ? window.getRubyPassAmount(reward.level, 'gems') : 3);
+                addCurrency(amount, 'gems');
+                totals.gems += amount;
+            } else if (rewardData.type === 'emote') {
+                const passEmote = EMOTES_DATA.find(e => e.passOnly && e.rubyPassLane === lane && e.rubyPassLevel === reward.level);
+                if (passEmote) { localStorage.setItem('emote_' + passEmote.id, 'true'); totals.emotes++; }
+            } else if (rewardData.type === 'banner') {
+                const passBanner = (rewardData.bannerId && BANNERS_DATA.find(b => b.id === rewardData.bannerId))
+                    || BANNERS_DATA.find(b => b.passOnly && b.rubyPassLane === lane && b.rubyPassLevel === reward.level);
+                if (passBanner) { setBannerOwned(passBanner); totals.banners++; }
+            }
+        });
+    });
+
+    if (totals.claimedCount === 0) {
+        showRubyPassToast(totals.chestsPending > 0 ? 'Te faltan cofres por abrir' : 'No hay nada para reclamar');
+        return;
+    }
+
+    window.playSfx?.('passReward', 0.9);
+    refreshShopBalances?.();
+    renderBattlePassPage(document.getElementById('rubyPassContent'));
+
+    const parts = [];
+    if (totals.coins) parts.push(`${totals.coins} monedas`);
+    if (totals.gems) parts.push(`${totals.gems} rubies`);
+    if (totals.banners) parts.push(`${totals.banners} banner${totals.banners === 1 ? '' : 's'}`);
+    if (totals.emotes) parts.push(`${totals.emotes} emote${totals.emotes === 1 ? '' : 's'}`);
+    showShopModal({
+        kicker: 'RUBY PASS',
+        title: '¡Recompensas reclamadas!',
+        body: `Recibiste: ${parts.join(', ')}.${totals.chestsPending > 0 ? ` Te quedan ${totals.chestsPending} cofre${totals.chestsPending === 1 ? '' : 's'} por abrir a mano.` : ''}`,
+        cancelText: null,
+        confirmText: 'GENIAL'
+    });
+}
+window.claimAllRubyPassRewards = claimAllRubyPassRewards;
+
+// Antes tocar un nivel que todavía no alcanzaste no hacía nada (ni
+// feedback). Ahora muestra qué te espera ahí, para que tengas motivo
+// para seguir jugando — como en cualquier pase real.
+function previewRubyPassReward(lane, level) {
+    const state = getRubyPassState();
+    const reward = RUBY_PASS_REWARDS.find(item => item.level === level);
+    const rewardData = lane === 'premium' ? reward?.premium : reward?.free;
+    if (!rewardData) return;
+
+    if (lane === 'premium' && !state.premiumOwned) {
+        showShopModal({
+            kicker: `PREMIUM · NIVEL ${level}`,
+            title: getRewardLabel(rewardData),
+            image: rewardData.type === 'chest' ? rewardData.image : (rewardData.image || RUBY_PASS_REWARD_PLACEHOLDER),
+            fallback: rewardData.type?.toUpperCase() || 'PNG',
+            body: `Esta recompensa es del carril VIP. Activá el Ruby Pass VIP para poder alcanzarla.`,
+            cancelText: 'CERRAR',
+            confirmText: 'DESBLOQUEAR VIP',
+            onConfirm: unlockRubyPassPremium
+        });
+        return;
+    }
+
+    const levelsAway = level - (lane === 'premium' ? state.premiumLevel : state.freeLevel);
+    showShopModal({
+        kicker: `${lane === 'premium' ? 'PREMIUM' : 'FREE'} · NIVEL ${level}`,
+        title: getRewardLabel(rewardData),
+        image: rewardData.image || RUBY_PASS_REWARD_PLACEHOLDER,
+        fallback: rewardData.type?.toUpperCase() || 'PNG',
+        body: `Te faltan ${levelsAway} nivel${levelsAway === 1 ? '' : 'es'} para desbloquear esta recompensa.`,
+        cancelText: null,
+        confirmText: 'CERRAR'
+    });
+}
+window.previewRubyPassReward = previewRubyPassReward;
+
 function claimRubyPassReward(lane, level, rewardType) {
     const state = getRubyPassState();
     const unlocked = lane === 'free' ? level <= state.freeLevel : state.premiumOwned && level <= state.premiumLevel;
@@ -7075,6 +7259,15 @@ function claimRubyPassReward(lane, level, rewardType) {
         const passEmote = EMOTES_DATA.find(emote => emote.passOnly && emote.rubyPassLane === lane && emote.rubyPassLevel === level);
         if (passEmote) localStorage.setItem('emote_' + passEmote.id, 'true');
     }
+    if (rewardData?.type === 'banner') {
+        // Antes esto no hacía nada: se mostraba el modal de "reclamado"
+        // pero el banner nunca se guardaba, así que nunca aparecía en
+        // el inventario del jugador. Se busca por bannerId si está
+        // definido en la recompensa, o por lane+level como respaldo.
+        const passBanner = (rewardData.bannerId && BANNERS_DATA.find(b => b.id === rewardData.bannerId))
+            || BANNERS_DATA.find(b => b.passOnly && b.rubyPassLane === lane && b.rubyPassLevel === level);
+        if (passBanner) setBannerOwned(passBanner);
+    }
     if (rewardData?.type === 'chest') {
         showChestClaimOptions(getChestFromReward(rewardData), `${lane === 'premium' ? 'PREMIUM' : 'FREE'} NIVEL ${level}`);
     } else {
@@ -7084,6 +7277,12 @@ function claimRubyPassReward(lane, level, rewardType) {
     if (el) {
         el.classList.add('is-claiming', 'is-claimed');
         setTimeout(() => el.classList.remove('is-claiming'), 520);
+    }
+    // Si la galería "VER TODO" está abierta, se redibuja para que el
+    // check de reclamado aparezca al toque en vez de quedar desfasada
+    // hasta la próxima vez que se abra.
+    if (document.getElementById('rubyPassGalleryModal')?.style.display === 'grid') {
+        openRubyPassGallery();
     }
 }
 
@@ -7115,6 +7314,55 @@ function getRewardLabel(reward) {
     return labels[reward?.type] || 'Recompensa';
 }
 
+// ===================================================================
+// Mini widget de progreso del Ruby Pass para las pantallas de victoria
+// y derrota (#gw-pass-progress / #go-pass-progress en index.html).
+// La idea: que el jugador vea "che, me falta poco para el próximo
+// nivel" y tenga un motivo para jugar otra partida.
+// rpResult es lo que devuelve addRubyPassXp() — si es null, se muestra
+// el progreso actual sin línea de "+XP" (partidas donde no se sumó nada).
+// ===================================================================
+function renderRubyPassMiniProgress(containerId, rpResult = null) {
+    const container = document.getElementById(containerId);
+    if (!container) return;
+
+    const state = getRubyPassState();
+    const level = rpResult ? rpResult.level : state.freeLevel;
+    const xp = rpResult ? rpResult.xp : state.xp;
+    const progress = getRubyPassProgress(xp, level);
+    const maxLevel = RUBY_PASS_REWARDS[RUBY_PASS_REWARDS.length - 1].level;
+    const isMax = level >= maxLevel;
+    const nextReward = RUBY_PASS_REWARDS.find(r => r.level > level);
+    const xpToNext = nextReward ? Math.max(0, nextReward.xp - xp) : 0;
+    const leveledUp = !!(rpResult && rpResult.level > rpResult.previousLevel);
+    const CIRC = 176; // 2 * PI * 28 (radio del svg de abajo), redondeado
+
+    let subText;
+    if (isMax) subText = 'Nivel máximo del pase';
+    else if (leveledUp) subText = `¡Subiste a nivel ${level}!`;
+    else if (rpResult) subText = `+${rpResult.gained} XP · faltan ${xpToNext} para subir`;
+    else subText = `Faltan ${xpToNext} XP para el nivel ${level + 1}`;
+
+    container.innerHTML = `
+        <div class="gwp-widget ${leveledUp ? 'is-levelup' : ''}">
+            <div class="gwp-ring">
+                <svg viewBox="0 0 64 64">
+                    <circle cx="32" cy="32" r="28" class="gwp-ring-bg"></circle>
+                    <circle cx="32" cy="32" r="28" class="gwp-ring-fill" stroke-dasharray="${Math.round(progress * CIRC)} ${CIRC}" transform="rotate(-90 32 32)"></circle>
+                </svg>
+                <div class="gwp-ring-label">${level}</div>
+            </div>
+            <div class="gwp-info">
+                <div class="gwp-title">RUBY PASS</div>
+                <div class="gwp-bar"><i style="width:${Math.round(progress * 100)}%"></i></div>
+                <div class="gwp-sub">${subText}</div>
+            </div>
+        </div>
+    `;
+    container.style.display = 'block';
+}
+window.renderRubyPassMiniProgress = renderRubyPassMiniProgress;
+
 function showRubyPassToast(text) {
     let toast = document.getElementById('ruby-pass-toast');
     if (!toast) {
@@ -7128,7 +7376,17 @@ function showRubyPassToast(text) {
     toast.classList.add('showing');
     setTimeout(() => toast.classList.remove('showing'), 1300);
 }
+window.showRubyPassToast = showRubyPassToast;
 
+// =====================================================
+// RUBY PASS — pantalla principal
+// Reimplementación 1:1 sobre el diseño ruby_pass_pro.html
+// (topbar con anillo + countdown, hero de recompensa exclusiva,
+// barra de XP segmentada, dos carriles VIP/GRATIS en tarjetas,
+// panel inferior de progreso + misiones). Toda la lógica de datos
+// (localStorage, canje, monedas) es la misma de siempre — esto
+// solo cambia CÓMO se dibuja.
+// =====================================================
 function renderBattlePassPage(container, options = {}) {
     const state = getRubyPassState();
     const currentLevel = state.freeLevel;
@@ -7139,110 +7397,140 @@ function renderBattlePassPage(container, options = {}) {
     const renderProgress = getRubyPassProgress(renderXp, renderFreeLevel);
     const visibleRewards = RUBY_PASS_REWARDS;
     const seasonCountdown = getRubyPassSeasonCountdown();
-    const profileName = localStorage.getItem('playerName') || 'Jugador';
     const profileAvatar = localStorage.getItem('playerAvatar') || 'assets/UI/Common/Avatars/Avatar_Default.png';
-    const bannerId = localStorage.getItem('equippedBanner') || 'Banner_Deafult';
-    const banner = findBannerById(bannerId) || BANNERS_DATA[0];
-    const profileBannerBg = banner.cover
-        ? `linear-gradient(90deg, rgba(5,6,12,0.88), rgba(5,6,12,0.34)), url('${banner.cover}')`
-        : 'linear-gradient(135deg, rgba(0,255,231,0.18), rgba(255,77,109,0.16))';
+
+    // Recompensa "estrella" de la temporada: el nivel mas alto del
+    // carril premium. Es lo que se muestra en grande en el hero,
+    // como el arma/skin exclusiva que empuja la compra del pase.
+    const topReward = visibleRewards[visibleRewards.length - 1];
+
+    // Siguiente nivel gratis pendiente (para el texto de la barra de XP)
+    const nextReward = visibleRewards.find(r => r.level > currentLevel);
+    const xpToNext = nextReward ? Math.max(0, nextReward.xp - currentXp) : 0;
+
+    const XP_SEGMENTS = 20;
+    const xpSegmentsHtml = (segCount, prog) => Array.from({ length: segCount })
+        .map((_, i) => `<div class="rp-xp-seg${i < Math.round(prog * segCount) ? ' on' : ''}"></div>`)
+        .join('');
 
     container.innerHTML = `
-        <div class="ruby-pass-screen ${state.premiumOwned ? 'is-premium-owned' : 'is-premium-locked'}" style="${RUBY_PASS_ASSETS.background ? `background-image:linear-gradient(90deg, rgba(5,0,8,0.96), rgba(10,0,5,0.74)), url('${RUBY_PASS_ASSETS.background}')` : ''}">
-            <div class="ruby-pass-topbar">
-                <div class="ruby-pass-profile" style="background-image:${profileBannerBg};">
-                    <div class="ruby-pass-profile-avatar" style="background-image:url('${profileAvatar}')"></div>
-                    <div>
-                        <div class="ruby-pass-profile-name">${profileName}</div>
-                        <div class="ruby-pass-profile-sub">${banner.name || 'Banner'}</div>
+        <div class="ruby-pass-screen">
+        <!-- INICIO DEBUG RUBY PASS — borrá este <div class="rp-debug">...</div> completo
+             (y el bloque de funciones JS marcado igual más abajo) cuando el pase
+             ya esté terminado al 100% y no lo necesites más para probar. -->
+        <div class="rp-debug">
+            <button class="rp-debug-toggle" onclick="toggleRubyPassDebugPanel()" type="button" title="Panel de pruebas">🐞</button>
+            <div class="rp-debug-panel" id="rubyPassDebugPanel">
+                <span class="rp-debug-label">DEBUG PASE</span>
+                <button class="rp-debug-btn" onclick="rubyPassDevUnlockPremium()" type="button">Desbloquear pase</button>
+                <button class="rp-debug-btn" onclick="rubyPassDevLockPremium()" type="button">Bloquear pase</button>
+                <button class="rp-debug-btn" onclick="addRubyPassXpDev()" type="button">+250 XP</button>
+                <button class="rp-debug-btn" onclick="resetRubyPassXpDev()" type="button">Reset XP</button>
+            </div>
+        </div>
+        <!-- FIN DEBUG RUBY PASS -->
+        <div class="rp-wrap">
+
+            <div class="rp-topbar">
+                <div class="rp-season-id">
+                    <div class="rp-ring">
+                        <svg viewBox="0 0 100 100">
+                            <circle cx="50" cy="50" r="47" fill="none" stroke="var(--rp-gold)" stroke-width="2" opacity="0.22"/>
+                            <circle cx="50" cy="50" r="47" fill="none" stroke="var(--rp-gold)" stroke-width="2" stroke-dasharray="${Math.round(renderProgress * 295)} 295" stroke-linecap="round" transform="rotate(-90 50 50)"/>
+                        </svg>
+                        <div class="rp-ring-fill"><img src="${profileAvatar}" alt="" onerror="this.style.display='none'"></div>
                     </div>
-                </div>
-                <div class="ruby-pass-season">
-                    <span>NIVEL ${currentLevel}</span>
-                    <strong>${currentXp} XP</strong>
+                    <div>
+                        <div class="rp-season-eyebrow">${state.premiumOwned ? 'VIP ACTIVO' : 'PASE FREE / VIP'}</div>
+                        <div class="rp-season-title">RUBY PASS</div>
+                    </div>
                 </div>
                 ${seasonCountdown ? `
-                <div class="ruby-rail-countdown ${seasonCountdown.expired ? 'is-expired' : ''}">
-                    TERMINA EN<b>${seasonCountdown.label}</b>
-                </div>` : ''}
-                <button onclick="closeRubyPass()" class="ruby-pass-back" type="button">VOLVER</button>
+                <div class="rp-timer ${seasonCountdown.expired ? 'is-expired' : ''}"><div class="rp-timer-clock"></div>${seasonCountdown.label} RESTANTES</div>` : ''}
+                <button onclick="closeRubyPass()" class="rp-back" type="button">← VOLVER</button>
             </div>
 
-            <div class="ruby-pass-stage">
-                ${RUBY_PASS_ASSETS.seasonBanner ? `
-                <div class="ruby-rail-showcase-banner">
-                    <img src="${RUBY_PASS_ASSETS.seasonBanner}" alt="" draggable="false"
-                        onerror="this.closest('.ruby-rail-showcase-banner').style.display='none'">
-                </div>` : ''}
+            <div class="rp-hud-frame rp-hero">
+                <div class="rp-corner tl"></div><div class="rp-corner tr"></div><div class="rp-corner bl"></div><div class="rp-corner br"></div>
+                <div class="rp-hero-left">
+                    <span class="rp-tag">◀ EXCLUSIVO ▶</span>
+                    <div class="rp-hero-title">${getRewardLabel(topReward.premium).toUpperCase()} · NIVEL ${topReward.level}</div>
+                    <div class="rp-hero-sub">Recompensa premium exclusiva de esta temporada. Se desbloquea llegando al nivel ${topReward.level} del carril VIP antes de que termine el pase.</div>
+                    ${state.premiumOwned
+            ? `<div class="rp-hero-owned">✓ PREMIUM ACTIVO</div>`
+            : `<div class="rp-hero-buy-row">
+                    <button class="rp-buy-btn" onclick="unlockRubyPassPremium()" type="button">🔓 DESBLOQUEAR RUBY PASS · ${RUBY_PASS_PREMIUM_COST_GEMS} <img src="${getCurrencyPileAsset('gems', 1)}" alt=""></button>
+                    <button class="rp-buy-btn-money" onclick="showRubyPassRealMoneyComingSoon()" type="button">💳 COMPRAR CON DINERO REAL</button>
+                   </div>`}
+                </div>
+                <div class="rp-hex">${renderRewardIcon(topReward.premium, 'premium', topReward.level)}</div>
+            </div>
 
-                <div class="ruby-rail-top-row">
-                    ${renderRubyPassNextShowcase(state, currentLevel)}
-                    <button class="ruby-rail-viewall-btn" onclick="openRubyPassGallery()" type="button">VER TODO</button>
+            <div class="rp-xp-wrap">
+                <div class="rp-xp-label">
+                    <span><b>NIVEL ${currentLevel}</b> · ${currentXp} XP</span>
+                    <span>${nextReward ? `${xpToNext} XP para el siguiente nivel` : 'Nivel máximo alcanzado'}</span>
+                </div>
+                <div class="rp-xp-bar">${xpSegmentsHtml(XP_SEGMENTS, renderProgress)}</div>
+            </div>
+
+            <div class="rp-hud-frame rp-track-panel">
+                <div class="rp-corner tl"></div><div class="rp-corner tr"></div><div class="rp-corner bl"></div><div class="rp-corner br"></div>
+
+                <div class="rp-track-head-row">
+                    ${getRubyPassTotalClaimableCount(state) > 0
+            ? `<button class="rp-claimall-btn" onclick="claimAllRubyPassRewards()" type="button">⚡ RECLAMAR TODO (${getRubyPassTotalClaimableCount(state)})</button>`
+            : '<span></span>'}
+                    <button class="rp-viewall-btn" onclick="openRubyPassGallery()" type="button">VER TODO</button>
                 </div>
 
-                <div class="ruby-rail-stage">
-                    <div class="ruby-rail-scroll" id="rubyRailScroll">
-                        <div class="ruby-rail-group ${state.premiumOwned ? '' : 'is-premium-locked'}">
-                            <div class="ruby-rail-nodes is-premium">
-                                ${visibleRewards.map(reward => renderRubyPassRailNode(reward, state.premiumLevel, 'premium', state.premiumOwned)).join('')}
-                            </div>
-                            <div class="ruby-rail-bar-slot is-premium"></div>
-
-                            <div class="ruby-rail-path">
-                                <div class="ruby-rail-path-track">
-                                    <div class="ruby-rail-path-fill" style="width:${Math.round(renderProgress * 100)}%;"></div>
-                                </div>
-                                <div class="ruby-rail-path-spark" style="left:${Math.round(renderProgress * 100)}%;"></div>
-                            </div>
-
-                            <div class="ruby-rail-bar-slot is-free"></div>
-                            <div class="ruby-rail-nodes is-free">
-                                ${visibleRewards.map(reward => renderRubyPassRailNode(reward, currentLevel, 'free', true)).join('')}
-                            </div>
-                        </div>
+                <div class="rp-lane-header">
+                    <span class="num">01</span><span class="line"></span><span class="txt">VIP</span><span class="fade"></span>
+                </div>
+                <div class="rp-tiers-scroll" id="rubyRailScrollPremium">
+                    <div class="rp-tiers">
+                        ${visibleRewards.map(reward => renderRubyPassRailNode(reward, state.premiumLevel, 'premium', state.premiumOwned)).join('')}
                     </div>
                 </div>
 
-                <div class="ruby-rail-bottom-row">
-                ${state.premiumOwned ? `
-                <div class="ruby-rail-premium-banner is-owned">
-                    <div class="ruby-rail-premium-banner-text">
-                        <b>PREMIUM ACTIVO ✓</b>
-                        <span>${(() => {
-                    const ready = getRubyPassClaimablePremiumCount(state);
-                    return ready > 0
-                        ? `${ready} recompensa${ready === 1 ? '' : 's'} premium esperando reclamo`
-                        : 'Estás al día con tus recompensas premium';
-                })()}</span>
-                    </div>
-                </div>` : `
-                <div class="ruby-rail-premium-banner">
-                    <div class="ruby-rail-premium-banner-text">
-                        <b>Activá el Ruby Pass Premium</b>
-                        <span>Desbloqueá estas recompensas y muchas más antes de que termine la temporada</span>
-                    </div>
-                    <div class="ruby-rail-premium-previews">
-                        ${getRubyPassUpcomingPremiumRewards(state, 3).map(reward => `
-                        <div class="ruby-rail-premium-preview-icon">${renderRewardIcon(reward.premium, 'premium', reward.level)}</div>
-                        `).join('')}
-                    </div>
-                    <button class="ruby-rail-premium-banner-btn" onclick="unlockRubyPassPremium()" type="button">DESBLOQUEAR · ${RUBY_PASS_PREMIUM_COST_GEMS} <img src="${getCurrencyPileAsset('gems', 1)}" alt="" draggable="false"></button>
-                </div>`}
+                <div class="rp-divider"><div class="rp-divider-node"></div></div>
 
-                ${renderRubyRailMissionsSummary()}
+                <div class="rp-lane-header silver">
+                    <span class="num">02</span><span class="line"></span><span class="txt">GRATIS</span><span class="fade"></span>
                 </div>
-
-                <div class="ruby-pass-focus">
-                    <div class="ruby-pass-focus-copy">
-                        <div class="ruby-pass-kicker">${state.premiumOwned ? 'VIP ACTIVO' : 'PASE FREE / VIP'}</div>
-                        <h3>RUBY PASS</h3>
-                        <p>${Math.round(renderProgress * 100)}% PROGRESO</p>
-                        <div class="ruby-pass-xpbar"><span style="width:${Math.round(renderProgress * 100)}%;"></span></div>
+                <div class="rp-tiers-scroll" id="rubyRailScrollFree">
+                    <div class="rp-tiers">
+                        ${visibleRewards.map(reward => renderRubyPassRailNode(reward, currentLevel, 'free', true)).join('')}
                     </div>
-                    <button class="ruby-pass-dev" onclick="addRubyPassXpDev()" type="button">DEV +250 XP</button>
-                    <button class="ruby-pass-dev" onclick="resetRubyPassXpDev()" type="button">DEV RESET XP</button>
                 </div>
             </div>
+
+            <div class="rp-bottom-grid">
+                <div class="rp-panel-left">
+                    <div class="rp-eyebrow">${state.premiumOwned ? 'VIP ACTIVO' : 'PROGRESO DE TEMPORADA'}</div>
+                    <div class="rp-panel-title">${state.premiumOwned ? 'Progreso de temporada' : 'Activá el Ruby Pass Premium'}</div>
+                    <div class="rp-pct-row">
+                        <div class="rp-xp-bar mini">${xpSegmentsHtml(24, renderProgress)}</div>
+                        <div class="rp-pct-num">${Math.round(renderProgress * 100)}%</div>
+                    </div>
+                    ${state.premiumOwned ? `
+                    <div class="rp-panel-note">${(() => {
+            const ready = getRubyPassClaimablePremiumCount(state);
+            return ready > 0
+                ? `${ready} recompensa${ready === 1 ? '' : 's'} premium esperando reclamo`
+                : 'Estás al día con tus recompensas premium';
+        })()}</div>` : `
+                    <button class="rp-chip" onclick="unlockRubyPassPremium()" type="button"><span>◆</span>DESBLOQUEAR · ${RUBY_PASS_PREMIUM_COST_GEMS}</button>`}
+                </div>
+
+                <div class="rp-rail"></div>
+
+                <div class="rp-missions">
+                    ${renderRubyRailMissionsSummary()}
+                </div>
+            </div>
+
+        </div>
         </div>
     `;
 
@@ -7252,186 +7540,130 @@ function renderBattlePassPage(container, options = {}) {
     initRubyPassRail(container);
 }
 
-// Anima solo la barra de XP del panel focus (el resto de la animación
-// vieja —rotación de los anillos— se borró junto con el círculo).
-// TODO (parte 4): la vidriera de "próxima recompensa" probablemente
-// quiera su propia transición al ganar XP; se suma ahí, no acá.
+// Anima la barra de XP grande y la mini del panel inferior hacia el
+// progreso real (se usa después de ganar XP con el botón DEV, o con
+// XP real de partidas). Solo togglea clases 'on' en los segmentos
+// existentes — el transition vive en el CSS (.rp-xp-seg).
 function animateRubyPassProgress(container, target) {
     requestAnimationFrame(() => {
-        const fill = Math.round(target.progress * 100) + '%';
-        const xpFill = container.querySelector('.ruby-pass-xpbar span');
-        if (xpFill) xpFill.style.width = fill;
+        container.querySelectorAll('.rp-xp-bar').forEach(bar => {
+            const segs = bar.querySelectorAll('.rp-xp-seg');
+            const onCount = Math.round(target.progress * segs.length);
+            segs.forEach((seg, i) => seg.classList.toggle('on', i < onCount));
+        });
     });
 }
 
-// Reemplaza a initRubyPassDrag(): ya no hay que rotar nada ni adivinar
-// en qué nodo hizo click el jugador por distancia — cada nodo del
-// riel tiene su propio onclick directo. Lo único que hace esta
-// función es centrar el scroll horizontal en el nivel actual al
-// abrir el pase, para que el jugador no tenga que buscarlo.
+// Centra el scroll horizontal de cada carril (VIP y GRATIS) en el
+// nivel actual del jugador al abrir el pase, para que no tenga que
+// buscarlo manualmente.
 function initRubyPassRail(container) {
-    const scroller = container.querySelector('#rubyRailScroll');
-    const current = container.querySelector('.ruby-rail-node.is-current');
-    if (!scroller || !current) return;
-    requestAnimationFrame(() => {
-        const target = current.offsetLeft - (scroller.clientWidth / 2) + (current.offsetWidth / 2);
-        scroller.scrollLeft = Math.max(0, target);
+    ['rubyRailScrollPremium', 'rubyRailScrollFree'].forEach(id => {
+        const scroller = container.querySelector('#' + id);
+        if (!scroller) return;
+        const current = scroller.querySelector('.rp-tier.is-current') || scroller.querySelector('.rp-tier.is-claimable');
+        if (!current) return;
+        requestAnimationFrame(() => {
+            const target = current.offsetLeft - (scroller.clientWidth / 2) + (current.offsetWidth / 2);
+            scroller.scrollLeft = Math.max(0, target);
+        });
     });
 }
 
-// Nodo del riel horizontal (reemplaza a renderRubyPassNode, que
-// posicionaba todo con trigonometría circular). Mantiene el mismo
-// data-ruby-claim que ya usa claimRubyPassReward() para no tocar esa
-// lógica, y agrega el onclick directo (antes el click se resolvía
-// por distancia al nodo más cercano en initRubyPassDrag — ya no hace
-// falta con un riel recto).
+// ===================================================================
+// GALERÍA "VER TODO" — el botón ya llamaba a openRubyPassGallery()
+// pero esta función nunca existió en el archivo; solo quedó el CSS
+// (.ruby-gallery-*) de alguna versión anterior que no se llegó a
+// conectar. Se construye igual que showShopModal: busca el contenedor
+// en el DOM, si no existe lo crea una vez y lo reusa.
+// ===================================================================
+function openRubyPassGallery() {
+    let modal = document.getElementById('rubyPassGalleryModal');
+    if (!modal) {
+        modal = document.createElement('div');
+        modal.id = 'rubyPassGalleryModal';
+        modal.className = 'ruby-gallery-modal';
+        modal.innerHTML = `
+            <div class="ruby-gallery-panel">
+                <button class="ruby-gallery-close" onclick="closeRubyPassGallery()" type="button">X</button>
+                <div class="ruby-gallery-header">
+                    <span>RUBY PASS</span>
+                    <strong>TODAS LAS RECOMPENSAS</strong>
+                </div>
+                <div class="ruby-gallery-columns">
+                    <div class="ruby-gallery-column is-premium" id="rubyGalleryColPremium">
+                        <div class="ruby-gallery-column-head">VIP</div>
+                        <div class="ruby-gallery-column-rows" id="rubyGalleryRowsPremium"></div>
+                    </div>
+                    <div class="ruby-gallery-column" id="rubyGalleryColFree">
+                        <div class="ruby-gallery-column-head">GRATIS</div>
+                        <div class="ruby-gallery-column-rows" id="rubyGalleryRowsFree"></div>
+                    </div>
+                </div>
+            </div>
+        `;
+        document.body.appendChild(modal);
+        modal.addEventListener('click', (e) => { if (e.target === modal) closeRubyPassGallery(); });
+    }
+
+    const state = getRubyPassState();
+    modal.querySelector('#rubyGalleryColPremium').classList.toggle('is-locked', !state.premiumOwned);
+
+    [['premium', state.premiumLevel, state.premiumOwned, 'rubyGalleryRowsPremium'],
+        ['free', state.freeLevel, true, 'rubyGalleryRowsFree']].forEach(([lane, laneLevel, laneActive, rowsId]) => {
+        const rowsContainer = modal.querySelector('#' + rowsId);
+        rowsContainer.innerHTML = RUBY_PASS_REWARDS.map(reward => {
+            const rewardData = lane === 'premium' ? reward.premium : reward.free;
+            const unlocked = laneActive && reward.level <= laneLevel;
+            const claimed = localStorage.getItem(`rubyPassClaimed_${lane}_${reward.level}`) === 'true';
+            const clickAction = unlocked
+                ? `claimRubyPassReward('${lane}', ${reward.level}, '${rewardData.type}')`
+                : `previewRubyPassReward('${lane}', ${reward.level})`;
+            return `
+                <button type="button" class="ruby-gallery-row ${!unlocked ? 'is-locked' : ''} ${unlocked && !claimed ? 'is-claimable' : ''}" data-ruby-claim="${lane}_${reward.level}" onclick="${clickAction}">
+                    <span class="ruby-gallery-row-level">${reward.level}</span>
+                    <span class="ruby-gallery-row-icon ${unlocked ? '' : 'is-future'}">${renderRewardIcon(rewardData, lane, reward.level)}</span>
+                    ${claimed ? '<span class="ruby-gallery-row-check">✓</span>' : ''}
+                </button>
+            `;
+        }).join('');
+    });
+
+    modal.style.display = 'grid';
+}
+window.openRubyPassGallery = openRubyPassGallery;
+
+function closeRubyPassGallery() {
+    const modal = document.getElementById('rubyPassGalleryModal');
+    if (modal) modal.style.display = 'none';
+}
+window.closeRubyPassGallery = closeRubyPassGallery;
+
+// Tarjeta individual de nivel (una por carril VIP/GRATIS). Mantiene
+// el mismo data-ruby-claim que usa claimRubyPassReward() para no
+// tocar esa lógica — solo cambia el markup/las clases visuales.
 function renderRubyPassRailNode(reward, currentLevelForLane, lane, laneActive) {
     const unlocked = laneActive && reward.level <= currentLevelForLane;
     const rewardData = lane === 'premium' ? reward.premium : reward.free;
     const claimed = localStorage.getItem(`rubyPassClaimed_${lane}_${reward.level}`) === 'true';
     const claimable = unlocked && !claimed;
     const isCurrent = laneActive && reward.level === currentLevelForLane;
-    return `
-        <div class="ruby-rail-node ${isCurrent ? 'is-current' : ''}">
-            <button type="button"
-                class="ruby-rail-node-icon ${unlocked ? 'is-unlocked' : ''} ${claimable ? 'is-claimable' : ''} ${laneActive ? '' : 'is-locked'} ${claimed ? 'is-claimed' : ''}"
-                data-ruby-claim="${lane}_${reward.level}"
-                data-reward-type="${rewardData.type}"
-                onclick="claimRubyPassReward('${lane}', ${reward.level}, '${rewardData.type}')"
-                title="${lane === 'premium' ? 'Premium' : 'Free'} nivel ${reward.level}">
-                ${renderRewardIcon(rewardData, lane, reward.level)}
-            </button>
-            <span class="ruby-rail-node-level">${reward.level}</span>
-        </div>
-    `;
-}
-
-// Parte #2: busca qué recompensa mostrar en la "vidriera" de próxima
-// recompensa. Prioriza el carril premium (es la pieza más atractiva —
-// skins/emotes — y la que más empuja la compra del pase VIP). Si el
-// jugador ya reclamó todo lo premium disponible, muestra la última
-// como referencia (no debería pasar con 30 niveles, pero por las dudas).
-function getRubyPassNextShowcaseReward(state, currentLevel) {
-    const next = RUBY_PASS_REWARDS.find(r =>
-        r.level >= currentLevel &&
-        localStorage.getItem(`rubyPassClaimed_premium_${r.level}`) !== 'true'
-    );
-    return next || RUBY_PASS_REWARDS[RUBY_PASS_REWARDS.length - 1];
-}
-
-function renderRubyPassNextShowcase(state, currentLevel) {
-    const reward = getRubyPassNextShowcaseReward(state, currentLevel);
-    // "Borrosa" solo si todavía no llegó a ese nivel (es una recompensa
-    // futura real, no una ya alcanzada pero sin reclamar) — el efecto es
-    // para generar curiosidad ("¿qué es esa skin del nivel 12?"), no para
-    // ocultar algo que el jugador ya podría reclamar.
-    const isFuture = reward.level > currentLevel;
-    return `
-        <div class="ruby-rail-next-showcase">
-            <div class="ruby-rail-next-showcase-frame">
-                <div class="ruby-rail-next-showcase-icon ${isFuture ? 'is-future' : ''}">
-                    ${renderRewardIcon(reward.premium, 'premium', reward.level)}
-                </div>
-                ${isFuture ? '<span class="ruby-rail-next-showcase-mark">?</span>' : ''}
-            </div>
-            <div class="ruby-rail-next-showcase-text">
-                <span>PRÓXIMA RECOMPENSA VIP</span>
-                <b>NIVEL ${reward.level}</b>
-            </div>
-        </div>
-    `;
-}
-
-
-// ── Parte #6: galería completa "ver todo" (gratis / premium) ──
-// Reutiliza RUBY_PASS_REWARDS y renderRewardIcon() tal cual (no se
-// tocan). El único agregado real es claimFromRubyPassGallery(), un
-// wrapper fino sobre claimRubyPassReward() — la lógica de reclamo no
-// se duplica, solo se asegura de refrescar las DOS vistas (galería +
-// riel) ya que pueden convivir en el DOM al mismo tiempo (el riel
-// sigue detrás del modal) y claimRubyPassReward() solo actualiza el
-// primer nodo que encuentra con ese data-ruby-claim.
-function renderRubyPassGalleryRow(reward, lane, currentLevelForLane, laneActive) {
-    const unlocked = laneActive && reward.level <= currentLevelForLane;
-    const rewardData = lane === 'premium' ? reward.premium : reward.free;
-    const claimed = localStorage.getItem(`rubyPassClaimed_${lane}_${reward.level}`) === 'true';
-    const claimable = unlocked && !claimed;
+    const clickAction = unlocked
+        ? `claimRubyPassReward('${lane}', ${reward.level}, '${rewardData.type}')`
+        : `previewRubyPassReward('${lane}', ${reward.level})`;
     return `
         <button type="button"
-            class="ruby-gallery-row ${claimable ? 'is-claimable' : ''} ${claimed ? 'is-claimed' : ''} ${unlocked ? '' : 'is-locked'}"
+            class="rp-tier ${lane === 'free' ? 'is-free' : ''} ${claimed ? 'is-done' : ''} ${isCurrent ? 'is-current' : ''} ${claimable ? 'is-claimable' : ''} ${unlocked ? '' : 'is-locked'}"
             data-ruby-claim="${lane}_${reward.level}"
-            onclick="claimFromRubyPassGallery('${lane}', ${reward.level}, '${rewardData.type}')"
-            title="Nivel ${reward.level}">
-            <span class="ruby-gallery-row-level">${reward.level}</span>
-            <span class="ruby-gallery-row-icon ${unlocked ? '' : 'is-future'}">${renderRewardIcon(rewardData, lane, reward.level)}</span>
-            ${claimed ? '<span class="ruby-gallery-row-check">&check;</span>' : ''}
-        </button>`;
+            data-reward-type="${rewardData.type}"
+            onclick="${clickAction}"
+            title="${lane === 'premium' ? 'Premium' : 'Free'} nivel ${reward.level}">
+            <span class="rp-tnum">${reward.level}</span>
+            ${!unlocked ? '<div class="rp-mini-lock"></div>' : ''}
+            ${renderRewardIcon(rewardData, lane, reward.level)}
+        </button>
+    `;
 }
-
-function renderRubyPassGalleryColumn(lane, state) {
-    const currentLevelForLane = lane === 'premium' ? state.premiumLevel : state.freeLevel;
-    const laneActive = lane === 'premium' ? state.premiumOwned : true;
-    return `
-        <div class="ruby-gallery-column is-${lane} ${laneActive ? '' : 'is-locked'}">
-            <div class="ruby-gallery-column-head">${lane === 'premium' ? 'PREMIUM' : 'GRATIS'}</div>
-            <div class="ruby-gallery-column-rows">
-                ${RUBY_PASS_REWARDS.map(reward => renderRubyPassGalleryRow(reward, lane, currentLevelForLane, laneActive)).join('')}
-            </div>
-        </div>`;
-}
-
-function renderRubyPassGalleryPage() {
-    const state = getRubyPassState();
-    return `
-        <section class="ruby-gallery-panel">
-            <button class="ruby-gallery-close" onclick="closeRubyPassGallery()" type="button">X</button>
-            <div class="ruby-gallery-header">
-                <span>RUBY PASS</span>
-                <strong>TODAS LAS RECOMPENSAS</strong>
-            </div>
-            <div class="ruby-gallery-columns">
-                ${renderRubyPassGalleryColumn('free', state)}
-                ${renderRubyPassGalleryColumn('premium', state)}
-            </div>
-        </section>`;
-}
-
-function ensureRubyPassGalleryModal() {
-    let modal = document.getElementById('rubyPassGalleryModal');
-    if (modal) return modal;
-    modal = document.createElement('div');
-    modal.id = 'rubyPassGalleryModal';
-    modal.className = 'ruby-gallery-modal';
-    modal.addEventListener('click', event => {
-        if (event.target === modal) closeRubyPassGallery();
-    });
-    document.body.appendChild(modal);
-    return modal;
-}
-
-function openRubyPassGallery() {
-    const modal = ensureRubyPassGalleryModal();
-    modal.innerHTML = renderRubyPassGalleryPage();
-    modal.style.display = 'grid';
-}
-
-function closeRubyPassGallery() {
-    const modal = document.getElementById('rubyPassGalleryModal');
-    if (modal) modal.style.display = 'none';
-}
-
-// Reclama vía claimRubyPassReward() de siempre (cero lógica nueva de
-// reclamo) y después refresca ambas vistas para que no queden
-// desincronizadas entre sí.
-function claimFromRubyPassGallery(lane, level, type) {
-    claimRubyPassReward(lane, level, type);
-    openRubyPassGallery();
-    const rubyContent = document.getElementById('rubyPassContent');
-    if (rubyContent) renderBattlePassPage(rubyContent);
-}
-window.openRubyPassGallery = openRubyPassGallery;
-window.closeRubyPassGallery = closeRubyPassGallery;
-window.claimFromRubyPassGallery = claimFromRubyPassGallery;
 
 function renderRewardIcon(reward, lane, level) {
     if (reward.image) return `<img src="${reward.image}" alt="" draggable="false">`;
@@ -7446,6 +7678,43 @@ function renderRewardIcon(reward, lane, level) {
     const slot = reward.slot ? `${lane}_${reward.slot}` : `${lane}_${reward.type}`;
     return `<div class="ruby-pass-placeholder ruby-pass-${reward.type}" data-asset-slot="RUBY_PASS_ASSET_SLOT_${slot.toUpperCase()}"></div>`;
 }
+
+// ===================================================================
+// INICIO DEBUG RUBY PASS — bloque temporal para pruebas de desarrollo.
+// Borrá esta función completa (hasta "FIN DEBUG RUBY PASS") cuando el
+// pase ya esté terminado al 100% y no lo necesites más. También borrá
+// el <div class="rp-debug">...</div> que se agrega en renderBattlePassPage
+// y el bloque CSS marcado igual en style.css.
+// ===================================================================
+function toggleRubyPassDebugPanel() {
+    const panel = document.getElementById('rubyPassDebugPanel');
+    if (panel) panel.classList.toggle('is-open');
+}
+
+// Activa el carril premium GRATIS (sin gastar rubies), solo para probar
+// cómo se ve el pase con VIP activo.
+function rubyPassDevUnlockPremium() {
+    const state = getRubyPassState();
+    localStorage.setItem('rubyPassPremiumOwned', 'true');
+    localStorage.setItem('rubyPassPremiumLevel', String(state.freeLevel));
+    refreshShopBalances?.();
+    renderBattlePassPage(document.getElementById('rubyPassContent'));
+}
+
+// Revierte el desbloqueo premium y borra lo reclamado en ese carril,
+// para volver a probar desde cero el flujo de "activar el pase".
+function rubyPassDevLockPremium() {
+    localStorage.removeItem('rubyPassPremiumOwned');
+    localStorage.setItem('rubyPassPremiumLevel', '1');
+    RUBY_PASS_REWARDS.forEach(reward => localStorage.removeItem(`rubyPassClaimed_premium_${reward.level}`));
+    refreshShopBalances?.();
+    renderBattlePassPage(document.getElementById('rubyPassContent'));
+}
+
+window.toggleRubyPassDebugPanel = toggleRubyPassDebugPanel;
+window.rubyPassDevUnlockPremium = rubyPassDevUnlockPremium;
+window.rubyPassDevLockPremium = rubyPassDevLockPremium;
+// FIN DEBUG RUBY PASS
 
 // =====================================================
 // TIENDA RUBY — paquetes de monedas/gemas (dinero real) +
@@ -7880,31 +8149,23 @@ function renderRubyRailMissionsSummary() {
 
     if (preview.length === 0) {
         return `
-        <div class="ruby-rail-missions-summary">
-            <div class="ruby-rail-missions-summary-head">
-                <span>${mt.tituloResumen ?? 'MISIONES DE HOY'}</span>
-            </div>
-            <p class="ruby-rail-missions-summary-empty">${mt.completadas ?? 'Completaste todas tus misiones de hoy'}</p>
-            <button class="ruby-rail-missions-summary-link" onclick="openMissionsPanel()" type="button">${verTodas} &rsaquo;</button>
-        </div>`;
+        <div class="rp-missions-bar">${mt.tituloResumen ?? 'MISIONES DE HOY'}</div>
+        <p class="rp-missions-empty">${mt.completadas ?? 'Completaste todas tus misiones de hoy'}</p>
+        <button class="rp-missions-link" onclick="openMissionsPanel()" type="button">${verTodas} &rsaquo;</button>`;
     }
 
     return `
-        <div class="ruby-rail-missions-summary">
-            <div class="ruby-rail-missions-summary-head">
-                <span>${mt.tituloResumen ?? 'MISIONES DE HOY'}</span>
-                ${readyCount > 0 ? `<b class="ruby-rail-missions-summary-badge">${readyCount}</b>` : ''}
+        <div class="rp-missions-bar">${mt.tituloResumen ?? 'MISIONES DE HOY'}${readyCount > 0 ? `<div class="rp-dot-wrap"><div class="rp-dot"></div></div>` : ''}</div>
+        ${preview.map(item => `
+        <button class="rp-mission-item" onclick="openMissionsPanel()" type="button">
+            <div class="rp-mission-check ${item.ready ? 'is-done' : 'is-wip'}">${item.ready ? '✓' : '···'}</div>
+            <div class="rp-mission-txt">
+                <div class="name">${item.mission.title}</div>
+                <div class="sub">${Math.floor(item.progress)} / ${item.mission.goal}</div>
+                <div class="rp-mm-bar"><i class="${item.ready ? 'is-done' : ''}" style="width:${item.ready ? 100 : item.pct}%"></i></div>
             </div>
-            ${preview.map(item => `
-            <button class="ruby-rail-missions-summary-row ${item.ready ? 'is-ready' : ''}" onclick="openMissionsPanel()" type="button">
-                <div class="ruby-rail-missions-summary-row-text">
-                    <span>${item.mission.title}</span>
-                    <div class="ruby-rail-missions-summary-row-bar"><i style="width:${item.pct}%"></i></div>
-                </div>
-                <small>${Math.floor(item.progress)}/${item.mission.goal}</small>
-            </button>`).join('')}
-            <button class="ruby-rail-missions-summary-link" onclick="openMissionsPanel()" type="button">${verTodas} &rsaquo;</button>
-        </div>`;
+        </button>`).join('')}
+        <button class="rp-missions-link" onclick="openMissionsPanel()" type="button">${verTodas} &rsaquo;</button>`;
 }
 
 function openMissionsPanel() {
