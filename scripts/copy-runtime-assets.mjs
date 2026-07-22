@@ -16,7 +16,6 @@ const runtimeFiles = [
   "shop.js",
   "obstacles.js",
   "trails.js",
-  "menuball.js",
   "src/main.js",
   "combo-system.js",
   "fragment-system.js",
