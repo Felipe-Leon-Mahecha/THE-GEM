@@ -2135,36 +2135,85 @@ function showShopSection(section) {
 
 // Renderizar la página de temporadas
 // container: Elemento contenedor
-function openSeasonBannersModal() {
+function openSeasonContentModal(kind) {
     const activeSeasons = window.getActiveSeasons?.() || [];
     const season = activeSeasons[0];
     if (!season) return;
 
-    const ids = season.contains?.banners || [];
-    const items = BANNERS_DATA.filter(b => ids.includes(b.id));
-    const equipped = localStorage.getItem('equippedBanner') || 'Banner_Deafult';
-    const visible = items.filter(b => !b.missionOnly || ownsBanner(b));
+    const ids = season.contains?.[kind] || [];
+    const labels = { banners: 'BANNERS', skins: 'SKINS', trails: 'TRAILS', emotes: 'EMOTES' };
+
+    let visibleHTML = '';
+
+    if (kind === 'banners') {
+        const items = BANNERS_DATA.filter(b => ids.includes(b.id));
+        const equipped = localStorage.getItem('equippedBanner') || 'Banner_Deafult';
+        const visible = items.filter(b => !b.missionOnly || ownsBanner(b));
+        visibleHTML = visible.length > 0
+            ? visible.map(b => renderBannerCard(b, equipped)).join('')
+            : `<div class="empty-showcase">AÚN NO HAY BANNERS DISPONIBLES</div>`;
+    } else if (kind === 'skins') {
+        const catalog = typeof getAllShopSkins === 'function' ? getAllShopSkins() : SKINS_DATA;
+        const items = catalog.filter(s => ids.includes(s.id));
+        const equipped = localStorage.getItem('equippedSkin') || 'cyan';
+        visibleHTML = items.length > 0
+            ? items.map(s => renderSkinCard(s, equipped)).join('')
+            : `<div class="empty-showcase">AÚN NO HAY SKINS DISPONIBLES — PRÓXIMAMENTE</div>`;
+    } else if (kind === 'trails') {
+        const items = TRAILS_DATA.filter(t => ids.includes(t.id));
+        const equippedId = localStorage.getItem('equippedTrail') || 'none';
+        visibleHTML = items.length > 0
+            ? items.map(t => renderSeasonTrailCard(t, equippedId)).join('')
+            : `<div class="empty-showcase">AÚN NO HAY TRAILS DISPONIBLES — PRÓXIMAMENTE</div>`;
+    } else if (kind === 'emotes') {
+        const items = EMOTES_DATA.filter(e => ids.includes(e.id));
+        visibleHTML = items.length > 0
+            ? items.map(e => renderEmoteSlot(e)).join('')
+            : `<div class="empty-showcase">AÚN NO HAY EMOTES DISPONIBLES — PRÓXIMAMENTE</div>`;
+    }
 
     const existing = document.querySelector('.season-banners-modal-overlay');
     if (existing) existing.remove();
 
     const overlay = document.createElement('div');
     overlay.className = 'season-banners-modal-overlay';
+    overlay.dataset.kind = kind;
     overlay.onclick = (e) => { if (e.target === overlay) overlay.remove(); };
     overlay.innerHTML = `
         <div class="season-banners-modal">
             <div class="season-banners-modal-header">
-                <span>BANNERS DE ${season.displayName.toUpperCase()}</span>
+                <span>${labels[kind] || kind.toUpperCase()} DE ${season.displayName.toUpperCase()}</span>
                 <button type="button" onclick="this.closest('.season-banners-modal-overlay').remove()">✕</button>
             </div>
             <div class="season-banners-modal-grid">
-                ${visible.length > 0
-                    ? visible.map(b => renderBannerCard(b, equipped)).join('')
-                    : `<div class="empty-showcase">AÚN NO HAY BANNERS DISPONIBLES</div>`}
+                ${visibleHTML}
             </div>
         </div>
     `;
     document.body.appendChild(overlay);
+}
+
+// Card simple para trails dentro del modal de temporada — NO reutiliza
+// renderTrailCardNew a propósito, porque esa depende del carrusel 3D
+// de la página principal de Trails (activeTrailIndex, scroll, etc.)
+// y rompería fuera de ese contexto.
+function renderSeasonTrailCard(t, equippedId) {
+    const isEquipped = equippedId === t.id;
+    const owned = t.price === 0 || (typeof isTrailOwned === 'function' ? isTrailOwned(t.id) : false);
+    const color = t.rarityColor || '#57b7dd';
+    return `
+        <div style="background:rgba(255,255,255,0.03); border:1px solid ${isEquipped ? color + '66' : 'rgba(255,255,255,0.08)'}; border-radius:14px; padding:14px; display:flex; flex-direction:column; align-items:center; gap:8px;">
+            <div style="width:100%; height:90px; border-radius:10px; background:rgba(0,0,0,0.3); display:flex; align-items:center; justify-content:center; overflow:hidden;">
+                ${t.image ? `<img src="${t.image}" style="width:100%;height:100%;object-fit:contain;" alt="">` : ''}
+            </div>
+            <div style="color:white; font-family:monospace; font-size:11px; letter-spacing:1px;">${t.name}</div>
+            <div style="color:${color}; font-family:monospace; font-size:9px; letter-spacing:2px;">${t.rarity}</div>
+            ${owned
+                ? `<button onclick="selectTrailEffectNew('${t.id}'); document.querySelector('.season-banners-modal-overlay')?.remove();" style="width:100%; padding:6px 0; border-radius:8px; border:1px solid ${isEquipped ? color + '66' : 'rgba(255,255,255,0.12)'}; background:none; color:${isEquipped ? color : 'rgba(255,255,255,0.5)'}; font-family:monospace; font-size:9px; cursor:pointer;">${isEquipped ? '✔ EQUIPADO' : 'EQUIPAR'}</button>`
+                : `<button onclick="document.querySelector('.season-banners-modal-overlay')?.remove(); showShopSection('trails');" style="width:100%; padding:6px 0; border-radius:8px; border:1px solid rgba(255,238,0,0.4); background:none; color:#ffee00; font-family:monospace; font-size:9px; cursor:pointer;">IR A TRAILS</button>`
+            }
+        </div>
+    `;
 }
 
 function toggleSeasonInfo(e) {
@@ -2310,22 +2359,22 @@ function renderShopSeasonsPage(container) {
         </div>
 
         <div class="category-bento">
-            <div class="cat-card main" style="--cc:#a259ff; --cc-soft:rgba(162,89,255,.35); --cc-glow:rgba(162,89,255,.3);">
+            <div class="cat-card main" onclick="openSeasonContentModal('skins')" style="--cc:#a259ff; --cc-soft:rgba(162,89,255,.35); --cc-glow:rgba(162,89,255,.3);">
                 <div class="cat-icon-big"><div class="ph skin"></div></div>
                 <div class="cat-name">SKINS</div>
                 <div class="cat-count">${season.contains.skins.length} disponibles esta temporada</div>
             </div>
-            <div class="cat-card small" style="--cc:#00e5ff; --cc-soft:rgba(0,229,255,.3); --cc-glow:rgba(0,229,255,.25);">
+            <div class="cat-card small" onclick="openSeasonContentModal('trails')" style="--cc:#00e5ff; --cc-soft:rgba(0,229,255,.3); --cc-glow:rgba(0,229,255,.25);">
                 <div class="cat-icon-small"><div class="ph trail"></div></div>
                 <div class="cat-name">TRAILS</div>
                 <div class="cat-count">${season.contains.trails.length} disponibles</div>
             </div>
-            <div class="cat-card small" onclick="openSeasonBannersModal()" style="--cc:#ff5d8f; --cc-soft:rgba(255,93,143,.3); --cc-glow:rgba(255,93,143,.25);">
+            <div class="cat-card small" onclick="openSeasonContentModal('banners')" style="--cc:#ff5d8f; --cc-soft:rgba(255,93,143,.3); --cc-glow:rgba(255,93,143,.25);">
                 <div class="cat-icon-small"><div class="ph banner"></div></div>
                 <div class="cat-name">BANNERS</div>
                 <div class="cat-count">${season.contains.banners.length} disponibles</div>
             </div>
-            <div class="cat-card small" style="--cc:#ffd76a; --cc-soft:rgba(255,215,106,.3); --cc-glow:rgba(255,215,106,.25);">
+            <div class="cat-card small" onclick="openSeasonContentModal('emotes')" style="--cc:#ffd76a; --cc-soft:rgba(255,215,106,.3); --cc-glow:rgba(255,215,106,.25);">
                 <div class="cat-icon-small"><div class="ph emote"></div></div>
                 <div class="cat-name">EMOTES</div>
                 <div class="cat-count">${season.contains.emotes.length} disponibles</div>
@@ -2732,6 +2781,7 @@ function renderBannerCard(b, equipped) {
     const isVIP = b.rarity === 'VIP';
     const vipOnly = isVIPBannerOnly(b);
     const canBuy = !vipOnly && parseInt(localStorage.getItem('deadCoins') || '0') >= b.price;
+    const canBuyGems = !vipOnly && !!b.priceGems && parseInt(localStorage.getItem('gems') || '0') >= b.priceGems;
     const bannerBg = b.cover ? `url('${b.cover}')` : `linear-gradient(135deg, rgba(0,255,231,0.18), rgba(255,77,109,0.14))`;
 
     if (b.id === 'Banner_RubyPass_Temporada_VIP') {
@@ -2778,7 +2828,12 @@ function renderBannerCard(b, equipped) {
             ? `<button onclick="equipBanner('${b.id}')" style="padding:8px 12px; border-radius:8px; border:1px solid ${isEquipped ? (isVIP ? 'rgba(255,204,0,0.6)' : 'rgba(0,255,231,0.6)') : 'rgba(255,255,255,0.12)'}; background:${isEquipped ? (isVIP ? 'rgba(255,204,0,0.12)' : 'rgba(0,255,231,0.12)') : 'none'}; color:${isEquipped ? (isVIP ? '#ffd700' : '#00ffe7') : 'rgba(255,255,255,0.5)'}; font-family:monospace; font-size:9px; cursor:pointer;">${isEquipped ? (bt.botonEquipado ?? 'EQUIPADO') : (bt.botonEquipar ?? 'EQUIPAR')}</button>`
             : vipOnly
                 ? `<button onclick="openVIP(); setTimeout(() => renderVIPPromoDetail('vip_specials'), 40)" style="padding:8px 12px; border-radius:8px; border:1px solid rgba(255,238,0,0.36); background:rgba(255,238,0,0.08); color:#ffee00; font-family:monospace; font-size:9px; cursor:pointer;">${bt.botonSoloVIP ?? 'SOLO EN TIENDA VIP'}</button>`
-                : `<button onclick="buyBanner('${b.id}')" ${!canBuy ? 'disabled' : ''} style="padding:8px 12px; border-radius:8px; border:1px solid ${canBuy ? 'rgba(255,238,0,0.45)' : 'rgba(255,255,255,0.08)'}; background:none; color:${canBuy ? '#ffee00' : 'rgba(255,255,255,0.22)'}; font-family:monospace; font-size:9px; cursor:${canBuy ? 'pointer' : 'default'};">${b.price}</button>`
+                : b.priceGems
+                    ? `<div style="display:flex; flex-direction:column; gap:6px; align-items:flex-end;">
+                        <button onclick="buyBanner('${b.id}')" ${!canBuy ? 'disabled' : ''} style="padding:6px 12px; border-radius:8px; border:1px solid ${canBuy ? 'rgba(255,238,0,0.45)' : 'rgba(255,255,255,0.08)'}; background:none; color:${canBuy ? '#ffee00' : 'rgba(255,255,255,0.22)'}; font-family:monospace; font-size:9px; cursor:${canBuy ? 'pointer' : 'default'}; white-space:nowrap;">${b.price} 🪙</button>
+                        <button onclick="buyBannerWithGems('${b.id}')" ${!canBuyGems ? 'disabled' : ''} style="padding:6px 12px; border-radius:8px; border:1px solid ${canBuyGems ? 'rgba(255,77,109,0.55)' : 'rgba(255,255,255,0.08)'}; background:none; color:${canBuyGems ? '#ff4d6d' : 'rgba(255,255,255,0.22)'}; font-family:monospace; font-size:9px; cursor:${canBuyGems ? 'pointer' : 'default'}; white-space:nowrap;">${b.priceGems} 💎</button>
+                    </div>`
+                    : `<button onclick="buyBanner('${b.id}')" ${!canBuy ? 'disabled' : ''} style="padding:8px 12px; border-radius:8px; border:1px solid ${canBuy ? 'rgba(255,238,0,0.45)' : 'rgba(255,255,255,0.08)'}; background:none; color:${canBuy ? '#ffee00' : 'rgba(255,255,255,0.22)'}; font-family:monospace; font-size:9px; cursor:${canBuy ? 'pointer' : 'default'};">${b.price}</button>`
         }
             </div>
         </div>
@@ -2805,7 +2860,39 @@ function buyBanner(id) {
     localStorage.setItem('equippedBanner', banner.id);
     document.getElementById('shop-coins').textContent = coins;
     updateMenuHUD();
-    renderBannersPage(document.getElementById('shopContent'));
+    refreshBannerViewsAfterPurchase();
+}
+
+function buyBannerWithGems(id) {
+    const banner = BANNERS_DATA.find(b => b.id === id);
+    if (!banner) return;
+    if (banner.passOnly || banner.missionOnly) return;
+    if (!banner.priceGems) return;
+    if (isVIPBannerOnly(banner)) return openVIP();
+    let gems = parseInt(localStorage.getItem('gems') || '0');
+    if (gems < banner.priceGems) return;
+    gems -= banner.priceGems;
+    localStorage.setItem('gems', gems);
+    setBannerOwned(banner);
+    localStorage.setItem('equippedBanner', banner.id);
+    document.getElementById('shop-gems').textContent = gems;
+    updateMenuHUD();
+    refreshBannerViewsAfterPurchase();
+}
+
+function refreshBannerViewsAfterPurchase() {
+    // Si el modal de banners de temporada está abierto, refrescarlo a él
+    // en vez de pisar la página que esté debajo (ej. Temporadas).
+    const openModal = document.querySelector('.season-banners-modal-overlay');
+    if (openModal) {
+        openSeasonContentModal(openModal.dataset.kind || 'banners');
+        return;
+    }
+    // Si no, refrescar solo si de verdad estamos en la página normal de Banners.
+    const content = document.getElementById('shopContent');
+    if (content && content.querySelector('.banner-list, [onclick^="buyBanner"], [onclick^="equipBanner"]')) {
+        renderBannersPage(content);
+    }
 }
 
 function renderEmotesPage(container) {

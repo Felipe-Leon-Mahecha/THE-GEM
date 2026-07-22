@@ -208,9 +208,6 @@
             "vip_placeholder_08": "", // reservado, pendiente de asignar
             "vip_placeholder_09": "", // reservado, pendiente de asignar
             "vip_placeholder_10": "", // reservado, pendiente de asignar
-            "temporada_placeholder_01": "", // reservado, pendiente de asignar
-            "temporada_placeholder_02": "", // reservado, pendiente de asignar
-            "temporada_placeholder_03": "", // reservado, pendiente de asignar
             "nuevo_placeholder_01": "", // reservado, pendiente de asignar
             "nuevo_placeholder_02": "", // reservado, pendiente de asignar
             "nuevo_placeholder_03": "", // reservado, pendiente de asignar

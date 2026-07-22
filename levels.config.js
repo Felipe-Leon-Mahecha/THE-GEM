@@ -104,6 +104,7 @@
             ringInset: 0,
             visual: {
                 sphereBackgroundScale: 1.2,
+                coreScale: 1.045,
                 frameScale: 1.10,
                 frameSize: 2.20,
                 layers: { trail: 55, player: 65, frame: 75, obstacles: 88, lasers: 92 }
@@ -135,8 +136,9 @@
             spawnRate: 110,
             ringInset: 14,
             visual: {
-                sphereBackgroundScale: 1,
-                frameScale: 1.08,
+                sphereBackgroundScale: 1.18,
+                coreScale: 1.11,
+                frameScale: 1.12,
                 frameSize: 2.22,
                 layers: { trail: 55, player: 65, frame: 75, obstacles: 88, lasers: 92 }
             },
@@ -168,8 +170,10 @@
             ringInset: 14,
             visual: {
                 sphereBackgroundScale: 0.58,
-                frameScale: 1.09,
+                coreScale: 1.07,
+                frameScale: 1.40,
                 frameSize: 2.22,
+                frameOffsetY: 17,
                 layers: { trail: 55, player: 65, frame: 75, obstacles: 88, lasers: 94 }
             },
             rubySpawnInterval: 800,
@@ -217,6 +221,7 @@
             ringInset: 0,
             visual: {
                 sphereBackgroundScale: 1.2,
+                coreScale: 1.045,
                 frameScale: 1.10,
                 frameSize: 2.20,
                 layers: { trail: 55, player: 65, frame: 75, obstacles: 88, lasers: 92 }
