@@ -40,6 +40,7 @@ const TRAIL_EFFECT_MAP = {
     'trail_lava':       'lava',
     'trail_nature':     'nature',
     'trail_custom_text':'custom_text',
+    'trail_solmerion':  'solmerion',
 };
 
 // =====================================================
@@ -98,6 +99,7 @@ function getTrailColorKey(trailId) {
         'trail_lava':       'red',
         'trail_nature':     'green',
         'trail_custom_text':'yellow',
+        'trail_solmerion':  'yellow',
     };
     return colorMap[trailId] || 'cyan';
 }
@@ -149,7 +151,7 @@ function updateTrail() {
         ghost: 40, fractura: 38, hielo: 42, toxico: 40,
         vampiro: 38, zombie: 40, fire: 45, water: 42,
         wind: 44, ice: 42, lava: 45, nature: 40,
-        custom_text: 35
+        custom_text: 35, solmerion: 26
     };
     let maxLen = baseLengths[effect] ?? 32;
     if (lowPower) maxLen = Math.ceil(maxLen * 0.55);
@@ -826,6 +828,90 @@ function drawTrail() {
         ctx.restore();
     }
 
+    // ── 18. SOLMERION ────────────────────────────────
+    // Estela ancha blanco→dorado (estilo caballero de luz) con un
+    // hilo rojo fino en el centro. Colores fijos (como 'spark'),
+    // el colorKey del jugador no aplica aquí.
+    else if (effect === 'solmerion') {
+        // Pasada 1: halo dorado ancho y suave
+        ctx.save();
+        ctx.globalCompositeOperation = 'lighter';
+        for (let i = step; i < trail.length; i += step) {
+            const t    = trail[i];
+            const prev = trail[i - step] || trail[0];
+            const life = t.life;
+            ctx.beginPath();
+            ctx.moveTo(prev.x, prev.y);
+            ctx.lineTo(t.x, t.y);
+            ctx.strokeStyle = `rgba(255,196,60,${(life * 0.45).toFixed(3)})`;
+            ctx.lineWidth   = 34 * life;
+            ctx.lineCap     = 'round';
+            ctx.stroke();
+        }
+        ctx.restore();
+
+        // Pasada 2: núcleo blanco→dorado (más blanco cerca de la bolita)
+        ctx.save();
+        ctx.globalCompositeOperation = 'lighter';
+        for (let i = step; i < trail.length; i += step) {
+            const t    = trail[i];
+            const prev = trail[i - step] || trail[0];
+            const life = t.life;
+            const whiteAmt = 0.35 + 0.6 * life;
+            const r = 255;
+            const g = Math.round(255 * whiteAmt + 205 * (1 - whiteAmt));
+            const b = Math.round(255 * whiteAmt + 90  * (1 - whiteAmt));
+            ctx.beginPath();
+            ctx.moveTo(prev.x, prev.y);
+            ctx.lineTo(t.x, t.y);
+            ctx.strokeStyle = `rgba(${r},${g},${b},${(life * 0.95).toFixed(3)})`;
+            ctx.lineWidth   = Math.max(1, 15 * life);
+            ctx.lineCap     = 'round';
+            ctx.stroke();
+        }
+        ctx.restore();
+
+        // Pasada 3: hilo rojo fino en el centro exacto
+        // (se pinta normal, NO con 'lighter', porque si se suma sobre el
+        // núcleo blanco ya saturado, el rojo queda invisible/tapado)
+        ctx.save();
+        for (let i = step; i < trail.length; i += step) {
+            const t    = trail[i];
+            const prev = trail[i - step] || trail[0];
+            const life = t.life;
+            ctx.beginPath();
+            ctx.moveTo(prev.x, prev.y);
+            ctx.lineTo(t.x, t.y);
+            ctx.strokeStyle = `rgba(210,20,25,${(life * 0.95).toFixed(3)})`;
+            ctx.lineWidth   = Math.max(0.8, 3 * life);
+            ctx.lineCap     = 'round';
+            ctx.stroke();
+        }
+        ctx.restore();
+
+        // Pasada 4: núcleo caliente junto a la bolita (glow extra)
+        const head = trail[trail.length - 1];
+        if (head) {
+            ctx.save();
+            ctx.globalCompositeOperation = 'lighter';
+            const glowLayers = [
+                { r: 30, a: 0.35 },
+                { r: 20, a: 0.5 },
+                { r: 11, a: 0.7 },
+            ];
+            for (const gl of glowLayers) {
+                const grd = ctx.createRadialGradient(head.x, head.y, 0, head.x, head.y, gl.r);
+                grd.addColorStop(0, `rgba(255,255,255,${gl.a})`);
+                grd.addColorStop(1, 'rgba(255,235,170,0)');
+                ctx.beginPath();
+                ctx.arc(head.x, head.y, gl.r, 0, Math.PI * 2);
+                ctx.fillStyle = grd;
+                ctx.fill();
+            }
+            ctx.restore();
+        }
+    }
+
     // ── DEFAULT: SOLID ───────────────────────────────
     else {
         ctx.save();
@@ -953,7 +1039,7 @@ window.drawPreviewTrailPoint = function(ctx, p, trailId, rgb, colorId) {
         'spark': 'spark', 'trail_vampiro': 'vampiro', 'trail_zombie': 'zombie',
         'trail_fire': 'fire', 'trail_water': 'water', 'trail_wind': 'wind',
         'trail_ice': 'ice', 'trail_lava': 'lava', 'trail_nature': 'nature',
-        'trail_custom_text': 'custom_text',
+        'trail_custom_text': 'custom_text', 'trail_solmerion': 'solmerion',
     };
     // Para trails con formato effect_color (ej: glow_cyan)
     let effect = effectMap[trailId] || trailId.split('_').slice(0, -1).join('_') || 'solid';
@@ -1142,6 +1228,29 @@ window.drawPreviewTrailPoint = function(ctx, p, trailId, rgb, colorId) {
         ctx.fillStyle = fc(life * 0.85);
         ctx.fillText(txt, p.x, p.y);
     }
+    else if (effect === 'solmerion') {
+        // Halo dorado
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, 9 * life, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(255,196,60,${(life * 0.22).toFixed(3)})`;
+        ctx.fill();
+
+        // Núcleo blanco→dorado
+        const whiteAmt = 0.3 + 0.6 * life;
+        const r = 255;
+        const g = Math.round(255 * whiteAmt + 205 * (1 - whiteAmt));
+        const b = Math.round(255 * whiteAmt + 90  * (1 - whiteAmt));
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, 3.5 * life, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(${r},${g},${b},${(life * 0.9).toFixed(3)})`;
+        ctx.fill();
+
+        // Punto rojo central, fino
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, 1.2 * life, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(220,30,30,${(life * 0.95).toFixed(3)})`;
+        ctx.fill();
+    }
     else {
         // Fallback: punto sólido
         ctx.beginPath();
@@ -1151,4 +1260,119 @@ window.drawPreviewTrailPoint = function(ctx, p, trailId, rgb, colorId) {
     }
 
     ctx.restore();
+};
+
+// =====================================================
+// LÍNEA CONTINUA PARA PREVIEWS RÁPIDOS
+// Algunos efectos (como solmerion) están pensados como una
+// cinta/estela continua, no partículas sueltas. En las animaciones
+// de preview (arco de selección, tarjetas de inventario) la bolita
+// de demo se mueve rápido y los puntos quedan separados, por lo que
+// dibujar solo con drawPreviewTrailPoint (puntitos) se ve punteado.
+// Esta función conecta los puntos con trazos, igual que drawTrail()
+// en el gameplay real. Para el resto de efectos, delega en
+// drawPreviewTrailPoint sin cambiar nada.
+// =====================================================
+const PREVIEW_LINE_EFFECTS = ['solmerion'];
+
+window.drawPreviewTrailLine = function(ctx, pts, trailId, rgb, colorId) {
+    const len = pts.length;
+    if (len < 2) return;
+
+    const effectMap = {
+        'none': 'none', 'basic': 'solid', 'ghost': 'ghost',
+        'fractura': 'fractura', 'hielo': 'hielo', 'toxico': 'toxico',
+        'spark': 'spark', 'trail_vampiro': 'vampiro', 'trail_zombie': 'zombie',
+        'trail_fire': 'fire', 'trail_water': 'water', 'trail_wind': 'wind',
+        'trail_ice': 'ice', 'trail_lava': 'lava', 'trail_nature': 'nature',
+        'trail_custom_text': 'custom_text', 'trail_solmerion': 'solmerion',
+    };
+    let effect = effectMap[trailId] || trailId.split('_').slice(0, -1).join('_') || 'solid';
+    if (effect === trailId) effect = 'solid';
+
+    if (!PREVIEW_LINE_EFFECTS.includes(effect)) {
+        for (let i = 0; i < len; i++) {
+            const p = pts[i];
+            if (p.life <= 0) continue;
+            if (p.seed === undefined) p.seed = ((i * 7919) % 997) / 997;
+            window.drawPreviewTrailPoint(ctx, p, trailId, rgb, colorId);
+        }
+        return;
+    }
+
+    if (effect === 'solmerion') {
+        ctx.save();
+        ctx.globalCompositeOperation = 'lighter';
+
+        // Halo dorado ancho
+        for (let i = 1; i < len; i++) {
+            const a = pts[i - 1], b = pts[i];
+            const life = b.life;
+            if (life <= 0) continue;
+            ctx.beginPath();
+            ctx.moveTo(a.x, a.y);
+            ctx.lineTo(b.x, b.y);
+            ctx.strokeStyle = `rgba(255,196,60,${(life * 0.45).toFixed(3)})`;
+            ctx.lineWidth   = 34 * life;
+            ctx.lineCap     = 'round';
+            ctx.stroke();
+        }
+        // Núcleo blanco→dorado
+        for (let i = 1; i < len; i++) {
+            const a = pts[i - 1], b = pts[i];
+            const life = b.life;
+            if (life <= 0) continue;
+            const whiteAmt = 0.35 + 0.6 * life;
+            const r = 255;
+            const g = Math.round(255 * whiteAmt + 205 * (1 - whiteAmt));
+            const bch = Math.round(255 * whiteAmt + 90 * (1 - whiteAmt));
+            ctx.beginPath();
+            ctx.moveTo(a.x, a.y);
+            ctx.lineTo(b.x, b.y);
+            ctx.strokeStyle = `rgba(${r},${g},${bch},${(life * 0.95).toFixed(3)})`;
+            ctx.lineWidth   = Math.max(1, 15 * life);
+            ctx.lineCap     = 'round';
+            ctx.stroke();
+        }
+        ctx.restore();
+
+        // Hilo rojo central (pintado normal, no aditivo, para que se
+        // note sobre el núcleo blanco en vez de quedar tapado)
+        ctx.save();
+        for (let i = 1; i < len; i++) {
+            const a = pts[i - 1], b = pts[i];
+            const life = b.life;
+            if (life <= 0) continue;
+            ctx.beginPath();
+            ctx.moveTo(a.x, a.y);
+            ctx.lineTo(b.x, b.y);
+            ctx.strokeStyle = `rgba(210,20,25,${(life * 0.95).toFixed(3)})`;
+            ctx.lineWidth   = Math.max(0.8, 3 * life);
+            ctx.lineCap     = 'round';
+            ctx.stroke();
+        }
+        ctx.restore();
+
+        // Núcleo caliente junto a la bolita (glow extra)
+        const head = pts[len - 1];
+        if (head && head.life > 0) {
+            ctx.save();
+            ctx.globalCompositeOperation = 'lighter';
+            const glowLayers = [
+                { r: 30, a: 0.35 },
+                { r: 20, a: 0.5 },
+                { r: 11, a: 0.7 },
+            ];
+            for (const gl of glowLayers) {
+                const grd = ctx.createRadialGradient(head.x, head.y, 0, head.x, head.y, gl.r);
+                grd.addColorStop(0, `rgba(255,255,255,${gl.a})`);
+                grd.addColorStop(1, 'rgba(255,235,170,0)');
+                ctx.beginPath();
+                ctx.arc(head.x, head.y, gl.r, 0, Math.PI * 2);
+                ctx.fillStyle = grd;
+                ctx.fill();
+            }
+            ctx.restore();
+        }
+    }
 };

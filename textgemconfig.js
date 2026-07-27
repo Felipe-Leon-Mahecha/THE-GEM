@@ -383,7 +383,7 @@ const GEM_CONFIG = {
             sidebar: {
                 titulo: 'TIENDA',
                 botonVolver: '← VOLVER',
-                labelEstandarte: 'ESTANDARTE',
+                labelEstandarte: 'DISEÑO DE PERFIL',
                 labelRubies: 'RUBIES',
                 labelCoins: 'COINS',
                 misionesTitulo: 'MISIONES',
@@ -427,7 +427,7 @@ const GEM_CONFIG = {
 
             // Página de Banners
             banners: {
-                titulo: 'BANNERS',
+                titulo: 'DISEÑO DE PERFIL',
                 botonEquipar: 'EQUIPAR',
                 botonEquipado: 'EQUIPADO',
                 botonSoloVIP: 'SOLO EN TIENDA VIP',
@@ -500,7 +500,7 @@ const GEM_CONFIG = {
                     brandSub: 'THE GEM',
                     pillSkins: 'SKINS',
                     pillTrails: 'TRAILS',
-                    pillBanners: 'BANNERS',
+                    pillBanners: 'DISEÑO DE PERFIL',
                     pillEmotes: 'EMOTES',
                     pillPowerups: 'POTENCIADORES',
                     pillCofres: 'COFRES',
@@ -524,7 +524,7 @@ const GEM_CONFIG = {
                 titulos: {
                     skinsTemplate: 'SKINS OBTENIDAS — {n}',
                     trailsTemplate: 'TRAILS OBTENIDOS — {n} EFECTOS',
-                    bannersTemplate: 'BANNERS OBTENIDOS — {n}',
+                    bannersTemplate: 'DISEÑO DE PERFIL — {n}',
                     emotesTemplate: 'EMOTES OBTENIDOS — {n}',
                     powerupsTemplate: 'POTENCIADORES OBTENIDOS — {n}',
                     cofresTemplate: 'COFRES GUARDADOS — {n}',
@@ -551,7 +551,7 @@ const GEM_CONFIG = {
                 banners: {
                     tooltipEquipado: 'Equipado',
                     tooltipClickEquipar: 'Click para equipar',
-                    labelBannerEquipado: 'BANNER EQUIPADO', // kicker sobre el preview de perfil
+                    labelBannerEquipado: 'DISEÑO DE PERFIL', // kicker sobre el preview de perfil
                     fallbackNombreJugador: 'Jugador',        // si no hay nombre guardado
                     fallbackNombreBanner: 'Banner',          // si el banner no tiene nombre
                 },

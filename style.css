@@ -22,6 +22,9 @@
 
     /* Tamaños de fuente base (se ajustan distinto en cada media query) */
     --font-size-base: 14px;
+
+    /* Sidebar de tienda — ancho ajustado al ratio 2.251:1 del marco de perfil */
+    --shop-sidebar-width: 213px;
 }
 
 /* Estilos base del documento HTML */
@@ -10086,7 +10089,7 @@ body.is-touch-device .shop-sidebar::after {
 
 /* ── Banner de perfil (el cuadro con avatar + nombre del banner) ── */
 .shop-profile-banner {
-    height: var(--shop-banner-height, 82px);
+    height: var(--shop-banner-height, 98px);
     border-radius: var(--shop-banner-radius, 10px);
     border: 1px solid rgba(255, 255, 255, 0.1);
     background: linear-gradient(135deg, rgba(0, 255, 231, 0.18), rgba(255, 77, 109, 0.16));
@@ -10974,6 +10977,34 @@ body.performance-mode #pausePanel {
     font-weight: 700;
 }
 
+.inv-currency-group {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-shrink: 0;
+}
+
+.inv-coin-counter {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    font-family: var(--font-secundaria);
+    font-size: 12px;
+    font-weight: bold;
+    color: #ffb347;
+    background: rgba(255, 179, 71, 0.08);
+    border: 1px solid rgba(255, 179, 71, 0.3);
+    padding: 8px 14px;
+    border-radius: 20px;
+    flex-shrink: 0;
+}
+
+.inv-coin-counter img {
+    width: 16px;
+    height: 16px;
+    object-fit: contain;
+}
+
 .inv-gem-counter {
     display: flex;
     align-items: center;
@@ -11002,20 +11033,49 @@ body.performance-mode #pausePanel {
     flex: 1;
     overflow-y: auto;
     padding: 32px 40px 60px;
+    -webkit-mask-image: linear-gradient(to bottom, transparent 0px, black 28px);
+    mask-image: linear-gradient(to bottom, transparent 0px, black 28px);
+    scrollbar-width: thin;
+    scrollbar-color: rgba(0, 255, 231, 0.35) transparent;
 }
 
-/* ---------- Hero (equipado + progreso) ---------- */
+.inv-main::-webkit-scrollbar {
+    width: 7px;
+}
+
+.inv-main::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.inv-main::-webkit-scrollbar-thumb {
+    background: linear-gradient(180deg, rgba(0, 255, 231, 0.55), rgba(0, 255, 231, 0.2));
+    border-radius: 10px;
+    border: 1px solid rgba(0, 255, 231, 0.15);
+}
+
+.inv-main::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(180deg, rgba(0, 255, 231, 0.8), rgba(0, 255, 231, 0.35));
+}
+
+/* ---------- Hero (equipado + progreso) ----------
+   El fondo se pinta por JS (invHeroBannerBackground en shop.js) con el
+   banner de perfil equipado; el degradado de abajo es solo el fallback
+   antes de que el JS corra / si no hay banner. */
 .inv-hero {
     display: flex;
     align-items: center;
     gap: 44px;
     background: linear-gradient(160deg, rgba(18, 25, 31, 0.75) 0%, rgba(12, 19, 25, 0.8) 100%);
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
     border: 1px solid rgba(255, 255, 255, 0.08);
     border-radius: 22px;
     padding: 32px 40px;
     position: relative;
     overflow: hidden;
     flex-wrap: wrap;
+    transition: background-image 0.25s ease;
 }
 
 .inv-equip-stage {
@@ -11331,9 +11391,14 @@ body.performance-mode #pausePanel {
         letter-spacing: 2px;
     }
 
-    .inv-gem-counter {
+    .inv-currency-group {
         order: 2;
         margin-left: auto;
+        gap: 6px;
+    }
+
+    .inv-coin-counter,
+    .inv-gem-counter {
         padding: 6px 12px;
         font-size: 11px;
     }
@@ -11476,9 +11541,14 @@ body.is-touch-device .inv-brand-title {
     letter-spacing: 2px !important;
 }
 
-body.is-touch-device .inv-gem-counter {
+body.is-touch-device .inv-currency-group {
     order: 2;
     margin-left: auto !important;
+    gap: 6px !important;
+}
+
+body.is-touch-device .inv-coin-counter,
+body.is-touch-device .inv-gem-counter {
     padding: 6px 12px !important;
     font-size: 11px !important;
 }
@@ -12929,6 +12999,122 @@ body.performance-mode .hud-flag-shine::after {
     color: inherit;
 }
 
+.hud-price-chip.locked {
+    background: rgba(255, 255, 255, .1);
+    color: rgba(255, 255, 255, .35);
+}
+
+.hud-price-chip.small {
+    padding: 6px 12px;
+    font-size: 11px;
+}
+
+/* =====================================================
+   15b · DISEÑO DE PERFIL — TARJETAS DE BANNER/MARCO (pd-card)
+   Grid de 4 columnas para banners, 3 para marcos. Reusa
+   hud-panel-cut (marco/corte) y hud-price-chip (precio/estado)
+   ya definidos arriba; el color de rareza se pasa por
+   style="--cfg-hud-accent:..." en cada card.
+   ===================================================== */
+.diseno-perfil-grid-banners {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+}
+
+.diseno-perfil-grid-frames {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+}
+
+@media (max-width: 900px) {
+
+    .diseno-perfil-grid-banners,
+    .diseno-perfil-grid-frames {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 520px) {
+
+    .diseno-perfil-grid-banners,
+    .diseno-perfil-grid-frames {
+        grid-template-columns: 1fr;
+    }
+}
+
+.pd-card {
+    position: relative;
+    overflow: hidden;
+    isolation: isolate;
+    cursor: pointer;
+    transition: transform .22s ease, border-color .22s ease, box-shadow .22s ease;
+    aspect-ratio: 16 / 7.1;
+}
+
+.diseno-perfil-grid-frames .pd-card {
+    aspect-ratio: 1882 / 836;
+}
+
+.pd-card:hover {
+    transform: translateY(-4px);
+}
+
+.pd-card.no-disponible,
+.pd-card.no-disponible:hover {
+    cursor: default;
+    transform: none;
+}
+
+.pd-media {
+    position: absolute;
+    inset: 0;
+    background-size: cover;
+    background-position: center;
+}
+
+.diseno-perfil-grid-frames .pd-media {
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-color: #0e1017;
+}
+
+.pd-veil {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 46%;
+    background: linear-gradient(0deg, rgba(5, 6, 10, .75), transparent);
+    pointer-events: none;
+}
+
+.pd-chip-wrap {
+    position: absolute;
+    right: 10px;
+    bottom: 10px;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    align-items: flex-end;
+}
+
+.pd-card.equipped {
+    border-color: var(--color-cian);
+    box-shadow: 0 0 16px rgba(0, 255, 231, .25);
+}
+
+.pd-card.equipped .hud-price-chip {
+    background: var(--color-cian);
+    color: #04302b;
+}
+
+.pd-card.locked .pd-media {
+    filter: grayscale(.55) brightness(.55);
+}
+
 /* =====================================================
    16 · BADGE DE TEMPORIZADOR
    Reloj dibujado en CSS (sin emoji).
@@ -13717,124 +13903,216 @@ body.performance-mode .hud-notify-dot {
     background: linear-gradient(90deg, #6b3bb0, transparent);
 }
 
-/* ---- Bento de categorías: 1 grande + 3 chicas, no 4 iguales ---- */
+/* ---- Bento de categorías: 5 cards iguales, diseño v2 (nebulosa + esquinas HUD) ---- */
 .category-bento {
     display: grid;
-    grid-template-columns: 1.6fr 1fr 1fr 1fr;
+    grid-template-columns: repeat(5, 1fr);
     gap: 14px;
 }
 
 .cat-card {
+    --cc: #00e5ff;
     position: relative;
-    overflow: hidden;
-    border-radius: 8px;
+    height: 172px;
+    background: #11141f;
     border: 1px solid rgba(255, 255, 255, .08);
-    background: rgba(255, 255, 255, .03);
-    padding: 20px;
+    clip-path: polygon(0 0, calc(100% - 16px) 0, 100% 16px, 100% 100%, 12px 100%, 0 calc(100% - 12px));
+    padding: 16px 14px 14px;
     display: flex;
     flex-direction: column;
+    align-items: center;
     justify-content: flex-end;
-    min-height: 170px;
+    gap: 8px;
+    text-align: center;
     cursor: pointer;
+    isolation: isolate;
+    overflow: hidden;
     transition: transform .18s ease, border-color .18s ease;
-}
-
-.cat-card:hover {
-    transform: translateY(-3px);
-    border-color: #a259ff;
 }
 
 .cat-card::before {
     content: "";
     position: absolute;
-    inset: 0;
-    background: radial-gradient(circle at 80% 0%, var(--cc-glow, rgba(162, 89, 255, .22)), transparent 60%);
+    inset: -20%;
+    background:
+        radial-gradient(circle at 78% 8%, color-mix(in srgb, var(--cc) 55%, transparent) 0%, transparent 34%),
+        radial-gradient(circle at 15% 30%, color-mix(in srgb, var(--cc) 30%, transparent) 0%, transparent 30%),
+        radial-gradient(circle at 60% 70%, color-mix(in srgb, var(--cc) 22%, transparent) 0%, transparent 38%),
+        radial-gradient(circle at 30% 95%, rgba(255, 255, 255, .05) 0%, transparent 3%),
+        radial-gradient(circle at 85% 55%, rgba(255, 255, 255, .06) 0%, transparent 2.5%),
+        radial-gradient(circle at 45% 20%, rgba(255, 255, 255, .05) 0%, transparent 2%),
+        radial-gradient(circle at 68% 88%, rgba(255, 255, 255, .05) 0%, transparent 2.5%),
+        radial-gradient(circle at 10% 65%, rgba(255, 255, 255, .04) 0%, transparent 2%);
+    filter: blur(6px);
+    opacity: .55;
+    transition: opacity .25s ease, filter .25s ease;
+    z-index: 0;
+}
+
+.cat-card:hover::before {
+    opacity: .95;
+    filter: blur(4px);
+}
+
+.cat-corner-fill {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 16px;
+    height: 16px;
+    background: var(--cc);
+    clip-path: polygon(100% 0, 0 0, 100% 100%);
+    opacity: .6;
+    z-index: 2;
+    transition: opacity .18s ease;
+}
+
+.cat-card:hover .cat-corner-fill {
+    opacity: 1;
+}
+
+.cat-card:hover {
+    transform: translateY(-4px);
+    border-color: var(--cc);
+}
+
+.cc-corner {
+    position: absolute;
+    width: 14px;
+    height: 14px;
+    z-index: 2;
+    pointer-events: none;
+    opacity: .5;
+    transition: opacity .18s ease;
+}
+
+.cc-corner::before,
+.cc-corner::after {
+    content: "";
+    position: absolute;
+    background: var(--cc);
+}
+
+.cc-corner.tl {
+    top: 6px;
+    left: 6px;
+}
+
+.cc-corner.tl::before {
+    width: 100%;
+    height: 2px;
+    top: 0;
+    left: 0;
+}
+
+.cc-corner.tl::after {
+    width: 2px;
+    height: 100%;
+    top: 0;
+    left: 0;
+}
+
+.cc-corner.bl {
+    bottom: 6px;
+    left: 6px;
+}
+
+.cc-corner.bl::before {
+    width: 100%;
+    height: 2px;
+    bottom: 0;
+    left: 0;
+}
+
+.cc-corner.bl::after {
+    width: 2px;
+    height: 100%;
+    bottom: 0;
+    left: 0;
+}
+
+.cat-card:hover .cc-corner {
+    opacity: 1;
+}
+
+.cat-icon-zone {
+    position: relative;
+    flex: 1;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1;
+}
+
+.cat-glow {
+    position: absolute;
+    width: 76px;
+    height: 76px;
+    border-radius: 50%;
+    background: radial-gradient(circle, color-mix(in srgb, var(--cc) 45%, transparent) 0%, transparent 72%);
+    filter: blur(2px);
+    transition: transform .2s ease, opacity .2s ease;
+    opacity: .6;
+}
+
+.cat-card:hover .cat-glow {
+    transform: scale(1.18);
     opacity: .9;
 }
 
-.cat-card.main {
-    background: linear-gradient(150deg, rgba(162, 89, 255, .14), rgba(255, 255, 255, .02));
-}
-
-.cat-icon-big {
+.cat-icon {
     position: relative;
     z-index: 1;
-    width: 64px;
-    height: 64px;
-    margin-bottom: 14px;
+    width: 46px;
+    height: 46px;
+    filter: drop-shadow(0 0 8px color-mix(in srgb, var(--cc) 70%, transparent));
+    transition: transform .18s ease;
+}
+
+.cat-card:hover .cat-icon {
+    transform: translateY(-3px) scale(1.06);
+}
+
+.cat-text {
+    position: relative;
+    z-index: 1;
     display: flex;
+    flex-direction: column;
     align-items: center;
-    justify-content: center;
-    clip-path: polygon(30% 0, 70% 0, 100% 30%, 100% 70%, 70% 100%, 30% 100%, 0 70%, 0 30%);
-    background: linear-gradient(160deg, rgba(255, 255, 255, .08), rgba(0, 0, 0, .35));
-    border: 2px solid var(--cc, #a259ff);
-    box-shadow: 0 0 16px var(--cc-soft, rgba(162, 89, 255, .35)), inset 0 0 10px var(--cc-soft, rgba(162, 89, 255, .35));
-}
-
-.cat-icon-big .ph {
-    width: 26px;
-    height: 26px;
-    background: var(--cc, #a259ff);
-}
-
-.cat-icon-big .ph.skin {
-    border-radius: 50%;
-}
-
-.cat-icon-big .ph.trail {
-    clip-path: polygon(0 40%, 60% 40%, 60% 0, 100% 50%, 60% 100%, 60% 60%, 0 60%);
+    gap: 5px;
 }
 
 .cat-name {
-    position: relative;
-    z-index: 1;
     font-family: 'Rajdhani', sans-serif;
     font-weight: 700;
-    font-size: 16px;
-    letter-spacing: 1px;
+    font-size: 14px;
+    letter-spacing: 1.8px;
+    color: #e8ecf5;
+}
+
+.cat-underline {
+    width: 26px;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--cc), transparent);
 }
 
 .cat-count {
-    position: relative;
-    z-index: 1;
-    font-size: 10.5px;
+    font-size: 10px;
     color: rgba(124, 134, 156, 1);
-    margin-top: 3px;
+    letter-spacing: .3px;
 }
 
-.cat-card.small {
-    min-height: 170px;
-    padding: 16px;
+.cat-count b {
+    color: var(--cc);
+    font-weight: 700;
 }
 
-.cat-icon-small {
-    width: 46px;
-    height: 46px;
-    margin-bottom: 12px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    clip-path: polygon(30% 0, 70% 0, 100% 30%, 100% 70%, 70% 100%, 30% 100%, 0 70%, 0 30%);
-    background: linear-gradient(160deg, rgba(255, 255, 255, .08), rgba(0, 0, 0, .35));
-    border: 2px solid var(--cc, #a259ff);
-    box-shadow: 0 0 12px var(--cc-soft, rgba(162, 89, 255, .35));
-    position: relative;
-    z-index: 1;
-}
-
-.cat-icon-small .ph {
-    width: 18px;
-    height: 18px;
-    background: var(--cc, #a259ff);
-}
-
-.cat-icon-small .ph.banner {
-    clip-path: polygon(15% 0, 85% 0, 85% 80%, 50% 100%, 15% 80%);
-}
-
-.cat-icon-small .ph.emote {
-    clip-path: polygon(50% 0, 100% 50%, 50% 100%, 0 50%);
-}
+.cat-card.skins { --cc: #a259ff; }
+.cat-card.trails { --cc: #00e5ff; }
+.cat-card.banners { --cc: #ff5d8f; }
+.cat-card.marcos { --cc: #6ad7ff; }
+.cat-card.emotes { --cc: #ffd76a; }
 
 /* ---- Vitrina de recompensas: filas escalonadas, no todas iguales ---- */
 .showcase-grid {
@@ -13917,13 +14195,380 @@ body.performance-mode .hud-notify-dot {
 
 .empty-showcase {
     grid-column: 1 / -1;
-    padding: 30px;
-    border: 1px dashed rgba(255, 255, 255, .08);
-    border-radius: 8px;
+    position: relative;
+    padding: 44px 30px;
+    border-radius: 10px;
     text-align: center;
-    color: rgba(124, 134, 156, 1);
-    font-size: 12px;
+    overflow: hidden;
+    background:
+        radial-gradient(circle at 28% 20%, rgba(162, 89, 255, .16), transparent 60%),
+        radial-gradient(circle at 76% 82%, rgba(255, 215, 106, .10), transparent 55%),
+        linear-gradient(160deg, rgba(255, 255, 255, .03), rgba(0, 0, 0, .25));
+    border: 1px solid rgba(255, 215, 106, .18);
+}
+
+.empty-showcase::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: repeating-linear-gradient(115deg, rgba(162, 89, 255, .07) 0 2px, transparent 2px 26px);
+    mask-image: linear-gradient(100deg, transparent, black 40%, black 60%, transparent 100%);
+    pointer-events: none;
+}
+
+.empty-showcase-diamond {
+    position: relative;
+    z-index: 1;
+    width: 46px;
+    height: 46px;
+    margin: 0 auto 18px;
+    display: grid;
+    place-items: center;
+    transform: rotate(45deg);
+    border: 1.5px solid rgba(255, 215, 106, .55);
+    background: linear-gradient(160deg, rgba(162, 89, 255, .25), rgba(255, 215, 106, .08));
+    box-shadow: 0 0 22px -4px rgba(255, 215, 106, .45), inset 0 0 14px rgba(162, 89, 255, .25);
+    animation: emptyShowcasePulse 2.6s ease-in-out infinite;
+}
+
+.empty-showcase-diamond span {
+    width: 14px;
+    height: 14px;
+    background: linear-gradient(160deg, #ffd76a, #a259ff);
+    clip-path: polygon(50% 0, 100% 50%, 50% 100%, 0 50%);
+    transform: rotate(-45deg);
+}
+
+@keyframes emptyShowcasePulse {
+
+    0%,
+    100% {
+        box-shadow: 0 0 22px -4px rgba(255, 215, 106, .45), inset 0 0 14px rgba(162, 89, 255, .25);
+    }
+
+    50% {
+        box-shadow: 0 0 34px -2px rgba(255, 215, 106, .7), inset 0 0 20px rgba(162, 89, 255, .4);
+    }
+}
+
+.empty-showcase-title {
+    position: relative;
+    z-index: 1;
+    font-family: 'Rajdhani', sans-serif;
+    font-weight: 700;
+    font-size: 15px;
+    letter-spacing: 5px;
+    color: #ffd76a;
+    text-shadow: 0 0 16px rgba(255, 215, 106, .4);
+}
+
+.empty-showcase-text {
+    position: relative;
+    z-index: 1;
+    margin: 8px auto 0;
+    max-width: 340px;
+    font-size: 11px;
+    letter-spacing: .5px;
+    line-height: 1.5;
+    color: rgba(255, 255, 255, .4);
+}
+
+/* ===== Destacados de Temporada Leyendas: Emotes del día + Packs ===== */
+.season-showcase-featured-row {
+    display: flex;
+    gap: 14px;
+    align-items: stretch;
+}
+
+.season-emotes-of-day-col {
+    flex: 1 1 50%;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    min-width: 0;
+}
+
+.season-emote-of-day-card {
+    flex: 1;
+    position: relative;
+    overflow: hidden;
+    border-radius: 8px;
+    border: 1px solid rgba(255, 215, 106, .25);
+    background: #0e0d16;
+}
+
+.season-emote-of-day-card.is-empty {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: rgba(255, 255, 255, .35);
+    font-family: 'Chakra Petch', sans-serif;
+    font-size: 10px;
     letter-spacing: 1px;
+}
+
+.season-emote-of-day-hazard {
+    height: 20px;
+    background: repeating-linear-gradient(135deg, #e0b563 0 8px, #0e0d16 8px 16px);
+    clip-path: polygon(0 0, 100% 0, calc(100% - 14px) 100%, 0 100%);
+    display: flex;
+    align-items: center;
+    padding-left: 12px;
+}
+
+.season-emote-of-day-hazard span {
+    background: #0e0d16;
+    color: #e0b563;
+    font-family: 'Chakra Petch', sans-serif;
+    font-size: 9px;
+    letter-spacing: 1.5px;
+    font-weight: 600;
+    padding: 2px 8px;
+    text-transform: uppercase;
+}
+
+.season-emote-of-day-body {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 14px;
+}
+
+.season-emote-of-day-thumb {
+    width: 48px;
+    height: 48px;
+    flex-shrink: 0;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, .04);
+    border: 1px solid rgba(255, 255, 255, .1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+
+.season-emote-of-day-thumb img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.season-emote-of-day-name {
+    font-family: 'Chakra Petch', sans-serif;
+    font-size: 12px;
+    color: #fff;
+    letter-spacing: .5px;
+}
+
+.season-packs-card {
+    flex: 1 1 50%;
+    position: relative;
+    overflow: hidden;
+    cursor: pointer;
+    border-radius: 8px;
+    border: 1px solid rgba(162, 89, 255, .3);
+    background: radial-gradient(circle at 80% 10%, rgba(162, 89, 255, .16), transparent 55%), #0e0d16;
+    display: flex;
+    flex-direction: column;
+    transition: transform .18s ease, border-color .18s ease;
+}
+
+.season-packs-card:hover {
+    transform: translateY(-2px);
+    border-color: rgba(162, 89, 255, .6);
+}
+
+.season-packs-hazard {
+    height: 20px;
+    background: repeating-linear-gradient(135deg, #a259ff 0 8px, #0e0d16 8px 16px);
+    clip-path: polygon(0 0, 100% 0, calc(100% - 14px) 100%, 0 100%);
+    display: flex;
+    align-items: center;
+    padding-left: 12px;
+}
+
+.season-packs-hazard span {
+    background: #0e0d16;
+    color: #a259ff;
+    font-family: 'Chakra Petch', sans-serif;
+    font-size: 9px;
+    letter-spacing: 1.5px;
+    font-weight: 600;
+    padding: 2px 8px;
+    text-transform: uppercase;
+}
+
+.season-packs-body {
+    flex: 1;
+    padding: 14px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.season-packs-title {
+    font-family: 'Rajdhani', sans-serif;
+    font-weight: 700;
+    font-size: 22px;
+    letter-spacing: 2px;
+    color: #fff;
+    text-shadow: 0 0 18px rgba(162, 89, 255, .5);
+    margin-bottom: 6px;
+}
+
+.season-packs-sub {
+    font-size: 11px;
+    color: rgba(255, 255, 255, .55);
+    line-height: 1.5;
+    margin: 0 0 12px;
+}
+
+.season-packs-swatches {
+    display: flex;
+    gap: 8px;
+}
+
+.season-packs-swatch {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: var(--c);
+    box-shadow: 0 0 12px var(--c);
+}
+
+/* ===== Modal de Packs: overview con 2 paneles ===== */
+.season-pack-overview-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+}
+
+.season-pack-overview-panel {
+    position: relative;
+    height: 220px;
+    border-radius: 8px;
+    overflow: hidden;
+    cursor: pointer;
+    border: 1px solid color-mix(in srgb, var(--c) 40%, transparent);
+    background: radial-gradient(circle at 50% 30%, color-mix(in srgb, var(--c) 30%, transparent), #0e0d16 70%);
+    display: flex;
+    align-items: flex-end;
+    transition: transform .18s ease;
+}
+
+.season-pack-overview-panel:hover { transform: translateY(-3px); }
+
+.season-pack-overview-panel img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.season-pack-overview-panel.no-cover {
+    background: radial-gradient(circle at 50% 30%, color-mix(in srgb, var(--c) 45%, transparent), #0e0d16 75%);
+}
+
+.season-pack-overview-name {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    padding: 12px 14px;
+    background: linear-gradient(0deg, rgba(3, 2, 8, .9), transparent);
+    font-family: 'Rajdhani', sans-serif;
+    font-weight: 700;
+    font-size: 16px;
+    letter-spacing: 1px;
+    color: #fff;
+}
+
+/* ===== Modal de Packs: detalle de un personaje ===== */
+.season-pack-detail-back {
+    background: none;
+    border: none;
+    color: rgba(255, 255, 255, .5);
+    font-family: 'Chakra Petch', sans-serif;
+    font-size: 10px;
+    letter-spacing: 1px;
+    cursor: pointer;
+    margin-bottom: 14px;
+    padding: 0;
+}
+.season-pack-detail-back:hover { color: #fff; }
+
+.season-pack-detail-header {
+    position: relative;
+    height: 140px;
+    border-radius: 8px;
+    overflow: hidden;
+    margin-bottom: 16px;
+    border: 1px solid color-mix(in srgb, var(--c) 40%, transparent);
+    display: flex;
+    align-items: flex-end;
+    background: radial-gradient(circle at 50% 20%, color-mix(in srgb, var(--c) 30%, transparent), #0e0d16 75%);
+}
+
+.season-pack-detail-header img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.season-pack-detail-header h3 {
+    position: relative;
+    z-index: 1;
+    padding: 12px 16px;
+    background: linear-gradient(0deg, rgba(3, 2, 8, .9), transparent);
+    width: 100%;
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 20px;
+    color: #fff;
+    margin: 0;
+}
+
+.season-pack-detail-section { margin-bottom: 16px; }
+
+.season-pack-detail-label {
+    display: block;
+    font-family: 'Chakra Petch', sans-serif;
+    font-size: 10px;
+    letter-spacing: 2px;
+    color: var(--c);
+    margin-bottom: 8px;
+}
+
+.season-pack-detail-item {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    margin-right: 12px;
+}
+
+.season-pack-detail-item img {
+    width: 64px;
+    height: 64px;
+    object-fit: contain;
+    border-radius: 6px;
+    background: rgba(255, 255, 255, .04);
+    border: 1px solid rgba(255, 255, 255, .1);
+}
+
+.season-pack-detail-item span {
+    font-size: 9px;
+    color: rgba(255, 255, 255, .6);
+    text-align: center;
+    max-width: 70px;
+}
+
+.season-pack-detail-emotes { display: flex; flex-wrap: wrap; gap: 4px; }
+
+@media (max-width: 720px) {
+    .season-showcase-featured-row { flex-direction: column; }
+    .season-pack-overview-grid { grid-template-columns: 1fr; }
 }
 
 .category-bento .cat-card[onclick] {
@@ -13985,6 +14630,679 @@ body.performance-mode .hud-notify-dot {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
     gap: 14px;
+}
+
+/* ===== Evento de Temporada (checklist paralelo a misiones diarias) ===== */
+.season-event-card {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 180px;
+    gap: 18px;
+    align-items: center;
+    padding: 20px 22px;
+    margin-bottom: 24px;
+    border: 1px solid rgba(255, 215, 106, .18);
+    border-radius: 10px;
+    background: linear-gradient(135deg, rgba(255, 215, 106, .08), rgba(12, 10, 20, .92));
+}
+
+.season-event-card--upcoming,
+.season-event-card--ended {
+    border-color: rgba(255, 255, 255, .1);
+    background: linear-gradient(135deg, rgba(255, 255, 255, .04), rgba(12, 10, 20, .92));
+}
+
+.season-event-card-copy strong {
+    display: block;
+    font-family: 'Chakra Petch', sans-serif;
+    font-size: 13px;
+    letter-spacing: 2px;
+    color: #ffd76a;
+    margin-bottom: 8px;
+}
+
+.season-event-card-copy p {
+    margin: 0 0 6px;
+    font-family: monospace;
+    font-size: 12px;
+    color: rgba(255, 255, 255, .78);
+}
+
+.season-event-card-copy small {
+    display: block;
+    font-family: monospace;
+    font-size: 10px;
+    color: rgba(255, 255, 255, .42);
+    line-height: 1.5;
+}
+
+.season-event-card-timer {
+    color: #ffd76a !important;
+    letter-spacing: 1px;
+}
+
+.season-event-card-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 14px;
+}
+
+.season-event-card-actions button {
+    padding: 8px 14px;
+    border-radius: 8px;
+    border: 1px solid rgba(255, 215, 106, .35);
+    background: rgba(255, 215, 106, .08);
+    color: #ffd76a;
+    font-family: monospace;
+    font-size: 10px;
+    letter-spacing: 1px;
+    cursor: pointer;
+}
+
+.season-event-card-claimed {
+    font-family: monospace;
+    font-size: 10px;
+    letter-spacing: 1px;
+    color: rgba(111, 255, 176, .85);
+}
+
+.season-event-card-banner {
+    width: 100%;
+    min-height: 110px;
+    border-radius: 8px;
+    border: 1px solid rgba(255, 255, 255, .1);
+    background-size: cover;
+    background-position: center;
+}
+
+.season-event-modal-body {
+    padding: 18px;
+    overflow-y: auto;
+    max-height: calc(80vh - 56px);
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255, 215, 106, .35) transparent;
+}
+
+.season-event-modal-body::-webkit-scrollbar {
+    width: 7px;
+}
+
+.season-event-modal-body::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.season-event-modal-body::-webkit-scrollbar-thumb {
+    background: linear-gradient(180deg, rgba(255, 215, 106, .6), rgba(162, 89, 255, .4));
+    border-radius: 4px;
+}
+
+.season-event-modal-body::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(180deg, rgba(255, 215, 106, .85), rgba(162, 89, 255, .6));
+}
+
+/* ===== Evento activo: hero con pedestal de rareza (reemplaza la card plana) ===== */
+.season-event-hero {
+    --rarity-color: #ffd76a;
+    position: relative;
+    margin-bottom: 24px;
+    border: 1px solid rgba(255, 255, 255, .08);
+    background: #0e0d16;
+}
+
+.season-event-hazard {
+    height: 24px;
+    background: repeating-linear-gradient(135deg, var(--rarity-color) 0 10px, #0e0d16 10px 20px);
+    clip-path: polygon(0 0, 100% 0, calc(100% - 18px) 100%, 0 100%);
+    display: flex;
+    align-items: center;
+    padding-left: 14px;
+}
+
+.season-event-hazard span {
+    background: #0e0d16;
+    color: var(--rarity-color);
+    font-family: 'Chakra Petch', sans-serif;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    padding: 2px 10px;
+}
+
+.season-event-hero-body {
+    display: flex;
+    gap: 22px;
+    padding: 20px 22px;
+}
+
+.season-event-pedestal {
+    position: relative;
+    width: 130px;
+    height: 130px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.season-event-pedestal-ring,
+.season-event-pedestal-ring2 {
+    position: absolute;
+    inset: 0;
+    border: 1px solid rgba(255, 255, 255, .12);
+    clip-path: polygon(50% 0, 100% 25%, 100% 75%, 50% 100%, 0 75%, 0 25%);
+}
+
+.season-event-pedestal-ring2 {
+    inset: 10px;
+    border-color: var(--rarity-color);
+    box-shadow: 0 0 22px rgba(255, 215, 106, .3) inset;
+}
+
+.season-event-pedestal-art {
+    position: absolute;
+    inset: 18px;
+    background-size: cover;
+    background-position: center;
+    clip-path: polygon(50% 0, 100% 25%, 100% 75%, 50% 100%, 0 75%, 0 25%);
+}
+
+.season-event-pedestal-tag {
+    position: absolute;
+    bottom: -10px;
+    background: #0e0d16;
+    border: 1px solid var(--rarity-color);
+    color: var(--rarity-color);
+    font-family: monospace;
+    font-size: 9px;
+    letter-spacing: 1.5px;
+    font-weight: 600;
+    padding: 3px 8px;
+    white-space: nowrap;
+}
+
+.season-event-hero-info {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+.season-event-hero-title {
+    font-family: 'Chakra Petch', sans-serif;
+    font-size: 18px;
+    font-weight: 600;
+    color: #fff;
+    margin: 0 0 4px;
+}
+
+.season-event-hero-sub {
+    font-family: monospace;
+    font-size: 11px;
+    color: rgba(255, 255, 255, .5);
+    line-height: 1.5;
+    margin: 0 0 12px;
+}
+
+.season-event-timer-chip {
+    align-self: flex-start;
+    display: flex;
+    align-items: baseline;
+    gap: 6px;
+    border: 1px solid rgba(255, 255, 255, .12);
+    background: rgba(255, 255, 255, .03);
+    padding: 5px 10px;
+    margin-bottom: 14px;
+}
+
+.season-event-timer-chip b {
+    font-family: 'Chakra Petch', sans-serif;
+    font-size: 14px;
+    color: var(--rarity-color);
+}
+
+.season-event-timer-chip span {
+    font-family: monospace;
+    font-size: 9px;
+    letter-spacing: 1px;
+    color: rgba(255, 255, 255, .45);
+    text-transform: uppercase;
+}
+
+.season-event-timer-chip.is-urgent {
+    border-color: rgba(224, 60, 60, .5);
+    background: rgba(224, 60, 60, .08);
+    animation: pulse 1.4s ease-in-out infinite;
+}
+
+.season-event-timer-chip.is-urgent b {
+    color: #ff5c5c;
+}
+
+.season-event-gauge-label {
+    display: flex;
+    justify-content: space-between;
+    font-family: monospace;
+    font-size: 10px;
+    letter-spacing: 1px;
+    color: rgba(255, 255, 255, .45);
+    margin-bottom: 6px;
+}
+
+.season-event-gauge-label b {
+    color: #fff;
+}
+
+.season-event-gauge {
+    display: flex;
+    gap: 3px;
+    margin-bottom: 16px;
+}
+
+.season-event-gauge i {
+    flex: 1;
+    height: 8px;
+    background: rgba(255, 255, 255, .06);
+    border: 1px solid rgba(255, 255, 255, .1);
+}
+
+.season-event-gauge i.on {
+    background: linear-gradient(90deg, rgba(255, 215, 106, .55), var(--rarity-color));
+    border-color: var(--rarity-color);
+}
+
+.season-event-hero-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: auto;
+}
+
+.season-event-btn {
+    font-family: 'Chakra Petch', sans-serif;
+    font-weight: 600;
+    letter-spacing: 1.5px;
+    font-size: 11px;
+    text-transform: uppercase;
+    cursor: pointer;
+    padding: 9px 18px;
+    border: 1px solid var(--rarity-color);
+    color: #0e0d16;
+    background: linear-gradient(180deg, #ffe9ad, var(--rarity-color));
+    clip-path: polygon(8px 0, 100% 0, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%, 0 8px);
+}
+
+.season-event-btn.is-claim {
+    border-color: #6fffb0;
+    background: linear-gradient(180deg, #b8ffd9, #6fffb0);
+}
+
+@media (max-width: 720px) {
+    .season-event-hero-body {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+    }
+
+    .season-event-timer-chip,
+    .season-event-hero-actions {
+        align-self: center;
+    }
+}
+
+/* ===== Modal checklist: showcase premium de la recompensa ===== */
+.season-event-showcase {
+    --rarity-color: #ffd76a;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: radial-gradient(circle at 50% 25%, rgba(255, 215, 106, .12), transparent 60%), rgba(255, 255, 255, .03);
+    border: 1px solid rgba(255, 255, 255, .08);
+    padding: 22px 16px 16px;
+    margin-bottom: 18px;
+}
+
+.season-event-info-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    border: 1px solid var(--rarity-color);
+    background: rgba(3, 5, 12, .75);
+    color: var(--rarity-color);
+    font-family: 'Rajdhani', sans-serif;
+    font-weight: 700;
+    font-style: italic;
+    cursor: pointer;
+}
+
+.season-event-info-btn:hover {
+    background: rgba(255, 215, 106, .18);
+}
+
+.season-event-info-panel {
+    display: none;
+    position: absolute;
+    z-index: 3;
+    top: 38px;
+    right: 10px;
+    width: 200px;
+    padding: 12px 14px;
+    background: rgba(8, 6, 16, .96);
+    border: 1px solid rgba(255, 215, 106, .3);
+    border-radius: 6px;
+    backdrop-filter: blur(6px);
+}
+
+.season-event-info-panel p {
+    margin: 0;
+    font-family: monospace;
+    font-size: 11px;
+    line-height: 1.55;
+    color: rgba(255, 255, 255, .75);
+}
+
+.season-event-showcase-frame {
+    width: 150px;
+    height: 88px;
+    border: 2px solid var(--rarity-color);
+    background: linear-gradient(160deg, rgba(255, 255, 255, .06), rgba(0, 0, 0, .3));
+    box-shadow: 0 0 24px rgba(255, 215, 106, .25);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.season-event-showcase-art {
+    width: 100%;
+    height: 100%;
+    background-size: cover;
+    background-position: center;
+}
+
+.season-event-showcase-placeholder {
+    font-family: monospace;
+    font-size: 10px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, .35);
+}
+
+.season-event-showcase-rarity {
+    margin-top: 12px;
+    font-family: monospace;
+    font-size: 10px;
+    letter-spacing: 2px;
+    font-weight: 600;
+    text-transform: uppercase;
+    color: var(--rarity-color);
+    border: 1px solid var(--rarity-color);
+    padding: 3px 12px;
+}
+
+.season-event-showcase-name {
+    font-family: 'Chakra Petch', sans-serif;
+    font-size: 15px;
+    font-weight: 600;
+    color: #fff;
+    margin: 10px 0 2px;
+}
+
+.season-event-showcase-count {
+    font-family: monospace;
+    font-size: 10px;
+    letter-spacing: 1px;
+    color: rgba(255, 255, 255, .5);
+    margin: 0;
+}
+
+.season-event-mission-list {
+    display: grid;
+    gap: 8px;
+}
+
+.season-event-mission {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 12px;
+    border: 1px solid rgba(255, 255, 255, .08);
+    background: rgba(255, 255, 255, .03);
+}
+
+.season-event-mission.is-complete {
+    border-color: #ffd76a;
+    background: rgba(255, 215, 106, .06);
+}
+
+.season-event-mission-icon {
+    width: 32px;
+    height: 32px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    color: #a259ff;
+    background: rgba(255, 255, 255, .04);
+    border: 1px solid rgba(255, 255, 255, .1);
+    clip-path: polygon(50% 0, 100% 25%, 100% 75%, 50% 100%, 0 75%, 0 25%);
+}
+
+.season-event-mission.is-complete .season-event-mission-icon {
+    color: #ffd76a;
+    border-color: #ffd76a;
+}
+
+/* Íconos reales (monedas, gemas, potenciador) que ya existen como PNG */
+.season-event-mission-icon .gm-icon-img {
+    width: 20px;
+    height: 20px;
+    object-fit: contain;
+    pointer-events: none;
+}
+
+/* ===== Kit de íconos dibujados en CSS (gm-icon-*) — cero PNGs nuevos ===== */
+.gm-icon {
+    display: block;
+}
+
+.gm-icon-diamond {
+    width: 11px;
+    height: 11px;
+    background: currentColor;
+    clip-path: polygon(50% 0, 100% 50%, 50% 100%, 0 50%);
+}
+
+.gm-icon-arrow-up {
+    position: relative;
+    width: 15px;
+    height: 17px;
+}
+
+.gm-icon-arrow-up::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 0;
+    height: 0;
+    border-left: 7px solid transparent;
+    border-right: 7px solid transparent;
+    border-bottom: 8px solid currentColor;
+}
+
+.gm-icon-arrow-up::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 4px;
+    height: 8px;
+    background: currentColor;
+}
+
+.gm-icon-path {
+    position: relative;
+    width: 22px;
+    height: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    color: currentColor;
+}
+
+.gm-icon-path .dot {
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: currentColor;
+    flex-shrink: 0;
+    z-index: 1;
+}
+
+.gm-icon-path .line {
+    position: absolute;
+    left: 6px;
+    right: 6px;
+    top: 50%;
+    border-top: 1.5px dashed currentColor;
+    transform: translateY(-50%);
+    opacity: .8;
+}
+
+.gm-icon-flame {
+    position: relative;
+    width: 15px;
+    height: 19px;
+}
+
+.gm-icon-flame::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(200deg, #ff9a3d, #ff3d3d 75%);
+    clip-path: polygon(50% 0%, 78% 28%, 88% 58%, 68% 100%, 32% 100%, 12% 58%, 22% 28%);
+}
+
+.gm-icon-flame::after {
+    content: "";
+    position: absolute;
+    left: 50%;
+    top: 52%;
+    width: 6px;
+    height: 8px;
+    transform: translateX(-50%);
+    background: #ffe9ad;
+    clip-path: polygon(50% 0%, 80% 30%, 85% 65%, 60% 100%, 40% 100%, 15% 65%, 20% 30%);
+}
+
+.season-event-mission-body {
+    flex: 1;
+    min-width: 0;
+}
+
+.season-event-mission-top {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 10px;
+}
+
+.season-event-mission-top strong {
+    font-family: 'Chakra Petch', sans-serif;
+    font-size: 12px;
+    letter-spacing: .5px;
+    color: #fff;
+}
+
+.season-event-mission-top small {
+    font-family: monospace;
+    font-size: 10px;
+    color: rgba(255, 255, 255, .45);
+    flex-shrink: 0;
+}
+
+.season-event-mission-body p {
+    margin: 2px 0 8px;
+    font-family: monospace;
+    font-size: 10px;
+    color: rgba(255, 255, 255, .5);
+    line-height: 1.45;
+}
+
+.season-event-mission-progress {
+    display: flex;
+    gap: 2px;
+    height: 6px;
+}
+
+.season-event-mission-progress i {
+    flex: 1;
+    background: rgba(255, 255, 255, .08);
+    border: 1px solid rgba(255, 255, 255, .1);
+}
+
+.season-event-mission-progress i.on {
+    background: #a259ff;
+    border-color: #a259ff;
+}
+
+.season-event-mission.is-complete .season-event-mission-progress i.on {
+    background: #ffd76a;
+    border-color: #ffd76a;
+}
+
+.season-event-mission-check {
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid rgba(255, 255, 255, .12);
+    font-family: monospace;
+    font-size: 11px;
+    color: transparent;
+}
+
+.season-event-mission.is-complete .season-event-mission-check {
+    border-color: #ffd76a;
+    color: #ffd76a;
+    background: rgba(255, 215, 106, .15);
+}
+
+.season-event-claim-btn {
+    width: 100%;
+    margin-top: 16px;
+    padding: 12px 16px;
+    border-radius: 8px;
+    border: 1px solid rgba(111, 255, 176, .45);
+    background: rgba(111, 255, 176, .12);
+    color: #6fffb0;
+    font-family: monospace;
+    font-size: 11px;
+    letter-spacing: 1px;
+    cursor: pointer;
+}
+
+.season-event-claimed-msg {
+    margin: 16px 0 0;
+    text-align: center;
+    font-family: monospace;
+    font-size: 10px;
+    letter-spacing: 1px;
+    color: rgba(111, 255, 176, .85);
+}
+
+@media (max-width: 720px) {
+    .season-event-card {
+        grid-template-columns: 1fr;
+    }
 }
 
 
@@ -14079,6 +15397,26 @@ body.performance-mode .hud-notify-dot {
     height: 100vh;
     overflow-y: auto;
     padding: 20px 22px 32px;
+    scrollbar-width: thin;
+    scrollbar-color: var(--rp-gold-dark) transparent;
+}
+
+.ruby-pass-screen::-webkit-scrollbar {
+    width: 8px;
+}
+
+.ruby-pass-screen::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.ruby-pass-screen::-webkit-scrollbar-thumb {
+    background: linear-gradient(180deg, var(--rp-gold), var(--rp-gold-dark));
+    border-radius: 10px;
+    border: 1px solid rgba(0, 0, 0, .3);
+}
+
+.ruby-pass-screen::-webkit-scrollbar-thumb:hover {
+    background: var(--rp-gold);
 }
 
 .ruby-pass-screen h2,
@@ -15763,21 +17101,16 @@ body.performance-mode .hud-notify-dot {
     padding: 8px 14px;
     border-radius: 20px;
     flex-shrink: 0;
-    margin-left: 8px;
 }
 
 @media (max-width: 760px) {
     .inv-key-counter {
-        order: 3;
-        margin-left: 0;
         padding: 6px 12px;
         font-size: 11px;
     }
 }
 
 body.is-touch-device .inv-key-counter {
-    order: 3;
-    margin-left: 0 !important;
     padding: 6px 12px !important;
     font-size: 11px !important;
 }

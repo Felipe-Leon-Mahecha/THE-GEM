@@ -1581,27 +1581,73 @@ function drawLaserEmitter(x, y, angle, progress, laser) {
     ctx.rotate(angle + Math.PI / 2);
     const scale = 0.85 + progress * 0.25;
     ctx.scale(scale, scale);
-    if (!window.GAME_PERF?.lowPower()) {
-        ctx.shadowBlur = 16;
-        ctx.shadowColor = '#9fe8ff';
-    }
-    ctx.fillStyle = 'rgba(18,28,36,0.95)';
-    ctx.strokeStyle = 'rgba(170,230,255,0.72)';
-    ctx.lineWidth = 2;
+
+    // El 'lighter' heredado de drawIceLasers hace que los colores oscuros
+    // casi no se vean — por eso el cañón se perdía y solo quedaba el glow.
+    // Lo reseteamos acá para el cuerpo sólido.
+    ctx.globalCompositeOperation = 'source-over';
+    ctx.shadowBlur = 0;
+
+    // --- Cuerpo del cañón (tubo metálico con gradiente lateral) ---
+    const bodyGrad = ctx.createLinearGradient(-13, 0, 13, 0);
+    bodyGrad.addColorStop(0, '#5a6570');
+    bodyGrad.addColorStop(0.15, '#c9d6de');  // brillo lateral (luz reflejada)
+    bodyGrad.addColorStop(0.5, '#8b98a3');
+    bodyGrad.addColorStop(0.85, '#3d454d');
+    bodyGrad.addColorStop(1, '#20262b');
+
+    ctx.fillStyle = bodyGrad;
+    ctx.strokeStyle = 'rgba(10,14,18,0.9)';
+    ctx.lineWidth = 1.5;
     ctx.beginPath();
     ctx.roundRect(-13, -18, 26, 34, 6);
     ctx.fill();
     ctx.stroke();
+
+    // --- Anillos tipo tubo de cañón ---
+    ctx.strokeStyle = 'rgba(0,0,0,0.35)';
+    ctx.lineWidth = 1;
+    [-10, -2, 6].forEach(yy => {
+        ctx.beginPath();
+        ctx.moveTo(-11, yy);
+        ctx.lineTo(11, yy);
+        ctx.stroke();
+    });
+
+    // --- Tornillos en las esquinas ---
+    ctx.fillStyle = 'rgba(0,0,0,0.5)';
+    [[-9, -14], [9, -14], [-9, 11], [9, 11]].forEach(([sx, sy]) => {
+        ctx.beginPath();
+        ctx.arc(sx, sy, 1.4, 0, Math.PI * 2);
+        ctx.fill();
+    });
+
+    // --- Boquilla / lente (acá sí va el glow, en modo lighter) ---
+    ctx.globalCompositeOperation = 'lighter';
+    ctx.shadowBlur = window.GAME_PERF?.lowPower() ? 0 : 16;
+    ctx.shadowColor = '#9fe8ff';
+
     ctx.fillStyle = laser.state === 'warning'
         ? `rgba(255,77,109,${0.35 + progress * 0.55})`
         : 'rgba(120,235,255,0.95)';
     ctx.beginPath();
     ctx.roundRect(-7, -23, 14, 10, 4);
     ctx.fill();
+
     ctx.fillStyle = 'rgba(210,250,255,0.88)';
     ctx.beginPath();
     ctx.arc(0, -18, 4 + progress * 2, 0, Math.PI * 2);
     ctx.fill();
+
+    // --- Marco metálico alrededor de la boquilla, en normal, para que no se pierda ---
+    ctx.globalCompositeOperation = 'source-over';
+    ctx.shadowBlur = 0;
+    ctx.strokeStyle = 'rgba(20,24,28,0.9)';
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.roundRect(-7, -23, 14, 10, 4);
+    ctx.stroke();
+
     ctx.restore();
 }
 
@@ -2049,6 +2095,8 @@ function winGame() {
     } catch (e) {
         console.warn('[winGame] Error en drop de Llave de Caronte:', e);
     }
+
+    window.trackMissionProgress?.('game_win', 1);
 
     let wins = parseInt(localStorage.getItem('gamesWon') || '0');
     wins++;

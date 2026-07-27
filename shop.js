@@ -223,6 +223,7 @@ const TRAILS_DATA = [
     { id: 'trail_lava', name: 'Elemento Lava', rarity: 'VIP', rarityColor: '#ff4444', price: 0, priceType: 'gems', image: 'assets/UI/Store/Trails/Covers/Elemento_Lava_trail.png' },
     { id: 'trail_nature', name: 'Elemento Naturaleza', rarity: 'VIP', rarityColor: '#44ff88', price: 0, priceType: 'gems', image: 'assets/UI/Store/Trails/Covers/Elemento_Naturaleza_trail.png' },
     { id: 'trail_custom_text', name: 'Texto Personalizado', rarity: 'VIP', rarityColor: '#ffda3a', price: 0, priceType: 'gems', image: 'assets/UI/Store/Trails/Covers/Texto_Personalizado_trail.png' },
+    { id: 'trail_solmerion', name: 'Solmerion', rarity: 'VIP', rarityColor: '#ffd700', price: 0, priceType: 'gems', image: 'assets/UI/Store/Trails/Covers/Solmerion_trail.png' },
 ];
 
 // =====================================================
@@ -536,7 +537,48 @@ const SKINS_DATA = [
     { id: 'skin_nocturna', name: 'Nocturna', rarity: 'EPICA', price: 1300, priceType: 'coins', owned: false, image: 'assets/UI/Store/VIP/Bundles/Monsters/skin_nocturna.png' },
 
     // ----- DEMON (bajo de VIP) -----
-    { id: 'skin_samurai', name: 'Samurai', rarity: 'DEMON', price: 4800, priceType: 'coins', owned: false, image: 'assets/UI/Store/VIP/Bundles/Professional/skin_samurai.png' }
+    { id: 'skin_samurai', name: 'Samurai', rarity: 'DEMON', price: 4800, priceType: 'coins', owned: false, image: 'assets/UI/Store/VIP/Bundles/Professional/skin_samurai.png' },
+
+    // ── Temporada Leyendas ────────────────────────────────────────────────
+    {
+        id: 'skin_solmerion',
+        name: 'Solmerion',
+        color: '#ffd700',
+        rarity: 'VIP',
+        price: 0,
+        priceType: 'coins',
+        passOnly: true,
+        rubyPassLane: 'premium',
+        rubyPassLevel: 30,
+        image: 'assets/Imagenes/Temporadas/Temp_Leyendas/Skins/skin_Solmerion.png',
+        imageRight: 'assets/Imagenes/Temporadas/Temp_Leyendas/Skins/skin_Solmerion/skin_Solmerion_de_lado.png',
+        seasonId: 'leyendas'
+    },
+    {
+        id: 'skin_zherath',
+        name: 'Zherath',
+        color: '#E00000',
+        rarity: 'VIP',
+        price: 0,
+        priceType: 'coins',
+        passOnly: true,
+        rubyPassLane: 'premium',
+        rubyPassLevel: 20,
+        image: 'assets/Imagenes/Temporadas/Temp_Leyendas/Skins/skin_Zherath.png',
+        imageRight: 'assets/Imagenes/Temporadas/Temp_Leyendas/Skins/skin_Zherath/skin_Zherath_de_lado.png',
+        seasonId: 'leyendas'
+    },
+    {
+        id: 'skin_sombra_real',
+        name: 'Sombra Real',
+        color: '#888888',
+        rarity: 'ESPECIAL',
+        price: 2500,
+        priceType: 'coins',
+        image: 'assets/Imagenes/Temporadas/Temp_Leyendas/Skins/skin_Sombra_Real.png',
+        imageRight: 'assets/Imagenes/Temporadas/Temp_Leyendas/Skins/skin_Sombra_Real/skin_Sombra_Real_de_lado.png',
+        seasonId: 'leyendas'
+    }
 ];
 
 // Lista de skins desbloqueables con fragmentos
@@ -912,6 +954,326 @@ const VIP_BANNER_PLACEHOLDERS = [
 
 const BANNERS_CATALOG_CONFIG = window.GEM_BANNERS_CATALOG || null;
 const BANNER_CATALOG_RULES = BANNERS_CATALOG_CONFIG?.rules || {};
+
+// ── Marcos de perfil (se equipan sobre el banner de perfil) ──────────────
+// Misma forma de objeto que BANNERS_DATA:
+// { id, name, price, exclusive, rarity, activeCategory, imagen, passOnly?, aliases? }
+const FRAMES_DATA = [
+    // ── Temporada Leyendas ───────────────────────────────────────────────
+    {
+        id: 'Frame_Leyendas_Perla',
+        name: 'Perla de Leyendas',
+        price: 1800,
+        exclusive: false,
+        passOnly: false,
+        rarity: 'ESPECIAL',
+        activeCategory: 'temporada',
+        imagen: 'assets/Imagenes/Temporadas/Temp_Leyendas/Marcos/marco_leyendas_perla.png'
+    },
+    {
+        id: 'Frame_Leyendas_Exclusivo',
+        name: 'Exclusivo de Leyendas',
+        price: 2000,
+        exclusive: false,
+        rarity: 'ESPECIAL',
+        activeCategory: 'temporada',
+        imagen: 'assets/Imagenes/Temporadas/Temp_Leyendas/Marcos/marco_leyendas_exclusivo.png'
+    },
+    {
+        id: 'Frame_Leyendas_Rosaceo',
+        name: 'Rosáceo de Leyendas',
+        price: 1800,
+        exclusive: false,
+        rarity: 'ESPECIAL',
+        activeCategory: 'temporada',
+        imagen: 'assets/Imagenes/Temporadas/Temp_Leyendas/Marcos/marco_leyendas_rosaceo.png'
+    },
+    {
+        id: 'Frame_Leyendas_Campeones',
+        name: 'Campeones de Leyendas',
+        price: 0,
+        exclusive: false,
+        missionOnly: true,
+        rarity: 'DEMON',
+        activeCategory: 'temporada',
+        imagen: 'assets/Imagenes/Temporadas/Temp_Leyendas/Marcos/marco_leyendas_campeones.png'
+    },
+    {
+        id: 'Frame_Leyendas_Racha_Ganadora',
+        name: 'Racha Ganadora de Leyendas',
+        price: 0,
+        exclusive: false,
+        missionOnly: true,
+        rarity: 'DEMON',
+        activeCategory: 'temporada',
+        imagen: 'assets/Imagenes/Temporadas/Temp_Leyendas/Marcos/marco_leyendas_racha_ganadora.png'
+    },
+    {
+        id: 'Frame_Leyendas_RubyPass_VIP',
+        name: 'Temporada · Ruby Pass VIP',
+        price: 0,
+        exclusive: true,
+        passOnly: true,
+        rubyPassLane: 'premium',
+        rubyPassLevel: 17,
+        rarity: 'VIP',
+        activeCategory: 'temporada',
+        imagen: 'assets/Imagenes/Temporadas/Temp_Leyendas/Marcos/marco_rubypass_vip_leyendas.png'
+    },
+    {
+        id: 'Frame_Leyendas_RubyPass_Free',
+        name: 'Temporada · Ruby Pass',
+        price: 0,
+        exclusive: true,
+        passOnly: true,
+        rubyPassLane: 'free',
+        rubyPassLevel: 27,
+        rarity: 'ESPECIAL',
+        activeCategory: 'temporada',
+        imagen: 'assets/Imagenes/Temporadas/Temp_Leyendas/Marcos/marco_rubypass_free_leyendas.png'
+    },
+
+    // ── Tienda Normal (placeholders) ─────────────────────────────────────
+    {
+        id: 'Frame_Normal_01',
+        name: 'Marco Normal 01',
+        price: 150,
+        exclusive: false,
+        rarity: 'BASICO',
+        activeCategory: 'tienda_normal',
+        imagen: 'assets/Imagenes/Marcos/tienda_normal/Marco_Placeholder_01.png'
+    },
+    {
+        id: 'Frame_Normal_02',
+        name: 'Marco Normal 02',
+        price: 150,
+        exclusive: false,
+        rarity: 'BASICO',
+        activeCategory: 'tienda_normal',
+        imagen: 'assets/Imagenes/Marcos/tienda_normal/Marco_Placeholder_02.png'
+    },
+    {
+        id: 'Frame_Normal_03',
+        name: 'Marco Normal 03',
+        price: 300,
+        exclusive: false,
+        rarity: 'ESPECIAL',
+        activeCategory: 'tienda_normal',
+        imagen: 'assets/Imagenes/Marcos/tienda_normal/Marco_Placeholder_03.png'
+    },
+    {
+        id: 'Frame_Normal_04',
+        name: 'Marco Normal 04',
+        price: 300,
+        exclusive: false,
+        rarity: 'ESPECIAL',
+        activeCategory: 'tienda_normal',
+        imagen: 'assets/Imagenes/Marcos/tienda_normal/Marco_Placeholder_04.png'
+    },
+    {
+        id: 'Frame_Normal_05',
+        name: 'Marco Normal 05',
+        price: 300,
+        exclusive: false,
+        rarity: 'ESPECIAL',
+        activeCategory: 'tienda_normal',
+        imagen: 'assets/Imagenes/Marcos/tienda_normal/Marco_Placeholder_05.png'
+    },
+    {
+        id: 'Frame_Normal_06',
+        name: 'Marco Normal 06',
+        price: 500,
+        exclusive: false,
+        rarity: 'EPICA',
+        activeCategory: 'tienda_normal',
+        imagen: 'assets/Imagenes/Marcos/tienda_normal/Marco_Placeholder_06.png'
+    },
+    {
+        id: 'Frame_Normal_07',
+        name: 'Marco Normal 07',
+        price: 500,
+        exclusive: false,
+        rarity: 'EPICA',
+        activeCategory: 'tienda_normal',
+        imagen: 'assets/Imagenes/Marcos/tienda_normal/Marco_Placeholder_07.png'
+    },
+    {
+        id: 'Frame_Normal_08',
+        name: 'Marco Normal 08',
+        price: 500,
+        exclusive: false,
+        rarity: 'EPICA',
+        activeCategory: 'tienda_normal',
+        imagen: 'assets/Imagenes/Marcos/tienda_normal/Marco_Placeholder_08.png'
+    },
+    {
+        id: 'Frame_Normal_09',
+        name: 'Marco Normal 09',
+        price: 300,
+        exclusive: false,
+        rarity: 'DEMON',
+        activeCategory: 'tienda_normal',
+        imagen: 'assets/Imagenes/Marcos/tienda_normal/Marco_Placeholder_09.png'
+    },
+    {
+        id: 'Frame_Normal_10',
+        name: 'Marco Normal 10',
+        price: 300,
+        exclusive: false,
+        rarity: 'DEMON',
+        activeCategory: 'tienda_normal',
+        imagen: 'assets/Imagenes/Marcos/tienda_normal/Marco_Placeholder_10.png'
+    },
+
+    // ── Tienda VIP (placeholders) ────────────────────────────────────────
+    {
+        id: 'Frame_VIP_01',
+        name: 'Marco VIP 01',
+        price: 420,
+        exclusive: true,
+        rarity: 'VIP',
+        activeCategory: 'tienda_vip',
+        imagen: 'assets/Imagenes/Marcos/tienda_vip/Marco_Placeholder_01.png'
+    },
+    {
+        id: 'Frame_VIP_02',
+        name: 'Marco VIP 02',
+        price: 420,
+        exclusive: true,
+        rarity: 'VIP',
+        activeCategory: 'tienda_vip',
+        imagen: 'assets/Imagenes/Marcos/tienda_vip/Marco_Placeholder_02.png'
+    },
+    {
+        id: 'Frame_VIP_03',
+        name: 'Marco VIP 03',
+        price: 420,
+        exclusive: true,
+        rarity: 'VIP',
+        activeCategory: 'tienda_vip',
+        imagen: 'assets/Imagenes/Marcos/tienda_vip/Marco_Placeholder_03.png'
+    },
+    {
+        id: 'Frame_VIP_04',
+        name: 'Marco VIP 04',
+        price: 420,
+        exclusive: true,
+        rarity: 'VIP',
+        activeCategory: 'tienda_vip',
+        imagen: 'assets/Imagenes/Marcos/tienda_vip/Marco_Placeholder_04.png'
+    },
+    {
+        id: 'Frame_VIP_05',
+        name: 'Marco VIP 05',
+        price: 420,
+        exclusive: true,
+        rarity: 'VIP',
+        activeCategory: 'tienda_vip',
+        imagen: 'assets/Imagenes/Marcos/tienda_vip/Marco_Placeholder_05.png'
+    },
+    {
+        id: 'Frame_VIP_06',
+        name: 'Marco VIP 06',
+        price: 560,
+        exclusive: true,
+        rarity: 'VIP',
+        activeCategory: 'tienda_vip',
+        imagen: 'assets/Imagenes/Marcos/tienda_vip/Marco_Placeholder_06.png'
+    },
+    {
+        id: 'Frame_VIP_07',
+        name: 'Marco VIP 07',
+        price: 560,
+        exclusive: true,
+        rarity: 'VIP',
+        activeCategory: 'tienda_vip',
+        imagen: 'assets/Imagenes/Marcos/tienda_vip/Marco_Placeholder_07.png'
+    },
+
+    // ── Temporada Oceánica (placeholders) ────────────────────────────────
+    {
+        id: 'Frame_Oceanica_01',
+        name: 'Marco Oceánica 01',
+        price: 0,
+        exclusive: true,
+        passOnly: true,
+        rarity: 'ESPECIAL',
+        activeCategory: 'temporada',
+        imagen: 'assets/Imagenes/Temporadas/Temp_Oceanica/Marcos/Marco_Placeholder_01.png'
+    },
+    {
+        id: 'Frame_Oceanica_02',
+        name: 'Marco Oceánica 02',
+        price: 0,
+        exclusive: true,
+        passOnly: true,
+        rarity: 'ESPECIAL',
+        activeCategory: 'temporada',
+        imagen: 'assets/Imagenes/Temporadas/Temp_Oceanica/Marcos/Marco_Placeholder_02.png'
+    },
+    {
+        id: 'Frame_Oceanica_03',
+        name: 'Marco Oceánica 03',
+        price: 0,
+        exclusive: true,
+        passOnly: true,
+        rarity: 'EPICA',
+        activeCategory: 'temporada',
+        imagen: 'assets/Imagenes/Temporadas/Temp_Oceanica/Marcos/Marco_Placeholder_03.png'
+    },
+    {
+        id: 'Frame_Oceanica_04',
+        name: 'Marco Oceánica 04',
+        price: 0,
+        exclusive: true,
+        passOnly: true,
+        rarity: 'EPICA',
+        activeCategory: 'temporada',
+        imagen: 'assets/Imagenes/Temporadas/Temp_Oceanica/Marcos/Marco_Placeholder_04.png'
+    },
+
+    // ── Temporada Raíces (placeholders) ──────────────────────────────────
+    {
+        id: 'Frame_Raices_01',
+        name: 'Marco Raíces 01',
+        price: 0,
+        exclusive: true,
+        passOnly: true,
+        rarity: 'ESPECIAL',
+        activeCategory: 'temporada',
+        imagen: 'assets/Imagenes/Temporadas/Temp_Raices/Marcos/Marco_Placeholder_01.png'
+    },
+    {
+        id: 'Frame_Raices_02',
+        name: 'Marco Raíces 02',
+        price: 0,
+        exclusive: true,
+        passOnly: true,
+        rarity: 'ESPECIAL',
+        activeCategory: 'temporada',
+        imagen: 'assets/Imagenes/Temporadas/Temp_Raices/Marcos/Marco_Placeholder_02.png'
+    },
+    {
+        id: 'Frame_Raices_03',
+        name: 'Marco Raíces 03',
+        price: 0,
+        exclusive: true,
+        passOnly: true,
+        rarity: 'EPICA',
+        activeCategory: 'temporada',
+        imagen: 'assets/Imagenes/Temporadas/Temp_Raices/Marcos/Marco_Placeholder_03.png'
+    },
+    {
+        id: 'Frame_Raices_04',
+        name: 'Marco Raíces 04',
+        price: 0,
+        exclusive: true,
+        passOnly: true,
+        rarity: 'EPICA',
+        activeCategory: 'temporada',
+        imagen: 'assets/Imagenes/Temporadas/Temp_Raices/Marcos/Marco_Placeholder_04.png'
+    },
+];
 const BANNER_CATALOG_PATHS = BANNERS_CATALOG_CONFIG?.paths || {};
 
 function parseBannerCatalogDate(value) {
@@ -1014,12 +1376,61 @@ function mapBannerCatalogItem(item) {
     };
 }
 
-function getAllBannerCatalog() {
-    if (!Array.isArray(BANNERS_CATALOG_CONFIG?.items)) {
-        return [...BANNERS_DATA, ...VIP_BANNER_PLACEHOLDERS]
-            .filter((banner, index, list) => banner?.id && list.findIndex(item => item.id === banner.id) === index);
+// ── Capa genérica de cosméticos (banners + marcos) ───────────────────────
+
+/**
+ * Devuelve el catálogo completo para un type dado.
+ * Para 'banner' reproduce exactamente la lógica de getAllBannerCatalog(),
+ * incluyendo el fix de passOnly cuando existe BANNERS_CATALOG_CONFIG.
+ * Para 'frame' devuelve FRAMES_DATA directamente (sin config externo aún).
+ */
+function getAllCosmeticCatalog(type) {
+    if (type === 'banner') {
+        if (!Array.isArray(BANNERS_CATALOG_CONFIG?.items)) {
+            return [...BANNERS_DATA, ...VIP_BANNER_PLACEHOLDERS]
+                .filter((b, i, list) => b?.id && list.findIndex(x => x.id === b.id) === i);
+        }
+        const configItems = BANNERS_CATALOG_CONFIG.items.map(mapBannerCatalogItem);
+        // Los banners passOnly viven en BANNERS_DATA pero no en el config —
+        // hay que sumarlos manualmente o desaparecen del inventario/perfil.
+        const passOnlyExtras = BANNERS_DATA.filter(b => b?.passOnly
+            && !configItems.some(c => c.id === b.id));
+        return [...configItems, ...passOnlyExtras];
     }
-    return BANNERS_CATALOG_CONFIG.items.map(mapBannerCatalogItem);
+    if (type === 'frame') {
+        return [...FRAMES_DATA]
+            .filter((f, i, list) => f?.id && list.findIndex(x => x.id === f.id) === i);
+    }
+    return [];
+}
+
+/** Busca un cosmético por id (o alias) dentro del type dado. */
+function findCosmeticById(id, type) {
+    return getAllCosmeticCatalog(type).find(item => item.id === id || item.aliases?.includes(id));
+}
+
+/** Devuelve true si el jugador posee el item. */
+function ownsCosmetic(item, type) {
+    if (!item?.id) return false;
+    const prefix = type === 'banner' ? 'banner_' : 'cosmetic_frame_';
+    const ids = [item.id, ...(Array.isArray(item.aliases) ? item.aliases : [])].filter(Boolean);
+    if (type === 'banner' && item.id === 'Banner_Deafult') return true;
+    return ids.some(id => localStorage.getItem(prefix + id) === 'true') || item.owned === true;
+}
+
+/**
+ * Guarda en localStorage que el item está equipado.
+ * Solo capa de datos — sin refresh de UI (eso es responsabilidad del caller).
+ */
+function equipCosmetic(id, type) {
+    const storageKey = type === 'banner' ? 'equippedBanner' : 'equippedFrame';
+    const item = findCosmeticById(id, type);
+    localStorage.setItem(storageKey, item?.id || id);
+    if (item) item.owned = true;
+}
+
+function getAllBannerCatalog() {
+    return getAllCosmeticCatalog('banner');
 }
 
 function getNormalBannerCatalog() {
@@ -1031,7 +1442,7 @@ function getVipBannerCatalogFromConfig() {
 }
 
 function findBannerById(id) {
-    return getAllBannerCatalog().find(banner => banner.id === id || banner.aliases?.includes(id));
+    return findCosmeticById(id, 'banner');
 }
 
 function getBannerStorageIds(banner) {
@@ -1048,6 +1459,11 @@ function ownsBanner(banner) {
 function setBannerOwned(banner) {
     if (!banner?.id) return;
     localStorage.setItem('banner_' + banner.id, 'true');
+}
+
+function setFrameOwned(frame) {
+    if (!frame?.id) return;
+    localStorage.setItem('cosmetic_frame_' + frame.id, 'true');
 }
 
 function isBannerEquipped(banner, equippedId = localStorage.getItem('equippedBanner')) {
@@ -1475,7 +1891,15 @@ const EMOTES_DATA = [
     { id: 'emote_Llorando', name: 'Llorando', image: 'assets/UI/Store/Emotes/emote_brifon_llorando.png', rarity: 'BASICO', price: EMOTE_STANDARD_PRICE_COINS, priceType: 'coins', slot: 'SHOP_EMOTE_ASSET_SLOT_BASIC_LLORANDO' },
     { id: 'emote_sorprendido', name: 'Sorprendido', image: 'assets/UI/Store/Emotes/emote_brifon_sorprendido.png', rarity: 'BASICO', price: EMOTE_STANDARD_PRICE_COINS, priceType: 'coins', slot: 'SHOP_EMOTE_ASSET_SLOT_BASIC_SORPRENDIDO' },
     { id: 'emote_mudo', name: 'Mudo', image: 'assets/UI/Store/Emotes/emote_brifon_mudo.png', rarity: 'BASICO', price: EMOTE_STANDARD_PRICE_COINS, priceType: 'coins', slot: 'SHOP_EMOTE_ASSET_SLOT_BASIC_MUDO' },
-    { id: 'emote_ruby_pass_01', name: 'Ruby Pass', image: RUBY_PASS_ASSETS.premiumEmote01, rarity: 'VIP', vip: true, passOnly: true, rubyPassLane: 'premium', rubyPassLevel: 8, slot: 'SHOP_EMOTE_ASSET_SLOT_RUBY_PASS_01' },
+    // ── Temporada Leyendas ───────────────────────────────────────────────
+    { id: 'emote_solmerion_enojado', name: 'Solmerion Enojado', image: 'assets/Imagenes/Temporadas/Temp_Leyendas/Emotes/skin_Solmerion_enojado.png', rarity: 'ESPECIAL', price: 800, priceType: 'coins', seasonId: 'leyendas' },
+    { id: 'emote_solmerion_negacion', name: 'Solmerion Negación', image: 'assets/Imagenes/Temporadas/Temp_Leyendas/Emotes/skin_Solmerion_negacion.png', rarity: 'ESPECIAL', price: 800, priceType: 'coins', seasonId: 'leyendas' },
+    { id: 'emote_solmerion_saludo', name: 'Solmerion Saludo', image: 'assets/Imagenes/Temporadas/Temp_Leyendas/Emotes/skin_Solmerion_saludo.png', rarity: 'ESPECIAL', price: 600, priceType: 'coins', seasonId: 'leyendas' },
+    { id: 'emote_solmerion_victoria', name: 'Solmerion Victoria', image: 'assets/Imagenes/Temporadas/Temp_Leyendas/Emotes/skin_Solmerion_victoria.png', rarity: 'DEMON', price: 0, priceType: 'coins', passOnly: true, rubyPassLane: 'premium', rubyPassLevel: 22, seasonId: 'leyendas' },
+    { id: 'emote_zherath_aceptacion', name: 'Zherath Aceptación', image: 'assets/Imagenes/Temporadas/Temp_Leyendas/Emotes/skin_Zherath_aceptacion.png', rarity: 'ESPECIAL', price: 600, priceType: 'coins', seasonId: 'leyendas' },
+    { id: 'emote_zherath_avergonzado', name: 'Zherath Avergonzado', image: 'assets/Imagenes/Temporadas/Temp_Leyendas/Emotes/skin_Zherath_avergonzado.png', rarity: 'ESPECIAL', price: 0, priceType: 'coins', passOnly: true, rubyPassLane: 'free', rubyPassLevel: 28, seasonId: 'leyendas' },
+    { id: 'emote_zherath_enojado', name: 'Zherath Enojado', image: 'assets/Imagenes/Temporadas/Temp_Leyendas/Emotes/skin_Zherath_enojado.png', rarity: 'ESPECIAL', price: 800, priceType: 'coins', seasonId: 'leyendas' },
+    { id: 'emote_zherath_reto', name: 'Zherath Reto', image: 'assets/Imagenes/Temporadas/Temp_Leyendas/Emotes/skin_Zherath_reto.png', rarity: 'DEMON', price: 1200, priceType: 'coins', seasonId: 'leyendas' },
     { id: 'emoji_fachero', name: 'Fachero', image: 'assets/UI/Store/VIP/Bundles/Emojis/emoji_fachero.png', rarity: 'VIP', vip: true, price: 200, priceType: 'gems', slot: 'SHOP_EMOTE_ASSET_SLOT_VIP_FACHERO' },
     { id: 'emoji_enamorado', name: 'Enamorado', image: 'assets/UI/Store/VIP/Bundles/Emojis/emoji_enamorado.png', rarity: 'VIP', vip: true, price: 200, priceType: 'gems', slot: 'SHOP_EMOTE_ASSET_SLOT_VIP_ENAMORADO' },
     { id: 'emoji_asustado', name: 'Asustado', image: 'assets/UI/Store/VIP/Bundles/Emojis/emoji_asustado.png', rarity: 'VIP', vip: true, price: 200, priceType: 'gems', slot: 'SHOP_EMOTE_ASSET_SLOT_VIP_ASUSTADO' },
@@ -1493,6 +1917,54 @@ const EMOTES_DATA = [
 ];
 
 applyGemRarityOverrides('normal');
+
+// ── Packs de personaje de Temporada Leyendas ─────────────────────────────
+// Cada pack agrupa skin + trail + emotes de un mismo personaje para
+// mostrarlos juntos en el modal "PACKS" de la vitrina de Destacados.
+// cover: portada aún no creada (se generará con IA aparte) — mientras
+// no exista, se usa un degradado con el color del personaje como respaldo.
+const SEASON_PACKS_LEYENDAS = [
+    {
+        id: 'pack_solmerion',
+        name: 'Solmerion',
+        color: '#ffd700',
+        cover: 'assets/Imagenes/Temporadas/Temp_Leyendas/Packs/pack_solmerion.png',
+        skinId: 'skin_solmerion',
+        trailId: 'trail_solmerion',
+        emoteIds: ['emote_solmerion_enojado', 'emote_solmerion_negacion', 'emote_solmerion_saludo', 'emote_solmerion_victoria']
+    },
+    {
+        id: 'pack_zherath',
+        name: 'Zherath',
+        color: '#E00000',
+        cover: 'assets/Imagenes/Temporadas/Temp_Leyendas/Packs/pack_zherath.png',
+        skinId: 'skin_zherath',
+        trailId: null, // pendiente — trail de Zherath en creación
+        emoteIds: ['emote_zherath_aceptacion', 'emote_zherath_avergonzado', 'emote_zherath_enojado', 'emote_zherath_reto']
+    }
+];
+window.SEASON_PACKS_LEYENDAS = SEASON_PACKS_LEYENDAS;
+
+// Hash simple y determinístico (mismo día → mismo resultado, sin dependencias externas)
+function seasonSimpleHash(str) {
+    let hash = 0;
+    for (let i = 0; i < str.length; i++) {
+        hash = (hash << 5) - hash + str.charCodeAt(i);
+        hash |= 0;
+    }
+    return Math.abs(hash);
+}
+
+// Elige un emote "random" pero estable durante todo el día — cada índice
+// (0 y 1) se sortea de forma independiente, por eso pueden salir 2 emotes
+// del mismo personaje, o uno de cada uno, sin ningún patrón fijo.
+function getDailySeasonEmotePick(index, emotePool) {
+    if (!emotePool || emotePool.length === 0) return null;
+    const dayKey = new Date().toISOString().slice(0, 10);
+    const seed = seasonSimpleHash(`${dayKey}_emote_of_day_${index}`);
+    const pick = emotePool[seed % emotePool.length];
+    return EMOTES_DATA.find(e => e.id === pick) || null;
+}
 
 // Aplicar precios desde prices.config.js a todos los items de la tienda
 if (typeof window.applyShopPrices === 'function') {
@@ -1615,8 +2087,8 @@ const VIP_PROMO_BANNERS = [
     },
     {
         id: 'vip_specials',
-        title: 'BANNERS VIP',
-        subtitle: 'Banners premium, animados y coleccionables',
+        title: 'DISEÑOS DE PERFIL VIP',
+        subtitle: 'Banners y marcos premium, animados y coleccionables',
         cover: 'assets/UI/Store/VIP/Banners/banner_vip_specials.png',
         detailBackground: 'assets/UI/Store/VIP/Banners/bg_vip_specials.png',
         // Fondo propio de la Sala Legendaria (VER BANNERS). Opcional: si no
@@ -2141,7 +2613,7 @@ function openSeasonContentModal(kind) {
     if (!season) return;
 
     const ids = season.contains?.[kind] || [];
-    const labels = { banners: 'BANNERS', skins: 'SKINS', trails: 'TRAILS', emotes: 'EMOTES' };
+    const labels = { banners: 'BANNERS', frames: 'MARCOS', skins: 'SKINS', trails: 'TRAILS', emotes: 'EMOTES' };
 
     let visibleHTML = '';
 
@@ -2152,6 +2624,12 @@ function openSeasonContentModal(kind) {
         visibleHTML = visible.length > 0
             ? visible.map(b => renderBannerCard(b, equipped)).join('')
             : `<div class="empty-showcase">AÚN NO HAY BANNERS DISPONIBLES</div>`;
+    } else if (kind === 'frames') {
+        const frameIds = season.contains?.frames || [];
+        const items = getAllCosmeticCatalog('frame').filter(f => frameIds.includes(f.id));
+        visibleHTML = items.length > 0
+            ? items.map(f => renderFrameCard(f)).join('')
+            : `<div class="empty-showcase">AÚN NO HAY MARCOS DISPONIBLES</div>`;
     } else if (kind === 'skins') {
         const catalog = typeof getAllShopSkins === 'function' ? getAllShopSkins() : SKINS_DATA;
         const items = catalog.filter(s => ids.includes(s.id));
@@ -2209,9 +2687,9 @@ function renderSeasonTrailCard(t, equippedId) {
             <div style="color:white; font-family:monospace; font-size:11px; letter-spacing:1px;">${t.name}</div>
             <div style="color:${color}; font-family:monospace; font-size:9px; letter-spacing:2px;">${t.rarity}</div>
             ${owned
-                ? `<button onclick="selectTrailEffectNew('${t.id}'); document.querySelector('.season-banners-modal-overlay')?.remove();" style="width:100%; padding:6px 0; border-radius:8px; border:1px solid ${isEquipped ? color + '66' : 'rgba(255,255,255,0.12)'}; background:none; color:${isEquipped ? color : 'rgba(255,255,255,0.5)'}; font-family:monospace; font-size:9px; cursor:pointer;">${isEquipped ? '✔ EQUIPADO' : 'EQUIPAR'}</button>`
-                : `<button onclick="document.querySelector('.season-banners-modal-overlay')?.remove(); showShopSection('trails');" style="width:100%; padding:6px 0; border-radius:8px; border:1px solid rgba(255,238,0,0.4); background:none; color:#ffee00; font-family:monospace; font-size:9px; cursor:pointer;">IR A TRAILS</button>`
-            }
+            ? `<button onclick="selectTrailEffectNew('${t.id}'); document.querySelector('.season-banners-modal-overlay')?.remove();" style="width:100%; padding:6px 0; border-radius:8px; border:1px solid ${isEquipped ? color + '66' : 'rgba(255,255,255,0.12)'}; background:none; color:${isEquipped ? color : 'rgba(255,255,255,0.5)'}; font-family:monospace; font-size:9px; cursor:pointer;">${isEquipped ? '✔ EQUIPADO' : 'EQUIPAR'}</button>`
+            : `<button onclick="document.querySelector('.season-banners-modal-overlay')?.remove(); showShopSection('trails');" style="width:100%; padding:6px 0; border-radius:8px; border:1px solid rgba(255,238,0,0.4); background:none; color:#ffee00; font-family:monospace; font-size:9px; cursor:pointer;">IR A TRAILS</button>`
+        }
         </div>
     `;
 }
@@ -2233,9 +2711,393 @@ function toggleSeasonInfo(e) {
     }
 }
 
+function getCurrentRubyPassFreeLevel() {
+    return getRubyPassState().freeLevel;
+}
+
+function getSeasonEventMissionProgress(mission) {
+    if (mission.metric === 'rubypass_level_check') {
+        return Math.min(mission.goal, getCurrentRubyPassFreeLevel());
+    }
+    const state = readSeasonEventState();
+    return Math.min(mission.goal, parseFloat(state.progress?.[mission.metric]) || 0);
+}
+
+// Determina qué se está regalando en el evento (por ahora solo banners,
+// pero queda preparado por si mañana se agregan skins/trails de evento)
+// para armar el título "EVENTO ${TIPO}" sin hardcodear texto fijo.
+function getSeasonEventRewardTypeLabel(config) {
+    if (config.rewardBannerId) return 'BANNER';
+    if (config.rewardSkinId) return 'SKIN';
+    if (config.rewardTrailId) return 'TRAIL';
+    if (config.rewardEmoteId) return 'EMOTE';
+    return 'RECOMPENSA';
+}
+
+// Devuelve el tiempo restante del evento ya formateado para el chip.
+// Mientras falte más de 24hrs se muestra en días (como antes). Cuando
+// entra en las últimas 24hrs, cambia a horas para transmitir urgencia
+// (igual que hace el Ruby Pass con getRubyPassSeasonCountdown).
+function getSeasonEventCountdown() {
+    const config = window.SEASON_EVENT_CONFIG;
+    if (!config) return { value: 0, unit: 'días' };
+    const now = new Date();
+    const expiresAt = new Date(`${config.expiresAt}T23:59:59`);
+    const diffMs = Math.max(0, expiresAt - now);
+    const totalHours = diffMs / (1000 * 60 * 60);
+
+    if (totalHours < 24) {
+        return { value: Math.max(1, Math.ceil(totalHours)), unit: totalHours <= 1 ? 'hora' : 'horas', urgent: true };
+    }
+    return { value: Math.ceil(totalHours / 24), unit: 'días', urgent: false };
+}
+
+function formatSeasonEventDate(dateStr) {
+    const date = new Date(`${dateStr}T00:00:00`);
+    return date.toLocaleDateString('es-ES', { day: 'numeric', month: 'short', year: 'numeric' });
+}
+
+// ── Kit de íconos de misiones (evento + a futuro cualquier checklist) ──
+// Cada misión se identifica por su "metric". Algunas usan un PNG real que
+// ya existe en el proyecto (monedas, gemas, potenciador), otras se dibujan
+// 100% en CSS (flama, flecha, camino) para no depender de arte nuevo.
+// Si mañana agregás una misión con un metric que no está acá, cae en el
+// diamante genérico por defecto — nunca queda un hueco vacío.
+const SEASON_EVENT_MISSION_ICONS = {
+    coin_collect: { type: 'image', src: REWARD_CURRENCY_ASSETS.coins.single },
+    powerup_use: { type: 'image', src: 'assets/powerups/icons/proteccion.png' },
+    distance: { type: 'css', variant: 'path' },
+    shop_purchase: { type: 'image', src: REWARD_CURRENCY_ASSETS.gems.single },
+    win_streak: { type: 'css', variant: 'flame' },
+    rubypass_level_check: { type: 'css', variant: 'arrow-up' }
+};
+
+function renderSeasonEventMissionIcon(mission) {
+    const cfg = SEASON_EVENT_MISSION_ICONS[mission.metric];
+    if (cfg?.type === 'image') {
+        return `<img src="${cfg.src}" alt="" class="gm-icon-img">`;
+    }
+    switch (cfg?.variant) {
+        case 'flame':
+            return `<span class="gm-icon gm-icon-flame"></span>`;
+        case 'arrow-up':
+            return `<span class="gm-icon gm-icon-arrow-up"></span>`;
+        case 'path':
+            return `<span class="gm-icon gm-icon-path"><i class="dot"></i><i class="line"></i><i class="dot"></i></span>`;
+        default:
+            return `<span class="gm-icon gm-icon-diamond"></span>`;
+    }
+}
+
+function renderSeasonEventMissionRow(mission) {
+    const progress = getSeasonEventMissionProgress(mission);
+    const complete = progress >= mission.goal;
+    const pct = Math.max(0, Math.min(100, (progress / mission.goal) * 100));
+    const segmentCount = 5;
+    const filledSegments = Math.round((pct / 100) * segmentCount);
+    const segmentsHtml = Array.from({ length: segmentCount }, (_, i) =>
+        `<i class="${i < filledSegments ? 'on' : ''}"></i>`
+    ).join('');
+    return `
+        <article class="season-event-mission ${complete ? 'is-complete' : ''}">
+            <div class="season-event-mission-icon">${renderSeasonEventMissionIcon(mission)}</div>
+            <div class="season-event-mission-body">
+                <div class="season-event-mission-top">
+                    <strong>${mission.title}</strong>
+                    <small>${Math.floor(progress)}/${mission.goal}</small>
+                </div>
+                <p>${mission.text}</p>
+                <div class="season-event-mission-progress">${segmentsHtml}</div>
+            </div>
+            <span class="season-event-mission-check">${complete ? '✓' : ''}</span>
+        </article>
+    `;
+}
+
+function openSeasonEventModal() {
+    const config = window.SEASON_EVENT_CONFIG;
+    if (!config || !window.isSeasonEventActive?.()) return;
+
+    const existing = document.querySelector('.season-event-modal-overlay');
+    if (existing) existing.remove();
+
+    const completion = getSeasonEventCompletion();
+    const state = readSeasonEventState();
+    const banner = BANNERS_DATA.find(b => b.id === config.rewardBannerId);
+    const rarityColor = BANNER_RARITY_COLORS[banner?.rarity] || '#ffd76a';
+
+    const overlay = document.createElement('div');
+    overlay.className = 'season-banners-modal-overlay season-event-modal-overlay';
+    overlay.innerHTML = `
+        <div class="season-banners-modal season-event-modal">
+            <div class="season-banners-modal-header">
+                <span>CHECKLIST DEL EVENTO</span>
+                <button type="button" onclick="this.closest('.season-event-modal-overlay').remove()">✕</button>
+            </div>
+            <div class="season-event-modal-body">
+                <div class="season-event-showcase" style="--rarity-color:${rarityColor};">
+                    <button class="season-event-info-btn" onclick="toggleSeasonEventInfo(event)" type="button" aria-label="Info de la recompensa">i</button>
+                    <div class="season-event-info-panel" id="seasonEventInfoPanel">
+                        <p>Se desbloquea al completar las ${completion.total} misiones del evento.</p>
+                    </div>
+                    <div class="season-event-showcase-frame">
+                        ${banner?.cover
+            ? `<div class="season-event-showcase-art" style="background-image:url('${banner.cover}');"></div>`
+            : `<span class="season-event-showcase-placeholder">Vista previa</span>`}
+                    </div>
+                    ${banner?.rarity ? `<span class="season-event-showcase-rarity">${banner.rarity}</span>` : ''}
+                    <p class="season-event-showcase-name">${banner?.name || 'Recompensa de temporada'}</p>
+                    <p class="season-event-showcase-count">${completion.done}/${completion.total} misiones completadas</p>
+                </div>
+                <div class="season-event-mission-list">
+                    ${config.missions.map(renderSeasonEventMissionRow).join('')}
+                </div>
+                ${completion.allComplete && !state.claimed ? `
+                    <button class="season-event-claim-btn" onclick="handleClaimSeasonEventReward()" type="button">RECLAMAR RECOMPENSA</button>
+                ` : ''}
+                ${state.claimed ? `<p class="season-event-claimed-msg">Recompensa reclamada</p>` : ''}
+            </div>
+        </div>
+    `;
+    overlay.addEventListener('click', event => {
+        if (event.target === overlay) overlay.remove();
+    });
+    document.body.appendChild(overlay);
+}
+
+function toggleSeasonEventInfo(e) {
+    e.stopPropagation();
+    const panel = document.getElementById('seasonEventInfoPanel');
+    if (!panel) return;
+    const willOpen = panel.style.display !== 'block';
+    panel.style.display = willOpen ? 'block' : 'none';
+    if (willOpen) {
+        const closeOnOutsideClick = (evt) => {
+            if (!panel.contains(evt.target)) {
+                panel.style.display = 'none';
+                document.removeEventListener('click', closeOnOutsideClick);
+            }
+        };
+        setTimeout(() => document.addEventListener('click', closeOnOutsideClick), 0);
+    }
+}
+
+function handleClaimSeasonEventReward() {
+    if (!claimSeasonEventReward()) return;
+    window.playSfx?.('reward', 0.85);
+    document.querySelector('.season-event-modal-overlay')?.remove();
+    const content = document.getElementById('shopContent');
+    if (content) renderShopSeasonsPage(content);
+}
+
+function renderSeasonEventSectionHTML() {
+    const config = window.SEASON_EVENT_CONFIG;
+    if (!config) return '';
+
+    const now = new Date();
+    const startsAt = new Date(`${config.startsAt}T00:00:00`);
+    const expiresAt = new Date(`${config.expiresAt}T23:59:59`);
+    const state = readSeasonEventState();
+    const banner = BANNERS_DATA.find(b => b.id === config.rewardBannerId);
+    const bannerPreview = banner?.cover
+        ? `<div class="season-event-card-banner" style="background-image:url('${banner.cover}');"></div>`
+        : '';
+
+    if (now < startsAt) {
+        return `
+        <div class="section-header">
+            <span class="num">03</span><span class="line"></span>
+            <span class="txt">EVENTO DE TEMPORADA</span>
+            <span class="fade"></span>
+        </div>
+        <div class="season-event-card season-event-card--upcoming">
+            <div class="season-event-card-copy">
+                <strong>PRÓXIMO EVENTO</strong>
+                <p>Comienza el ${formatSeasonEventDate(config.startsAt)}</p>
+                <small>Completa 6 misiones para desbloquear el banner exclusivo del evento.</small>
+            </div>
+            ${bannerPreview}
+        </div>`;
+    }
+
+    if (now > expiresAt) {
+        return `
+        <div class="section-header">
+            <span class="num">03</span><span class="line"></span>
+            <span class="txt">EVENTO DE TEMPORADA</span>
+            <span class="fade"></span>
+        </div>
+        <div class="season-event-card season-event-card--ended">
+            <div class="season-event-card-copy">
+                <strong>EVENTO FINALIZADO</strong>
+                <p>El evento terminó el ${formatSeasonEventDate(config.expiresAt)}.</p>
+                <small>${state.claimed ? 'Reclamaste la recompensa a tiempo.' : 'El banner queda bloqueado hasta el próximo evento.'}</small>
+            </div>
+            ${bannerPreview}
+        </div>`;
+    }
+
+    const completion = getSeasonEventCompletion();
+    const countdown = getSeasonEventCountdown();
+    const rewardTypeLabel = getSeasonEventRewardTypeLabel(config);
+    const rarityColor = BANNER_RARITY_COLORS[banner?.rarity] || '#ffd76a';
+    const gaugeHtml = Array.from({ length: completion.total }, (_, i) =>
+        `<i class="${i < completion.done ? 'on' : ''}"></i>`
+    ).join('');
+
+    return `
+        <div class="section-header">
+            <span class="num">03</span><span class="line"></span>
+            <span class="txt">EVENTO DE TEMPORADA</span>
+            <span class="fade"></span>
+        </div>
+        <div class="season-event-hero" style="--rarity-color:${rarityColor};">
+            <div class="season-event-hazard"><span>EVENTO ${rewardTypeLabel}</span></div>
+            <div class="season-event-hero-body">
+                <div class="season-event-pedestal">
+                    <div class="season-event-pedestal-ring"></div>
+                    <div class="season-event-pedestal-ring2"></div>
+                    ${banner?.cover ? `<div class="season-event-pedestal-art" style="background-image:url('${banner.cover}');"></div>` : ''}
+                    ${banner?.rarity ? `<span class="season-event-pedestal-tag">${banner.rarity}</span>` : ''}
+                </div>
+                <div class="season-event-hero-info">
+                    <p class="season-event-hero-title">${banner?.name || 'Recompensa de temporada'}</p>
+                    <p class="season-event-hero-sub">Completa las misiones de temporada y desbloquea la recompensa exclusiva del evento.</p>
+                    <div class="season-event-timer-chip${countdown.urgent ? ' is-urgent' : ''}"><b>${countdown.value}</b><span>${countdown.unit} restantes</span></div>
+                    <div class="season-event-gauge-label"><span>Progreso de misiones</span><b>${completion.done}/${completion.total}</b></div>
+                    <div class="season-event-gauge">${gaugeHtml}</div>
+                    <div class="season-event-hero-actions">
+                        <button class="season-event-btn" onclick="openSeasonEventModal()" type="button">Ver checklist</button>
+                        ${completion.allComplete && !state.claimed ? `<button class="season-event-btn is-claim" onclick="handleClaimSeasonEventReward()" type="button">Reclamar recompensa</button>` : ''}
+                        ${state.claimed ? `<span class="season-event-card-claimed">Recompensa reclamada</span>` : ''}
+                    </div>
+                </div>
+            </div>
+        </div>`;
+}
+
+// Estado vacío de "DESTACADOS DE LA TEMPORADA" cuando aún no hay cosméticos
+// cargados. Antes era una caja gris punteada genérica; ahora usa el mismo
+// lenguaje visual dorado/púrpura del resto de la página de temporada
+// (LEYENDAS), con un diamante decorativo animado dibujado en CSS puro.
+function seasonEmptyShowcaseHTML() {
+    return `
+        <div class="empty-showcase">
+            <div class="empty-showcase-diamond"><span></span></div>
+            <div class="empty-showcase-title">PRÓXIMAMENTE</div>
+            <p class="empty-showcase-text">LOS DEMÁS COSMÉTICOS DE ESTA TEMPORADA SE REVELARÁN PRONTO</p>
+        </div>
+    `;
+}
+
+function renderSeasonEmoteOfDayCard(index, emotePool) {
+    const emote = getDailySeasonEmotePick(index, emotePool);
+    if (!emote) {
+        return `<div class="season-emote-of-day-card is-empty">
+            <span>SIN EMOTES DISPONIBLES</span>
+        </div>`;
+    }
+    return `
+        <div class="season-emote-of-day-card">
+            <div class="season-emote-of-day-hazard"><span>EMOTES DEL DÍA</span></div>
+            <div class="season-emote-of-day-body">
+                <div class="season-emote-of-day-thumb">
+                    <img src="${emote.image}" alt="${emote.name}" onerror="this.style.display='none';">
+                </div>
+                <div class="season-emote-of-day-name">${emote.name}</div>
+            </div>
+        </div>
+    `;
+}
+
+function renderSeasonPacksCard() {
+    return `
+        <div class="season-packs-card" onclick="openSeasonPacksModal()">
+            <div class="season-packs-hazard"><span>Colecciones</span></div>
+            <div class="season-packs-body">
+                <div class="season-packs-title">PACKS</div>
+                <p class="season-packs-sub">Descubre las colecciones completas de cada personaje de la temporada.</p>
+                <div class="season-packs-swatches">
+                    ${SEASON_PACKS_LEYENDAS.map(p => `<span class="season-packs-swatch" style="--c:${p.color};"></span>`).join('')}
+                </div>
+            </div>
+        </div>
+    `;
+}
+
+function openSeasonPacksModal() {
+    const existing = document.querySelector('.season-packs-modal-overlay');
+    if (existing) existing.remove();
+
+    const overlay = document.createElement('div');
+    overlay.className = 'season-banners-modal-overlay season-packs-modal-overlay';
+    overlay.innerHTML = `
+        <div class="season-banners-modal season-packs-modal">
+            <div class="season-banners-modal-header">
+                <span>PACKS DE TEMPORADA</span>
+                <button type="button" onclick="this.closest('.season-packs-modal-overlay').remove()">✕</button>
+            </div>
+            <div class="season-packs-modal-body" id="seasonPacksModalBody">
+                ${renderSeasonPacksOverviewHTML()}
+            </div>
+        </div>
+    `;
+    overlay.addEventListener('click', event => {
+        if (event.target === overlay) overlay.remove();
+    });
+    document.body.appendChild(overlay);
+}
+
+function renderSeasonPacksOverviewHTML() {
+    return `
+        <div class="season-pack-overview-grid">
+            ${SEASON_PACKS_LEYENDAS.map(p => `
+                <div class="season-pack-overview-panel" style="--c:${p.color};" onclick="showSeasonPackDetail('${p.id}')">
+                    <img src="${p.cover}" alt="${p.name}" onerror="this.style.display='none'; this.parentElement.classList.add('no-cover');">
+                    <div class="season-pack-overview-name">${p.name}</div>
+                </div>
+            `).join('')}
+        </div>
+    `;
+}
+
+function showSeasonPackDetail(packId) {
+    const pack = SEASON_PACKS_LEYENDAS.find(p => p.id === packId);
+    const body = document.getElementById('seasonPacksModalBody');
+    if (!pack || !body) return;
+
+    const skin = SKINS_DATA.find(s => s.id === pack.skinId);
+    const trail = pack.trailId ? TRAILS_DATA.find(t => t.id === pack.trailId) : null;
+    const emotes = EMOTES_DATA.filter(e => pack.emoteIds.includes(e.id));
+
+    body.innerHTML = `
+        <button class="season-pack-detail-back" type="button" onclick="document.getElementById('seasonPacksModalBody').innerHTML = renderSeasonPacksOverviewHTML();">← VOLVER A PACKS</button>
+        <div class="season-pack-detail" style="--c:${pack.color};">
+            <div class="season-pack-detail-header">
+                <img src="${pack.cover}" alt="${pack.name}" onerror="this.style.display='none';">
+                <h3>${pack.name}</h3>
+            </div>
+            <div class="season-pack-detail-section">
+                <span class="season-pack-detail-label">SKIN</span>
+                ${skin ? `<div class="season-pack-detail-item"><img src="${skin.image}" alt="${skin.name}"><span>${skin.name}</span></div>` : `<div class="empty-showcase">PRÓXIMAMENTE</div>`}
+            </div>
+            <div class="season-pack-detail-section">
+                <span class="season-pack-detail-label">TRAIL</span>
+                ${trail ? `<div class="season-pack-detail-item"><img src="${trail.image}" alt="${trail.name}"><span>${trail.name}</span></div>` : `<div class="empty-showcase">PRÓXIMAMENTE</div>`}
+            </div>
+            <div class="season-pack-detail-section">
+                <span class="season-pack-detail-label">EMOTES</span>
+                <div class="season-pack-detail-emotes">
+                    ${emotes.map(e => `<div class="season-pack-detail-item"><img src="${e.image}" alt="${e.name}"><span>${e.name}</span></div>`).join('')}
+                </div>
+            </div>
+        </div>
+    `;
+}
+
 function renderShopSeasonsPage(container) {
     const activeSeasons = window.getActiveSeasons?.() || [];
-    
+
     // Si no hay temporada activa, mostrar estado vacío
     if (!activeSeasons || activeSeasons.length === 0) {
         container.innerHTML = `
@@ -2254,37 +3116,47 @@ function renderShopSeasonsPage(container) {
     const now = new Date();
     const expiresAt = new Date(`${season.expiresAt}T23:59:59`);
     const startsAt = new Date(`${season.startsAt}T00:00:00`);
-    
+
     // Calcular días restantes
     const daysRemaining = Math.max(0, Math.ceil((expiresAt - now) / (1000 * 60 * 60 * 24)));
-    
+
     // Calcular progreso de temporada (porcentaje)
     const totalDuration = expiresAt - startsAt;
     const elapsed = now - startsAt;
     const progressPercent = Math.max(0, Math.min(100, Math.round((elapsed / totalDuration) * 100)));
-    
+
     // Generar segmentos de barra de progreso (30 segmentos totales)
     const totalSegments = 30;
     const filledSegments = Math.round((progressPercent / 100) * totalSegments);
-    
+
     // Verificar si hay contenido en la temporada
-    const hasContent = season.contains.skins.length > 0 || 
-                       season.contains.trails.length > 0 || 
-                       season.contains.banners.length > 0 || 
-                       season.contains.emotes.length > 0;
-    
-    // Generar items para la vitrina de destacados (placeholder por ahora)
+    const hasContent = season.contains.skins.length > 0 ||
+        season.contains.trails.length > 0 ||
+        season.contains.banners.length > 0 ||
+        season.contains.emotes.length > 0;
+
+    // Vitrina de Destacados: la temporada Leyendas ya tiene contenido real
+    // (packs de personaje + emotes del día). Otras temporadas futuras sin
+    // contenido cargado siguen usando el estado vacío genérico.
     let showcaseHTML = '';
-    if (!hasContent) {
-        showcaseHTML = `<div class="empty-showcase">LOS DEMÁS COSMÉTICOS DE ESTA TEMPORADA SE REVELARÁN PRÓXIMAMENTE</div>`;
-    } else {
-        // Placeholder: combinar primeros 3 IDs de skins/trails/emotes
+    let showcaseClass = 'showcase-grid';
+    if (season.id === 'leyendas') {
+        showcaseClass = 'season-showcase-featured-row';
+        showcaseHTML = `
+            <div class="season-emotes-of-day-col">
+                ${renderSeasonEmoteOfDayCard(0, season.contains.emotes)}
+                ${renderSeasonEmoteOfDayCard(1, season.contains.emotes)}
+            </div>
+            ${renderSeasonPacksCard()}
+        `;
+    } else if (hasContent) {
+        // Placeholder genérico: combinar primeros 3 IDs de skins/trails/emotes
         const allItems = [
-            ...season.contains.skins.map(id => ({id, type: 'SKIN', name: 'Cosmético de Temporada', rarity: 'EXCLUSIVO'})),
-            ...season.contains.trails.map(id => ({id, type: 'TRAIL', name: 'Trail de Temporada', rarity: 'EXCLUSIVO'})),
-            ...season.contains.emotes.map(id => ({id, type: 'EMOTE', name: 'Emote de Temporada', rarity: 'EXCLUSIVO'}))
+            ...season.contains.skins.map(id => ({ id, type: 'SKIN', name: 'Cosmético de Temporada', rarity: 'EXCLUSIVO' })),
+            ...season.contains.trails.map(id => ({ id, type: 'TRAIL', name: 'Trail de Temporada', rarity: 'EXCLUSIVO' })),
+            ...season.contains.emotes.map(id => ({ id, type: 'EMOTE', name: 'Emote de Temporada', rarity: 'EXCLUSIVO' }))
         ].slice(0, 3);
-        
+
         showcaseHTML = allItems.map((item, index) => {
             const isFeatured = index === 0;
             return `
@@ -2295,10 +3167,12 @@ function renderShopSeasonsPage(container) {
                 </div>
             `;
         }).join('');
-        
+
         if (allItems.length < 3) {
-            showcaseHTML += `<div class="empty-showcase">LOS DEMÁS COSMÉTICOS DE ESTA TEMPORADA SE REVELARÁN PRÓXIMAMENTE</div>`;
+            showcaseHTML += seasonEmptyShowcaseHTML();
         }
+    } else {
+        showcaseHTML = seasonEmptyShowcaseHTML();
     }
 
     container.innerHTML = `
@@ -2343,9 +3217,9 @@ function renderShopSeasonsPage(container) {
                     <div class="season-progress">
                         <div class="season-progress-label"><span>PROGRESO DE TEMPORADA</span><b>${progressPercent}%</b></div>
                         <div class="season-progress-bar" id="seasonBar">
-                            ${Array.from({length: totalSegments}, (_, i) => 
-                                `<div class="season-progress-seg${i < filledSegments ? ' on' : ''}"></div>`
-                            ).join('')}
+                            ${Array.from({ length: totalSegments }, (_, i) =>
+        `<div class="season-progress-seg${i < filledSegments ? ' on' : ''}"></div>`
+    ).join('')}
                         </div>
                     </div>
                 </div>
@@ -2359,25 +3233,107 @@ function renderShopSeasonsPage(container) {
         </div>
 
         <div class="category-bento">
-            <div class="cat-card main" onclick="openSeasonContentModal('skins')" style="--cc:#a259ff; --cc-soft:rgba(162,89,255,.35); --cc-glow:rgba(162,89,255,.3);">
-                <div class="cat-icon-big"><div class="ph skin"></div></div>
-                <div class="cat-name">SKINS</div>
-                <div class="cat-count">${season.contains.skins.length} disponibles esta temporada</div>
+            <div class="cat-card skins" onclick="openSeasonContentModal('skins')">
+                <div class="cat-corner-fill"></div>
+                <div class="cc-corner tl"></div><div class="cc-corner bl"></div>
+                <div class="cat-icon-zone">
+                    <div class="cat-glow"></div>
+                    <svg class="cat-icon" viewBox="0 0 40 40" fill="none">
+                        <circle cx="20" cy="20" r="16" fill="var(--cc)" fill-opacity="0.18" stroke="var(--cc)" stroke-width="2"/>
+                        <circle cx="14.5" cy="17" r="2.1" fill="var(--cc)"/>
+                        <circle cx="25.5" cy="17" r="2.1" fill="var(--cc)"/>
+                        <path d="M13 23.5 Q20 30 27 23.5" stroke="var(--cc)" stroke-width="2.2" stroke-linecap="round" fill="none"/>
+                    </svg>
+                </div>
+                <div class="cat-text">
+                    <div class="cat-name">SKINS</div>
+                    <div class="cat-underline"></div>
+                    <div class="cat-count"><b>${season.contains.skins.length}</b> disponibles esta temporada</div>
+                </div>
             </div>
-            <div class="cat-card small" onclick="openSeasonContentModal('trails')" style="--cc:#00e5ff; --cc-soft:rgba(0,229,255,.3); --cc-glow:rgba(0,229,255,.25);">
-                <div class="cat-icon-small"><div class="ph trail"></div></div>
-                <div class="cat-name">TRAILS</div>
-                <div class="cat-count">${season.contains.trails.length} disponibles</div>
+            <div class="cat-card trails" onclick="openSeasonContentModal('trails')">
+                <div class="cat-corner-fill"></div>
+                <div class="cc-corner tl"></div><div class="cc-corner bl"></div>
+                <div class="cat-icon-zone">
+                    <div class="cat-glow"></div>
+                    <svg class="cat-icon" viewBox="0 0 40 40" fill="none">
+                        <defs>
+                            <linearGradient id="trailGrad" x1="4" y1="34" x2="32" y2="8" gradientUnits="userSpaceOnUse">
+                                <stop offset="0" style="stop-color:var(--cc)" stop-opacity="0"/>
+                                <stop offset="0.55" style="stop-color:var(--cc)" stop-opacity="0.55"/>
+                                <stop offset="1" style="stop-color:var(--cc)" stop-opacity="1"/>
+                            </linearGradient>
+                        </defs>
+                        <path d="M4 33 C10 30 14 25 17 20 C20 15 23 11 27 8.5 C24 12 22 16 22 19 C22 22 25 22 28 19.5 C31 17.5 32.5 13.5 32 9.5"
+                            stroke="url(#trailGrad)" stroke-width="4.2" stroke-linecap="round" fill="none"/>
+                        <circle cx="32" cy="9" r="3.2" fill="var(--cc)"/>
+                    </svg>
+                </div>
+                <div class="cat-text">
+                    <div class="cat-name">TRAILS</div>
+                    <div class="cat-underline"></div>
+                    <div class="cat-count"><b>${season.contains.trails.length}</b> disponibles</div>
+                </div>
             </div>
-            <div class="cat-card small" onclick="openSeasonContentModal('banners')" style="--cc:#ff5d8f; --cc-soft:rgba(255,93,143,.3); --cc-glow:rgba(255,93,143,.25);">
-                <div class="cat-icon-small"><div class="ph banner"></div></div>
-                <div class="cat-name">BANNERS</div>
-                <div class="cat-count">${season.contains.banners.length} disponibles</div>
+            <div class="cat-card banners" onclick="openSeasonContentModal('banners')">
+                <div class="cat-corner-fill"></div>
+                <div class="cc-corner tl"></div><div class="cc-corner bl"></div>
+                <div class="cat-icon-zone">
+                    <div class="cat-glow"></div>
+                    <svg class="cat-icon" viewBox="0 0 40 40" fill="none">
+                        <path d="M12 5 L28 5 L28 30 L20 25 L12 30 Z"
+                            fill="var(--cc)" fill-opacity="0.18" stroke="var(--cc)" stroke-width="2" stroke-linejoin="round"/>
+                        <path d="M12 12 L28 12" stroke="var(--cc)" stroke-width="1.4" opacity="0.55"/>
+                        <path d="M20 5 L20 30" stroke="var(--cc)" stroke-width="1" opacity="0.3"/>
+                        <path d="M20 15 L23.5 18.5 L20 22 L16.5 18.5 Z" fill="var(--cc)"/>
+                    </svg>
+                </div>
+                <div class="cat-text">
+                    <div class="cat-name">BANNERS</div>
+                    <div class="cat-underline"></div>
+                    <div class="cat-count"><b>${season.contains.banners.length}</b> disponibles</div>
+                </div>
             </div>
-            <div class="cat-card small" onclick="openSeasonContentModal('emotes')" style="--cc:#ffd76a; --cc-soft:rgba(255,215,106,.3); --cc-glow:rgba(255,215,106,.25);">
-                <div class="cat-icon-small"><div class="ph emote"></div></div>
-                <div class="cat-name">EMOTES</div>
-                <div class="cat-count">${season.contains.emotes.length} disponibles</div>
+            <div class="cat-card marcos" onclick="openSeasonContentModal('frames')">
+                <div class="cat-corner-fill"></div>
+                <div class="cc-corner tl"></div><div class="cc-corner bl"></div>
+                <div class="cat-icon-zone">
+                    <div class="cat-glow"></div>
+                    <svg class="cat-icon" viewBox="0 0 40 40" fill="none">
+                        <rect x="6" y="6" width="28" height="28" rx="1" stroke="var(--cc)" stroke-width="2" fill="none"/>
+                        <rect x="12" y="12" width="16" height="16" rx="1" stroke="var(--cc)" stroke-width="1.2" opacity="0.4" fill="none"/>
+                        <path d="M6 6 L11 6 L6 11 Z" fill="var(--cc)"/>
+                        <path d="M34 6 L29 6 L34 11 Z" fill="var(--cc)"/>
+                        <path d="M6 34 L11 34 L6 29 Z" fill="var(--cc)"/>
+                        <path d="M34 34 L29 34 L34 29 Z" fill="var(--cc)"/>
+                        <path d="M20 3 L22.6 8 L20 13 L17.4 8 Z" fill="var(--cc)"/>
+                    </svg>
+                </div>
+                <div class="cat-text">
+                    <div class="cat-name">MARCOS</div>
+                    <div class="cat-underline"></div>
+                    <div class="cat-count"><b>${(season.contains.frames || []).length}</b> disponibles</div>
+                </div>
+            </div>
+            <div class="cat-card emotes" onclick="openSeasonContentModal('emotes')">
+                <div class="cat-corner-fill"></div>
+                <div class="cc-corner tl"></div><div class="cc-corner bl"></div>
+                <div class="cat-icon-zone">
+                    <div class="cat-glow"></div>
+                    <svg class="cat-icon" viewBox="0 0 40 40" fill="none">
+                        <path d="M20 6 C28.5 6 34 11.5 34 19 C34 26 28.5 30.5 20.5 30.5 C18.6 30.5 17.4 30.8 16 31.4 L12.5 33 L13.5 29 C8.7 26.6 6 23.2 6 19 C6 11.5 11.5 6 20 6Z"
+                            fill="var(--cc)" fill-opacity="0.16" stroke="var(--cc)" stroke-width="2" stroke-linejoin="round"/>
+                        <path d="M13 17 Q15 14.5 17 17" stroke="var(--cc)" stroke-width="2" stroke-linecap="round" fill="none"/>
+                        <path d="M23 17 Q25 14.5 27 17" stroke="var(--cc)" stroke-width="2" stroke-linecap="round" fill="none"/>
+                        <path d="M13.5 21 Q20 27 26.5 21" stroke="var(--cc)" stroke-width="2.2" stroke-linecap="round" fill="none"/>
+                        <path d="M31 4 L32 7 L35 8 L32 9 L31 12 L30 9 L27 8 L30 7 Z" fill="var(--cc)"/>
+                    </svg>
+                </div>
+                <div class="cat-text">
+                    <div class="cat-name">EMOTES</div>
+                    <div class="cat-underline"></div>
+                    <div class="cat-count"><b>${season.contains.emotes.length}</b> disponibles</div>
+                </div>
             </div>
         </div>
 
@@ -2387,9 +3343,11 @@ function renderShopSeasonsPage(container) {
             <span class="fade"></span>
         </div>
 
-        <div class="showcase-grid">
+        <div class="${showcaseClass}">
             ${showcaseHTML}
         </div>
+
+        ${renderSeasonEventSectionHTML()}
     `;
 }
 
@@ -2752,6 +3710,7 @@ function unlockFoodAchievement(id) {
 
 function renderBannersPage(container) {
     const equipped = localStorage.getItem('equippedBanner') || 'Banner_Deafult';
+    const activeTab = window._designPerfilTab || 'banners';
     // Los banners passOnly (exclusivos del Ruby Pass) y missionOnly (solo
     // por misión) no se muestran acá hasta que el jugador los tenga.
     const rubyBanner = BANNERS_DATA.find(b => b.id === 'Banner_RubyPass_Temporada_VIP');
@@ -2767,13 +3726,191 @@ function renderBannersPage(container) {
     container.innerHTML = `
         <div style="display:flex; align-items:center; gap:16px; margin-bottom:24px;">
             ${shopBotonVolverHtml()}
-            <div style="color:rgba(255,255,255,0.4); font-family:monospace; font-size:11px; letter-spacing:4px;">${shopTextos('banners').titulo ?? 'BANNERS'}</div>
+            <div style="color:rgba(255,255,255,0.4); font-family:monospace; font-size:11px; letter-spacing:4px;">${shopTextos('banners').titulo ?? 'DISEÑO DE PERFIL'}</div>
         </div>
-        <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:16px;">
-            ${visibleBanners.map(b => renderBannerCard(b, equipped)).join('')}
+        <div style="display:flex; gap:8px; margin-bottom:20px;">
+            <button onclick="switchDesignPerfilTab('banners')" style="padding:6px 16px; border-radius:20px; border:1px solid ${activeTab === 'banners' ? 'rgba(0,255,231,0.6)' : 'rgba(255,255,255,0.12)'}; background:${activeTab === 'banners' ? 'rgba(0,255,231,0.1)' : 'none'}; color:${activeTab === 'banners' ? '#00ffe7' : 'rgba(255,255,255,0.45)'}; font-family:monospace; font-size:10px; letter-spacing:2px; cursor:pointer;">BANNERS</button>
+            <button onclick="switchDesignPerfilTab('frames')" style="padding:6px 16px; border-radius:20px; border:1px solid ${activeTab === 'frames' ? 'rgba(0,255,231,0.6)' : 'rgba(255,255,255,0.12)'}; background:${activeTab === 'frames' ? 'rgba(0,255,231,0.1)' : 'none'}; color:${activeTab === 'frames' ? '#00ffe7' : 'rgba(255,255,255,0.45)'}; font-family:monospace; font-size:10px; letter-spacing:2px; cursor:pointer;">MARCOS</button>
+        </div>
+        <div id="diseno-perfil-banners-grid" style="${activeTab === 'banners' ? '' : 'display:none;'}">
+            <div class="diseno-perfil-grid-banners">
+                ${visibleBanners.map(b => renderBannerCard(b, equipped)).join('')}
+            </div>
+        </div>
+        <div id="diseno-perfil-frames-grid" style="${activeTab === 'frames' ? '' : 'display:none;'}">
+            <div class="diseno-perfil-grid-frames">
+                ${getAllCosmeticCatalog('frame').map(f => renderFrameCard(f)).join('')}
+            </div>
         </div>
     `;
 }
+
+// ── Selector de tab Banners/Marcos (tienda normal) ──────────────────────
+function switchDesignPerfilTab(tab) {
+    window._designPerfilTab = tab;
+    const bannersGrid = document.getElementById('diseno-perfil-banners-grid');
+    const framesGrid = document.getElementById('diseno-perfil-frames-grid');
+    if (bannersGrid) bannersGrid.style.display = tab === 'banners' ? '' : 'none';
+    if (framesGrid) framesGrid.style.display = tab === 'frames' ? '' : 'none';
+    // Re-renderiza para actualizar el estilo activo de las pills
+    const content = document.getElementById('shopContent');
+    if (content && document.getElementById('shopPanel')?.style.display !== 'none') {
+        renderBannersPage(content);
+    }
+}
+window.switchDesignPerfilTab = switchDesignPerfilTab;
+
+// ── Selector de tab Banners/Marcos (tienda VIP) ──────────────────────────
+function switchVIPDesignTab(tab) {
+    window._vipDesignTab = tab;
+    const bannersTab = document.getElementById('vip-design-banners-tab');
+    const framesTab = document.getElementById('vip-design-frames-tab');
+    if (bannersTab) bannersTab.style.display = tab === 'banners' ? '' : 'none';
+    if (framesTab) framesTab.style.display = tab === 'frames' ? '' : 'none';
+    // Re-renderiza para actualizar estilo de pills
+    renderVIPPromoDetail('vip_specials');
+}
+window.switchVIPDesignTab = switchVIPDesignTab;
+
+// ── Card de marco — mismo diseño HUD (pd-card) que renderBannerCard ──────
+function renderFrameCard(f, opts = {}) {
+    const equippedFrameId = localStorage.getItem('equippedFrame');
+    const owned = ownsCosmetic(f, 'frame');
+    const isEquipped = equippedFrameId === f.id;
+    const frameBg = f.imagen ? `url('${f.imagen}')` : 'linear-gradient(135deg,rgba(0,255,231,0.1),rgba(255,77,109,0.08))';
+    const accent = BANNER_RARITY_COLORS[f.rarity] || BANNER_RARITY_COLORS.DEFAULT;
+    const bt = shopTextos('banners');
+
+    // Determinar tipo de botón
+    const isEventReward = window.SEASON_EVENT_CONFIG?.rewardFrameId === f.id;
+    const isRubyPassVIP = f.rubyPassLane === 'premium' && f.passOnly;
+    const isRubyPassFree = f.rubyPassLane === 'free' && f.passOnly;
+    const isBuyable = !f.passOnly && !f.missionOnly && !isEventReward && f.price > 0;
+
+    const cardClasses = ['pd-card', 'hud-panel-cut'];
+    if (isEquipped) cardClasses.push('equipped');
+    if (!owned) cardClasses.push('locked');
+
+    let chipHTML = '';
+    let cardClick = `onclick="openFramePreviewModal('${f.id}')"`;
+
+    if (isEquipped) {
+        chipHTML = `<div class="hud-price-chip">&#10003;</div>`;
+        cardClick = `onclick="openFramePreviewModal('${f.id}')"`;
+    } else if (owned) {
+        chipHTML = `<div class="hud-price-chip">${bt.botonEquipar ?? 'EQUIPAR'}</div>`;
+        cardClick = `onclick="equipFrameFromShop('${f.id}')"`;
+    } else if (isEventReward) {
+        chipHTML = `<div class="hud-price-chip locked" style="color:#ffd76a; border-color:rgba(255,215,106,0.5);">EVENTO</div>`;
+    } else if (isRubyPassVIP) {
+        chipHTML = `<div class="hud-price-chip locked" style="color:#ffd700; border-color:rgba(255,215,0,0.55);">PASE RUBY</div>`;
+    } else if (isRubyPassFree) {
+        chipHTML = `<div class="hud-price-chip locked" style="color:#aaaaaa; border-color:rgba(180,180,180,0.45);">PASE RUBY</div>`;
+    } else if (f.missionOnly) {
+        chipHTML = `<div class="hud-price-chip locked">MISIÓN</div>`;
+    } else if (isBuyable) {
+        const canAffordIt = parseInt(localStorage.getItem('deadCoins') || '0') >= f.price;
+        chipHTML = `<div class="hud-price-chip locked" onclick="buyFrameFromShop('${f.id}')" style="cursor:pointer; color:${canAffordIt ? '#ffee00' : 'rgba(255,255,255,0.22)'}; border-color:${canAffordIt ? 'rgba(255,238,0,0.45)' : 'rgba(255,255,255,0.1)'};">${renderPrice(f.price, 'coins')}</div>`;
+        cardClick = `onclick="openFramePreviewModal('${f.id}')"`;
+    } else {
+        chipHTML = `<div class="hud-price-chip locked">NO DISPONIBLE</div>`;
+    }
+
+    return `
+        <div class="${cardClasses.join(' ')}" style="--cfg-hud-accent:${accent};" ${cardClick}>
+            <div class="pd-media" style="background-image:${frameBg};"></div>
+            <div class="pd-veil"></div>
+            <div class="pd-chip-wrap">${chipHTML}</div>
+        </div>
+    `;
+}
+
+// ── Equipa un marco y refresca el sidebar ────────────────────────────────
+function equipFrameFromShop(id) {
+    equipCosmetic(id, 'frame');
+    updateShopProfileBanner();
+    const content = document.getElementById('shopContent');
+    if (content && document.getElementById('shopPanel')?.style.display !== 'none') {
+        renderBannersPage(content);
+    }
+}
+window.equipFrameFromShop = equipFrameFromShop;
+
+// ── Compra un marco de tienda normal ─────────────────────────────────────
+function buyFrameFromShop(id) {
+    const frame = findCosmeticById(id, 'frame');
+    if (!frame || frame.price <= 0) return;
+    const coins = parseInt(localStorage.getItem('deadCoins') || '0');
+    if (coins < frame.price) return;
+    showShopModal({
+        kicker: 'CONFIRMAR COMPRA',
+        title: frame.name,
+        image: frame.imagen,
+        body: `¿Confirmas la compra por ${frame.price} monedas?`,
+        confirmText: 'COMPRAR',
+        cancelText: 'CANCELAR',
+        onConfirm: () => {
+            spendCurrency(frame.price, 'coins');
+            setFrameOwned(frame);
+            window.playSfx?.('spend');
+            updateMenuHUD();
+            const content = document.getElementById('shopContent');
+            if (content && document.getElementById('shopPanel')?.style.display !== 'none') {
+                renderBannersPage(content);
+            }
+        }
+    });
+}
+window.buyFrameFromShop = buyFrameFromShop;
+
+// ── Modal de preview del marco ────────────────────────────────────────────
+function openFramePreviewModal(id) {
+    const frame = findCosmeticById(id, 'frame');
+    if (!frame) return;
+    const owned = ownsCosmetic(frame, 'frame');
+    const isEquipped = localStorage.getItem('equippedFrame') === frame.id;
+    const isEventReward = window.SEASON_EVENT_CONFIG?.rewardFrameId === frame.id;
+    const isRubyPassVIP = frame.rubyPassLane === 'premium' && frame.passOnly;
+    const isRubyPassFree = frame.rubyPassLane === 'free' && frame.passOnly;
+
+    let actionBtn = '';
+    if (owned && !isEquipped) {
+        actionBtn = `<button class="shop-modal-btn primary" onclick="equipFrameFromShop('${frame.id}'); closeShopModal();" type="button">EQUIPAR</button>`;
+    } else if (!owned && !frame.passOnly && !frame.missionOnly && !isEventReward && frame.price > 0) {
+        actionBtn = `<button class="shop-modal-btn primary" onclick="closeShopModal(); buyFrameFromShop('${frame.id}');" type="button">COMPRAR · ${frame.price} 🪙</button>`;
+    }
+
+    let statusLabel = '';
+    if (isEquipped) statusLabel = '<span style="color:#00ffe7;">✓ EQUIPADO</span>';
+    else if (isEventReward) statusLabel = '<span style="color:#ffd76a;">RECOMPENSA DE EVENTO</span>';
+    else if (isRubyPassVIP) statusLabel = '<span style="color:#ffd700;">PASE RUBY · VIP</span>';
+    else if (isRubyPassFree) statusLabel = '<span style="color:#aaaaaa;">PASE RUBY · FREE</span>';
+    else if (frame.missionOnly) statusLabel = '<span style="color:#ff9a17;">SOLO POR MISIÓN</span>';
+
+    showShopModal({
+        kicker: 'MARCO',
+        title: frame.name,
+        mediaHTML: frame.imagen
+            ? `<img src="${frame.imagen}" alt="${frame.name}" draggable="false" style="width:100%; border-radius:10px; object-fit:contain;">`
+            : `<div style="width:100%; height:120px; border:1px solid rgba(255,255,255,0.1); border-radius:10px; display:flex; align-items:center; justify-content:center; color:rgba(255,255,255,0.3); font-family:monospace;">SIN IMAGEN</div>`,
+        mediaClass: 'wide',
+        body: `<div style="display:flex; justify-content:space-between; align-items:center; font-family:monospace; font-size:10px; margin-top:4px;">
+            <span style="color:${BANNER_RARITY_COLORS[frame.rarity] || 'rgba(255,255,255,0.4)'};">${frame.rarity || 'NORMAL'}</span>
+            ${statusLabel}
+        </div>`,
+        cancelText: 'CERRAR',
+        confirmText: null,
+    });
+
+    // Inyectar botón de acción extra si aplica
+    if (actionBtn) {
+        setTimeout(() => {
+            const actions = document.querySelector('.shop-modal-actions');
+            if (actions) actions.insertAdjacentHTML('afterbegin', actionBtn);
+        }, 0);
+    }
+}
+window.openFramePreviewModal = openFramePreviewModal;
 
 function renderBannerCard(b, equipped) {
     const owned = ownsBanner(b);
@@ -2783,67 +3920,41 @@ function renderBannerCard(b, equipped) {
     const canBuy = !vipOnly && parseInt(localStorage.getItem('deadCoins') || '0') >= b.price;
     const canBuyGems = !vipOnly && !!b.priceGems && parseInt(localStorage.getItem('gems') || '0') >= b.priceGems;
     const bannerBg = b.cover ? `url('${b.cover}')` : `linear-gradient(135deg, rgba(0,255,231,0.18), rgba(255,77,109,0.14))`;
-
-    if (b.id === 'Banner_RubyPass_Temporada_VIP') {
-        console.log('[renderBannerCard] Rendering Ruby Pass VIP banner. Owned:', owned, 'IsVIP:', isVIP, 'VipOnly:', vipOnly);
-    }
-
-    let borderStyle = '';
-    let boxShadow = '';
-    let extraStyle = '';
-
-    if (isVIP && isEquipped) {
-        borderStyle = '2px solid transparent';
-        boxShadow = '0 0 20px rgba(255,204,0,0.35)';
-        extraStyle = `
-        background-image: linear-gradient(rgba(18,18,24,1), rgba(18,18,24,1)),
-                          linear-gradient(180deg, #00ffe7 0%, #7affcc 40%, #ffcc00 100%);
-        background-origin: border-box;
-        background-clip: padding-box, border-box;
-    `;
-    } else if (isVIP) {
-        borderStyle = '2px solid rgba(255,204,0,0.8)';
-        boxShadow = '0 0 18px rgba(255,204,0,0.25)';
-    } else if (isEquipped) {
-        borderStyle = '2px solid rgba(0,255,231,0.55)';
-        boxShadow = '0 0 14px rgba(0,255,231,0.2)';
-    } else {
-        borderStyle = '1px solid rgba(255,255,255,0.08)';
-        boxShadow = 'none';
-    }
-
+    const accent = isVIP ? (BANNER_RARITY_COLORS.VIP || '#ffee00') : (BANNER_RARITY_COLORS[b.rarity] || BANNER_RARITY_COLORS.DEFAULT);
     const bt = shopTextos('banners');
 
-    const html = `
-        <div style="background:${isVIP && isEquipped ? 'rgb(18,18,24)' : 'rgba(255,255,255,0.03)'}; border:${borderStyle}; border-radius:14px; padding:14px; display:flex; flex-direction:column; gap:12px; box-shadow:${boxShadow}; ${extraStyle}">
-            <div style="height:104px; border-radius:10px; border:1px solid rgba(0,0,0,0.45); background:${bannerBg}; background-size:cover; background-position:center; display:flex; align-items:center; justify-content:center; color:rgba(255,255,255,0.48); font-family:monospace; font-size:10px; letter-spacing:3px;">
-                ${b.cover ? '' : (bt.labelPortada ?? 'PORTADA')}
-            </div>
-            <div style="display:flex; justify-content:space-between; gap:10px; align-items:center;">
-                <div>
-                    <div style="color:white; font-family:monospace; font-size:12px; letter-spacing:1px;">${b.name}</div>
-                    <div class="${gemRarityClass(b.rarity)}" style="color:${BANNER_RARITY_COLORS[b.rarity] || 'rgba(255,255,255,0.35)'}; font-family:monospace; font-size:9px; margin-top:4px;">${b.rarity === 'VIP' ? (bt.labelVipPaseRuby ?? 'VIP / PASE RUBY') : (b.rarity || (bt.labelNormal ?? 'NORMAL'))}</div>
-                </div>
-                ${owned
-            ? `<button onclick="equipBanner('${b.id}')" style="padding:8px 12px; border-radius:8px; border:1px solid ${isEquipped ? (isVIP ? 'rgba(255,204,0,0.6)' : 'rgba(0,255,231,0.6)') : 'rgba(255,255,255,0.12)'}; background:${isEquipped ? (isVIP ? 'rgba(255,204,0,0.12)' : 'rgba(0,255,231,0.12)') : 'none'}; color:${isEquipped ? (isVIP ? '#ffd700' : '#00ffe7') : 'rgba(255,255,255,0.5)'}; font-family:monospace; font-size:9px; cursor:pointer;">${isEquipped ? (bt.botonEquipado ?? 'EQUIPADO') : (bt.botonEquipar ?? 'EQUIPAR')}</button>`
-            : vipOnly
-                ? `<button onclick="openVIP(); setTimeout(() => renderVIPPromoDetail('vip_specials'), 40)" style="padding:8px 12px; border-radius:8px; border:1px solid rgba(255,238,0,0.36); background:rgba(255,238,0,0.08); color:#ffee00; font-family:monospace; font-size:9px; cursor:pointer;">${bt.botonSoloVIP ?? 'SOLO EN TIENDA VIP'}</button>`
-                : b.priceGems
-                    ? `<div style="display:flex; flex-direction:column; gap:6px; align-items:flex-end;">
-                        <button onclick="buyBanner('${b.id}')" ${!canBuy ? 'disabled' : ''} style="padding:6px 12px; border-radius:8px; border:1px solid ${canBuy ? 'rgba(255,238,0,0.45)' : 'rgba(255,255,255,0.08)'}; background:none; color:${canBuy ? '#ffee00' : 'rgba(255,255,255,0.22)'}; font-family:monospace; font-size:9px; cursor:${canBuy ? 'pointer' : 'default'}; white-space:nowrap;">${b.price} 🪙</button>
-                        <button onclick="buyBannerWithGems('${b.id}')" ${!canBuyGems ? 'disabled' : ''} style="padding:6px 12px; border-radius:8px; border:1px solid ${canBuyGems ? 'rgba(255,77,109,0.55)' : 'rgba(255,255,255,0.08)'}; background:none; color:${canBuyGems ? '#ff4d6d' : 'rgba(255,255,255,0.22)'}; font-family:monospace; font-size:9px; cursor:${canBuyGems ? 'pointer' : 'default'}; white-space:nowrap;">${b.priceGems} 💎</button>
-                    </div>`
-                    : `<button onclick="buyBanner('${b.id}')" ${!canBuy ? 'disabled' : ''} style="padding:8px 12px; border-radius:8px; border:1px solid ${canBuy ? 'rgba(255,238,0,0.45)' : 'rgba(255,255,255,0.08)'}; background:none; color:${canBuy ? '#ffee00' : 'rgba(255,255,255,0.22)'}; font-family:monospace; font-size:9px; cursor:${canBuy ? 'pointer' : 'default'};">${b.price}</button>`
-        }
-            </div>
-        </div>
-    `;
+    const cardClasses = ['pd-card', 'hud-panel-cut'];
+    if (isEquipped) cardClasses.push('equipped');
+    if (!owned) cardClasses.push('locked');
 
-    if (b.id === 'Banner_RubyPass_Temporada_VIP') {
-        console.log('[renderBannerCard] Generated HTML length:', html.length);
+    let chipHTML = '';
+    let cardClick = '';
+
+    if (isEquipped) {
+        chipHTML = `<div class="hud-price-chip">&#10003;</div>`;
+    } else if (owned) {
+        chipHTML = `<div class="hud-price-chip">${bt.botonEquipar ?? 'EQUIPAR'}</div>`;
+        cardClick = `onclick="equipBanner('${b.id}')"`;
+    } else if (vipOnly) {
+        chipHTML = `<div class="hud-price-chip locked">${bt.botonSoloVIP ?? 'SOLO EN TIENDA VIP'}</div>`;
+        cardClick = `onclick="openVIP(); setTimeout(() => renderVIPPromoDetail('vip_specials'), 40)"`;
+    } else if (b.priceGems) {
+        chipHTML = `
+            <div class="hud-price-chip small ${canBuy ? '' : 'locked'}" onclick="event.stopPropagation(); buyBanner('${b.id}')">${renderPrice(b.price, 'coins')}</div>
+            <div class="hud-price-chip small ${canBuyGems ? '' : 'locked'}" onclick="event.stopPropagation(); buyBannerWithGems('${b.id}')">${renderPrice(b.priceGems, 'gems')}</div>
+        `;
+    } else {
+        chipHTML = `<div class="hud-price-chip ${canBuy ? '' : 'locked'}">${renderPrice(b.price, 'coins')}</div>`;
+        cardClick = `onclick="buyBanner('${b.id}')"`;
     }
 
-    return html;
+    return `
+        <div class="${cardClasses.join(' ')}" style="--cfg-hud-accent:${accent};" ${cardClick}>
+            <div class="pd-media" style="background-image:${bannerBg};"></div>
+            <div class="pd-veil"></div>
+            <div class="pd-chip-wrap">${chipHTML}</div>
+        </div>
+    `;
 }
 
 
@@ -3529,6 +4640,17 @@ function updateShopProfileBanner() {
         card.style.border = banner.rarity === 'VIP' ? '2px solid rgba(255,204,0,0.8)' : '1px solid rgba(255,255,255,0.08)';
         card.style.boxShadow = banner.rarity === 'VIP' ? '0 0 18px rgba(255,204,0,0.3)' : 'none';
         card.style.overflow = 'visible';
+        // TEMP - prueba visual, remover después
+        card.style.position = 'relative';
+        let frameOverlay = card.querySelector('.temp-frame-overlay');
+        if (!frameOverlay) {
+            frameOverlay = document.createElement('img');
+            frameOverlay.className = 'temp-frame-overlay';
+            frameOverlay.src = 'assets/Imagenes/Temporadas/Temp_Leyendas/Marcos/marco_leyendas_perla.png';
+            frameOverlay.alt = '';
+            frameOverlay.style.cssText = 'position:absolute;top:-8px;bottom:-8px;left:-8px;right:-2px;width:calc(100% + 16px);height:calc(100% + 16px);pointer-events:none;z-index:10;object-fit:fill;';
+            card.appendChild(frameOverlay);
+        }
     }
     if (avatarEl) avatarEl.style.backgroundImage = `url("${avatar}")`;
     if (nameEl) nameEl.textContent = name;
@@ -4770,11 +5892,22 @@ function renderVIPLegendRoom(banner) {
                     <div class="vip-kicker">SALA LEGENDARIA</div>
                     <h2>${banner.title}</h2>
                     <p>${banner.subtitle}</p>
-                    <button class="vip-tech-button" onclick="document.querySelector('.vip-banner-catalog-chamber')?.scrollIntoView({behavior:'smooth', block:'start'})" type="button">VER BANNERS</button>
+                    <button class="vip-tech-button" onclick="document.querySelector('.vip-banner-catalog-chamber')?.scrollIntoView({behavior:'smooth', block:'start'})" type="button">VER DISEÑOS</button>
                 </div>
             </section>
             <section class="vip-banner-catalog-chamber">
-                ${shelvesHtml || '<p class="vip-banner-empty">Aún no hay banners disponibles.</p>'}
+                <div style="display:flex; gap:10px; margin-bottom:24px; padding:0 4px;">
+                    <button onclick="switchVIPDesignTab('banners')" style="padding:7px 20px; border-radius:20px; border:1px solid ${(window._vipDesignTab || 'banners') === 'banners' ? 'rgba(255,204,0,0.7)' : 'rgba(255,255,255,0.15)'}; background:${(window._vipDesignTab || 'banners') === 'banners' ? 'rgba(255,204,0,0.12)' : 'none'}; color:${(window._vipDesignTab || 'banners') === 'banners' ? '#ffd700' : 'rgba(255,255,255,0.45)'}; font-family:monospace; font-size:10px; letter-spacing:2px; cursor:pointer;">BANNERS</button>
+                    <button onclick="switchVIPDesignTab('frames')" style="padding:7px 20px; border-radius:20px; border:1px solid ${(window._vipDesignTab || 'banners') === 'frames' ? 'rgba(255,204,0,0.7)' : 'rgba(255,255,255,0.15)'}; background:${(window._vipDesignTab || 'banners') === 'frames' ? 'rgba(255,204,0,0.12)' : 'none'}; color:${(window._vipDesignTab || 'banners') === 'frames' ? '#ffd700' : 'rgba(255,255,255,0.45)'}; font-family:monospace; font-size:10px; letter-spacing:2px; cursor:pointer;">MARCOS</button>
+                </div>
+                <div id="vip-design-banners-tab" style="${(window._vipDesignTab || 'banners') === 'banners' ? '' : 'display:none;'}">
+                    ${shelvesHtml || '<p class="vip-banner-empty">Aún no hay banners disponibles.</p>'}
+                </div>
+                <div id="vip-design-frames-tab" style="${(window._vipDesignTab || 'banners') === 'frames' ? '' : 'display:none;'}">
+                    <div style="display:grid; grid-template-columns:repeat(2, 1fr); gap:16px; padding:0 4px;">
+                        ${getAllCosmeticCatalog('frame').filter(f => f.activeCategory === 'tienda_vip').map(f => renderFrameCard(f)).join('') || '<p class="vip-banner-empty">Aún no hay marcos VIP disponibles.</p>'}
+                    </div>
+                </div>
             </section>
         </div>
     `;
@@ -5568,6 +6701,39 @@ function invGetEmotesProgress() {
 }
 
 function renderInventoryHero(section) {
+    // ── Sección DISEÑO DE PERFIL: muestra banner + marco equipados ──
+    if (section === 'banners') {
+        const bannerId = localStorage.getItem('equippedBanner') || 'Banner_Deafult';
+        const banner = findBannerById(bannerId) || BANNERS_DATA[0];
+        const frameId = localStorage.getItem('equippedFrame');
+        const frame = frameId ? findCosmeticById(frameId, 'frame') : null;
+        const bg = banner.cover
+            ? `linear-gradient(90deg, rgba(5,6,12,0.82), rgba(5,6,12,0.34)), url('${banner.cover}')`
+            : 'linear-gradient(135deg, rgba(0,255,231,0.18), rgba(255,77,109,0.16))';
+        return `
+            <div style="
+                position:relative;
+                width:100%;
+                height:100%;
+                background-image:${bg};
+                background-size:cover;
+                background-position:center;
+                border-radius:16px;
+                overflow:visible;
+            ">
+                ${frame?.imagen ? `<img src="${frame.imagen}" alt="" style="
+                    position:absolute;
+                    inset:-8px;
+                    width:calc(100% + 16px);
+                    height:calc(100% + 16px);
+                    pointer-events:none;
+                    z-index:10;
+                    object-fit:fill;
+                ">` : ''}
+            </div>
+        `;
+    }
+
     const equippedId = localStorage.getItem('equippedSkin') || 'cyan';
     const equippedSkin = getAllShopSkins().find(s => s.id === equippedId) || getAllShopSkins()[0];
     const isTrophy = TROPHY_IDS.includes(equippedSkin.id);
@@ -5714,12 +6880,27 @@ function invSetRarityFilter(section, rarity) {
     showInventorySection(section);
 }
 
+// Fondo del panel hero del inventario (donde se muestra la skin equipada,
+// ej. DAXOR): usa el banner de perfil actualmente equipado como imagen de
+// fondo, con un degradado oscuro encima para que el texto/ícono sigan
+// leyéndose. Reemplaza al viejo banner grande independiente de arriba.
+function invHeroBannerBackground() {
+    const equippedBannerId = localStorage.getItem('equippedBanner') || 'Banner_Deafult';
+    const banner = findBannerById(equippedBannerId) || BANNERS_DATA[0];
+    return banner?.cover
+        ? `linear-gradient(160deg, rgba(12,19,25,0.88) 0%, rgba(12,19,25,0.6) 55%, rgba(12,19,25,0.88) 100%), url('${banner.cover}')`
+        : 'linear-gradient(160deg, rgba(18, 25, 31, 0.75) 0%, rgba(12, 19, 25, 0.8) 100%)';
+}
+
 function showInventorySection(section) {
     ['skins', 'trails', 'banners', 'emotes', 'powerups', 'cofres'].forEach(s => {
         const el = document.getElementById('inv-nav-' + s);
         if (!el) return;
         el.classList.toggle('active', s === section);
     });
+
+    const coinsEl = document.getElementById('inv-coins-value');
+    if (coinsEl) coinsEl.textContent = window.infiniteCoinsMode ? '∞' : parseInt(localStorage.getItem('deadCoins') || '0').toLocaleString();
 
     const gemsEl = document.getElementById('inv-gems-value');
     if (gemsEl) gemsEl.textContent = parseInt(localStorage.getItem('gems') || '0');
@@ -5728,7 +6909,10 @@ function showInventorySection(section) {
     if (keysEl) keysEl.textContent = window.infiniteCoinsMode ? '∞' : (window.getCaronteKeys ? window.getCaronteKeys() : 0);
 
     const heroEl = document.getElementById('inv-hero');
-    if (heroEl) heroEl.innerHTML = renderInventoryHero(section);
+    if (heroEl) {
+        heroEl.innerHTML = renderInventoryHero(section);
+        heroEl.style.backgroundImage = invHeroBannerBackground();
+    }
     // El hero se regenera cada vez (nuevo HTML => nuevos ids), así que hay que
     // volver a aplicar color/tamaño de GEM_CONFIG.estilosTexto sobre los ids nuevos.
     if (window.aplicarEstilosTexto) window.aplicarEstilosTexto();
@@ -5849,7 +7033,6 @@ function showInventorySection(section) {
         if (titleEl) titleEl.textContent = (shopTextos('inventario').titulos?.bannersTemplate ?? 'BANNERS OBTENIDOS — {n}').replace('{n}', owned.length);
 
         content.innerHTML = `
-            ${renderInventoryProfileBanner(equipped)}
             <div class="inv-grid inv-banner-grid">
                 ${owned.map(b => renderInventoryBannerCard(b, equipped)).join('')}
             </div>
@@ -5970,26 +7153,6 @@ function renderInventoryChestCard(chest) {
     `;
 }
 
-function renderInventoryProfileBanner(equipped) {
-    const bn = shopTextos('inventario').banners || {};
-    const name = localStorage.getItem('playerName') || (bn.fallbackNombreJugador ?? 'Jugador');
-    const avatar = localStorage.getItem('playerAvatar') || 'assets/UI/Common/Avatars/Avatar_Default.png';
-    const banner = findBannerById(equipped) || BANNERS_DATA[0];
-    const bg = banner.cover
-        ? `linear-gradient(90deg, rgba(5,6,12,0.86), rgba(5,6,12,0.36)), url('${banner.cover}')`
-        : 'linear-gradient(135deg, rgba(0,255,231,0.18), rgba(255,77,109,0.16))';
-    return `
-        <section class="inventory-profile-banner" style="background-image:${bg};">
-            <div class="inventory-profile-avatar" style="background-image:url('${avatar}')"></div>
-            <div>
-                <div class="inventory-profile-kicker" id="inv-profile-banner-kicker">${bn.labelBannerEquipado ?? 'BANNER EQUIPADO'}</div>
-                <div class="inventory-profile-name">${name}</div>
-                <div class="inventory-profile-banner-name">${banner.name || (bn.fallbackNombreBanner ?? 'Banner')}</div>
-            </div>
-        </section>
-    `;
-}
-
 function openInventoryChest(id) {
     const count = parseInt(localStorage.getItem('invChest_' + id) || '0');
     if (count <= 0) return;
@@ -6055,21 +7218,21 @@ window.closeInventory = closeInventory;
 
 // ── Sin el color RGB ──────────────────────────────────
 const TRAIL_COLOR_LIST = [
-    { id: 'cyan',    color: '#00ffe7', rgb: '0,255,231' },
-    { id: 'teal',    color: '#00ffaa', rgb: '0,255,170' },
-    { id: 'green',   color: '#44ff88', rgb: '68,255,136' },
-    { id: 'lime',    color: '#aaff00', rgb: '170,255,0' },
-    { id: 'yellow',  color: '#ffee00', rgb: '255,238,0' },
-    { id: 'orange',  color: '#ff8800', rgb: '255,136,0' },
-    { id: 'red',     color: '#ff4444', rgb: '255,68,68' },
-    { id: 'pink',    color: '#ff2288', rgb: '255,34,136' },
+    { id: 'cyan', color: '#00ffe7', rgb: '0,255,231' },
+    { id: 'teal', color: '#00ffaa', rgb: '0,255,170' },
+    { id: 'green', color: '#44ff88', rgb: '68,255,136' },
+    { id: 'lime', color: '#aaff00', rgb: '170,255,0' },
+    { id: 'yellow', color: '#ffee00', rgb: '255,238,0' },
+    { id: 'orange', color: '#ff8800', rgb: '255,136,0' },
+    { id: 'red', color: '#ff4444', rgb: '255,68,68' },
+    { id: 'pink', color: '#ff2288', rgb: '255,34,136' },
     { id: 'magenta', color: '#ff44cc', rgb: '255,68,204' },
-    { id: 'purple',  color: '#cc44ff', rgb: '204,68,255' },
-    { id: 'violet',  color: '#8844ff', rgb: '136,68,255' },
-    { id: 'blue',    color: '#4488ff', rgb: '68,136,255' },
-    { id: 'sky',     color: '#00ccff', rgb: '0,204,255' },
-    { id: 'white',   color: '#e0eeff', rgb: '224,238,255' },
-    { id: 'rgb',     color: 'linear-gradient(135deg,#ff4444,#ffee00,#44ff88,#4488ff,#cc44ff)', rgb: null, premium: true, price: 250, priceType: 'gems' },
+    { id: 'purple', color: '#cc44ff', rgb: '204,68,255' },
+    { id: 'violet', color: '#8844ff', rgb: '136,68,255' },
+    { id: 'blue', color: '#4488ff', rgb: '68,136,255' },
+    { id: 'sky', color: '#00ccff', rgb: '0,204,255' },
+    { id: 'white', color: '#e0eeff', rgb: '224,238,255' },
+    { id: 'rgb', color: 'linear-gradient(135deg,#ff4444,#ffee00,#44ff88,#4488ff,#cc44ff)', rgb: null, premium: true, price: 250, priceType: 'gems' },
 ];
 
 function getTrailColorStyle(color) {
@@ -6093,25 +7256,25 @@ let selectedTrailColor = null;
 let activeTrailIndex = 0;
 
 function renderTrailsPage(container) {
-    const equipped   = localStorage.getItem('equippedTrail') || 'solid_cyan';
-    const eqParts    = equipped.split('_');
-    const eqColor    = eqParts[eqParts.length - 1];
-    const eqEffect   = eqParts.slice(0, -1).join('_');
+    const equipped = localStorage.getItem('equippedTrail') || 'solid_cyan';
+    const eqParts = equipped.split('_');
+    const eqColor = eqParts[eqParts.length - 1];
+    const eqEffect = eqParts.slice(0, -1).join('_');
 
     if (!selectedTrailEffect) selectedTrailEffect = eqEffect;
-    if (!selectedTrailColor)  selectedTrailColor  = eqColor;
+    if (!selectedTrailColor) selectedTrailColor = eqColor;
 
     activeTrailIndex = TRAILS_DATA.findIndex(t => t.id === selectedTrailEffect);
     if (activeTrailIndex < 0) activeTrailIndex = 0;
 
     const coins = window.playerData?.deadCoins ?? parseInt(localStorage.getItem('deadCoins') || '0');
-    const gems  = window.playerData?.gems       ?? parseInt(localStorage.getItem('gems')      || '0');
+    const gems = window.playerData?.gems ?? parseInt(localStorage.getItem('gems') || '0');
 
     // Cancelar animaciones anteriores
-    if (trailAnimId)      { cancelAnimationFrame(trailAnimId);      trailAnimId      = null; }
+    if (trailAnimId) { cancelAnimationFrame(trailAnimId); trailAnimId = null; }
     if (previewTrailAnim) { cancelAnimationFrame(previewTrailAnim); previewTrailAnim = null; }
-    if (trailArcAnimId)   { cancelAnimationFrame(trailArcAnimId);   trailArcAnimId   = null; }
-    if (trailBallAnimId)  { cancelAnimationFrame(trailBallAnimId);  trailBallAnimId  = null; }
+    if (trailArcAnimId) { cancelAnimationFrame(trailArcAnimId); trailArcAnimId = null; }
+    if (trailBallAnimId) { cancelAnimationFrame(trailBallAnimId); trailBallAnimId = null; }
 
     // Eliminar overlay previo si existe
     const prev = document.getElementById('trails-fullscreen-overlay');
@@ -6186,7 +7349,7 @@ function renderTrailsPage(container) {
 
     // Botón volver
     document.getElementById('trails-back-btn').onclick = () => {
-        if (trailArcAnimId)  { cancelAnimationFrame(trailArcAnimId);  trailArcAnimId  = null; }
+        if (trailArcAnimId) { cancelAnimationFrame(trailArcAnimId); trailArcAnimId = null; }
         if (trailBallAnimId) { cancelAnimationFrame(trailBallAnimId); trailBallAnimId = null; }
         document.removeEventListener('keydown', trailsKeyHandler);
         overlay.remove();
@@ -6212,11 +7375,11 @@ function renderTrailsPage(container) {
     // Dimensionar canvas al tamaño real y arrancar animaciones
     setTimeout(() => {
         const zone = document.getElementById('trail-center-zone');
-        const arc  = document.getElementById('trailArcCanvas');
+        const arc = document.getElementById('trailArcCanvas');
         const ball = document.getElementById('trailBallCanvas');
         if (zone && arc && ball) {
-            arc.width  = zone.offsetWidth;  arc.height  = zone.offsetHeight;
-            ball.width = zone.offsetWidth;  ball.height = zone.offsetHeight;
+            arc.width = zone.offsetWidth; arc.height = zone.offsetHeight;
+            ball.width = zone.offsetWidth; ball.height = zone.offsetHeight;
         }
         startTrailArcAnim();
         startTrailBallAnim();
@@ -6262,17 +7425,17 @@ function renderTrailCardNew(t, index) {
         </div>`;
     }
 
-    const isOwned    = isTrailOwned(t.id);
+    const isOwned = isTrailOwned(t.id);
     const equippedId = localStorage.getItem('equippedTrail') || '';
     // Trails específicos sin variantes de color
-    const specificTrails = ['none', 'spark', 'ghost', 'fractura', 'hielo', 'toxico', 
-                           'trail_vampiro', 'trail_zombie', 'trail_fire', 'trail_water', 
-                           'trail_wind', 'trail_ice', 'trail_lava', 'trail_nature', 
-                           'trail_custom_text'];
-    const isEquipped = specificTrails.includes(t.id) 
-        ? equippedId === t.id 
+    const specificTrails = ['none', 'spark', 'ghost', 'fractura', 'hielo', 'toxico',
+        'trail_vampiro', 'trail_zombie', 'trail_fire', 'trail_water',
+        'trail_wind', 'trail_ice', 'trail_lava', 'trail_nature',
+        'trail_custom_text', 'trail_solmerion'];
+    const isEquipped = specificTrails.includes(t.id)
+        ? equippedId === t.id
         : equippedId.startsWith(t.id + '_');
-    const priceIcon  = t.priceType === 'gems'
+    const priceIcon = t.priceType === 'gems'
         ? 'assets/UI/Common/Currency/Rubies.png'
         : 'assets/UI/Common/Currency/DEAD_COIN.png';
 
@@ -6298,8 +7461,8 @@ function renderTrailCardNew(t, index) {
     ">
         <div style="width:100%; height:110px; border-radius:10px; background:rgba(0,0,0,0.45); overflow:hidden; display:flex; align-items:center; justify-content:center;">
             ${cover
-                ? `<img src="${cover}" style="width:100%; height:100%; object-fit:cover;" draggable="false">`
-                : `<canvas id="trail-card-${t.id}" width="100" height="100"></canvas>`}
+            ? `<img src="${cover}" style="width:100%; height:100%; object-fit:cover;" draggable="false">`
+            : `<canvas id="trail-card-${t.id}" width="100" height="100"></canvas>`}
         </div>
         <div style="display:flex; flex-direction:column; align-items:center; gap:2px; width:100%;">
             <div style="color:white; font-size:10px; letter-spacing:1px; font-weight:bold; text-align:center; font-family:'Geom',monospace;">${t.name.toUpperCase()}</div>
@@ -6307,8 +7470,8 @@ function renderTrailCardNew(t, index) {
         </div>
         <div style="width:100%; display:flex; justify-content:center; align-items:center;">
             ${isOwned
-                ? `<div style="color:#00ff88; font-size:9px; font-weight:bold; letter-spacing:1px;">${shopTextos('trails').labelTienes ?? '✔ TIENES'}</div>`
-                : `<div style="display:flex; align-items:center; gap:4px; background:rgba(255,255,255,0.04); padding:4px 8px; border-radius:6px; border:1px solid rgba(255,255,255,0.08);">
+            ? `<div style="color:#00ff88; font-size:9px; font-weight:bold; letter-spacing:1px;">${shopTextos('trails').labelTienes ?? '✔ TIENES'}</div>`
+            : `<div style="display:flex; align-items:center; gap:4px; background:rgba(255,255,255,0.04); padding:4px 8px; border-radius:6px; border:1px solid rgba(255,255,255,0.08);">
                     <img src="${priceIcon}" style="width:11px;height:11px;object-fit:contain;">
                     <span style="color:#ffffff; font-size:9px; font-weight:bold;">${t.price}</span>
                    </div>`}
@@ -6325,10 +7488,10 @@ function updateTrailCardsCarousel() {
     for (let i = 0; i < total; i++) {
         const card = cards[i];
         const diff = i - activeTrailIndex;
-        
+
         let zIndex = 10 - Math.abs(diff);
         let opacity = 1;
-        let translateX = diff * 135; 
+        let translateX = diff * 135;
         let rotateY = 0;
         let translateZ = 0;
         let scale = 1;
@@ -6339,13 +7502,13 @@ function updateTrailCardsCarousel() {
             rotateY = 0;
             opacity = 1;
         } else if (diff < 0) {
-            rotateY = 32; 
-            translateX = diff * 115 - 40; 
+            rotateY = 32;
+            translateX = diff * 115 - 40;
             translateZ = -20 - Math.abs(diff) * 15;
             opacity = Math.max(0.35, 1 - Math.abs(diff) * 0.25);
         } else {
-            rotateY = -32; 
-            translateX = diff * 115 + 40; 
+            rotateY = -32;
+            translateX = diff * 115 + 40;
             translateZ = -20 - Math.abs(diff) * 15;
             opacity = Math.max(0.35, 1 - Math.abs(diff) * 0.25);
         }
@@ -6435,12 +7598,12 @@ function startTrailArcAnim() {
     const ctx = cvs.getContext('2d');
 
     const arcColors = TRAIL_COLOR_LIST.map(c => ({ id: c.id, color: c.color, rgb: c.rgb }));
-    const total     = arcColors.length;
+    const total = arcColors.length;
 
     // Círculo COMPLETO que rota — todos los colores distribuidos en 360°
     // El orb en el tope (-π/2) es el seleccionado
     // Los orbs de la mitad inferior quedan ocultos detrás de las cards
-    const ARC_SPAN  = Math.PI * 2;              // 360°
+    const ARC_SPAN = Math.PI * 2;              // 360°
     const ARC_START = -Math.PI / 2;             // empezamos en el tope
 
     // Inicializar arcOffset para que el color seleccionado quede en el tope (-π/2)
@@ -6461,7 +7624,7 @@ function startTrailArcAnim() {
         // cy = borde inferior del canvas (donde empiezan las cards)
         // R = cy - margen_superior → tope del arco justo bajo el título
         const cy = H;
-        const R  = H - H * 0.16; // tope a 16% del alto desde arriba
+        const R = H - H * 0.16; // tope a 16% del alto desde arriba
         return { cx: W / 2, cy, R };
     }
 
@@ -6479,39 +7642,39 @@ function startTrailArcAnim() {
     // Snap suave: mueve arcOffset para centrar el orb `idx` en el tope
     function snapTo(idx) {
         const targetOrbAngle = ARC_START + (idx / (total - 1)) * ARC_SPAN;
-        const wantedOffset   = -Math.PI / 2 - targetOrbAngle;
+        const wantedOffset = -Math.PI / 2 - targetOrbAngle;
         // Diferencia mínima
         let diff = wantedOffset - arcOffset;
         // Normalizar a [-π, π] — aunque el arco no es periódico completo,
         // esto evita girar más de lo necesario
-        while (diff >  Math.PI) diff -= Math.PI * 2;
+        while (diff > Math.PI) diff -= Math.PI * 2;
         while (diff < -Math.PI) diff += Math.PI * 2;
         const start = arcOffset, end = arcOffset + diff;
         const t0 = performance.now();
         function anim(now) {
             if (!document.getElementById('trailArcCanvas')) return;
-            const p    = Math.min(1, (now - t0) / 320);
+            const p = Math.min(1, (now - t0) / 320);
             const ease = 1 - Math.pow(1 - p, 3);
-            arcOffset  = start + (end - start) * ease;
+            arcOffset = start + (end - start) * ease;
             if (p < 1) requestAnimationFrame(anim);
         }
         requestAnimationFrame(anim);
     }
 
     // ── Drag ─────────────────────────────────────────────────────────────────
-    let isDragging     = false;
-    let dragStartX     = 0;
-    let dragStartOff   = 0;
-    let dragMoved      = false;
-    let lastTs         = 0;
+    let isDragging = false;
+    let dragStartX = 0;
+    let dragStartOff = 0;
+    let dragMoved = false;
+    let lastTs = 0;
 
     cvs.style.cursor = 'grab';
     cvs.style.touchAction = 'none';
 
     cvs.onpointerdown = e => {
-        isDragging   = true;
-        dragMoved    = false;
-        dragStartX   = e.clientX;
+        isDragging = true;
+        dragMoved = false;
+        dragStartX = e.clientX;
         dragStartOff = arcOffset;
         cvs.style.cursor = 'grabbing';
         cvs.setPointerCapture(e.pointerId);
@@ -6541,7 +7704,7 @@ function startTrailArcAnim() {
             const { cx, cy, R } = getCenter(W, H);
             const rect = cvs.getBoundingClientRect();
             const mx = (e.clientX - rect.left) * (W / rect.width);
-            const my = (e.clientY - rect.top)  * (H / rect.height);
+            const my = (e.clientY - rect.top) * (H / rect.height);
             for (let i = 0; i < total; i++) {
                 const a = getOrbAngle(i);
                 const ox = cx + Math.cos(a) * R;
@@ -6566,11 +7729,11 @@ function startTrailArcAnim() {
     const particles = [];
     for (let i = 0; i < 38; i++) {
         particles.push({
-            angle:  Math.random() * Math.PI * 2,
+            angle: Math.random() * Math.PI * 2,
             offset: (Math.random() - 0.5) * 28,   // desviación radial
-            speed:  (Math.random() - 0.5) * 0.004, // velocidad angular
-            size:   Math.random() * 2.2 + 0.5,
-            alpha:  Math.random() * 0.5 + 0.15,
+            speed: (Math.random() - 0.5) * 0.004, // velocidad angular
+            size: Math.random() * 2.2 + 0.5,
+            alpha: Math.random() * 0.5 + 0.15,
             colorIdx: Math.floor(Math.random() * arcColors.length),
             twinkle: Math.random() * Math.PI * 2,
             twinkleSpeed: Math.random() * 0.08 + 0.02,
@@ -6604,7 +7767,7 @@ function startTrailArcAnim() {
             const mx = cx + Math.cos((a1 + a2) / 2) * R;
             const my = cy + Math.sin((a1 + a2) / 2) * R;
             // Interpolar color según posición en el arco
-            const t  = ((s / segments) * arcColors.length) % arcColors.length;
+            const t = ((s / segments) * arcColors.length) % arcColors.length;
             const i0 = Math.floor(t) % arcColors.length;
             const i1 = (i0 + 1) % arcColors.length;
             const c0 = arcColors[i0].id === 'rgb' ? '#ff44ff' : arcColors[i0].color;
@@ -6618,26 +7781,26 @@ function startTrailArcAnim() {
             ctx.moveTo(x1, y1);
             ctx.lineTo(x2, y2);
             ctx.strokeStyle = grd;
-            ctx.lineWidth   = 2.5;
+            ctx.lineWidth = 2.5;
             ctx.stroke();
         }
 
         // ── B) Partículas flotantes alrededor del arco ───────────────────────
         for (const p of particles) {
-            p.angle   += p.speed;
+            p.angle += p.speed;
             p.twinkle += p.twinkleSpeed;
-            const pr  = R + p.offset;
-            const px  = cx + Math.cos(p.angle) * pr;
-            const py  = cy + Math.sin(p.angle) * pr;
+            const pr = R + p.offset;
+            const px = cx + Math.cos(p.angle) * pr;
+            const py = cy + Math.sin(p.angle) * pr;
             if (py > H + 10) continue; // fuera del canvas
             const col = arcColors[p.colorIdx % arcColors.length];
-            const c   = col.id === 'rgb' ? '#ff88ff' : col.color;
-            const a   = p.alpha * (0.5 + 0.5 * Math.sin(p.twinkle));
+            const c = col.id === 'rgb' ? '#ff88ff' : col.color;
+            const a = p.alpha * (0.5 + 0.5 * Math.sin(p.twinkle));
             ctx.save();
             ctx.globalAlpha = a;
-            ctx.shadowBlur  = 6;
+            ctx.shadowBlur = 6;
             ctx.shadowColor = c;
-            ctx.fillStyle   = c;
+            ctx.fillStyle = c;
             ctx.beginPath();
             ctx.arc(px, py, p.size, 0, Math.PI * 2);
             ctx.fill();
@@ -6646,14 +7809,14 @@ function startTrailArcAnim() {
 
         // ── C) Conexiones entre orbs adyacentes ─────────────────────────────
         for (let i = 0; i < total; i++) {
-            const i2  = (i + 1) % total;
-            const a1  = getOrbAngle(i);
-            const a2  = getOrbAngle(i2);
+            const i2 = (i + 1) % total;
+            const a1 = getOrbAngle(i);
+            const a2 = getOrbAngle(i2);
             const ox1 = cx + Math.cos(a1) * R, oy1 = cy + Math.sin(a1) * R;
             const ox2 = cx + Math.cos(a2) * R, oy2 = cy + Math.sin(a2) * R;
             if (oy1 > H + 10 && oy2 > H + 10) continue;
-            const c1  = arcColors[i].id  === 'rgb' ? '#ff44ff' : arcColors[i].color;
-            const c2  = arcColors[i2].id === 'rgb' ? '#44ffff' : arcColors[i2].color;
+            const c1 = arcColors[i].id === 'rgb' ? '#ff44ff' : arcColors[i].color;
+            const c2 = arcColors[i2].id === 'rgb' ? '#44ffff' : arcColors[i2].color;
             const grd = ctx.createLinearGradient(ox1, oy1, ox2, oy2);
             grd.addColorStop(0, c1 + '55');
             grd.addColorStop(1, c2 + '55');
@@ -6662,25 +7825,25 @@ function startTrailArcAnim() {
             ctx.moveTo(ox1, oy1);
             ctx.lineTo(ox2, oy2);
             ctx.strokeStyle = grd;
-            ctx.lineWidth   = 1;
+            ctx.lineWidth = 1;
             ctx.stroke();
             ctx.restore();
         }
 
         // ── Flecha indicadora en el tope ─────────────────────────────────────
         {
-            const topX     = cx;
-            const topY     = cy - R;
+            const topX = cx;
+            const topY = cy - R;
             const topColor = arcColors[getTopIndex()]?.color || '#00ffe7';
-            const pulse    = 0.7 + 0.3 * Math.sin(ts * 0.004);
+            const pulse = 0.7 + 0.3 * Math.sin(ts * 0.004);
             ctx.save();
-            ctx.shadowBlur  = 14 * pulse;
+            ctx.shadowBlur = 14 * pulse;
             ctx.shadowColor = topColor;
-            ctx.fillStyle   = topColor;
+            ctx.fillStyle = topColor;
             ctx.globalAlpha = pulse;
             const aw = 9, ah = 11;
             ctx.beginPath();
-            ctx.moveTo(topX,      topY - ah - 24);
+            ctx.moveTo(topX, topY - ah - 24);
             ctx.lineTo(topX - aw, topY - 24);
             ctx.lineTo(topX + aw, topY - 24);
             ctx.closePath();
@@ -6690,17 +7853,17 @@ function startTrailArcAnim() {
 
         // ── D) Orbs con pulso y efectos ──────────────────────────────────────
         for (let i = 0; i < total; i++) {
-            const a   = getOrbAngle(i);
-            const ox  = cx + Math.cos(a) * R;
-            const oy  = cy + Math.sin(a) * R;
+            const a = getOrbAngle(i);
+            const ox = cx + Math.cos(a) * R;
+            const oy = cy + Math.sin(a) * R;
             if (oy > H + 10) continue;
 
-            const isTop    = oy < cy;
+            const isTop = oy < cy;
             const orbAlpha = isTop ? 1.0 : 0.65;
-            const sel      = arcColors[i].id === selectedTrailColor;
-            const pulse    = sel ? 1 + 0.12 * Math.sin(ts * 0.005 + i) : 1;
-            const r        = (sel ? 15 : 10) * pulse;
-            const col      = arcColors[i].id === 'rgb'
+            const sel = arcColors[i].id === selectedTrailColor;
+            const pulse = sel ? 1 + 0.12 * Math.sin(ts * 0.005 + i) : 1;
+            const r = (sel ? 15 : 10) * pulse;
+            const col = arcColors[i].id === 'rgb'
                 ? `hsl(${(ts * 0.18 + i * 45) % 360},100%,68%)`
                 : arcColors[i].color;
 
@@ -6710,36 +7873,36 @@ function startTrailArcAnim() {
             // Anillo expansivo del seleccionado (efecto pulso)
             if (sel) {
                 const ringPhase = (ts * 0.002) % 1;
-                const ringR     = r + ringPhase * 22;
+                const ringR = r + ringPhase * 22;
                 ctx.beginPath();
                 ctx.arc(ox, oy, ringR, 0, Math.PI * 2);
-                ctx.strokeStyle = col + Math.floor((1 - ringPhase) * 120).toString(16).padStart(2,'0');
-                ctx.lineWidth   = 1.5;
+                ctx.strokeStyle = col + Math.floor((1 - ringPhase) * 120).toString(16).padStart(2, '0');
+                ctx.lineWidth = 1.5;
                 ctx.stroke();
             }
 
             // Glow exterior
-            ctx.shadowBlur  = sel ? 24 : 10;
+            ctx.shadowBlur = sel ? 24 : 10;
             ctx.shadowColor = col;
 
             // Borde exterior
             ctx.beginPath();
             ctx.arc(ox, oy, r + 3, 0, Math.PI * 2);
             ctx.strokeStyle = sel ? 'rgba(255,255,255,0.9)' : 'rgba(255,255,255,0.18)';
-            ctx.lineWidth   = sel ? 2.5 : 1.2;
+            ctx.lineWidth = sel ? 2.5 : 1.2;
             ctx.stroke();
 
             // Relleno con gradiente radial
-            const grd = ctx.createRadialGradient(ox - r*0.3, oy - r*0.3, 0, ox, oy, r);
+            const grd = ctx.createRadialGradient(ox - r * 0.3, oy - r * 0.3, 0, ox, oy, r);
             if (arcColors[i].id === 'rgb') {
                 const h = (ts * 0.18 + i * 45) % 360;
-                grd.addColorStop(0,   `hsl(${h},100%,88%)`);
-                grd.addColorStop(0.5, `hsl(${(h+120)%360},100%,65%)`);
-                grd.addColorStop(1,   `hsl(${(h+240)%360},100%,45%)`);
+                grd.addColorStop(0, `hsl(${h},100%,88%)`);
+                grd.addColorStop(0.5, `hsl(${(h + 120) % 360},100%,65%)`);
+                grd.addColorStop(1, `hsl(${(h + 240) % 360},100%,45%)`);
             } else {
                 grd.addColorStop(0, 'rgba(255,255,255,0.9)');
                 grd.addColorStop(0.35, col);
-                grd.addColorStop(1,   col + 'aa');
+                grd.addColorStop(1, col + 'aa');
             }
             ctx.fillStyle = grd;
             ctx.beginPath();
@@ -6749,7 +7912,7 @@ function startTrailArcAnim() {
             // Brillo interior
             ctx.shadowBlur = 0;
             ctx.beginPath();
-            ctx.arc(ox - r*0.28, oy - r*0.28, r * (sel ? 0.28 : 0.22), 0, Math.PI*2);
+            ctx.arc(ox - r * 0.28, oy - r * 0.28, r * (sel ? 0.28 : 0.22), 0, Math.PI * 2);
             ctx.fillStyle = 'rgba(255,255,255,0.75)';
             ctx.fill();
 
@@ -6771,7 +7934,7 @@ function startTrailBallAnim() {
     const ctx = cvs.getContext('2d');
 
     let ballPts = [];
-    let lastTs  = 0;
+    let lastTs = 0;
 
     function frame(ts) {
         if (!document.getElementById('trailBallCanvas')) { trailBallAnimId = null; return; }
@@ -6785,9 +7948,9 @@ function startTrailBallAnim() {
 
         // Generar órbita caótica 2D usando curvas de Lissajous y modulación
         const tVal = ts * 0.0018;
-        const rx = Math.min(W, H) * 0.32; 
-        const ry = Math.min(W, H) * 0.22; 
-        
+        const rx = Math.min(W, H) * 0.32;
+        const ry = Math.min(W, H) * 0.22;
+
         const ballX = cx + rx * Math.sin(tVal) * (1.1 + 0.3 * Math.cos(2.2 * tVal));
         const ballY = cy + ry * Math.cos(2.2 * tVal) * (0.8 + 0.2 * Math.sin(tVal));
 
@@ -6795,16 +7958,16 @@ function startTrailBallAnim() {
 
         ballPts.push({ x: ballX, y: ballY });
         if (ballPts.length > 55) ballPts.shift();
-        
+
         const len = ballPts.length;
         for (let i = 0; i < len; i++) ballPts[i].life = (i + 1) / len;
 
         // Trail
         let colorKey = selectedTrailColor || 'cyan';
-        let effect   = selectedTrailEffect || 'solid';
-        const hueBase  = (ts * 0.18) % 360;
-        let rgbMode  = colorKey === 'rgb';
-        let rgb      = TRAIL_COLOR_LIST.find(c => c.id === colorKey)?.rgb || '0,255,231';
+        let effect = selectedTrailEffect || 'solid';
+        const hueBase = (ts * 0.18) % 360;
+        let rgbMode = colorKey === 'rgb';
+        let rgb = TRAIL_COLOR_LIST.find(c => c.id === colorKey)?.rgb || '0,255,231';
 
         // Color especial para spark
         if (effect === 'spark') {
@@ -6814,15 +7977,23 @@ function startTrailBallAnim() {
 
         function rgba(alpha, hs) {
             return rgbMode
-                ? `hsla(${((hueBase + (hs||0)) % 360)},100%,65%,${alpha})`
+                ? `hsla(${((hueBase + (hs || 0)) % 360)},100%,65%,${alpha})`
                 : `rgba(${rgb},${alpha})`;
         }
         function solidCol() {
             return rgbMode ? `hsl(${hueBase},100%,64%)` : `rgb(${rgb})`;
         }
 
-        // Dibujar trail usando drawPreviewTrailPoint (mismo render que gameplay)
-        if (len >= 2 && typeof window.drawPreviewTrailPoint === 'function') {
+        // Dibujar trail usando drawPreviewTrailLine (conecta puntos con línea
+        // continua para efectos tipo "cinta" como solmerion; para el resto
+        // delega en drawPreviewTrailPoint igual que antes)
+        if (len >= 2 && typeof window.drawPreviewTrailLine === 'function') {
+            ctx.__previewNow = ts;
+            for (let i = 0; i < len; i++) {
+                if (ballPts[i].seed === undefined) ballPts[i].seed = ((i * 7919) % 997) / 997;
+            }
+            window.drawPreviewTrailLine(ctx, ballPts, effect, rgb, colorKey);
+        } else if (len >= 2 && typeof window.drawPreviewTrailPoint === 'function') {
             ctx.__previewNow = ts;
             for (let i = 0; i < len; i++) {
                 const p = ballPts[i];
@@ -6837,7 +8008,7 @@ function startTrailBallAnim() {
             for (let i = 1; i < len; i++) {
                 const l = ballPts[i].life;
                 ctx.beginPath();
-                ctx.moveTo(ballPts[i-1].x, ballPts[i-1].y);
+                ctx.moveTo(ballPts[i - 1].x, ballPts[i - 1].y);
                 ctx.lineTo(ballPts[i].x, ballPts[i].y);
                 ctx.strokeStyle = `rgba(${rgb},${l * 0.9})`;
                 ctx.lineWidth = Math.max(1, 4 * l);
@@ -6848,10 +8019,10 @@ function startTrailBallAnim() {
 
         // Bolita
         const SKIN_COLORS = {
-            cyan:'#00ffe7',red:'#ff4444',blue:'#5045eb',yellow:'#ffee00',
-            orange:'#ff8800',green:'#3fe969',purple:'#cc44ff',white:'#ffffff',black:'#444'
+            cyan: '#00ffe7', red: '#ff4444', blue: '#5045eb', yellow: '#ffee00',
+            orange: '#ff8800', green: '#3fe969', purple: '#cc44ff', white: '#ffffff', black: '#444'
         };
-        const skinId    = window._cachedEquippedSkin || 'cyan';
+        const skinId = window._cachedEquippedSkin || 'cyan';
         const ballColor = SKIN_COLORS[skinId] || '#00ffe7';
         ctx.save();
         ctx.shadowBlur = 20; ctx.shadowColor = ballColor;
@@ -6886,7 +8057,7 @@ function equipNoneTrail() {
 function equipSpecificTrail(trailId) {
     // Desbloquear temporalmente para pruebas
     localStorage.setItem(`trail_${trailId}_cyan`, 'true');
-    
+
     localStorage.setItem('equippedTrail', trailId);
     if (typeof bannerTrail !== 'undefined') bannerTrail = [];
     window.playSfx?.('colorSelect', 0.7);
@@ -6897,16 +8068,16 @@ function equipSpecificTrail(trailId) {
 function buySpecificTrail(trailId) {
     const trail = TRAILS_DATA.find(t => t.id === trailId);
     if (!trail) return;
-    
+
     const canAfford = trail.priceType === 'gems'
         ? parseInt(localStorage.getItem('gems') || '0') >= trail.price
         : parseInt(localStorage.getItem('deadCoins') || '0') >= trail.price;
-    
+
     if (!canAfford) {
         alert(shopTextos('trails').alertaSinFondos ?? 'No tienes suficientes monedas/gemas');
         return;
     }
-    
+
     // Gastar monedas/gemas
     if (trail.priceType === 'gems') {
         const gems = parseInt(localStorage.getItem('gems') || '0') - trail.price;
@@ -6916,12 +8087,12 @@ function buySpecificTrail(trailId) {
         localStorage.setItem('deadCoins', coins);
         if (window.playerData) window.playerData.deadCoins = coins;
     }
-    
+
     // Marcar como comprado y equipar
     localStorage.setItem(`trail_${trailId}_cyan`, 'true');
     localStorage.setItem('equippedTrail', trailId);
     if (typeof bannerTrail !== 'undefined') bannerTrail = [];
-    
+
     window.playSfx?.('spend');
     updateMenuHUD();
     showTrailBuyPanel();
@@ -6931,17 +8102,17 @@ function buySpecificTrail(trailId) {
 function selectTrailEffectNew(effectId, idx) {
     window.playSfx?.('selectTrail', 0.7);
     selectedTrailEffect = effectId;
-    
+
     // Trails específicos sin variantes de color
-    const specificTrails = ['none', 'spark', 'ghost', 'fractura', 'hielo', 'toxico', 
-                           'trail_vampiro', 'trail_zombie', 'trail_fire', 'trail_water', 
-                           'trail_wind', 'trail_ice', 'trail_lava', 'trail_nature', 
-                           'trail_custom_text'];
-    
+    const specificTrails = ['none', 'spark', 'ghost', 'fractura', 'hielo', 'toxico',
+        'trail_vampiro', 'trail_zombie', 'trail_fire', 'trail_water',
+        'trail_wind', 'trail_ice', 'trail_lava', 'trail_nature',
+        'trail_custom_text', 'trail_solmerion'];
+
     if (specificTrails.includes(effectId)) {
         selectedTrailColor = 'cyan';
     }
-    
+
     if (idx !== undefined) {
         activeTrailIndex = idx;
         updateTrailCardsCarousel();
@@ -6962,10 +8133,10 @@ function showTrailBuyPanel() {
     if (!panel) return;
 
     // Trails específicos sin variantes de color
-    const specificTrails = ['none', 'spark', 'ghost', 'fractura', 'hielo', 'toxico', 
-                           'trail_vampiro', 'trail_zombie', 'trail_fire', 'trail_water', 
-                           'trail_wind', 'trail_ice', 'trail_lava', 'trail_nature', 
-                           'trail_custom_text'];
+    const specificTrails = ['none', 'spark', 'ghost', 'fractura', 'hielo', 'toxico',
+        'trail_vampiro', 'trail_zombie', 'trail_fire', 'trail_water',
+        'trail_wind', 'trail_ice', 'trail_lava', 'trail_nature',
+        'trail_custom_text', 'trail_solmerion'];
 
     if (specificTrails.includes(selectedTrailEffect)) {
         const trail = TRAILS_DATA.find(t => t.id === selectedTrailEffect);
@@ -6983,7 +8154,7 @@ function showTrailBuyPanel() {
                 <div style="color:#fff; font-size:18px; font-weight:bold;">${trail.name}</div>
                 <div style="color:rgba(255,255,255,0.5); font-size:10px; margin-top:4px;">${tt1.labelTrailExclusivo ?? 'Trail exclusivo'}</div>
             </div>
-            ${owned 
+            ${owned
                 ? `<button onclick="equipSpecificTrail('${selectedTrailEffect}')" type="button" style="
                     background:${equipped ? '#ffd700' : '#00ff88'};
                     color:${equipped ? '#000' : '#000'};
@@ -7002,17 +8173,17 @@ function showTrailBuyPanel() {
     }
 
     if (!selectedTrailEffect || !selectedTrailColor) return;
-    const trail   = TRAILS_DATA.find(t => t.id === selectedTrailEffect);
-    const color   = TRAIL_COLOR_LIST.find(c => c.id === selectedTrailColor);
+    const trail = TRAILS_DATA.find(t => t.id === selectedTrailEffect);
+    const color = TRAIL_COLOR_LIST.find(c => c.id === selectedTrailColor);
     if (!trail || !color) return;
 
-    const owned    = localStorage.getItem(`trail_${selectedTrailEffect}_${selectedTrailColor}`) === 'true';
+    const owned = localStorage.getItem(`trail_${selectedTrailEffect}_${selectedTrailColor}`) === 'true';
     const equipped = localStorage.getItem('equippedTrail') === `${selectedTrailEffect}_${selectedTrailColor}`;
     const purchase = getTrailPurchaseInfo(trail, color);
-    const pIcon    = purchase.currency === 'gems'
+    const pIcon = purchase.currency === 'gems'
         ? 'assets/UI/Common/Currency/Rubies.png'
         : 'assets/UI/Common/Currency/DEAD_COIN.png';
-    const dot      = color.id === 'rgb'
+    const dot = color.id === 'rgb'
         ? `<span style="font-size:13px;margin-right:3px;vertical-align:middle;">🌈</span>`
         : `<span style="display:inline-block;width:11px;height:11px;border-radius:50%;background:${color.color};vertical-align:middle;margin-right:5px;box-shadow: 0 0 6px ${color.color}cc;"></span>`;
 
@@ -7028,27 +8199,27 @@ function showTrailBuyPanel() {
                     ${dot}${trail.name.toUpperCase()}
                 </div>
                 <div class="${gemRarityClass(trail.rarity)}" style="color:${trail.rarityColor}; font-size:8px; letter-spacing:2px; font-weight:bold;">
-                    ${trail.rarity} · <span style="color:${color.id==='rgb'?'#ff4dff':color.color}">${color.id.toUpperCase()}</span>
+                    ${trail.rarity} · <span style="color:${color.id === 'rgb' ? '#ff4dff' : color.color}">${color.id.toUpperCase()}</span>
                 </div>
             </div>
             
             <!-- Right Side: Buy/Equip action -->
             <div style="display: flex; align-items: center; gap: 8px; margin-right: 10px;">
                 ${owned
-                    ? `<div style="display:flex; gap:6px; align-items:center;">
+            ? `<div style="display:flex; gap:6px; align-items:center;">
                         ${equipped
-                            ? `<span style="color:#00ffe7; font-size:11px; letter-spacing:2px; font-weight:bold; text-shadow: 0 0 8px rgba(0,255,231,0.5);">${tt2.botonEquipado ?? '✔ EQUIPADO'}</span>`
-                            : `<button onclick="confirmBuyTrailNew()" style="padding:6px 14px; background:rgba(0,255,231,0.12); border:1px solid #00ffe7; border-radius:8px; color:#00ffe7; font-family:'Geom',monospace; font-size:10px; letter-spacing:2px; cursor:pointer; font-weight:bold; box-shadow: 0 0 10px rgba(0,255,231,0.15); transition: 0.2s;" onmouseover="this.style.background='rgba(0,255,231,0.2)'" onmouseout="this.style.background='rgba(0,255,231,0.12)'">${tt2.botonEquipar ?? 'EQUIPAR'}</button>`
-                        }
+                ? `<span style="color:#00ffe7; font-size:11px; letter-spacing:2px; font-weight:bold; text-shadow: 0 0 8px rgba(0,255,231,0.5);">${tt2.botonEquipado ?? '✔ EQUIPADO'}</span>`
+                : `<button onclick="confirmBuyTrailNew()" style="padding:6px 14px; background:rgba(0,255,231,0.12); border:1px solid #00ffe7; border-radius:8px; color:#00ffe7; font-family:'Geom',monospace; font-size:10px; letter-spacing:2px; cursor:pointer; font-weight:bold; box-shadow: 0 0 10px rgba(0,255,231,0.15); transition: 0.2s;" onmouseover="this.style.background='rgba(0,255,231,0.2)'" onmouseout="this.style.background='rgba(0,255,231,0.12)'">${tt2.botonEquipar ?? 'EQUIPAR'}</button>`
+            }
                        </div>`
-                    : `<div style="display:flex; gap:8px; align-items:center;">
+            : `<div style="display:flex; gap:8px; align-items:center;">
                         <div style="display:flex; align-items:center; gap:4px; background:rgba(0,0,0,0.3); padding:4px 8px; border-radius:6px; border:1px solid rgba(255,255,255,0.06);">
                             <img src="${pIcon}" style="width:13px; height:13px; object-fit:contain;">
                             <span style="color:white; font-size:11px; font-weight:bold;">${purchase.amount}</span>
                         </div>
                         <button onclick="confirmBuyTrailNew()" style="padding:6px 14px; background:rgba(255,238,0,0.15); border:1px solid #ffee00; border-radius:8px; color:#ffee00; font-family:'Geom',monospace; font-size:10px; letter-spacing:2px; cursor:pointer; font-weight:bold; box-shadow: 0 0 10px rgba(255,238,0,0.15); transition: 0.2s;" onmouseover="this.style.background='rgba(255,238,0,0.25)'" onmouseout="this.style.background='rgba(255,238,0,0.15)'">${tt2.botonComprar ?? 'COMPRAR'}</button>
                        </div>`
-                }
+        }
             </div>
         </div>`;
 }
@@ -7062,18 +8233,18 @@ window.hideTrailBuyPanel = hideTrailBuyPanel;
 function confirmBuyTrailNew() {
     confirmBuyTrail();
 }
-window.confirmBuyTrailNew   = confirmBuyTrailNew;
+window.confirmBuyTrailNew = confirmBuyTrailNew;
 window.selectTrailEffectNew = selectTrailEffectNew;
-window.selectTrailColorNew  = selectTrailColorNew;
+window.selectTrailColorNew = selectTrailColorNew;
 window.updateTrailCardsCarousel = updateTrailCardsCarousel;
-window.initTrailCardsDrag       = initTrailCardsDrag;
+window.initTrailCardsDrag = initTrailCardsDrag;
 
 // Redirigir la vista previa antigua a la nueva para no romper completeTrailPurchase
 function showTrailPreview() {
     showTrailBuyPanel();
     highlightSelectedCard();
     const coins = window.playerData?.deadCoins ?? parseInt(localStorage.getItem('deadCoins') || '0');
-    const gems  = window.playerData?.gems       ?? parseInt(localStorage.getItem('gems')      || '0');
+    const gems = window.playerData?.gems ?? parseInt(localStorage.getItem('gems') || '0');
     const elCoins = document.getElementById('trail-hud-coins');
     if (elCoins) elCoins.textContent = coins.toLocaleString();
     const elGems = document.getElementById('trail-hud-gems');
@@ -7758,6 +8929,7 @@ function renderBattlePassPage(container, options = {}) {
                         ${visibleRewards.map(reward => renderRubyPassRailNode(reward, state.premiumLevel, 'premium', state.premiumOwned)).join('')}
                     </div>
                 </div>
+                ${renderRubyPassTrailCard(state)}
 
                 <div class="rp-divider"><div class="rp-divider-node"></div></div>
 
@@ -7781,11 +8953,11 @@ function renderBattlePassPage(container, options = {}) {
                     </div>
                     ${state.premiumOwned ? `
                     <div class="rp-panel-note">${(() => {
-            const ready = getRubyPassClaimablePremiumCount(state);
-            return ready > 0
-                ? `${ready} recompensa${ready === 1 ? '' : 's'} premium esperando reclamo`
-                : 'Estás al día con tus recompensas premium';
-        })()}</div>` : `
+                const ready = getRubyPassClaimablePremiumCount(state);
+                return ready > 0
+                    ? `${ready} recompensa${ready === 1 ? '' : 's'} premium esperando reclamo`
+                    : 'Estás al día con tus recompensas premium';
+            })()}</div>` : `
                     <button class="rp-chip" onclick="unlockRubyPassPremium()" type="button"><span>◆</span>DESBLOQUEAR · ${RUBY_PASS_PREMIUM_COST_GEMS}</button>`}
                 </div>
 
@@ -7876,7 +9048,7 @@ function openRubyPassGallery() {
     modal.querySelector('#rubyGalleryColPremium').classList.toggle('is-locked', !state.premiumOwned);
 
     [['premium', state.premiumLevel, state.premiumOwned, 'rubyGalleryRowsPremium'],
-        ['free', state.freeLevel, true, 'rubyGalleryRowsFree']].forEach(([lane, laneLevel, laneActive, rowsId]) => {
+    ['free', state.freeLevel, true, 'rubyGalleryRowsFree']].forEach(([lane, laneLevel, laneActive, rowsId]) => {
         const rowsContainer = modal.querySelector('#' + rowsId);
         rowsContainer.innerHTML = RUBY_PASS_REWARDS.map(reward => {
             const rewardData = lane === 'premium' ? reward.premium : reward.free;
@@ -7907,6 +9079,62 @@ window.closeRubyPassGallery = closeRubyPassGallery;
 
 // Tarjeta individual de nivel (una por carril VIP/GRATIS). Mantiene
 // el mismo data-ruby-claim que usa claimRubyPassReward() para no
+// ── Card de trail al final del carril VIP ────────────────────────────────
+// Muestra el trail de la temporada activa como recompensa final del pase VIP.
+// Al hacer click abre un modal de "TRAIL RECLAMADO" con opción de equipar.
+function renderRubyPassTrailCard(state) {
+    const trailId = 'trail_solmerion';
+    const trailImg = 'assets/Imagenes/Temporadas/Temp_Leyendas/Trails/trail_solmerion.png';
+    const trailName = 'Solmerion';
+    const claimed = localStorage.getItem('rubyPassTrailClaimed_' + trailId) === 'true';
+    const unlocked = state.premiumOwned;
+    return `
+        <div style="margin:16px 0 4px; padding:0 4px;">
+            <button type="button"
+                onclick="openRubyPassTrailModal('${trailId}', '${trailImg}', '${trailName}')"
+                style="
+                    width:100%; background:${claimed ? 'rgba(0,255,136,0.08)' : unlocked ? 'rgba(255,204,0,0.07)' : 'rgba(255,255,255,0.03)'};
+                    border:1px solid ${claimed ? 'rgba(0,255,136,0.35)' : unlocked ? 'rgba(255,204,0,0.45)' : 'rgba(255,255,255,0.1)'};
+                    border-radius:14px; padding:12px 16px; cursor:${unlocked ? 'pointer' : 'default'};
+                    display:flex; align-items:center; gap:14px; text-align:left;
+                ">
+                <img src="${trailImg}" alt="" draggable="false"
+                    style="width:72px; height:72px; object-fit:contain; border-radius:10px; flex-shrink:0; opacity:${unlocked ? 1 : 0.35};">
+                <div style="flex:1; min-width:0;">
+                    <div style="color:rgba(255,255,255,0.4); font-family:monospace; font-size:9px; letter-spacing:3px; margin-bottom:4px;">TRAIL DE TEMPORADA</div>
+                    <div style="color:${claimed ? '#00ff88' : unlocked ? '#ffd700' : 'rgba(255,255,255,0.3)'}; font-family:monospace; font-size:13px; font-weight:bold; letter-spacing:1px;">${trailName}</div>
+                    <div style="color:rgba(255,255,255,0.3); font-family:monospace; font-size:9px; margin-top:4px;">${claimed ? '✓ RECLAMADO' : unlocked ? 'Toca para reclamar' : '🔒 Solo VIP'}</div>
+                </div>
+                ${unlocked && !claimed ? '<div style="color:#ffd700; font-size:18px; flex-shrink:0;">▶</div>' : ''}
+            </button>
+        </div>
+    `;
+}
+
+function openRubyPassTrailModal(trailId, trailImg, trailName) {
+    const state = getRubyPassState();
+    if (!state.premiumOwned) return;
+    const claimed = localStorage.getItem('rubyPassTrailClaimed_' + trailId) === 'true';
+    showShopModal({
+        kicker: 'TRAIL RECLAMADO',
+        title: trailName,
+        image: trailImg,
+        body: claimed
+            ? '<div style="color:#00ff88; font-family:monospace; font-size:11px; letter-spacing:2px;">Ya reclamaste este trail</div>'
+            : '<div style="font-family:monospace; font-size:11px; color:rgba(255,255,255,0.6);">Trail exclusivo de la Temporada de Leyendas</div>',
+        confirmText: claimed ? null : 'EQUIPAR',
+        cancelText: 'CERRAR',
+        onConfirm: () => {
+            localStorage.setItem('rubyPassTrailClaimed_' + trailId, 'true');
+            localStorage.setItem('equippedTrail', trailId + '_cyan');
+            window.playSfx?.('reward');
+            const content = document.getElementById('rubyPassContent');
+            if (content) renderBattlePassPage(content);
+        }
+    });
+}
+window.openRubyPassTrailModal = openRubyPassTrailModal;
+
 // tocar esa lógica — solo cambia el markup/las clases visuales.
 function renderRubyPassRailNode(reward, currentLevelForLane, lane, laneActive) {
     const unlocked = laneActive && reward.level <= currentLevelForLane;
@@ -8276,6 +9504,7 @@ function claimDailyGift(day) {
 
 const MISSIONS_STORAGE_KEY = 'shopMissionsState_v1';
 const MISSION_STREAK_STORAGE_KEY = 'shopMissionStreak_v1';
+const SEASON_EVENT_STORAGE_KEY = 'seasonEventState_v1';
 const DAILY_MISSIONS = [
     { id: 'distance', title: 'Recorre distancia', text: 'Avanza 1800 metros en partidas.', metric: 'distance', goal: 1800, reward: { coins: 90, gems: 1 } },
     { id: 'shop_purchase', title: 'Compra algo', text: 'Haz 1 compra en la tienda.', metric: 'shop_purchase', goal: 1, reward: { coins: 60, gems: 1 } },
@@ -8288,6 +9517,72 @@ const MISSION_STREAK_REWARDS = [
     { day: 5, coins: 320, gems: 5 },
     { day: 7, coins: 520, gems: 9 }
 ];
+
+function readSeasonEventState() {
+    try {
+        const raw = localStorage.getItem(SEASON_EVENT_STORAGE_KEY);
+        if (!raw) return { eventId: null, progress: {}, claimed: false };
+        return JSON.parse(raw);
+    } catch {
+        return { eventId: null, progress: {}, claimed: false };
+    }
+}
+
+function saveSeasonEventState(state) {
+    localStorage.setItem(SEASON_EVENT_STORAGE_KEY, JSON.stringify(state));
+}
+
+function trackSeasonEventProgress(metric, amount = 1) {
+    if (!window.isSeasonEventActive?.()) return;
+    const config = window.SEASON_EVENT_CONFIG;
+    if (!config) return;
+    const mission = config.missions.find(m => m.metric === metric);
+    if (!mission) return;
+
+    const state = readSeasonEventState();
+    if (state.eventId !== config.id) {
+        state.eventId = config.id;
+        state.progress = {};
+        state.claimed = false;
+    }
+    state.progress[metric] = Math.min(mission.goal, (parseFloat(state.progress[metric]) || 0) + amount);
+    saveSeasonEventState(state);
+}
+
+function getSeasonEventCompletion() {
+    const config = window.SEASON_EVENT_CONFIG;
+    if (!config) return { done: 0, total: 0, allComplete: false };
+    const state = readSeasonEventState();
+    let done = 0;
+    config.missions.forEach(m => {
+        const current = m.metric === 'rubypass_level_check'
+            ? getCurrentRubyPassFreeLevel()
+            : (parseFloat(state.progress?.[m.metric]) || 0);
+        if (current >= m.goal) done++;
+    });
+    return { done, total: config.missions.length, allComplete: done === config.missions.length };
+}
+
+function claimSeasonEventReward() {
+    const state = readSeasonEventState();
+    if (state.claimed) return false;
+    const { allComplete } = getSeasonEventCompletion();
+    if (!allComplete) return false;
+
+    const banner = BANNERS_DATA.find(b => b.id === window.SEASON_EVENT_CONFIG.rewardBannerId);
+    if (banner) setBannerOwned(banner);
+
+    // También entrega el marco del evento si está configurado
+    const rewardFrameId = window.SEASON_EVENT_CONFIG.rewardFrameId;
+    if (rewardFrameId) {
+        const frame = findCosmeticById(rewardFrameId, 'frame');
+        if (frame) setFrameOwned(frame);
+    }
+
+    state.claimed = true;
+    saveSeasonEventState(state);
+    return true;
+}
 
 function getMissionDateKey(date = new Date()) {
     return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
@@ -8350,6 +9645,7 @@ function touchMissionSessionStreak() {
 }
 
 function trackMissionProgress(metric, amount = 1) {
+    window.trackSeasonEventProgress?.(metric, amount);
     const state = readMissionState();
     state.progress[metric] = Math.max(0, (parseFloat(state.progress[metric]) || 0) + amount);
     saveMissionState(state);
@@ -8555,6 +9851,10 @@ window.closeMissionsPanel = function closeMissionsPanel() {
 window.trackMissionProgress = trackMissionProgress;
 window.trackMissionDistance = trackMissionDistance;
 window.updateMissionBadge = updateMissionBadge;
+window.trackSeasonEventProgress = trackSeasonEventProgress;
+window.claimSeasonEventReward = claimSeasonEventReward;
+window.openSeasonEventModal = openSeasonEventModal;
+window.handleClaimSeasonEventReward = handleClaimSeasonEventReward;
 
 function convertCoins() {
     const input = parseInt(document.getElementById('conv-input').value || '0');
@@ -8692,9 +9992,13 @@ function startVIPTrailCanvas(trailId, colorId, canvasId = `vip-trail-canvas-${tr
         for (let p of pts) p.life -= 0.014;
 
         ctx.__previewNow = lastFrame;
-        for (let p of pts) {
-            if (p.life <= 0) continue;
-            drawPreviewTrailPoint(ctx, p, trailId, rgb, colorId);
+        if (typeof window.drawPreviewTrailLine === 'function') {
+            window.drawPreviewTrailLine(ctx, pts, trailId, rgb, colorId);
+        } else {
+            for (let p of pts) {
+                if (p.life <= 0) continue;
+                drawPreviewTrailPoint(ctx, p, trailId, rgb, colorId);
+            }
         }
 
         ctx.beginPath();
@@ -8992,9 +10296,13 @@ function startInvTrailCanvas(trailId, colorId) {
         if (pts.length > 45) pts.shift();
         for (let p of pts) p.life -= 0.015;
         ctx.__previewNow = lastFrame;
-        for (let p of pts) {
-            if (p.life <= 0) continue;
-            drawPreviewTrailPoint(ctx, p, trailId, rgb, colorId);
+        if (typeof window.drawPreviewTrailLine === 'function') {
+            window.drawPreviewTrailLine(ctx, pts, trailId, rgb, colorId);
+        } else {
+            for (let p of pts) {
+                if (p.life <= 0) continue;
+                drawPreviewTrailPoint(ctx, p, trailId, rgb, colorId);
+            }
         }
         ctx.beginPath();
         ctx.arc(px, cvs.height / 2, 6, 0, Math.PI * 2);
