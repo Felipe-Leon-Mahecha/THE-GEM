@@ -16,7 +16,7 @@ const GEM_SEASONS = {
         lore: 'Los héroes olvidados del reino regresan. Nuevas skins, trails y recompensas exclusivas te esperan mientras dure el evento.',
         contains: {
             skins: ['skin_solmerion', 'skin_zherath', 'skin_sombra_real'],
-            trails: ['trail_solmerion'],
+            trails: ['trail_solmerion', 'trail_zherath'],
             banners: ['banner_leyendas_exclusivo', 'banner_leyendas_perla', 'banner_leyendas_rosaceo', 'banner_leyendas_campeones', 'banner_leyendas_racha_ganadora'],
             frames: ['Frame_Leyendas_Perla', 'Frame_Leyendas_Exclusivo', 'Frame_Leyendas_Rosaceo', 'Frame_Leyendas_Campeones', 'Frame_Leyendas_Racha_Ganadora', 'Frame_Leyendas_RubyPass_VIP', 'Frame_Leyendas_RubyPass_Free'],
             emotes: ['emote_solmerion_enojado', 'emote_solmerion_negacion', 'emote_solmerion_saludo', 'emote_solmerion_victoria', 'emote_zherath_aceptacion', 'emote_zherath_avergonzado', 'emote_zherath_enojado', 'emote_zherath_reto']

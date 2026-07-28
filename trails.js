@@ -41,6 +41,7 @@ const TRAIL_EFFECT_MAP = {
     'trail_nature':     'nature',
     'trail_custom_text':'custom_text',
     'trail_solmerion':  'solmerion',
+    'trail_zherath':    'zherath',
 };
 
 // =====================================================
@@ -99,7 +100,8 @@ function getTrailColorKey(trailId) {
         'trail_lava':       'red',
         'trail_nature':     'green',
         'trail_custom_text':'yellow',
-        'trail_solmerion':  'yellow',
+        'trail_solmerion':  'red',
+        'trail_zherath':    'red',
     };
     return colorMap[trailId] || 'cyan';
 }
@@ -151,7 +153,7 @@ function updateTrail() {
         ghost: 40, fractura: 38, hielo: 42, toxico: 40,
         vampiro: 38, zombie: 40, fire: 45, water: 42,
         wind: 44, ice: 42, lava: 45, nature: 40,
-        custom_text: 35, solmerion: 26
+        custom_text: 35, solmerion: 26, zherath: 26
     };
     let maxLen = baseLengths[effect] ?? 32;
     if (lowPower) maxLen = Math.ceil(maxLen * 0.55);
@@ -428,40 +430,24 @@ function drawTrail() {
         }
     }
 
-    // ── 5. GHOST ────────────────────────────────────
-    // Humo espectral: nubes borrosas que derivan hacia arriba
+    // ── 5. GHOST → BÁSICA II ─────────────────────────
+    // Línea lisa y delgada (más gruesa que el hilo rojo de solmerion,
+    // más delgada que "solid") que se desvanece limpiamente, sin
+    // bolitas ni partículas.
     else if (effect === 'ghost') {
         ctx.save();
-        // Sin 'lighter' para que el humo se vea opaco/suave, no brillante
+        ctx.globalCompositeOperation = 'lighter';
         for (let i = step; i < trail.length; i += step) {
             const t    = trail[i];
+            const prev = trail[i - step] || trail[0];
             const life = t.life;
-            // Deriva hacia arriba basada en cuánto ha vivido el punto (1-life = envejecimiento)
-            const age    = 1 - life;
-            const driftY = age * 22 * t.seed;          // sube más cuanto más viejo
-            const driftX = (t.seed - 0.5) * 8 * age;  // pequeña deriva lateral (determinista)
-            const cx     = t.x + driftX;
-            const cy     = t.y - driftY;
-            // Radio crece al envejecer (el humo se expande)
-            const r = (5 + age * 14) * life;
-
-            // Gradiente radial suave — aspecto de nube de humo
-            const grd = ctx.createRadialGradient(cx, cy, 0, cx, cy, r);
-            const a0  = life * 0.45;
-            const a1  = life * 0.18;
-            if (rgbMode) {
-                grd.addColorStop(0,   `hsla(${(hue + i * 6) % 360},60%,80%,${a0.toFixed(3)})`);
-                grd.addColorStop(0.5, `hsla(${(hue + i * 6) % 360},50%,70%,${(a0*0.5).toFixed(3)})`);
-                grd.addColorStop(1,   `hsla(${(hue + i * 6) % 360},40%,60%,0)`);
-            } else {
-                grd.addColorStop(0,   `rgba(${rgb},${a0.toFixed(3)})`);
-                grd.addColorStop(0.5, `rgba(${rgb},${(a0*0.5).toFixed(3)})`);
-                grd.addColorStop(1,   `rgba(${rgb},0)`);
-            }
             ctx.beginPath();
-            ctx.arc(cx, cy, r, 0, Math.PI * 2);
-            ctx.fillStyle = grd;
-            ctx.fill();
+            ctx.moveTo(prev.x, prev.y);
+            ctx.lineTo(t.x, t.y);
+            ctx.strokeStyle = fillColor(life * 0.9, i * 3);
+            ctx.lineWidth   = Math.max(0.8, 4.5 * life);
+            ctx.lineCap     = 'round';
+            ctx.stroke();
         }
         ctx.restore();
     }
@@ -829,9 +815,11 @@ function drawTrail() {
     }
 
     // ── 18. SOLMERION ────────────────────────────────
-    // Estela ancha blanco→dorado (estilo caballero de luz) con un
-    // hilo rojo fino en el centro. Colores fijos (como 'spark'),
-    // el colorKey del jugador no aplica aquí.
+    // Estela ancha blanco→dorado (estilo caballero de luz), fija.
+    // El hilo central SÍ usa el color elegido por el jugador (rueda de
+    // color) — por defecto rojo, pero se puede cambiar; el halo y el
+    // núcleo blanco/dorado siempre se quedan igual (es el "tema" fijo
+    // de este trail).
     else if (effect === 'solmerion') {
         // Pasada 1: halo dorado ancho y suave
         ctx.save();
@@ -871,9 +859,9 @@ function drawTrail() {
         }
         ctx.restore();
 
-        // Pasada 3: hilo rojo fino en el centro exacto
+        // Pasada 3: hilo central — color de la rueda (por defecto rojo)
         // (se pinta normal, NO con 'lighter', porque si se suma sobre el
-        // núcleo blanco ya saturado, el rojo queda invisible/tapado)
+        // núcleo blanco ya saturado, se vería tapado/invisible)
         ctx.save();
         for (let i = step; i < trail.length; i += step) {
             const t    = trail[i];
@@ -882,7 +870,9 @@ function drawTrail() {
             ctx.beginPath();
             ctx.moveTo(prev.x, prev.y);
             ctx.lineTo(t.x, t.y);
-            ctx.strokeStyle = `rgba(210,20,25,${(life * 0.95).toFixed(3)})`;
+            ctx.strokeStyle = rgbMode
+                ? `hsla(${(hue + i * 3) % 360},90%,55%,${(life * 0.95).toFixed(3)})`
+                : `rgba(${rgb},${(life * 0.95).toFixed(3)})`;
             ctx.lineWidth   = Math.max(0.8, 3 * life);
             ctx.lineCap     = 'round';
             ctx.stroke();
@@ -905,6 +895,108 @@ function drawTrail() {
                 grd.addColorStop(1, 'rgba(255,235,170,0)');
                 ctx.beginPath();
                 ctx.arc(head.x, head.y, gl.r, 0, Math.PI * 2);
+                ctx.fillStyle = grd;
+                ctx.fill();
+            }
+            ctx.restore();
+        }
+    }
+
+    // ── 19. ZHERATH ───────────────────────────────────
+    // Versión "malvada" de Solmerion: cuerpo NEGRO sólido con vetas
+    // rojas sutiles, en vez de blanco/dorado. El hilo central usa el
+    // color de la rueda (por defecto rojo); el negro/rojo del cuerpo
+    // siempre se queda igual.
+    else if (effect === 'zherath') {
+        // Pasada 1: aura roja muy sutil alrededor (solo insinúa el rojo,
+        // no debe dominar — por eso alpha bajito)
+        ctx.save();
+        ctx.globalCompositeOperation = 'lighter';
+        for (let i = step; i < trail.length; i += step) {
+            const t    = trail[i];
+            const prev = trail[i - step] || trail[0];
+            const life = t.life;
+            ctx.beginPath();
+            ctx.moveTo(prev.x, prev.y);
+            ctx.lineTo(t.x, t.y);
+            ctx.strokeStyle = `rgba(160,15,20,${(life * 0.16).toFixed(3)})`;
+            ctx.lineWidth   = 30 * life;
+            ctx.lineCap     = 'round';
+            ctx.stroke();
+        }
+        ctx.restore();
+
+        // Pasada 2: cuerpo NEGRO sólido — pintado NORMAL (no 'lighter'),
+        // porque sumar luz nunca da negro, solo brillo. Así sí se ve
+        // oscuro/negro de verdad en vez de rojo brillante.
+        ctx.save();
+        for (let i = step; i < trail.length; i += step) {
+            const t    = trail[i];
+            const prev = trail[i - step] || trail[0];
+            const life = t.life;
+            ctx.beginPath();
+            ctx.moveTo(prev.x, prev.y);
+            ctx.lineTo(t.x, t.y);
+            ctx.strokeStyle = `rgba(10,7,9,${(life * 0.92).toFixed(3)})`;
+            ctx.lineWidth   = Math.max(1, 16 * life);
+            ctx.lineCap     = 'round';
+            ctx.stroke();
+        }
+        ctx.restore();
+
+        // Pasada 2b: vetas rojas finas encima del negro (aditivo pero
+        // delgado y no muy intenso, solo para dar un toque "vivo")
+        ctx.save();
+        ctx.globalCompositeOperation = 'lighter';
+        for (let i = step; i < trail.length; i += step) {
+            const t    = trail[i];
+            const prev = trail[i - step] || trail[0];
+            const life = t.life;
+            ctx.beginPath();
+            ctx.moveTo(prev.x, prev.y);
+            ctx.lineTo(t.x, t.y);
+            ctx.strokeStyle = `rgba(200,25,30,${(life * 0.4).toFixed(3)})`;
+            ctx.lineWidth   = Math.max(0.6, 6 * life);
+            ctx.lineCap     = 'round';
+            ctx.stroke();
+        }
+        ctx.restore();
+
+        // Pasada 3: hilo central — color de la rueda (por defecto rojo)
+        ctx.save();
+        for (let i = step; i < trail.length; i += step) {
+            const t    = trail[i];
+            const prev = trail[i - step] || trail[0];
+            const life = t.life;
+            ctx.beginPath();
+            ctx.moveTo(prev.x, prev.y);
+            ctx.lineTo(t.x, t.y);
+            ctx.strokeStyle = rgbMode
+                ? `hsla(${(hue + i * 3) % 360},90%,50%,${(life * 0.95).toFixed(3)})`
+                : `rgba(${rgb},${(life * 0.95).toFixed(3)})`;
+            ctx.lineWidth   = Math.max(0.8, 3 * life);
+            ctx.lineCap     = 'round';
+            ctx.stroke();
+        }
+        ctx.restore();
+
+        // Pasada 4: brasa oscura junto a la bolita (glow rojo/negro en
+        // vez del estallido blanco de Solmerion)
+        const zHead = trail[trail.length - 1];
+        if (zHead) {
+            ctx.save();
+            ctx.globalCompositeOperation = 'lighter';
+            const glowLayers = [
+                { r: 28, a: 0.3, color: '90,0,10' },
+                { r: 18, a: 0.45, color: '180,10,15' },
+                { r: 9,  a: 0.7, color: '255,60,40' },
+            ];
+            for (const gl of glowLayers) {
+                const grd = ctx.createRadialGradient(zHead.x, zHead.y, 0, zHead.x, zHead.y, gl.r);
+                grd.addColorStop(0, `rgba(${gl.color},${gl.a})`);
+                grd.addColorStop(1, `rgba(${gl.color},0)`);
+                ctx.beginPath();
+                ctx.arc(zHead.x, zHead.y, gl.r, 0, Math.PI * 2);
                 ctx.fillStyle = grd;
                 ctx.fill();
             }
@@ -1040,6 +1132,7 @@ window.drawPreviewTrailPoint = function(ctx, p, trailId, rgb, colorId) {
         'trail_fire': 'fire', 'trail_water': 'water', 'trail_wind': 'wind',
         'trail_ice': 'ice', 'trail_lava': 'lava', 'trail_nature': 'nature',
         'trail_custom_text': 'custom_text', 'trail_solmerion': 'solmerion',
+        'trail_zherath': 'zherath',
     };
     // Para trails con formato effect_color (ej: glow_cyan)
     let effect = effectMap[trailId] || trailId.split('_').slice(0, -1).join('_') || 'solid';
@@ -1066,19 +1159,12 @@ window.drawPreviewTrailPoint = function(ctx, p, trailId, rgb, colorId) {
         ctx.fill();
     }
     else if (effect === 'ghost') {
-        // Humo: nube radial que deriva hacia arriba
-        ctx.globalCompositeOperation = 'source-over';
-        const driftY = age * 18 * seed;
-        const driftX = (seed - 0.5) * 6 * age;
-        const cx = p.x + driftX;
-        const cy = p.y - driftY;
-        const r  = (4 + age * 12) * life;
-        const grd = ctx.createRadialGradient(cx, cy, 0, cx, cy, r);
-        grd.addColorStop(0, rgbMode ? `hsla(${hue},60%,80%,${(life*0.4).toFixed(2)})` : `rgba(${rgb},${(life*0.4).toFixed(2)})`);
-        grd.addColorStop(1, rgbMode ? `hsla(${hue},40%,60%,0)` : `rgba(${rgb},0)`);
+        // Básica II: punto limpio y delgado (fallback; normalmente se
+        // dibuja conectado como línea vía drawPreviewTrailLine)
+        ctx.globalCompositeOperation = 'lighter';
         ctx.beginPath();
-        ctx.arc(cx, cy, r, 0, Math.PI * 2);
-        ctx.fillStyle = grd;
+        ctx.arc(p.x, p.y, 2.2 * life, 0, Math.PI * 2);
+        ctx.fillStyle = fc(life * 0.9);
         ctx.fill();
     }
     else if (effect === 'fractura') {
@@ -1245,10 +1331,37 @@ window.drawPreviewTrailPoint = function(ctx, p, trailId, rgb, colorId) {
         ctx.fillStyle = `rgba(${r},${g},${b},${(life * 0.9).toFixed(3)})`;
         ctx.fill();
 
-        // Punto rojo central, fino
+        // Punto central, fino — color de la rueda
         ctx.beginPath();
         ctx.arc(p.x, p.y, 1.2 * life, 0, Math.PI * 2);
-        ctx.fillStyle = `rgba(220,30,30,${(life * 0.95).toFixed(3)})`;
+        ctx.fillStyle = fc(life * 0.95);
+        ctx.fill();
+    }
+    else if (effect === 'zherath') {
+        // Aura roja muy sutil
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, 8 * life, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(160,15,20,${(life * 0.12).toFixed(3)})`;
+        ctx.fill();
+
+        // Núcleo negro sólido (pintado normal, no aditivo)
+        ctx.globalCompositeOperation = 'source-over';
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, 3.5 * life, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(10,7,9,${(life * 0.9).toFixed(3)})`;
+        ctx.fill();
+
+        // Veta roja fina encima (aditiva, sutil)
+        ctx.globalCompositeOperation = 'lighter';
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, 2 * life, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(200,25,30,${(life * 0.35).toFixed(3)})`;
+        ctx.fill();
+
+        // Punto central, fino — color de la rueda
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, 1.2 * life, 0, Math.PI * 2);
+        ctx.fillStyle = fc(life * 0.95);
         ctx.fill();
     }
     else {
@@ -1273,7 +1386,7 @@ window.drawPreviewTrailPoint = function(ctx, p, trailId, rgb, colorId) {
 // en el gameplay real. Para el resto de efectos, delega en
 // drawPreviewTrailPoint sin cambiar nada.
 // =====================================================
-const PREVIEW_LINE_EFFECTS = ['solmerion'];
+const PREVIEW_LINE_EFFECTS = ['solmerion', 'zherath', 'ghost'];
 
 window.drawPreviewTrailLine = function(ctx, pts, trailId, rgb, colorId) {
     const len = pts.length;
@@ -1286,6 +1399,7 @@ window.drawPreviewTrailLine = function(ctx, pts, trailId, rgb, colorId) {
         'trail_fire': 'fire', 'trail_water': 'water', 'trail_wind': 'wind',
         'trail_ice': 'ice', 'trail_lava': 'lava', 'trail_nature': 'nature',
         'trail_custom_text': 'custom_text', 'trail_solmerion': 'solmerion',
+        'trail_zherath': 'zherath',
     };
     let effect = effectMap[trailId] || trailId.split('_').slice(0, -1).join('_') || 'solid';
     if (effect === trailId) effect = 'solid';
@@ -1336,8 +1450,9 @@ window.drawPreviewTrailLine = function(ctx, pts, trailId, rgb, colorId) {
         }
         ctx.restore();
 
-        // Hilo rojo central (pintado normal, no aditivo, para que se
-        // note sobre el núcleo blanco en vez de quedar tapado)
+        // Hilo central (pintado normal, no aditivo, para que se
+        // note sobre el núcleo blanco en vez de quedar tapado) —
+        // color de la rueda, por defecto rojo
         ctx.save();
         for (let i = 1; i < len; i++) {
             const a = pts[i - 1], b = pts[i];
@@ -1346,7 +1461,7 @@ window.drawPreviewTrailLine = function(ctx, pts, trailId, rgb, colorId) {
             ctx.beginPath();
             ctx.moveTo(a.x, a.y);
             ctx.lineTo(b.x, b.y);
-            ctx.strokeStyle = `rgba(210,20,25,${(life * 0.95).toFixed(3)})`;
+            ctx.strokeStyle = `rgba(${rgb},${(life * 0.95).toFixed(3)})`;
             ctx.lineWidth   = Math.max(0.8, 3 * life);
             ctx.lineCap     = 'round';
             ctx.stroke();
@@ -1374,5 +1489,115 @@ window.drawPreviewTrailLine = function(ctx, pts, trailId, rgb, colorId) {
             }
             ctx.restore();
         }
+    }
+
+    else if (effect === 'zherath') {
+        // Aura roja muy sutil (solo insinúa el rojo, no domina)
+        ctx.save();
+        ctx.globalCompositeOperation = 'lighter';
+        for (let i = 1; i < len; i++) {
+            const a = pts[i - 1], b = pts[i];
+            const life = b.life;
+            if (life <= 0) continue;
+            ctx.beginPath();
+            ctx.moveTo(a.x, a.y);
+            ctx.lineTo(b.x, b.y);
+            ctx.strokeStyle = `rgba(160,15,20,${(life * 0.16).toFixed(3)})`;
+            ctx.lineWidth   = 30 * life;
+            ctx.lineCap     = 'round';
+            ctx.stroke();
+        }
+        ctx.restore();
+
+        // Cuerpo NEGRO sólido — pintado normal (no 'lighter'); sumar
+        // luz nunca da negro, por eso antes se veía rojo brillante
+        ctx.save();
+        for (let i = 1; i < len; i++) {
+            const a = pts[i - 1], b = pts[i];
+            const life = b.life;
+            if (life <= 0) continue;
+            ctx.beginPath();
+            ctx.moveTo(a.x, a.y);
+            ctx.lineTo(b.x, b.y);
+            ctx.strokeStyle = `rgba(10,7,9,${(life * 0.92).toFixed(3)})`;
+            ctx.lineWidth   = Math.max(1, 16 * life);
+            ctx.lineCap     = 'round';
+            ctx.stroke();
+        }
+        ctx.restore();
+
+        // Vetas rojas finas encima del negro (aditivo, sutil)
+        ctx.save();
+        ctx.globalCompositeOperation = 'lighter';
+        for (let i = 1; i < len; i++) {
+            const a = pts[i - 1], b = pts[i];
+            const life = b.life;
+            if (life <= 0) continue;
+            ctx.beginPath();
+            ctx.moveTo(a.x, a.y);
+            ctx.lineTo(b.x, b.y);
+            ctx.strokeStyle = `rgba(200,25,30,${(life * 0.4).toFixed(3)})`;
+            ctx.lineWidth   = Math.max(0.6, 6 * life);
+            ctx.lineCap     = 'round';
+            ctx.stroke();
+        }
+        ctx.restore();
+
+        // Hilo central — color de la rueda, por defecto rojo
+        ctx.save();
+        for (let i = 1; i < len; i++) {
+            const a = pts[i - 1], b = pts[i];
+            const life = b.life;
+            if (life <= 0) continue;
+            ctx.beginPath();
+            ctx.moveTo(a.x, a.y);
+            ctx.lineTo(b.x, b.y);
+            ctx.strokeStyle = `rgba(${rgb},${(life * 0.95).toFixed(3)})`;
+            ctx.lineWidth   = Math.max(0.8, 3 * life);
+            ctx.lineCap     = 'round';
+            ctx.stroke();
+        }
+        ctx.restore();
+
+        // Brasa oscura junto a la bolita
+        const zHead = pts[len - 1];
+        if (zHead && zHead.life > 0) {
+            ctx.save();
+            ctx.globalCompositeOperation = 'lighter';
+            const glowLayers = [
+                { r: 28, a: 0.3, color: '90,0,10' },
+                { r: 18, a: 0.45, color: '180,10,15' },
+                { r: 9,  a: 0.7, color: '255,60,40' },
+            ];
+            for (const gl of glowLayers) {
+                const grd = ctx.createRadialGradient(zHead.x, zHead.y, 0, zHead.x, zHead.y, gl.r);
+                grd.addColorStop(0, `rgba(${gl.color},${gl.a})`);
+                grd.addColorStop(1, `rgba(${gl.color},0)`);
+                ctx.beginPath();
+                ctx.arc(zHead.x, zHead.y, gl.r, 0, Math.PI * 2);
+                ctx.fillStyle = grd;
+                ctx.fill();
+            }
+            ctx.restore();
+        }
+    }
+
+    else if (effect === 'ghost') {
+        // Básica II: línea lisa y delgada, conectada, que se desvanece
+        ctx.save();
+        ctx.globalCompositeOperation = 'lighter';
+        for (let i = 1; i < len; i++) {
+            const a = pts[i - 1], b = pts[i];
+            const life = b.life;
+            if (life <= 0) continue;
+            ctx.beginPath();
+            ctx.moveTo(a.x, a.y);
+            ctx.lineTo(b.x, b.y);
+            ctx.strokeStyle = `rgba(${rgb},${(life * 0.9).toFixed(3)})`;
+            ctx.lineWidth   = Math.max(0.8, 4.5 * life);
+            ctx.lineCap     = 'round';
+            ctx.stroke();
+        }
+        ctx.restore();
     }
 };

@@ -209,7 +209,7 @@ function vipTrail(folder, id, name, price = 320) {
 const TRAILS_DATA = [
     { id: 'none', name: 'Ninguna', rarity: 'BASICO', rarityColor: '#888888', price: 0, priceType: 'coins', image: 'assets/UI/Store/Trails/Covers/Ninguna_trail.png' },
     { id: 'basic', name: 'Basica', rarity: 'BASICO', rarityColor: '#57b7dd', price: 30, priceType: 'coins', image: 'assets/UI/Store/Trails/Covers/Basic_trail.png' },
-    { id: 'ghost', name: 'Ghost', rarity: 'EPICA', rarityColor: '#cc44ff', price: 800, priceType: 'coins', image: 'assets/UI/Store/Trails/Covers/Ghost_trail.png' },
+    { id: 'ghost', name: 'Basica II', rarity: 'EPICA', rarityColor: '#cc44ff', price: 800, priceType: 'coins', image: 'assets/UI/Store/Trails/Covers/Ghost_trail.png' },
     { id: 'fractura', name: 'Fractura', rarity: 'EPICA', rarityColor: '#cc44ff', price: 1000, priceType: 'coins', image: 'assets/UI/Store/Trails/Covers/Fractura_trail.png' },
     { id: 'hielo', name: 'Hielo', rarity: 'ESPECIAL', rarityColor: '#7fd8ff', price: 260, priceType: 'coins', image: 'assets/UI/Store/Trails/Covers/Hielo_trail.png' },
     { id: 'toxico', name: 'Toxico', rarity: 'ESPECIAL', rarityColor: '#8dff5a', price: 320, priceType: 'coins', image: 'assets/UI/Store/Trails/Covers/Toxico_trail.png' },
@@ -223,7 +223,8 @@ const TRAILS_DATA = [
     { id: 'trail_lava', name: 'Elemento Lava', rarity: 'VIP', rarityColor: '#ff4444', price: 0, priceType: 'gems', image: 'assets/UI/Store/Trails/Covers/Elemento_Lava_trail.png' },
     { id: 'trail_nature', name: 'Elemento Naturaleza', rarity: 'VIP', rarityColor: '#44ff88', price: 0, priceType: 'gems', image: 'assets/UI/Store/Trails/Covers/Elemento_Naturaleza_trail.png' },
     { id: 'trail_custom_text', name: 'Texto Personalizado', rarity: 'VIP', rarityColor: '#ffda3a', price: 0, priceType: 'gems', image: 'assets/UI/Store/Trails/Covers/Texto_Personalizado_trail.png' },
-    { id: 'trail_solmerion', name: 'Solmerion', rarity: 'VIP', rarityColor: '#ffd700', price: 0, priceType: 'gems', image: 'assets/UI/Store/Trails/Covers/Solmerion_trail.png' },
+    { id: 'trail_solmerion', name: 'Solmerion', rarity: 'VIP', rarityColor: '#ffd700', price: 0, priceType: 'gems', image: 'assets/Imagenes/Temporadas/Temp_Leyendas/Trails/trail_solmerion.png' },
+    { id: 'trail_zherath', name: 'Zherath', rarity: 'VIP', rarityColor: '#c81414', price: 0, priceType: 'gems', image: 'assets/Imagenes/Temporadas/Temp_Leyendas/Trails/trail_zherath.png' },
 ];
 
 // =====================================================
@@ -1939,7 +1940,7 @@ const SEASON_PACKS_LEYENDAS = [
         color: '#E00000',
         cover: 'assets/Imagenes/Temporadas/Temp_Leyendas/Packs/pack_zherath.png',
         skinId: 'skin_zherath',
-        trailId: null, // pendiente — trail de Zherath en creación
+        trailId: 'trail_zherath',
         emoteIds: ['emote_zherath_aceptacion', 'emote_zherath_avergonzado', 'emote_zherath_enojado', 'emote_zherath_reto']
     }
 ];
@@ -7431,7 +7432,7 @@ function renderTrailCardNew(t, index) {
     const specificTrails = ['none', 'spark', 'ghost', 'fractura', 'hielo', 'toxico',
         'trail_vampiro', 'trail_zombie', 'trail_fire', 'trail_water',
         'trail_wind', 'trail_ice', 'trail_lava', 'trail_nature',
-        'trail_custom_text', 'trail_solmerion'];
+        'trail_custom_text'];
     const isEquipped = specificTrails.includes(t.id)
         ? equippedId === t.id
         : equippedId.startsWith(t.id + '_');
@@ -8107,7 +8108,7 @@ function selectTrailEffectNew(effectId, idx) {
     const specificTrails = ['none', 'spark', 'ghost', 'fractura', 'hielo', 'toxico',
         'trail_vampiro', 'trail_zombie', 'trail_fire', 'trail_water',
         'trail_wind', 'trail_ice', 'trail_lava', 'trail_nature',
-        'trail_custom_text', 'trail_solmerion'];
+        'trail_custom_text'];
 
     if (specificTrails.includes(effectId)) {
         selectedTrailColor = 'cyan';
@@ -8136,7 +8137,7 @@ function showTrailBuyPanel() {
     const specificTrails = ['none', 'spark', 'ghost', 'fractura', 'hielo', 'toxico',
         'trail_vampiro', 'trail_zombie', 'trail_fire', 'trail_water',
         'trail_wind', 'trail_ice', 'trail_lava', 'trail_nature',
-        'trail_custom_text', 'trail_solmerion'];
+        'trail_custom_text'];
 
     if (specificTrails.includes(selectedTrailEffect)) {
         const trail = TRAILS_DATA.find(t => t.id === selectedTrailEffect);
