@@ -125,11 +125,10 @@
             "skin_calabaza": "EPICA", // bajo de DEMON (bundle Halloween)
             "skin_nocturna": "EPICA", // bajo de DEMON (bundle Halloween) - RENOMBRAR a Frankenstein (pendiente, tarea de Devin)
 
-            // ----- DEMON (kenji/brifon/demon_ember/daxor sin cambios,
+            // ----- DEMON (kenji/brifon/daxor sin cambios,
             //              + samurai que baja de VIP) -----
             "kenji": "DEMON", // KENJI
             "brifon": "DEMON", // BRIFON
-            "demon_ember": "DEMON", // Demon Ember
             "daxor": "DEMON", // DAXOR
             "skin_samurai": "DEMON", // bajo de VIP
 

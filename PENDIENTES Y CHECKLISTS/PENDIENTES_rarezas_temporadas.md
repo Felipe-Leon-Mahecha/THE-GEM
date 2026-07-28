@@ -130,7 +130,7 @@ Los emotes reales **ya NO llevan sistema de rareza** — solo marco dorado si so
 | BASICO | colores, donas de color, contornos, controlador, metalman, pichos (sin cambios) |
 | ESPECIAL | comida suelta, espacio suelto, chef, cerdo, elefante, bruja (26 items — bajaron de VIP) |
 | EPICA | frank, shield + chocolate, sol, luna, hamburguesa, pizza, oficios sueltos, animales sueltos, monstruos de Halloween sueltos (19 items — bajaron de VIP) |
-| DEMON | kenji, brifon, demon_ember, daxor + samurai (bajó de VIP) |
+| DEMON | kenji, brifon, daxor + samurai (bajó de VIP) |
 | LEGENDARIO (trofeo, no comprable) | 3 trofeos de comida + caballero bronce/plata/dorado (trofeo de Camino de Reyes, Mapa 1 — falta poner el rango real) |
 
 ### Tienda VIP (bundles)

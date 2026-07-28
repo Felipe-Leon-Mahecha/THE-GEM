@@ -8568,6 +8568,20 @@ body.is-touch-device .ls-play-btn {
     font-size: 14px;
 }
 
+/* ── Notificación de progreso: días jugados en temporada ── */
+.season-days-notif {
+    border-color: rgba(207, 0, 0, 0.55) !important;
+    box-shadow: 0 0 30px rgba(207, 0, 0, 0.25) !important;
+}
+
+/* ── Notificación de desbloqueo: Racha Ganadora ── */
+.season-unlock-notif {
+    border-color: rgba(255, 215, 0, 0.7) !important;
+    box-shadow: 0 0 36px rgba(255, 215, 0, 0.35), 0 0 12px rgba(255, 215, 0, 0.15) !important;
+    top: 80px !important;
+    /* apila debajo de la notif de progreso */
+}
+
 /* =====================================================
    LEADERBOARD — SALA DE REYES
    (antes no existía nada de esto, por eso el panel no
@@ -10089,13 +10103,13 @@ body.is-touch-device .shop-sidebar::after {
 
 /* ── Banner de perfil (el cuadro con avatar + nombre del banner) ── */
 .shop-profile-banner {
-    height: var(--shop-banner-height, 98px);
-    border-radius: var(--shop-banner-radius, 10px);
+    height: 88px;
+    border-radius: 10px;
     border: 1px solid rgba(255, 255, 255, 0.1);
     background: linear-gradient(135deg, rgba(0, 255, 231, 0.18), rgba(255, 77, 109, 0.16));
     background-size: cover;
     background-position: center;
-    padding: var(--shop-banner-padding, 10px);
+    padding: 10px;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
@@ -10108,6 +10122,7 @@ body.is-touch-device .shop-sidebar::after {
    tienda (el del menú principal se queda igual) */
 #shop-profile-banner {
     border-radius: 6px;
+    height: 88px;
 }
 
 /* ── Banner de perfil del MENÚ PRINCIPAL (mismo diseño, variables propias) ── */
@@ -14108,11 +14123,25 @@ body.performance-mode .hud-notify-dot {
     font-weight: 700;
 }
 
-.cat-card.skins { --cc: #a259ff; }
-.cat-card.trails { --cc: #00e5ff; }
-.cat-card.banners { --cc: #ff5d8f; }
-.cat-card.marcos { --cc: #6ad7ff; }
-.cat-card.emotes { --cc: #ffd76a; }
+.cat-card.skins {
+    --cc: #a259ff;
+}
+
+.cat-card.trails {
+    --cc: #00e5ff;
+}
+
+.cat-card.banners {
+    --cc: #ff5d8f;
+}
+
+.cat-card.marcos {
+    --cc: #6ad7ff;
+}
+
+.cat-card.emotes {
+    --cc: #ffd76a;
+}
 
 /* ---- Vitrina de recompensas: filas escalonadas, no todas iguales ---- */
 .showcase-grid {
@@ -14456,7 +14485,9 @@ body.performance-mode .hud-notify-dot {
     transition: transform .18s ease;
 }
 
-.season-pack-overview-panel:hover { transform: translateY(-3px); }
+.season-pack-overview-panel:hover {
+    transform: translateY(-3px);
+}
 
 .season-pack-overview-panel img {
     position: absolute;
@@ -14495,7 +14526,10 @@ body.performance-mode .hud-notify-dot {
     margin-bottom: 14px;
     padding: 0;
 }
-.season-pack-detail-back:hover { color: #fff; }
+
+.season-pack-detail-back:hover {
+    color: #fff;
+}
 
 .season-pack-detail-header {
     position: relative;
@@ -14529,7 +14563,9 @@ body.performance-mode .hud-notify-dot {
     margin: 0;
 }
 
-.season-pack-detail-section { margin-bottom: 16px; }
+.season-pack-detail-section {
+    margin-bottom: 16px;
+}
 
 .season-pack-detail-label {
     display: block;
@@ -14564,11 +14600,20 @@ body.performance-mode .hud-notify-dot {
     max-width: 70px;
 }
 
-.season-pack-detail-emotes { display: flex; flex-wrap: wrap; gap: 4px; }
+.season-pack-detail-emotes {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+}
 
 @media (max-width: 720px) {
-    .season-showcase-featured-row { flex-direction: column; }
-    .season-pack-overview-grid { grid-template-columns: 1fr; }
+    .season-showcase-featured-row {
+        flex-direction: column;
+    }
+
+    .season-pack-overview-grid {
+        grid-template-columns: 1fr;
+    }
 }
 
 .category-bento .cat-card[onclick] {

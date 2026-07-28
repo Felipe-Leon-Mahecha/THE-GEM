@@ -908,8 +908,51 @@ function drawTrail() {
     // color de la rueda (por defecto rojo); el negro/rojo del cuerpo
     // siempre se queda igual.
     else if (effect === 'zherath') {
-        // Pasada 1: aura roja muy sutil alrededor (solo insinúa el rojo,
-        // no debe dominar — por eso alpha bajito)
+        // Pasada 1: borde gris-acero — es el elemento PRINCIPAL que
+        // define la silueta oscura contra cualquier fondo (incluso uno
+        // casi negro, donde el negro puro se pierde sin importar el
+        // alpha). Ya no hay una "aura roja" difusa por separado —
+        // esa era la que hacía que todo se viera anaranjado/rojizo
+        // en vez de oscuro.
+        ctx.save();
+        ctx.globalCompositeOperation = 'source-over';
+        for (let i = step; i < trail.length; i += step) {
+            const t    = trail[i];
+            const prev = trail[i - step] || trail[0];
+            const life = t.life;
+            ctx.beginPath();
+            ctx.moveTo(prev.x, prev.y);
+            ctx.lineTo(t.x, t.y);
+            ctx.strokeStyle = `rgba(70,64,74,${(life * 0.85).toFixed(3)})`;
+            ctx.lineWidth   = Math.max(1, 24 * life);
+            ctx.lineCap     = 'round';
+            ctx.stroke();
+        }
+        ctx.restore();
+
+        // Pasada 2: cuerpo oscuro (casi negro) — se fuerza 'source-over'
+        // a propósito: si el canvas venía en modo 'lighter' de un paso
+        // anterior, sumar luz nunca da negro, solo brillo. Va encima
+        // del borde gris (pasada 1), que es lo que hace que el
+        // conjunto se note incluso sobre fondo casi negro.
+        ctx.save();
+        ctx.globalCompositeOperation = 'source-over';
+        for (let i = step; i < trail.length; i += step) {
+            const t    = trail[i];
+            const prev = trail[i - step] || trail[0];
+            const life = t.life;
+            ctx.beginPath();
+            ctx.moveTo(prev.x, prev.y);
+            ctx.lineTo(t.x, t.y);
+            ctx.strokeStyle = `rgba(18,14,17,${(life * 0.97).toFixed(3)})`;
+            ctx.lineWidth   = Math.max(1, 13 * life);
+            ctx.lineCap     = 'round';
+            ctx.stroke();
+        }
+        ctx.restore();
+
+        // Pasada 2b: vetas rojas finas encima del negro (aditivo, muy
+        // sutil — solo un acento "vivo", no debe teñir todo de rojo)
         ctx.save();
         ctx.globalCompositeOperation = 'lighter';
         for (let i = step; i < trail.length; i += step) {
@@ -919,44 +962,8 @@ function drawTrail() {
             ctx.beginPath();
             ctx.moveTo(prev.x, prev.y);
             ctx.lineTo(t.x, t.y);
-            ctx.strokeStyle = `rgba(160,15,20,${(life * 0.16).toFixed(3)})`;
-            ctx.lineWidth   = 30 * life;
-            ctx.lineCap     = 'round';
-            ctx.stroke();
-        }
-        ctx.restore();
-
-        // Pasada 2: cuerpo NEGRO sólido — pintado NORMAL (no 'lighter'),
-        // porque sumar luz nunca da negro, solo brillo. Así sí se ve
-        // oscuro/negro de verdad en vez de rojo brillante.
-        ctx.save();
-        for (let i = step; i < trail.length; i += step) {
-            const t    = trail[i];
-            const prev = trail[i - step] || trail[0];
-            const life = t.life;
-            ctx.beginPath();
-            ctx.moveTo(prev.x, prev.y);
-            ctx.lineTo(t.x, t.y);
-            ctx.strokeStyle = `rgba(10,7,9,${(life * 0.92).toFixed(3)})`;
-            ctx.lineWidth   = Math.max(1, 16 * life);
-            ctx.lineCap     = 'round';
-            ctx.stroke();
-        }
-        ctx.restore();
-
-        // Pasada 2b: vetas rojas finas encima del negro (aditivo pero
-        // delgado y no muy intenso, solo para dar un toque "vivo")
-        ctx.save();
-        ctx.globalCompositeOperation = 'lighter';
-        for (let i = step; i < trail.length; i += step) {
-            const t    = trail[i];
-            const prev = trail[i - step] || trail[0];
-            const life = t.life;
-            ctx.beginPath();
-            ctx.moveTo(prev.x, prev.y);
-            ctx.lineTo(t.x, t.y);
-            ctx.strokeStyle = `rgba(200,25,30,${(life * 0.4).toFixed(3)})`;
-            ctx.lineWidth   = Math.max(0.6, 6 * life);
+            ctx.strokeStyle = `rgba(190,20,25,${(life * 0.3).toFixed(3)})`;
+            ctx.lineWidth   = Math.max(0.6, 4 * life);
             ctx.lineCap     = 'round';
             ctx.stroke();
         }
@@ -987,9 +994,9 @@ function drawTrail() {
             ctx.save();
             ctx.globalCompositeOperation = 'lighter';
             const glowLayers = [
-                { r: 28, a: 0.3, color: '90,0,10' },
-                { r: 18, a: 0.45, color: '180,10,15' },
-                { r: 9,  a: 0.7, color: '255,60,40' },
+                { r: 22, a: 0.22, color: '80,0,10' },
+                { r: 14, a: 0.35, color: '160,10,15' },
+                { r: 7,  a: 0.55, color: '215,35,30' },
             ];
             for (const gl of glowLayers) {
                 const grd = ctx.createRadialGradient(zHead.x, zHead.y, 0, zHead.x, zHead.y, gl.r);
@@ -1134,8 +1141,16 @@ window.drawPreviewTrailPoint = function(ctx, p, trailId, rgb, colorId) {
         'trail_custom_text': 'custom_text', 'trail_solmerion': 'solmerion',
         'trail_zherath': 'zherath',
     };
-    // Para trails con formato effect_color (ej: glow_cyan)
-    let effect = effectMap[trailId] || trailId.split('_').slice(0, -1).join('_') || 'solid';
+    // Para trails con formato effect_color (ej: glow_cyan, trail_solmerion_yellow)
+    let effect = effectMap[trailId];
+    if (!effect) {
+        // No hubo match directo — puede venir como "efecto_color"
+        // (ej: 'trail_solmerion_yellow'). Quitamos el último segmento
+        // (el color) y volvemos a buscar en el mapa — si no, YA no
+        // encontraba 'solmerion'/'zherath' y caía siempre al fallback.
+        const potentialEffect = trailId.split('_').slice(0, -1).join('_');
+        effect = effectMap[potentialEffect] || potentialEffect || 'solid';
+    }
     if (effect === trailId) effect = 'solid'; // fallback
 
     const seed  = p.seed  ?? 0.5;
@@ -1338,24 +1353,24 @@ window.drawPreviewTrailPoint = function(ctx, p, trailId, rgb, colorId) {
         ctx.fill();
     }
     else if (effect === 'zherath') {
-        // Aura roja muy sutil
-        ctx.beginPath();
-        ctx.arc(p.x, p.y, 8 * life, 0, Math.PI * 2);
-        ctx.fillStyle = `rgba(160,15,20,${(life * 0.12).toFixed(3)})`;
-        ctx.fill();
-
-        // Núcleo negro sólido (pintado normal, no aditivo)
+        // Borde gris-acero — elemento principal que define la silueta
         ctx.globalCompositeOperation = 'source-over';
         ctx.beginPath();
-        ctx.arc(p.x, p.y, 3.5 * life, 0, Math.PI * 2);
-        ctx.fillStyle = `rgba(10,7,9,${(life * 0.9).toFixed(3)})`;
+        ctx.arc(p.x, p.y, 5 * life, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(70,64,74,${(life * 0.75).toFixed(3)})`;
         ctx.fill();
 
-        // Veta roja fina encima (aditiva, sutil)
+        // Núcleo oscuro (casi negro)
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, 2.8 * life, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(18,14,17,${(life * 0.97).toFixed(3)})`;
+        ctx.fill();
+
+        // Veta roja fina encima (aditiva, muy sutil)
         ctx.globalCompositeOperation = 'lighter';
         ctx.beginPath();
-        ctx.arc(p.x, p.y, 2 * life, 0, Math.PI * 2);
-        ctx.fillStyle = `rgba(200,25,30,${(life * 0.35).toFixed(3)})`;
+        ctx.arc(p.x, p.y, 1.5 * life, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(190,20,25,${(life * 0.3).toFixed(3)})`;
         ctx.fill();
 
         // Punto central, fino — color de la rueda
@@ -1401,7 +1416,14 @@ window.drawPreviewTrailLine = function(ctx, pts, trailId, rgb, colorId) {
         'trail_custom_text': 'custom_text', 'trail_solmerion': 'solmerion',
         'trail_zherath': 'zherath',
     };
-    let effect = effectMap[trailId] || trailId.split('_').slice(0, -1).join('_') || 'solid';
+    let effect = effectMap[trailId];
+    if (!effect) {
+        // Igual que en drawPreviewTrailPoint: si viene como
+        // "efecto_color" (ej: 'trail_zherath_yellow'), quitamos el
+        // color y volvemos a buscar el efecto base en el mapa.
+        const potentialEffect = trailId.split('_').slice(0, -1).join('_');
+        effect = effectMap[potentialEffect] || potentialEffect || 'solid';
+    }
     if (effect === trailId) effect = 'solid';
 
     if (!PREVIEW_LINE_EFFECTS.includes(effect)) {
@@ -1492,7 +1514,48 @@ window.drawPreviewTrailLine = function(ctx, pts, trailId, rgb, colorId) {
     }
 
     else if (effect === 'zherath') {
-        // Aura roja muy sutil (solo insinúa el rojo, no domina)
+        // Borde gris-acero — es el elemento PRINCIPAL que define la
+        // silueta oscura contra cualquier fondo. Ya no hay una "aura
+        // roja" difusa por separado (esa era la que hacía que todo
+        // se viera anaranjado en vez de oscuro).
+        ctx.save();
+        ctx.globalCompositeOperation = 'source-over';
+        for (let i = 1; i < len; i++) {
+            const a = pts[i - 1], b = pts[i];
+            const life = b.life;
+            if (life <= 0) continue;
+            ctx.beginPath();
+            ctx.moveTo(a.x, a.y);
+            ctx.lineTo(b.x, b.y);
+            ctx.strokeStyle = `rgba(70,64,74,${(life * 0.85).toFixed(3)})`;
+            ctx.lineWidth   = Math.max(1, 24 * life);
+            ctx.lineCap     = 'round';
+            ctx.stroke();
+        }
+        ctx.restore();
+
+        // Cuerpo oscuro (casi negro) — se fuerza 'source-over' a
+        // propósito: si el canvas venía en modo 'lighter' de un paso
+        // anterior, sumar luz nunca da negro, solo brillo. Va sobre
+        // el borde gris de arriba, que es lo que hace que se note
+        // incluso sobre fondo casi negro.
+        ctx.save();
+        ctx.globalCompositeOperation = 'source-over';
+        for (let i = 1; i < len; i++) {
+            const a = pts[i - 1], b = pts[i];
+            const life = b.life;
+            if (life <= 0) continue;
+            ctx.beginPath();
+            ctx.moveTo(a.x, a.y);
+            ctx.lineTo(b.x, b.y);
+            ctx.strokeStyle = `rgba(18,14,17,${(life * 0.97).toFixed(3)})`;
+            ctx.lineWidth   = Math.max(1, 13 * life);
+            ctx.lineCap     = 'round';
+            ctx.stroke();
+        }
+        ctx.restore();
+
+        // Vetas rojas finas encima del negro (aditivo, muy sutil)
         ctx.save();
         ctx.globalCompositeOperation = 'lighter';
         for (let i = 1; i < len; i++) {
@@ -1502,42 +1565,8 @@ window.drawPreviewTrailLine = function(ctx, pts, trailId, rgb, colorId) {
             ctx.beginPath();
             ctx.moveTo(a.x, a.y);
             ctx.lineTo(b.x, b.y);
-            ctx.strokeStyle = `rgba(160,15,20,${(life * 0.16).toFixed(3)})`;
-            ctx.lineWidth   = 30 * life;
-            ctx.lineCap     = 'round';
-            ctx.stroke();
-        }
-        ctx.restore();
-
-        // Cuerpo NEGRO sólido — pintado normal (no 'lighter'); sumar
-        // luz nunca da negro, por eso antes se veía rojo brillante
-        ctx.save();
-        for (let i = 1; i < len; i++) {
-            const a = pts[i - 1], b = pts[i];
-            const life = b.life;
-            if (life <= 0) continue;
-            ctx.beginPath();
-            ctx.moveTo(a.x, a.y);
-            ctx.lineTo(b.x, b.y);
-            ctx.strokeStyle = `rgba(10,7,9,${(life * 0.92).toFixed(3)})`;
-            ctx.lineWidth   = Math.max(1, 16 * life);
-            ctx.lineCap     = 'round';
-            ctx.stroke();
-        }
-        ctx.restore();
-
-        // Vetas rojas finas encima del negro (aditivo, sutil)
-        ctx.save();
-        ctx.globalCompositeOperation = 'lighter';
-        for (let i = 1; i < len; i++) {
-            const a = pts[i - 1], b = pts[i];
-            const life = b.life;
-            if (life <= 0) continue;
-            ctx.beginPath();
-            ctx.moveTo(a.x, a.y);
-            ctx.lineTo(b.x, b.y);
-            ctx.strokeStyle = `rgba(200,25,30,${(life * 0.4).toFixed(3)})`;
-            ctx.lineWidth   = Math.max(0.6, 6 * life);
+            ctx.strokeStyle = `rgba(190,20,25,${(life * 0.3).toFixed(3)})`;
+            ctx.lineWidth   = Math.max(0.6, 4 * life);
             ctx.lineCap     = 'round';
             ctx.stroke();
         }
@@ -1565,9 +1594,9 @@ window.drawPreviewTrailLine = function(ctx, pts, trailId, rgb, colorId) {
             ctx.save();
             ctx.globalCompositeOperation = 'lighter';
             const glowLayers = [
-                { r: 28, a: 0.3, color: '90,0,10' },
-                { r: 18, a: 0.45, color: '180,10,15' },
-                { r: 9,  a: 0.7, color: '255,60,40' },
+                { r: 22, a: 0.22, color: '80,0,10' },
+                { r: 14, a: 0.35, color: '160,10,15' },
+                { r: 7,  a: 0.55, color: '215,35,30' },
             ];
             for (const gl of glowLayers) {
                 const grd = ctx.createRadialGradient(zHead.x, zHead.y, 0, zHead.x, zHead.y, gl.r);

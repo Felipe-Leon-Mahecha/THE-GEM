@@ -478,15 +478,14 @@ const SKINS_DATA = [
     { id: 'contorno_orange', name: 'Contorno Naranja', color: '#ff8800', rarity: 'ESPECIAL', price: 300, priceType: 'coins', owned: false },
     { id: 'contorno_white', name: 'Contorno Blanco', color: '#ffffff', rarity: 'ESPECIAL', price: 300, priceType: 'coins', owned: false },
     { id: 'contorno_black', name: 'Contorno Negro', color: '#222222', rarity: 'ESPECIAL', price: 300, priceType: 'coins', owned: false },
-    { id: 'controlador', name: 'Controlador', color: '#00ffe7', rarity: 'ESPECIAL', price: 650, priceType: 'coins', imageRight: 'assets/UI/Store/Skins/skin_neon_ace.png' },
-    { id: 'metalman', name: 'Metalman', color: '#ffee00', rarity: 'ESPECIAL', price: 650, priceType: 'coins', imageRight: 'assets/UI/Store/Skins/skin_volt_star.png' },
+    { id: 'controlador', name: 'Controlador', color: '#00ffe7', rarity: 'ESPECIAL', price: 650, priceType: 'coins', image: 'assets/UI/Store/Skins/Normal/Controlador/skin_controlador.png', imageSide: 'assets/UI/Store/Skins/Normal/Controlador/skin_controlador_lado_derecho.png' },
+    { id: 'metalman', name: 'Metalman', color: '#ffee00', rarity: 'ESPECIAL', price: 650, priceType: 'coins', image: 'assets/UI/Store/Skins/Normal/Metalman/skin_metalman.png', imageSide: 'assets/UI/Store/Skins/Normal/Metalman/skin_metalman_lado_derecho.png' },
     { id: 'pichos', name: 'Pichos', color: '#ffffff', rarity: 'ESPECIAL', price: 800, priceType: 'coins', imageRight: 'assets/UI/Store/Skins/skin_pichos.png' },
     { id: 'frank', name: 'Contorno Amarillo', color: '#ffee00', rarity: 'EPICA', price: 1200, priceType: 'coins', altPrice: 40, altType: 'gems', fragments: 3, owned: false },
     { id: 'shield', name: 'Contorno Azul', color: '#4488ff', rarity: 'EPICA', price: 1200, priceType: 'coins', altPrice: 40, altType: 'gems', fragments: 3, owned: false },
-    { id: 'kenji', name: 'KENJI', color: '#845cff', rarity: 'EPICA', price: 1500, priceType: 'coins', altPrice: 50, altType: 'gems', fragments: 3, owned: false, image: 'assets/UI/Store/Skins/Normal/KenjiEpic/Kenji_Skin.png', imageSide: 'assets/UI/Store/Skins/Normal/KenjiEpic/Kenji_Skin_lado.png' },
-    { id: 'brifon', name: 'BRIFON', color: '#b86cff', rarity: 'EPICA', price: 1600, priceType: 'coins', owned: false, image: 'assets/UI/Store/Skins/Normal/BrifonEpic/Brifon.png', imageSide: 'assets/UI/Store/Skins/Normal/BrifonEpic/BRIFON_Skin_lado.png' },
-    { id: 'demon_ember', name: 'Demon Ember', color: '#cf0000', rarity: 'DEMON', price: 4500, priceType: 'coins', altPrice: 150, altType: 'gems', fragments: 3, owned: false },
-    { id: 'daxor', name: 'DAXOR', color: '#ff2448', rarity: 'DEMON', price: 5200, priceType: 'coins', altPrice: 170, altType: 'gems', fragments: 3, owned: false, image: 'assets/UI/Store/Skins/Normal/DaxorDemon/DAXOR_Skin.png', imageSide: 'assets/UI/Store/Skins/Normal/DaxorDemon/DAXOR_Skin_lado.png' },
+    { id: 'kenji', name: 'KENJI', color: '#845cff', rarity: 'EPICA', price: 1500, priceType: 'coins', altPrice: 50, altType: 'gems', fragments: 3, owned: false, image: 'assets/UI/Store/Skins/Normal/KenjiEpic/skin_kenji.png', imageSide: 'assets/UI/Store/Skins/Normal/KenjiEpic/skin_kenji_lado.png' },
+    { id: 'brifon', name: 'BRIFON', color: '#b86cff', rarity: 'EPICA', price: 1600, priceType: 'coins', owned: false, image: 'assets/UI/Store/Skins/Normal/BrifonEpic/skin_brifon.png', imageSide: 'assets/UI/Store/Skins/Normal/BrifonEpic/skin_brifon_lado_derecho.png' },
+    { id: 'daxor', name: 'DAXOR', color: '#ff2448', rarity: 'DEMON', price: 700, priceType: 'coins', altPrice: 170, altType: 'gems', fragments: 3, owned: false, image: 'assets/UI/Store/Skins/Normal/DaxorDemon/skin_daxor.png', imageSide: 'assets/UI/Store/Skins/Normal/DaxorDemon/skin_daxor_lado.png', seasonId: 'leyendas', activeCategory: 'temporada' },
 
     // ===== PRECIOS ESTIMADOS: bajaron de VIP, ajustar a tu economia real =====
     // ----- ESPECIAL (bajaron de VIP: comida, espacio, oficios, animales sueltos) -----
@@ -576,6 +575,8 @@ const SKINS_DATA = [
         rarity: 'ESPECIAL',
         price: 2500,
         priceType: 'coins',
+        altPrice: 400,
+        altType: 'gems',
         image: 'assets/Imagenes/Temporadas/Temp_Leyendas/Skins/skin_Sombra_Real.png',
         imageRight: 'assets/Imagenes/Temporadas/Temp_Leyendas/Skins/skin_Sombra_Real/skin_Sombra_Real_de_lado.png',
         seasonId: 'leyendas'
@@ -941,16 +942,17 @@ const BANNERS_DATA = [
 
 // Placeholders de banners VIP
 const VIP_BANNER_PLACEHOLDERS = [
-    { id: 'VIP_Placeholder_PNG_1', name: 'VIP Placeholder PNG 1', price: 420, cover: 'assets/Imagenes/Banners/tienda_vip/VIP_Placeholder_PNG_1.png', rarity: 'VIP', exclusive: true },
-    { id: 'VIP_Placeholder_PNG_2', name: 'VIP Placeholder PNG 2', price: 420, cover: 'assets/Imagenes/Banners/tienda_vip/VIP_Placeholder_PNG_2.png', rarity: 'VIP', exclusive: true },
-    { id: 'VIP_Placeholder_PNG_3', name: 'VIP Placeholder PNG 3', price: 420, cover: 'assets/Imagenes/Banners/tienda_vip/VIP_Placeholder_PNG_3.png', rarity: 'VIP', exclusive: true },
-    { id: 'VIP_Placeholder_PNG_4', name: 'VIP Placeholder PNG 4', price: 420, cover: 'assets/Imagenes/Banners/tienda_vip/VIP_Placeholder_PNG_4.png', rarity: 'VIP', exclusive: true },
-    { id: 'VIP_Placeholder_PNG_5', name: 'VIP Placeholder PNG 5', price: 420, cover: 'assets/Imagenes/Banners/tienda_vip/VIP_Placeholder_PNG_5.png', rarity: 'VIP', exclusive: true },
-    { id: 'VIP_Placeholder_GIF_1', name: 'VIP Placeholder GIF 1', price: 560, cover: 'assets/Imagenes/Banners/tienda_vip/VIP_Placeholder_GIF_1.gif', rarity: 'VIP', exclusive: true, animated: true },
-    { id: 'VIP_Placeholder_GIF_2', name: 'VIP Placeholder GIF 2', price: 560, cover: 'assets/Imagenes/Banners/tienda_vip/VIP_Placeholder_GIF_2.gif', rarity: 'VIP', exclusive: true, animated: true },
-    { id: 'VIP_Placeholder_GIF_3', name: 'VIP Placeholder GIF 3', price: 560, cover: 'assets/Imagenes/Banners/tienda_vip/VIP_Placeholder_GIF_3.gif', rarity: 'VIP', exclusive: true, animated: true },
-    { id: 'VIP_Placeholder_GIF_4', name: 'VIP Placeholder GIF 4', price: 560, cover: 'assets/Imagenes/Banners/tienda_vip/VIP_Placeholder_GIF_4.gif', rarity: 'VIP', exclusive: true, animated: true },
-    { id: 'VIP_Placeholder_GIF_5', name: 'VIP Placeholder GIF 5', price: 560, cover: 'assets/Imagenes/Banners/tienda_vip/VIP_Placeholder_GIF_5.gif', rarity: 'VIP', exclusive: true, animated: true }
+    { id: 'VIP_Placeholder_PNG_1', name: 'Nubes moradas', price: 420, cover: 'assets/Imagenes/Banners/tienda_vip/VIP_Placeholder_PNG_1.png', rarity: 'VIP', exclusive: true },
+    { id: 'VIP_Placeholder_PNG_2', name: 'Tokio derrapes', price: 420, cover: 'assets/Imagenes/Banners/tienda_vip/VIP_Placeholder_PNG_2.png', rarity: 'VIP', exclusive: true },
+    { id: 'VIP_Placeholder_PNG_3', name: 'Rayas elegantes', price: 420, cover: 'assets/Imagenes/Banners/tienda_vip/VIP_Placeholder_PNG_3.png', rarity: 'VIP', exclusive: true },
+    { id: 'VIP_Placeholder_PNG_4', name: 'Electrico Yellow', price: 420, cover: 'assets/Imagenes/Banners/tienda_vip/VIP_Placeholder_PNG_4.png', rarity: 'VIP', exclusive: true },
+    { id: 'VIP_Placeholder_PNG_5', name: 'Te gusta el anime?', price: 420, cover: 'assets/Imagenes/Banners/tienda_vip/VIP_Placeholder_PNG_5.png', rarity: 'VIP', exclusive: true },
+    { id: 'VIP_Placeholder_GIF_1', name: 'Relax', price: 560, cover: 'assets/Imagenes/Banners/tienda_vip/VIP_Placeholder_GIF_1.gif', rarity: 'VIP', exclusive: true, animated: true },
+    { id: 'VIP_Placeholder_GIF_2', name: 'Bajo el agua', price: 560, cover: 'assets/Imagenes/Banners/tienda_vip/VIP_Placeholder_GIF_2.gif', rarity: 'VIP', exclusive: true, animated: true },
+    { id: 'VIP_Placeholder_GIF_3', name: 'Burbuja chiclosa', price: 560, cover: 'assets/Imagenes/Banners/tienda_vip/VIP_Placeholder_GIF_3.gif', rarity: 'VIP', exclusive: true, animated: true },
+    { id: 'VIP_Placeholder_GIF_4', name: 'Colores y mas colores', price: 560, cover: 'assets/Imagenes/Banners/tienda_vip/VIP_Placeholder_GIF_4.gif', rarity: 'VIP', exclusive: true, animated: true },
+    { id: 'VIP_Placeholder_GIF_5', name: 'Cuadricula pero en GIF', price: 560, cover: 'assets/Imagenes/Banners/tienda_vip/VIP_Placeholder_GIF_5.gif', rarity: 'VIP', exclusive: true, animated: true },
+    { id: 'Plush_Pro', name: 'Plush Pro!!!', price: 560, cover: 'assets/Imagenes/Banners/tienda_vip/Plush_Pro.gif', rarity: 'VIP', exclusive: true, animated: true },
 ];
 
 const BANNERS_CATALOG_CONFIG = window.GEM_BANNERS_CATALOG || null;
@@ -965,6 +967,7 @@ const FRAMES_DATA = [
         id: 'Frame_Leyendas_Perla',
         name: 'Perla de Leyendas',
         price: 1800,
+        priceGems: 120,
         exclusive: false,
         passOnly: false,
         rarity: 'ESPECIAL',
@@ -975,6 +978,7 @@ const FRAMES_DATA = [
         id: 'Frame_Leyendas_Exclusivo',
         name: 'Exclusivo de Leyendas',
         price: 2000,
+        priceGems: 140,
         exclusive: false,
         rarity: 'ESPECIAL',
         activeCategory: 'temporada',
@@ -984,6 +988,7 @@ const FRAMES_DATA = [
         id: 'Frame_Leyendas_Rosaceo',
         name: 'Rosáceo de Leyendas',
         price: 1800,
+        priceGems: 120,
         exclusive: false,
         rarity: 'ESPECIAL',
         activeCategory: 'temporada',
@@ -3809,6 +3814,11 @@ function renderFrameCard(f, opts = {}) {
         chipHTML = `<div class="hud-price-chip locked" style="color:#aaaaaa; border-color:rgba(180,180,180,0.45);">PASE RUBY</div>`;
     } else if (f.missionOnly) {
         chipHTML = `<div class="hud-price-chip locked">MISIÓN</div>`;
+    } else if (isBuyable && f.priceGems) {
+        const canAffordCoins = parseInt(localStorage.getItem('deadCoins') || '0') >= f.price;
+        const canAffordGems = parseInt(localStorage.getItem('gems') || '0') >= f.priceGems;
+        chipHTML = `<div class="hud-price-chip small ${canAffordCoins ? '' : 'locked'}" onclick="event.stopPropagation(); buyFrameFromShop('${f.id}')">${renderPrice(f.price, 'coins')}</div><div class="hud-price-chip small ${canAffordGems ? '' : 'locked'}" onclick="event.stopPropagation(); buyFrameFromShopWithGems('${f.id}')">${renderPrice(f.priceGems, 'gems')}</div>`;
+        cardClick = `onclick="openFramePreviewModal('${f.id}')"`;
     } else if (isBuyable) {
         const canAffordIt = parseInt(localStorage.getItem('deadCoins') || '0') >= f.price;
         chipHTML = `<div class="hud-price-chip locked" onclick="buyFrameFromShop('${f.id}')" style="cursor:pointer; color:${canAffordIt ? '#ffee00' : 'rgba(255,255,255,0.22)'}; border-color:${canAffordIt ? 'rgba(255,238,0,0.45)' : 'rgba(255,255,255,0.1)'};">${renderPrice(f.price, 'coins')}</div>`;
@@ -3830,9 +3840,9 @@ function renderFrameCard(f, opts = {}) {
 function equipFrameFromShop(id) {
     equipCosmetic(id, 'frame');
     updateShopProfileBanner();
-    const content = document.getElementById('shopContent');
-    if (content && document.getElementById('shopPanel')?.style.display !== 'none') {
-        renderBannersPage(content);
+    refreshBannerViewsAfterPurchase();
+    if (document.getElementById('inventoryPanel')?.style.display !== 'none') {
+        showInventorySection('frames');
     }
 }
 window.equipFrameFromShop = equipFrameFromShop;
@@ -3853,16 +3863,47 @@ function buyFrameFromShop(id) {
         onConfirm: () => {
             spendCurrency(frame.price, 'coins');
             setFrameOwned(frame);
+            localStorage.setItem('equippedFrame', frame.id);
+            updateShopProfileBanner();
             window.playSfx?.('spend');
             updateMenuHUD();
-            const content = document.getElementById('shopContent');
-            if (content && document.getElementById('shopPanel')?.style.display !== 'none') {
-                renderBannersPage(content);
+            refreshBannerViewsAfterPurchase();
+            if (document.getElementById('inventoryPanel')?.style.display !== 'none') {
+                showInventorySection('frames');
             }
         }
     });
 }
 window.buyFrameFromShop = buyFrameFromShop;
+
+// ── Compra un marco de tienda con gemas ──────────────────────────────────
+function buyFrameFromShopWithGems(id) {
+    const frame = findCosmeticById(id, 'frame');
+    if (!frame || !frame.priceGems) return;
+    const gems = parseInt(localStorage.getItem('gems') || '0');
+    if (gems < frame.priceGems) return;
+    showShopModal({
+        kicker: 'CONFIRMAR COMPRA',
+        title: frame.name,
+        image: frame.imagen,
+        body: `¿Confirmas la compra por ${frame.priceGems} gemas?`,
+        confirmText: 'COMPRAR',
+        cancelText: 'CANCELAR',
+        onConfirm: () => {
+            spendCurrency(frame.priceGems, 'gems');
+            setFrameOwned(frame);
+            localStorage.setItem('equippedFrame', frame.id);
+            updateShopProfileBanner();
+            window.playSfx?.('spend');
+            updateMenuHUD();
+            refreshBannerViewsAfterPurchase();
+            if (document.getElementById('inventoryPanel')?.style.display !== 'none') {
+                showInventorySection('frames');
+            }
+        }
+    });
+}
+window.buyFrameFromShopWithGems = buyFrameFromShopWithGems;
 
 // ── Modal de preview del marco ────────────────────────────────────────────
 function openFramePreviewModal(id) {
@@ -3993,16 +4034,18 @@ function buyBannerWithGems(id) {
 }
 
 function refreshBannerViewsAfterPurchase() {
-    // Si el modal de banners de temporada está abierto, refrescarlo a él
-    // en vez de pisar la página que esté debajo (ej. Temporadas).
+    // Si el modal de contenido de temporada está abierto (banners, skins,
+    // trails, emotes O marcos), refrescarlo a él en vez de pisar la página
+    // que esté debajo (ej. Temporadas).
     const openModal = document.querySelector('.season-banners-modal-overlay');
     if (openModal) {
         openSeasonContentModal(openModal.dataset.kind || 'banners');
         return;
     }
-    // Si no, refrescar solo si de verdad estamos en la página normal de Banners.
+    // Si no, refrescar solo si de verdad estamos en la página de
+    // Diseño de Perfil (Banners/Marcos), no en cualquier otra pantalla.
     const content = document.getElementById('shopContent');
-    if (content && content.querySelector('.banner-list, [onclick^="buyBanner"], [onclick^="equipBanner"]')) {
+    if (content && content.querySelector('.banner-list, #diseno-perfil-banners-grid, #diseno-perfil-frames-grid, [onclick^="buyBanner"], [onclick^="equipBanner"], [onclick^="buyFrameFromShop"], [onclick^="equipFrameFromShop"]')) {
         renderBannersPage(content);
     }
 }
@@ -4641,16 +4684,22 @@ function updateShopProfileBanner() {
         card.style.border = banner.rarity === 'VIP' ? '2px solid rgba(255,204,0,0.8)' : '1px solid rgba(255,255,255,0.08)';
         card.style.boxShadow = banner.rarity === 'VIP' ? '0 0 18px rgba(255,204,0,0.3)' : 'none';
         card.style.overflow = 'visible';
-        // TEMP - prueba visual, remover después
         card.style.position = 'relative';
-        let frameOverlay = card.querySelector('.temp-frame-overlay');
-        if (!frameOverlay) {
-            frameOverlay = document.createElement('img');
-            frameOverlay.className = 'temp-frame-overlay';
-            frameOverlay.src = 'assets/Imagenes/Temporadas/Temp_Leyendas/Marcos/marco_leyendas_perla.png';
-            frameOverlay.alt = '';
-            frameOverlay.style.cssText = 'position:absolute;top:-8px;bottom:-8px;left:-8px;right:-2px;width:calc(100% + 16px);height:calc(100% + 16px);pointer-events:none;z-index:10;object-fit:fill;';
-            card.appendChild(frameOverlay);
+        const equippedFrameId = localStorage.getItem('equippedFrame');
+        const equippedFrame = equippedFrameId ? findCosmeticById(equippedFrameId, 'frame') : null;
+        let frameOverlay = card.querySelector('.profile-frame-overlay');
+        if (equippedFrame?.imagen) {
+            if (!frameOverlay) {
+                frameOverlay = document.createElement('img');
+                frameOverlay.className = 'profile-frame-overlay';
+                frameOverlay.alt = '';
+                frameOverlay.style.cssText = 'position:absolute;top:-12px;bottom:-12px;left:-12px;right:-12px;width:calc(100% + 24px);height:calc(100% + 24px);pointer-events:none;z-index:10;object-fit:fill;';
+                card.appendChild(frameOverlay);
+            }
+            frameOverlay.src = equippedFrame.imagen;
+            frameOverlay.style.display = '';
+        } else if (frameOverlay) {
+            frameOverlay.style.display = 'none';
         }
     }
     if (avatarEl) avatarEl.style.backgroundImage = `url("${avatar}")`;
@@ -4669,6 +4718,24 @@ function updateShopProfileBanner() {
         menuCard.style.backgroundPosition = 'center';
         menuCard.style.border = banner.rarity === 'VIP' ? '2px solid rgba(255,204,0,0.8)' : '1px solid rgba(255,255,255,0.1)';
         menuCard.style.boxShadow = banner.rarity === 'VIP' ? '0 0 18px rgba(255,204,0,0.3)' : 'none';
+        menuCard.style.overflow = 'visible';
+        menuCard.style.position = 'relative';
+        const equippedFrameIdMenu = localStorage.getItem('equippedFrame');
+        const equippedFrameMenu = equippedFrameIdMenu ? findCosmeticById(equippedFrameIdMenu, 'frame') : null;
+        let menuFrameOverlay = menuCard.querySelector('.profile-frame-overlay');
+        if (equippedFrameMenu?.imagen) {
+            if (!menuFrameOverlay) {
+                menuFrameOverlay = document.createElement('img');
+                menuFrameOverlay.className = 'profile-frame-overlay';
+                menuFrameOverlay.alt = '';
+                menuFrameOverlay.style.cssText = 'position:absolute;top:-12px;bottom:-12px;left:-12px;right:-12px;width:calc(100% + 24px);height:calc(100% + 24px);pointer-events:none;z-index:10;object-fit:fill;';
+                menuCard.appendChild(menuFrameOverlay);
+            }
+            menuFrameOverlay.src = equippedFrameMenu.imagen;
+            menuFrameOverlay.style.display = '';
+        } else if (menuFrameOverlay) {
+            menuFrameOverlay.style.display = 'none';
+        }
     }
     if (menuAvatarEl) {
         menuAvatarEl.style.backgroundImage = `url("${avatar}")`;
@@ -4728,10 +4795,8 @@ function equipBanner(id) {
         renderBannerPicker();
     }
 
-    const content = document.getElementById('shopContent');
-    if (content && document.getElementById('shopPanel')?.style.display !== 'none') {
-        renderBannersPage(content);
-    }
+    refreshBannerViewsAfterPurchase();
+
     if (document.getElementById('inventoryPanel')?.style.display !== 'none') {
         showInventorySection('banners');
     }
@@ -6637,7 +6702,7 @@ function openInventory() {
         }
     }, 450);
 
-    invActiveRarityFilter = { skins: 'TODAS', trails: 'TODAS', banners: 'TODAS', emotes: 'TODAS', powerups: 'TODAS' };
+    invActiveRarityFilter = { skins: 'TODAS', trails: 'TODAS', banners: 'TODAS', frames: 'TODAS', emotes: 'TODAS', powerups: 'TODAS' };
     showInventorySection('skins');
 }
 
@@ -6670,7 +6735,7 @@ function closeInventory() {
 // Orden y color de rareza para los chips de filtro del inventario
 const INV_RARITY_ORDER = ['DEFAULT', 'BASICO', 'ESPECIAL', 'EPICA', 'DEMON', 'VIP', 'LEGENDARIO', 'EXCLUSIVO'];
 
-let invActiveRarityFilter = { skins: 'TODAS', trails: 'TODAS', banners: 'TODAS', emotes: 'TODAS', powerups: 'TODAS' };
+let invActiveRarityFilter = { skins: 'TODAS', trails: 'TODAS', banners: 'TODAS', frames: 'TODAS', emotes: 'TODAS', powerups: 'TODAS' };
 const INV_BANNER_RARITY_ORDER = ['DEFAULT', 'BASICO', 'ESPECIAL', 'EPICA', 'DEMON', 'VIP', 'LEGENDARIO', 'EXCLUSIVO'];
 
 function invGetSkinsProgress() {
@@ -6702,8 +6767,8 @@ function invGetEmotesProgress() {
 }
 
 function renderInventoryHero(section) {
-    // ── Sección DISEÑO DE PERFIL: muestra banner + marco equipados ──
-    if (section === 'banners') {
+    // ── Secciones DISEÑO DE PERFIL / MARCOS: muestran banner + marco equipados ──
+    if (section === 'banners' || section === 'frames') {
         const bannerId = localStorage.getItem('equippedBanner') || 'Banner_Deafult';
         const banner = findBannerById(bannerId) || BANNERS_DATA[0];
         const frameId = localStorage.getItem('equippedFrame');
@@ -6825,6 +6890,21 @@ function renderInventoryBannerCard(b, equipped) {
     `;
 }
 
+function renderInventoryFrameCard(f, equippedFrameId) {
+    const isEquipped = equippedFrameId === f.id;
+    const rarityColor = BANNER_RARITY_COLORS[f.rarity] || 'rgba(255,255,255,0.4)';
+    const cover = f.imagen ? `url('${f.imagen}')` : 'linear-gradient(135deg, rgba(0,255,231,0.18), rgba(255,77,109,0.14))';
+    const tooltip = isEquipped ? 'Equipado' : 'Click para equipar';
+    return `
+        <div class="inv-banner-card ${isEquipped ? 'inv-equipped' : ''}" style="--inv-card-color:${rarityColor};" onclick="equipFrameFromShop('${f.id}'); showInventorySection('frames');" title="${tooltip}">
+            ${isEquipped ? `<div class="inv-item-check">✓</div>` : ''}
+            <div class="inv-banner-cover" style="background-image:${cover};"></div>
+            <div class="inv-banner-name">${f.name}</div>
+            <div class="inv-item-rarity${gemRarityClass(f.rarity)}">${f.rarity}</div>
+        </div>
+    `;
+}
+
 function renderInventoryEmoteCard(e, equipped) {
     const isEquipped = equipped === e.id;
     const rarityColor = RARITY_COLORS[e.rarity] || '#aaa';
@@ -6894,7 +6974,7 @@ function invHeroBannerBackground() {
 }
 
 function showInventorySection(section) {
-    ['skins', 'trails', 'banners', 'emotes', 'powerups', 'cofres'].forEach(s => {
+    ['skins', 'trails', 'banners', 'frames', 'emotes', 'powerups', 'cofres'].forEach(s => {
         const el = document.getElementById('inv-nav-' + s);
         if (!el) return;
         el.classList.toggle('active', s === section);
@@ -7036,6 +7116,24 @@ function showInventorySection(section) {
         content.innerHTML = `
             <div class="inv-grid inv-banner-grid">
                 ${owned.map(b => renderInventoryBannerCard(b, equipped)).join('')}
+            </div>
+        `;
+        if (window.aplicarEstilosTexto) window.aplicarEstilosTexto();
+    } else if (section === 'frames') {
+        const equippedFrameId = localStorage.getItem('equippedFrame');
+        let owned = getAllCosmeticCatalog('frame').filter(f => ownsCosmetic(f, 'frame'));
+
+        const availableRarities = INV_BANNER_RARITY_ORDER.filter(r => owned.some(f => f.rarity === r));
+        invRenderRarityFilters('frames', availableRarities, BANNER_RARITY_COLORS);
+        if (invActiveRarityFilter.frames !== 'TODAS') {
+            owned = owned.filter(f => f.rarity === invActiveRarityFilter.frames);
+        }
+
+        if (titleEl) titleEl.textContent = (shopTextos('inventario').titulos?.framesTemplate ?? 'MARCOS OBTENIDOS — {n}').replace('{n}', owned.length);
+
+        content.innerHTML = `
+            <div class="inv-grid inv-banner-grid">
+                ${owned.map(f => renderInventoryFrameCard(f, equippedFrameId)).join('')}
             </div>
         `;
         if (window.aplicarEstilosTexto) window.aplicarEstilosTexto();
@@ -9856,6 +9954,183 @@ window.trackSeasonEventProgress = trackSeasonEventProgress;
 window.claimSeasonEventReward = claimSeasonEventReward;
 window.openSeasonEventModal = openSeasonEventModal;
 window.handleClaimSeasonEventReward = handleClaimSeasonEventReward;
+
+// ═══════════════════════════════════════════════════════════════════════════
+// SISTEMA DE DÍAS JUGADOS EN TEMPORADA — Desbloquea Racha Ganadora al
+// llegar a 20 días únicos jugados dentro de la temporada activa.
+// ═══════════════════════════════════════════════════════════════════════════
+
+const SEASON_DAYS_STORAGE_KEY = 'seasonPlayedDays_v1';   // { seasonId: [dateStr, ...] }
+const RACHA_GANADORA_GOAL = 20;                       // días para desbloquear
+const RACHA_GANADORA_BANNER_ID = 'banner_leyendas_racha_ganadora';
+const RACHA_GANADORA_FRAME_ID = 'Frame_Leyendas_Racha_Ganadora';
+
+/** Lee el registro de días jugados por temporada desde localStorage. */
+function readSeasonPlayedDays() {
+    try {
+        return JSON.parse(localStorage.getItem(SEASON_DAYS_STORAGE_KEY) || '{}');
+    } catch { return {}; }
+}
+
+/** Devuelve cuántos días únicos se han jugado en la temporada dada. */
+function getSeasonDaysPlayed(seasonId) {
+    const data = readSeasonPlayedDays();
+    return Array.isArray(data[seasonId]) ? data[seasonId].length : 0;
+}
+
+/**
+ * Registra el día de hoy como "jugado" en la temporada activa.
+ * Solo añade si no estaba ya registrado (garantiza unicidad por fecha).
+ * Devuelve el total actualizado de días jugados en esa temporada.
+ */
+function recordSeasonPlayDay(seasonId) {
+    if (!seasonId) return 0;
+    const today = getMissionDateKey();           // reutiliza la fn existente "YYYY-MM-DD"
+    const data = readSeasonPlayedDays();
+    if (!Array.isArray(data[seasonId])) data[seasonId] = [];
+    if (!data[seasonId].includes(today)) {
+        data[seasonId].push(today);
+        localStorage.setItem(SEASON_DAYS_STORAGE_KEY, JSON.stringify(data));
+    }
+    return data[seasonId].length;
+}
+
+/**
+ * Muestra una notificación visual de progreso de días jugados.
+ * Reutiliza el estilo de achievement-notification pero con clase propia
+ * para poder darle un look diferenciado (color dorado/rojo Leyendas).
+ */
+function showSeasonDaysProgressNotif(current, goal) {
+    const existing = document.querySelector('.season-days-notif');
+    if (existing) existing.remove();
+
+    const notif = document.createElement('div');
+    notif.className = 'achievement-notification season-days-notif';
+    notif.style.cssText = '--notif-accent:#cf0000;';
+    notif.innerHTML = `
+        <span class="achievement-icon" style="font-size:26px; line-height:1;">🗓️</span>
+        <div class="achievement-info">
+            <strong style="color:#ffd76a; letter-spacing:.06em;">RACHA DE LEYENDAS</strong>
+            <span>${current} / ${goal} días jugados esta temporada</span>
+        </div>
+    `;
+    document.body.appendChild(notif);
+    notif.classList.add('showing');
+    setTimeout(() => {
+        notif.classList.remove('showing');
+        setTimeout(() => notif.remove(), 300);
+    }, 3500);
+}
+
+/**
+ * Muestra la notificación especial de DESBLOQUEO cuando se alcanzan los 20 días.
+ * Aparece después de showSeasonDaysProgressNotif para no solaparse.
+ */
+function showRachaGanadoraUnlockNotif() {
+    setTimeout(() => {
+        const existing = document.querySelector('.season-unlock-notif');
+        if (existing) existing.remove();
+
+        const notif = document.createElement('div');
+        notif.className = 'achievement-notification season-unlock-notif';
+        notif.innerHTML = `
+            <span class="achievement-icon" style="font-size:28px; line-height:1;">🏆</span>
+            <div class="achievement-info">
+                <strong style="color:#ffd700; letter-spacing:.08em; text-transform:uppercase;">¡Racha Ganadora desbloqueada!</strong>
+                <span style="color:rgba(255,255,255,0.85);">Banner y Marco de Leyendas obtenidos</span>
+            </div>
+        `;
+        // Borde dorado para diferenciarlo del notif estándar
+        notif.style.cssText = 'border-color:rgba(255,215,0,0.6); box-shadow:0 0 20px rgba(255,215,0,0.25);';
+        document.body.appendChild(notif);
+        notif.classList.add('showing');
+        window.playSfx?.('reward', 0.9);
+        setTimeout(() => {
+            notif.classList.remove('showing');
+            setTimeout(() => notif.remove(), 300);
+        }, 4500);
+    }, 600);   // pequeño delay para que no aparezcan 2 notifs a la vez
+}
+
+/**
+ * Otorga los cosméticos de Racha Ganadora y muestra la notificación de desbloqueo.
+ * Idempotente: solo actúa si el jugador aún no los tiene.
+ */
+function unlockRachaGanadoraCosmetics() {
+    const banner = findBannerById(RACHA_GANADORA_BANNER_ID);
+    const frame = findCosmeticById(RACHA_GANADORA_FRAME_ID, 'frame');
+    const alreadyOwned = (banner && ownsBanner(banner)) && (frame && ownsCosmetic(frame, 'frame'));
+    if (alreadyOwned) return;
+
+    if (banner) setBannerOwned(banner);
+    if (frame) setFrameOwned(frame);
+    window.playSfx?.('spend');
+    showRachaGanadoraUnlockNotif();
+
+    // Refresca UI si la tienda está abierta
+    updateMenuHUD?.();
+    const content = document.getElementById('shopContent');
+    if (content && document.getElementById('shopPanel')?.style.display !== 'none') {
+        renderBannersPage(content);
+    }
+}
+
+/**
+ * Implementa el hook window.recordPlayDate que ya llama winGame() y
+ * showGameOverWithRevive() en src/main.js con optional chaining (?.).
+ *
+ * Lógica:
+ *  1. Detecta la temporada activa (usa GEM_SEASONS de seasons.config.js).
+ *  2. Registra el día actual como jugado en esa temporada.
+ *  3. Muestra progreso visual.
+ *  4. Si se alcanzan los 20 días → desbloquea los cosméticos.
+ *  5. También actualiza el array global 'playedDays' que usa getDaysPlayedCount() en ui.js.
+ */
+window.recordPlayDate = function () {
+    // ── 1. Actualizar playedDays global (para getDaysPlayedCount / ui.js) ──
+    try {
+        const today = getMissionDateKey();
+        const played = JSON.parse(localStorage.getItem('playedDays') || '[]');
+        if (!played.includes(today)) {
+            played.push(today);
+            localStorage.setItem('playedDays', JSON.stringify(played));
+            localStorage.setItem('lastPlayedAt', new Date().toISOString());
+        }
+    } catch (e) { /* silent */ }
+
+    // ── 2. Temporada activa ──
+    const activeSeasons = window.getActiveSeasons?.() || [];
+    if (activeSeasons.length === 0) return;
+    const season = activeSeasons[0];   // solo 1 activa a la vez por diseño
+
+    // ── 3. Registrar día en la temporada ──
+    const total = recordSeasonPlayDay(season.id);
+
+    // ── 4. Mostrar progreso (solo si aún no desbloqueado) ──
+    const banner = findBannerById(RACHA_GANADORA_BANNER_ID);
+    const alreadyOwned = banner && ownsBanner(banner);
+    if (!alreadyOwned && total <= RACHA_GANADORA_GOAL) {
+        showSeasonDaysProgressNotif(total, RACHA_GANADORA_GOAL);
+    }
+
+    // ── 5. Desbloquear si llegó a la meta ──
+    if (total >= RACHA_GANADORA_GOAL) {
+        unlockRachaGanadoraCosmetics();
+    }
+};
+
+/**
+ * Implementa el hook window.updateWinStreak que ya llama winGame().
+ * Por ahora solo trackea el metric 'win_streak' para el evento de temporada
+ * y actualiza la racha de victorias (readMissionStreak ya lo maneja internamente
+ * vía touchMissionSessionStreak — aquí solo exponemos el hook para que main.js
+ * no quede con un console warning de función no definida).
+ */
+window.updateWinStreak = function (won = true) {
+    if (!won) return;
+    touchMissionSessionStreak();   // actualiza la racha diaria de misiones
+    trackSeasonEventProgress('win_streak', 1);
+};
 
 function convertCoins() {
     const input = parseInt(document.getElementById('conv-input').value || '0');

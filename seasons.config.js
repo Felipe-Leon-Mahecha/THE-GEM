@@ -15,7 +15,7 @@ const GEM_SEASONS = {
         portadaPath: 'assets/Imagenes/Temporadas/Temp_Leyendas/Portada/portada_leyendas.png',
         lore: 'Los héroes olvidados del reino regresan. Nuevas skins, trails y recompensas exclusivas te esperan mientras dure el evento.',
         contains: {
-            skins: ['skin_solmerion', 'skin_zherath', 'skin_sombra_real'],
+            skins: ['skin_solmerion', 'skin_zherath', 'skin_sombra_real', 'daxor'],
             trails: ['trail_solmerion', 'trail_zherath'],
             banners: ['banner_leyendas_exclusivo', 'banner_leyendas_perla', 'banner_leyendas_rosaceo', 'banner_leyendas_campeones', 'banner_leyendas_racha_ganadora'],
             frames: ['Frame_Leyendas_Perla', 'Frame_Leyendas_Exclusivo', 'Frame_Leyendas_Rosaceo', 'Frame_Leyendas_Campeones', 'Frame_Leyendas_Racha_Ganadora', 'Frame_Leyendas_RubyPass_VIP', 'Frame_Leyendas_RubyPass_Free'],

@@ -54,41 +54,39 @@ window.GEM_BANNERS_CATALOG = {
         { id: 'Un_poco_de_hielo_VIP', name: 'Un poco de hielo', file: 'Un_poco_de_hielo_VIP.png', category: 'tienda_vip', price: 500, rarity: 'VIP', exclusive: true },
         { id: 'La_playa_relajante_VIP', name: 'La playa es relajante', file: 'Vacaciones_en_la playa_VIP.png', category: 'tienda_vip', price: 500, rarity: 'VIP', exclusive: true },
 
-        // Renombrados según mapeo final decidido (PENDIENTES_rarezas_temporadas.md / LISTA_COMPLETA_items_rareza.txt).
-        // Los ids se conservan (VIP_Placeholder_PNG_1, etc.) para no romper referencias existentes en shop.js/localStorage;
-        // solo cambia el "name" visible al jugador.
-        { id: 'VIP_Placeholder_PNG_1', name: 'Poder de la realeza', file: 'VIP_Placeholder_PNG_1.png', category: 'tienda_vip', price: 420, rarity: 'VIP', exclusive: true }, // -> Bundle Realeza
-        { id: 'VIP_Placeholder_PNG_2', name: 'El gran olimpo', file: 'VIP_Placeholder_PNG_2.png', category: 'tienda_vip', price: 420, rarity: 'VIP', exclusive: true }, // -> Bundle Dioses
-        { id: 'VIP_Placeholder_PNG_3', name: 'Nuestro mejor amigo', file: 'VIP_Placeholder_PNG_3.png', category: 'tienda_vip', price: 420, rarity: 'VIP', exclusive: true }, // -> Bundle Salvaje
-        { id: 'VIP_Placeholder_PNG_4', name: 'El antiguo Egipto', file: 'VIP_Placeholder_PNG_4.png', category: 'tienda_vip', price: 420, rarity: 'VIP', exclusive: true }, // -> Bundle Egipto
-        { id: 'VIP_Placeholder_PNG_5', name: 'Un circo tenebroso', file: 'VIP_Placeholder_PNG_5.png', category: 'tienda_vip', price: 420, rarity: 'VIP', exclusive: true }, // -> Bundle Circo
-        { id: 'VIP_Placeholder_GIF_1', name: 'Mucha risa?', file: 'VIP_Placeholder_GIF_1.gif', category: 'tienda_vip', price: 560, rarity: 'VIP', exclusive: true, animated: true }, // -> Paquete Emoji
-        { id: 'VIP_Placeholder_GIF_2', name: 'Espacio exterior', file: 'VIP_Placeholder_GIF_2.gif', category: 'tienda_vip', price: 560, rarity: 'VIP', exclusive: true, animated: true }, // -> Bundle Espacio
-        { id: 'VIP_Placeholder_GIF_3', name: 'Un lugar tranquilo', file: 'VIP_Placeholder_GIF_3.gif', category: 'tienda_vip', price: 560, rarity: 'VIP', exclusive: true, animated: true }, // -> futura temporada Naturaleza
-        { id: 'VIP_Placeholder_GIF_4', name: 'Corta unas sandias', file: 'VIP_Placeholder_GIF_4.gif', category: 'tienda_vip', price: 560, rarity: 'VIP', exclusive: true, animated: true }, // -> Bundle Comida
-        { id: 'VIP_Placeholder_GIF_5', name: 'Personalízame', file: 'VIP_Placeholder_GIF_5.gif', category: 'tienda_vip', price: 10000, rarity: 'VIP', exclusive: true, animated: true }, // -> feature standalone: banner personalizado, precio especial (10.000 gemas)
+        { id: 'VIP_Placeholder_PNG_1', name: 'Nubes moradas', file: 'VIP_Placeholder_PNG_1.png', category: 'tienda_vip', price: 420, rarity: 'VIP', exclusive: true },
+        { id: 'VIP_Placeholder_PNG_2', name: 'Tokio derrapes', file: 'VIP_Placeholder_PNG_2.png', category: 'tienda_vip', price: 420, rarity: 'VIP', exclusive: true },
+        { id: 'VIP_Placeholder_PNG_3', name: 'Rayas elegantes', file: 'VIP_Placeholder_PNG_3.png', category: 'tienda_vip', price: 420, rarity: 'VIP', exclusive: true },
+        { id: 'VIP_Placeholder_PNG_4', name: 'Electrico Yellow', file: 'VIP_Placeholder_PNG_4.png', category: 'tienda_vip', price: 420, rarity: 'VIP', exclusive: true },
+        { id: 'VIP_Placeholder_PNG_5', name: 'Te gusta el anime?', file: 'VIP_Placeholder_PNG_5.png', category: 'tienda_vip', price: 420, rarity: 'VIP', exclusive: true },
+        { id: 'VIP_Placeholder_GIF_1', name: 'Relax', file: 'VIP_Placeholder_GIF_1.gif', category: 'tienda_vip', price: 560, rarity: 'VIP', exclusive: true, animated: true },
+        { id: 'VIP_Placeholder_GIF_2', name: 'Bajo el agua', file: 'VIP_Placeholder_GIF_2.gif', category: 'tienda_vip', price: 560, rarity: 'VIP', exclusive: true, animated: true },
+        { id: 'VIP_Placeholder_GIF_3', name: 'Burbuja chiclosa', file: 'VIP_Placeholder_GIF_3.gif', category: 'tienda_vip', price: 560, rarity: 'VIP', exclusive: true, animated: true },
+        { id: 'VIP_Placeholder_GIF_4', name: 'Colores y mas colores', file: 'VIP_Placeholder_GIF_4.gif', category: 'tienda_vip', price: 560, rarity: 'VIP', exclusive: true, animated: true },
+        { id: 'VIP_Placeholder_GIF_5', name: 'Cuadricula pero en GIF', file: 'VIP_Placeholder_GIF_5.gif', category: 'tienda_vip', price: 560, rarity: 'VIP', exclusive: true, animated: true },
+        { id: 'Plush_Pro', name: 'Plush Pro!!!', file: 'Plush_Pro.gif', category: 'tienda_vip', price: 560, rarity: 'VIP', exclusive: true, animated: true },
 
-        { id: 'normal_placeholder_01', name: 'Normal Placeholder 01', autoIdFromName: true, file: 'banner_normal_placeholder_01.png', category: 'tienda_normal', price: 180, rarity: 'BASICO', exclusive: false },
-        { id: 'normal_placeholder_02', name: 'Normal Placeholder 02', autoIdFromName: true, file: 'banner_normal_placeholder_02.png', category: 'tienda_normal', price: 180, rarity: 'BASICO', exclusive: false },
-        { id: 'normal_placeholder_03', name: 'Normal Placeholder 03', autoIdFromName: true, file: 'banner_normal_placeholder_03.png', category: 'tienda_normal', price: 180, rarity: 'BASICO', exclusive: false },
-        { id: 'normal_placeholder_04', name: 'Normal Placeholder 04', autoIdFromName: true, file: 'banner_normal_placeholder_04.png', category: 'tienda_normal', price: 180, rarity: 'BASICO', exclusive: false },
-        { id: 'normal_placeholder_05', name: 'Normal Placeholder 05', autoIdFromName: true, file: 'banner_normal_placeholder_05.png', category: 'tienda_normal', price: 180, rarity: 'BASICO', exclusive: false },
-        { id: 'normal_placeholder_06', name: 'Normal Placeholder 06', autoIdFromName: true, file: 'banner_normal_placeholder_06.png', category: 'tienda_normal', price: 180, rarity: 'BASICO', exclusive: false },
-        { id: 'normal_placeholder_07', name: 'Normal Placeholder 07', autoIdFromName: true, file: 'banner_normal_placeholder_07.png', category: 'tienda_normal', price: 180, rarity: 'BASICO', exclusive: false },
-        { id: 'normal_placeholder_08', name: 'Normal Placeholder 08', autoIdFromName: true, file: 'banner_normal_placeholder_08.png', category: 'tienda_normal', price: 180, rarity: 'BASICO', exclusive: false },
-        { id: 'normal_placeholder_09', name: 'Normal Placeholder 09', autoIdFromName: true, file: 'banner_normal_placeholder_09.png', category: 'tienda_normal', price: 180, rarity: 'BASICO', exclusive: false },
-        { id: 'normal_placeholder_10', name: 'Normal Placeholder 10', autoIdFromName: true, file: 'banner_normal_placeholder_10.png', category: 'tienda_normal', price: 180, rarity: 'BASICO', exclusive: false },
+        { id: 'normal_placeholder_01', name: 'Estilo gamer I', autoIdFromName: true, file: 'banner_normal_placeholder_01.png', category: 'tienda_normal', price: 180, rarity: 'BASICO', exclusive: false },
+        { id: 'normal_placeholder_02', name: 'Plano cartografico', autoIdFromName: true, file: 'banner_normal_placeholder_02.png', category: 'tienda_normal', price: 180, rarity: 'BASICO', exclusive: false },
+        { id: 'normal_placeholder_03', name: 'Modo casual', autoIdFromName: true, file: 'banner_normal_placeholder_03.png', category: 'tienda_normal', price: 180, rarity: 'BASICO', exclusive: false },
+        { id: 'normal_placeholder_04', name: 'Puntos y mas puntos', autoIdFromName: true, file: 'banner_normal_placeholder_04.png', category: 'tienda_normal', price: 180, rarity: 'BASICO', exclusive: false },
+        { id: 'normal_placeholder_05', name: 'Pro gamer I', autoIdFromName: true, file: 'banner_normal_placeholder_05.png', category: 'tienda_normal', price: 180, rarity: 'BASICO', exclusive: false },
+        { id: 'normal_placeholder_06', name: 'Pro gamer II', autoIdFromName: true, file: 'banner_normal_placeholder_06.png', category: 'tienda_normal', price: 180, rarity: 'BASICO', exclusive: false },
+        { id: 'normal_placeholder_07', name: 'Estilo gamer II', autoIdFromName: true, file: 'banner_normal_placeholder_07.png', category: 'tienda_normal', price: 180, rarity: 'BASICO', exclusive: false },
+        { id: 'normal_placeholder_08', name: 'Un tipo sensillo', autoIdFromName: true, file: 'banner_normal_placeholder_08.png', category: 'tienda_normal', price: 180, rarity: 'BASICO', exclusive: false },
+        { id: 'normal_placeholder_09', name: 'Cruces', autoIdFromName: true, file: 'banner_normal_placeholder_09.png', category: 'tienda_normal', price: 180, rarity: 'BASICO', exclusive: false },
+        { id: 'normal_placeholder_10', name: 'Un muro...', autoIdFromName: true, file: 'banner_normal_placeholder_10.png', category: 'tienda_normal', price: 180, rarity: 'BASICO', exclusive: false },
 
-        { id: 'vip_placeholder_01', name: 'VIP Placeholder 01', autoIdFromName: true, file: 'banner_vip_placeholder_01.png', category: 'tienda_vip', price: 430, rarity: 'VIP', exclusive: true },
-        { id: 'vip_placeholder_02', name: 'VIP Placeholder 02', autoIdFromName: true, file: 'banner_vip_placeholder_02.png', category: 'tienda_vip', price: 430, rarity: 'VIP', exclusive: true },
-        { id: 'vip_placeholder_03', name: 'VIP Placeholder 03', autoIdFromName: true, file: 'banner_vip_placeholder_03.png', category: 'tienda_vip', price: 430, rarity: 'VIP', exclusive: true },
-        { id: 'vip_placeholder_04', name: 'VIP Placeholder 04', autoIdFromName: true, file: 'banner_vip_placeholder_04.png', category: 'tienda_vip', price: 430, rarity: 'VIP', exclusive: true },
-        { id: 'vip_placeholder_05', name: 'VIP Placeholder 05', autoIdFromName: true, file: 'banner_vip_placeholder_05.png', category: 'tienda_vip', price: 430, rarity: 'VIP', exclusive: true },
-        { id: 'vip_placeholder_06', name: 'VIP Placeholder 06', autoIdFromName: true, file: 'banner_vip_placeholder_06.png', category: 'tienda_vip', price: 430, rarity: 'VIP', exclusive: true },
-        { id: 'vip_placeholder_07', name: 'VIP Placeholder 07', autoIdFromName: true, file: 'banner_vip_placeholder_07.png', category: 'tienda_vip', price: 430, rarity: 'VIP', exclusive: true },
-        { id: 'vip_placeholder_08', name: 'VIP Placeholder 08', autoIdFromName: true, file: 'banner_vip_placeholder_08.png', category: 'tienda_vip', price: 430, rarity: 'VIP', exclusive: true },
-        { id: 'vip_placeholder_09', name: 'VIP Placeholder 09', autoIdFromName: true, file: 'banner_vip_placeholder_09.png', category: 'tienda_vip', price: 430, rarity: 'VIP', exclusive: true },
-        { id: 'vip_placeholder_10', name: 'VIP Placeholder 10', autoIdFromName: true, file: 'banner_vip_placeholder_10.png', category: 'tienda_vip', price: 430, rarity: 'VIP', exclusive: true },
+        { id: 'vip_placeholder_01', name: 'Plush Plus!!!', autoIdFromName: true, file: 'banner_vip_placeholder_01.png', category: 'tienda_vip', price: 430, rarity: 'VIP', exclusive: true },
+        { id: 'vip_placeholder_02', name: 'Creatividad pura', autoIdFromName: true, file: 'banner_vip_placeholder_02.png', category: 'tienda_vip', price: 430, rarity: 'VIP', exclusive: true },
+        { id: 'vip_placeholder_03', name: 'El flow de china', autoIdFromName: true, file: 'banner_vip_placeholder_03.png', category: 'tienda_vip', price: 430, rarity: 'VIP', exclusive: true },
+        { id: 'vip_placeholder_04', name: 'Lo mas pro que hubo', autoIdFromName: true, file: 'banner_vip_placeholder_04.png', category: 'tienda_vip', price: 430, rarity: 'VIP', exclusive: true },
+        { id: 'vip_placeholder_05', name: 'Estilo tipico', autoIdFromName: true, file: 'banner_vip_placeholder_05.png', category: 'tienda_vip', price: 430, rarity: 'VIP', exclusive: true },
+        { id: 'vip_placeholder_06', name: 'Siente el poder!', autoIdFromName: true, file: 'banner_vip_placeholder_06.png', category: 'tienda_vip', price: 430, rarity: 'VIP', exclusive: true },
+        { id: 'vip_placeholder_07', name: 'Para un amante de los autos', autoIdFromName: true, file: 'banner_vip_placeholder_07.png', category: 'tienda_vip', price: 430, rarity: 'VIP', exclusive: true },
+        { id: 'vip_placeholder_08', name: 'Algun dia asi terminare', autoIdFromName: true, file: 'banner_vip_placeholder_08.png', category: 'tienda_vip', price: 430, rarity: 'VIP', exclusive: true },
+        { id: 'vip_placeholder_09', name: 'Desde las raices...', autoIdFromName: true, file: 'banner_vip_placeholder_09.png', category: 'tienda_vip', price: 430, rarity: 'VIP', exclusive: true },
+        { id: 'vip_placeholder_10', name: 'Un sujeto peligroso', autoIdFromName: true, file: 'banner_vip_placeholder_10.png', category: 'tienda_vip', price: 430, rarity: 'VIP', exclusive: true },
 
         { id: 'banner_leyendas_exclusivo', name: 'Exclusivo de Leyendas', file: 'banner_leyendas_exclusivo.png', category: 'banners_temporada', price: 2000, priceGems: 140, rarity: 'ESPECIAL', exclusive: false, startsAt: '2026-07-01', expiresAt: '2027-02-28' },
         { id: 'banner_leyendas_perla', name: 'Perla de Leyendas', file: 'banner_leyendas_perla.png', category: 'banners_temporada', price: 1800, priceGems: 120, rarity: 'ESPECIAL', exclusive: false, startsAt: '2026-07-01', expiresAt: '2027-02-28' },
@@ -96,10 +94,10 @@ window.GEM_BANNERS_CATALOG = {
         { id: 'banner_leyendas_campeones', name: 'Campeones de Leyendas', file: 'banner_leyendas_campeones.png', category: 'banners_temporada', price: 0, missionOnly: true, rarity: 'DEMON', exclusive: false, startsAt: '2026-07-01', expiresAt: '2027-02-28' },
         { id: 'banner_leyendas_racha_ganadora', name: 'Racha Ganadora de Leyendas', file: 'banner_leyendas_racha_ganadora.png', category: 'banners_temporada', price: 0, missionOnly: true, rarity: 'DEMON', exclusive: false, startsAt: '2026-07-01', expiresAt: '2027-02-28' },
 
-        { id: 'nuevo_placeholder_01', name: 'Nuevo Placeholder 01', autoIdFromName: true, file: 'banner_nuevo_placeholder_01.png', category: 'banners_nuevos', finalCategory: 'tienda_normal', price: 220, rarity: 'BASICO', exclusive: false, addedAt: '2026-07-08', movesAt: '2026-09-08' },
-        { id: 'nuevo_placeholder_02', name: 'Nuevo Placeholder 02', autoIdFromName: true, file: 'banner_nuevo_placeholder_02.png', category: 'banners_nuevos', finalCategory: 'tienda_normal', price: 220, rarity: 'BASICO', exclusive: false, addedAt: '2026-07-08', movesAt: '2026-09-08' },
-        { id: 'nuevo_placeholder_03', name: 'Nuevo Placeholder 03', autoIdFromName: true, file: 'banner_nuevo_placeholder_03.png', category: 'banners_nuevos', finalCategory: 'tienda_normal', price: 220, rarity: 'BASICO', exclusive: false, addedAt: '2026-07-08', movesAt: '2026-09-08' },
-        { id: 'nuevo_placeholder_04', name: 'Nuevo Placeholder 04', autoIdFromName: true, file: 'banner_nuevo_placeholder_04.png', category: 'banners_nuevos', finalCategory: 'tienda_vip', price: 430, rarity: 'VIP', exclusive: true, addedAt: '2026-07-08', movesAt: '2026-09-08' },
-        { id: 'nuevo_placeholder_05', name: 'Nuevo Placeholder 05', autoIdFromName: true, file: 'banner_nuevo_placeholder_05.png', category: 'banners_nuevos', finalCategory: 'tienda_vip', price: 430, rarity: 'VIP', exclusive: true, addedAt: '2026-07-08', movesAt: '2026-09-08' }
+        { id: 'nuevo_placeholder_01', name: 'Paisaje chino', autoIdFromName: true, file: 'banner_nuevo_placeholder_01.png', category: 'banners_nuevos', finalCategory: 'tienda_normal', price: 220, rarity: 'BASICO', exclusive: false, addedAt: '2026-07-08', movesAt: '2026-09-08' },
+        { id: 'nuevo_placeholder_02', name: 'Ciudad de tokio', autoIdFromName: true, file: 'banner_nuevo_placeholder_02.png', category: 'banners_nuevos', finalCategory: 'tienda_normal', price: 220, rarity: 'BASICO', exclusive: false, addedAt: '2026-07-08', movesAt: '2026-09-08' },
+        { id: 'nuevo_placeholder_03', name: 'Una noche oscura', autoIdFromName: true, file: 'banner_nuevo_placeholder_03.png', category: 'banners_nuevos', finalCategory: 'tienda_normal', price: 220, rarity: 'BASICO', exclusive: false, addedAt: '2026-07-08', movesAt: '2026-09-08' },
+        { id: 'nuevo_placeholder_04', name: 'Tomate tu tiempo', autoIdFromName: true, file: 'banner_nuevo_placeholder_04.png', category: 'banners_nuevos', finalCategory: 'tienda_vip', price: 430, rarity: 'VIP', exclusive: true, addedAt: '2026-07-08', movesAt: '2026-09-08' },
+        { id: 'nuevo_placeholder_05', name: 'Un pueblo tranquilo', autoIdFromName: true, file: 'banner_nuevo_placeholder_05.png', category: 'banners_nuevos', finalCategory: 'tienda_vip', price: 430, rarity: 'VIP', exclusive: true, addedAt: '2026-07-08', movesAt: '2026-09-08' }
     ]
 };

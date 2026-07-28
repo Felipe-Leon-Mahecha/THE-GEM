@@ -84,7 +84,6 @@ skin_serpiente
 -- DEMON (puente, sigue siendo tienda normal/premium) --
 brifon
 kenji
-demon_ember
 daxor
 skin_fantasma
 skin_lobo_monstruo
