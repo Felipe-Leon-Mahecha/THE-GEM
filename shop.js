@@ -2829,7 +2829,8 @@ function openSeasonEventModal() {
 
     const completion = getSeasonEventCompletion();
     const state = readSeasonEventState();
-    const banner = BANNERS_DATA.find(b => b.id === config.rewardBannerId);
+    const banner = findCosmeticById(config.rewardBannerId, 'banner');
+    const frame = config.rewardFrameId ? findCosmeticById(config.rewardFrameId, 'frame') : null;
     const rarityColor = BANNER_RARITY_COLORS[banner?.rarity] || '#ffd76a';
 
     const overlay = document.createElement('div');
@@ -2846,13 +2847,29 @@ function openSeasonEventModal() {
                     <div class="season-event-info-panel" id="seasonEventInfoPanel">
                         <p>Se desbloquea al completar las ${completion.total} misiones del evento.</p>
                     </div>
-                    <div class="season-event-showcase-frame">
-                        ${banner?.cover
+                    <div class="season-event-showcase-rewards-row">
+                        <div class="season-event-showcase-reward-col">
+                            <div class="season-event-showcase-frame">
+                                ${banner?.cover
             ? `<div class="season-event-showcase-art" style="background-image:url('${banner.cover}');"></div>`
             : `<span class="season-event-showcase-placeholder">Vista previa</span>`}
+                            </div>
+                            <span class="season-event-showcase-reward-label">BANNER</span>
+                            <p class="season-event-showcase-name">${banner?.name || 'Banner de temporada'}</p>
+                            ${banner?.rarity ? `<span class="season-event-showcase-rarity">${banner.rarity}</span>` : ''}
+                        </div>
+                        ${frame ? `
+                        <div class="season-event-showcase-reward-col">
+                            <div class="season-event-showcase-frame">
+                                ${frame.imagen
+                ? `<div class="season-event-showcase-art" style="background-image:url('${frame.imagen}');"></div>`
+                : `<span class="season-event-showcase-placeholder">Vista previa</span>`}
+                            </div>
+                            <span class="season-event-showcase-reward-label">MARCO</span>
+                            <p class="season-event-showcase-name">${frame.name || 'Marco de temporada'}</p>
+                            ${frame.rarity ? `<span class="season-event-showcase-rarity">${frame.rarity}</span>` : ''}
+                        </div>` : ''}
                     </div>
-                    ${banner?.rarity ? `<span class="season-event-showcase-rarity">${banner.rarity}</span>` : ''}
-                    <p class="season-event-showcase-name">${banner?.name || 'Recompensa de temporada'}</p>
                     <p class="season-event-showcase-count">${completion.done}/${completion.total} misiones completadas</p>
                 </div>
                 <div class="season-event-mission-list">
@@ -2904,7 +2921,7 @@ function renderSeasonEventSectionHTML() {
     const startsAt = new Date(`${config.startsAt}T00:00:00`);
     const expiresAt = new Date(`${config.expiresAt}T23:59:59`);
     const state = readSeasonEventState();
-    const banner = BANNERS_DATA.find(b => b.id === config.rewardBannerId);
+    const banner = findCosmeticById(config.rewardBannerId, 'banner');
     const bannerPreview = banner?.cover
         ? `<div class="season-event-card-banner" style="background-image:url('${banner.cover}');"></div>`
         : '';
@@ -2977,6 +2994,65 @@ function renderSeasonEventSectionHTML() {
                         ${completion.allComplete && !state.claimed ? `<button class="season-event-btn is-claim" onclick="handleClaimSeasonEventReward()" type="button">Reclamar recompensa</button>` : ''}
                         ${state.claimed ? `<span class="season-event-card-claimed">Recompensa reclamada</span>` : ''}
                     </div>
+                </div>
+            </div>
+        </div>`;
+}
+
+/**
+ * Sección "04 RACHA DE TEMPORADA" — tarjeta persistente que muestra el progreso
+ * de días jugados hacia la meta de RACHA_GANADORA_GOAL (20 días).
+ * Solo se renderiza para la temporada 'leyendas' (RACHA_GANADORA_BANNER_ID y
+ * RACHA_GANADORA_FRAME_ID están hardcodeados a esa temporada).
+ *
+ * @param {object} season — el objeto season activo (de getActiveSeasons)
+ */
+function renderSeasonStreakSectionHTML(season) {
+    if (!season || season.id !== 'leyendas') return '';
+
+    const daysPlayed = getSeasonDaysPlayed(season.id);
+    const goal = RACHA_GANADORA_GOAL; // 20
+
+    // Verificar si la recompensa ya fue obtenida (ambos cosméticos desbloqueados)
+    const bannerItem = findBannerById(RACHA_GANADORA_BANNER_ID);
+    const frameItem = findCosmeticById(RACHA_GANADORA_FRAME_ID, 'frame');
+    const rewardClaimed = (bannerItem && ownsBanner(bannerItem)) && (frameItem && ownsCosmetic(frameItem, 'frame'));
+
+    const progressContent = rewardClaimed
+        ? `<span class="season-event-card-claimed">Recompensa obtenida</span>`
+        : (() => {
+            const filled = Math.min(daysPlayed, goal);
+            const gaugeHtml = Array.from({ length: goal }, (_, i) =>
+                `<i class="${i < filled ? 'on' : ''}"></i>`
+            ).join('');
+            return `
+                <div class="season-event-gauge-label">
+                    <span>Días jugados esta temporada</span>
+                    <b>${daysPlayed} / ${goal}</b>
+                </div>
+                <div class="season-event-gauge">${gaugeHtml}</div>
+            `;
+        })();
+
+    return `
+        <div class="section-header">
+            <span class="num">04</span><span class="line"></span>
+            <span class="txt">RACHA DE TEMPORADA</span>
+            <span class="fade"></span>
+        </div>
+        <div class="season-event-hero" style="--rarity-color:#b97bff;">
+            <div class="season-event-hazard"><span>RACHA GANADORA</span></div>
+            <div class="season-event-hero-body">
+                <div class="season-event-pedestal">
+                    <div class="season-event-pedestal-ring"></div>
+                    <div class="season-event-pedestal-ring2"></div>
+                    ${bannerItem?.cover ? `<div class="season-event-pedestal-art" style="background-image:url('${bannerItem.cover}');"></div>` : ''}
+                    ${bannerItem?.rarity ? `<span class="season-event-pedestal-tag">${bannerItem.rarity}</span>` : ''}
+                </div>
+                <div class="season-event-hero-info">
+                    <p class="season-event-hero-title">${bannerItem?.name || 'Racha Ganadora de Leyendas'}</p>
+                    <p class="season-event-hero-sub">Juega ${goal} días distintos durante la temporada para desbloquear el banner y marco exclusivos.</p>
+                    ${progressContent}
                 </div>
             </div>
         </div>`;
@@ -3354,6 +3430,7 @@ function renderShopSeasonsPage(container) {
         </div>
 
         ${renderSeasonEventSectionHTML()}
+        ${renderSeasonStreakSectionHTML(season)}
     `;
 }
 
@@ -10121,15 +10198,13 @@ window.recordPlayDate = function () {
 
 /**
  * Implementa el hook window.updateWinStreak que ya llama winGame().
- * Por ahora solo trackea el metric 'win_streak' para el evento de temporada
- * y actualiza la racha de victorias (readMissionStreak ya lo maneja internamente
- * vía touchMissionSessionStreak — aquí solo exponemos el hook para que main.js
- * no quede con un console warning de función no definida).
+ * Solo actualiza la racha de misiones diaria mediante touchMissionSessionStreak().
+ * El tracking de 'game_win' para el evento de temporada lo hace main.js directamente
+ * vía window.trackMissionProgress?.('game_win', 1) — no se duplica aquí.
  */
 window.updateWinStreak = function (won = true) {
     if (!won) return;
     touchMissionSessionStreak();   // actualiza la racha diaria de misiones
-    trackSeasonEventProgress('win_streak', 1);
 };
 
 function convertCoins() {
@@ -10659,3 +10734,114 @@ function renderCaronteKeyIcon(size = 'sm') {
     `;
 }
 window.renderCaronteKeyIcon = renderCaronteKeyIcon;
+
+
+// =====================================================
+// NOTIFICACIONES LOCALES DE TEMPORADA (Capacitor)
+// Avisa 1 día antes y en el día de inicio de cada temporada.
+// Solo corre en la app nativa (window._isCapacitor === true).
+// IDs reservados: 9000-9099 (para evitar conflictos con otras notifs).
+// =====================================================
+
+/**
+ * Programa notificaciones locales para el inicio de cada temporada.
+ * - 1 día antes a las 9:00 am: "¡Mañana comienza [displayName]!"
+ * - En el día a las 9:00 am:   "¡[displayName] ya está aquí!"
+ * Cancela primero cualquier notif pendiente en el rango 9000-9099
+ * antes de volver a programar, para evitar duplicados al reiniciar la app.
+ */
+async function scheduleSeasonNotifications() {
+    if (!window._isCapacitor) return;
+
+    const { LocalNotifications } = window.Capacitor.Plugins;
+    if (!LocalNotifications) {
+        console.warn('[SeasonNotifs] @capacitor/local-notifications no disponible en este entorno.');
+        return;
+    }
+
+    // ── 1. Pedir permiso ──────────────────────────────────────────────────
+    const perm = await LocalNotifications.requestPermissions();
+    if (perm?.display !== 'granted') {
+        console.info('[SeasonNotifs] Permiso de notificaciones no otorgado, se omite la programación.');
+        return;
+    }
+
+    // ── 2. Cancelar notifs anteriores del rango reservado ────────────────
+    const ID_START = 9000;
+    const ID_END = 9099;
+    try {
+        const pending = await LocalNotifications.getPending();
+        const toCancel = (pending?.notifications ?? [])
+            .filter(n => n.id >= ID_START && n.id <= ID_END)
+            .map(n => ({ id: n.id }));
+        if (toCancel.length > 0) {
+            await LocalNotifications.cancel({ notifications: toCancel });
+        }
+    } catch (e) {
+        console.warn('[SeasonNotifs] No se pudo cancelar notifs anteriores:', e);
+    }
+
+    // ── 3. Construir nuevas notificaciones ───────────────────────────────
+    const seasons = Object.values(window.GEM_SEASONS ?? {});
+    const now = new Date();
+    const scheduled = [];
+    let idCounter = ID_START;
+
+    for (const season of seasons) {
+        if (!season.startsAt || !season.displayName) continue;
+
+        const startDay = new Date(`${season.startsAt}T09:00:00`);
+        const dayBefore = new Date(startDay.getTime() - 24 * 60 * 60 * 1000);
+
+        // Notif "día antes" — solo si aún no pasó
+        if (dayBefore > now && idCounter <= ID_END) {
+            scheduled.push({
+                id: idCounter++,
+                title: 'THE GEM',
+                body: `¡Mañana comienza ${season.displayName}!`,
+                schedule: { at: dayBefore },
+                sound: null,
+                smallIcon: 'ic_stat_gem_notification'
+            });
+        }
+
+        // Notif "día de inicio" — solo si aún no pasó
+        if (startDay > now && idCounter <= ID_END) {
+            scheduled.push({
+                id: idCounter++,
+                title: 'THE GEM',
+                body: `¡${season.displayName} ya está aquí!`,
+                schedule: { at: startDay },
+                sound: null,
+                smallIcon: 'ic_stat_gem_notification'
+            });
+        }
+    }
+
+    if (scheduled.length === 0) {
+        console.info('[SeasonNotifs] Sin temporadas futuras para notificar.');
+        return;
+    }
+
+    // ── 4. Programar ──────────────────────────────────────────────────────
+    try {
+        await LocalNotifications.schedule({ notifications: scheduled });
+        console.info(`[SeasonNotifs] ${scheduled.length} notificación(es) programada(s).`);
+    } catch (e) {
+        console.error('[SeasonNotifs] Error al programar notificaciones:', e);
+    }
+}
+
+window.scheduleSeasonNotifications = scheduleSeasonNotifications;
+
+// ── Llamada al startup (solo en app nativa) ──────────────────────────────
+if (window._isCapacitor) {
+    // Esperar a que el DOM y GEM_SEASONS estén listos.
+    // seasons.config.js se carga antes que shop.js, así que window.GEM_SEASONS
+    // ya existe en este punto; el timeout es solo por si deviceready llega tarde.
+    setTimeout(() => {
+        scheduleSeasonNotifications().catch(e =>
+            console.warn('[SeasonNotifs] Error en startup:', e)
+        );
+    }, 1500);
+}

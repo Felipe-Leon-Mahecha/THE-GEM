@@ -15103,6 +15103,33 @@ body.performance-mode .hud-notify-dot {
     margin: 0;
 }
 
+/* Fila de recompensas del modal (banner + marco lado a lado) */
+.season-event-showcase-rewards-row {
+    display: flex;
+    flex-direction: row;
+    gap: 20px;
+    justify-content: center;
+    align-items: flex-start;
+    margin-bottom: 10px;
+}
+
+.season-event-showcase-reward-col {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+}
+
+.season-event-showcase-reward-label {
+    font-family: monospace;
+    font-size: 9px;
+    letter-spacing: 2.5px;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, .45);
+    margin-top: 4px;
+}
+
 .season-event-mission-list {
     display: grid;
     gap: 8px;
