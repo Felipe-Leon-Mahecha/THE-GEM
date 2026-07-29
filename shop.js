@@ -2752,25 +2752,51 @@ function getSeasonEventRewardTypeLabel(config) {
     return 'RECOMPENSA';
 }
 
-// Devuelve el tiempo restante del evento ya formateado para el chip.
-// Mientras falte más de 24hrs se muestra en días (como antes). Cuando
-// entra en las últimas 24hrs, cambia a horas para transmitir urgencia
-// (igual que hace el Ruby Pass con getRubyPassSeasonCountdown).
+// Devuelve el tiempo restante del evento ya formateado para el chip,
+// con label contextual dinámico según la urgencia.
 // Acepta un objeto evento del nuevo sistema (con .expiresAt) como
 // parámetro opcional; si no se pasa, cae al SEASON_EVENT_CONFIG legacy.
 function getSeasonEventCountdown(event = null) {
     const expiresAtStr = event?.expiresAt ?? window.SEASON_EVENT_CONFIG?.expiresAt;
-    if (!expiresAtStr) return { value: 0, unit: 'días', urgent: false };
+    if (!expiresAtStr) return { value: 0, unit: 'días', label: '', urgent: false };
     const now = new Date();
     const expiresAt = new Date(`${expiresAtStr}T23:59:59`);
     const diffMs = Math.max(0, expiresAt - now);
     const totalHours = diffMs / (1000 * 60 * 60);
+    const totalDays = Math.ceil(totalHours / 24);
 
-    // Urgent: últimas 24 horas O exactamente 1 día restante
+    // Últimas 24 horas — máxima urgencia
     if (totalHours <= 24) {
-        return { value: Math.max(1, Math.ceil(totalHours)), unit: totalHours <= 1 ? 'hora' : 'horas', urgent: true };
+        const h = Math.max(1, Math.ceil(totalHours));
+        const unit = totalHours <= 1 ? 'hora' : 'horas';
+        return {
+            value: h, unit,
+            label: `⚡ ¡ÚLTIMA OPORTUNIDAD! Solo ${h} ${unit} para reclamar tu recompensa`,
+            urgent: true
+        };
     }
-    return { value: Math.ceil(totalHours / 24), unit: 'días', urgent: false };
+    // 2 días — muy urgente
+    if (totalDays <= 2) {
+        return {
+            value: totalDays, unit: 'días',
+            label: `🔥 ¡ATENCIÓN! Quedan solo ${totalDays} día${totalDays > 1 ? 's' : ''} — ¡no lo dejes ir!`,
+            urgent: true
+        };
+    }
+    // 5 días o menos — advertencia
+    if (totalDays <= 5) {
+        return {
+            value: totalDays, unit: 'días',
+            label: `⏳ Quedan ${totalDays} días para que el evento termine`,
+            urgent: false
+        };
+    }
+    // Más de 5 días — motivacional
+    return {
+        value: totalDays, unit: 'días',
+        label: `🏆 El evento está activo — completa las misiones y reclama tu recompensa`,
+        urgent: false
+    };
 }
 
 function formatSeasonEventDate(dateStr) {
@@ -3059,7 +3085,7 @@ function renderSeasonEventsSectionHTML(season) {
                 <div class="season-event-hero-info">
                     <p class="season-event-hero-title">${event.name}</p>
                     <p class="season-event-hero-sub">${event.description}</p>
-                    <div class="season-event-timer-chip${countdown.urgent ? ' is-urgent' : ''}"><b>${countdown.value}</b><span>${countdown.unit} restantes</span></div>
+                    <div class="season-event-timer-chip${countdown.urgent ? ' is-urgent' : ''}"><b>${countdown.value}</b><span>${countdown.unit} restantes</span>${countdown.label ? `<span class="season-event-timer-label">${countdown.label}</span>` : ''}</div>
                     <div class="season-event-gauge-label"><span>Progreso de misiones</span><b>${completion.done}/${completion.total}</b></div>
                     <div class="season-event-gauge">${gaugeHtml}</div>
                     <div class="season-event-hero-actions">
@@ -3074,13 +3100,19 @@ function renderSeasonEventsSectionHTML(season) {
 
     const upcomingHTML = upcomingEvents.map(event => {
         const rewardsColsHTML = _buildEventRewardPreviewCols(event);
+        const daysUntil = Math.ceil((new Date(`${event.startsAt}T00:00:00`) - new Date()) / (1000 * 60 * 60 * 24));
+        const countdownText = daysUntil <= 1
+            ? `¡Comienza mañana — prepárate!`
+            : daysUntil <= 3
+                ? `🔥 ¡Llega en ${daysUntil} días! Calienta motores`
+                : `⚡ Comienza el ${formatSeasonEventDate(event.startsAt)} — ¡no te lo pierdas!`;
         return `
         <div class="season-event-card season-event-card--upcoming">
             <div class="season-event-card-copy">
-                <strong>PRÓXIMO EVENTO</strong>
+                <strong>⏰ PRÓXIMO EVENTO</strong>
                 <p>${event.name}</p>
-                <p>Comienza el ${formatSeasonEventDate(event.startsAt)}</p>
-                <small>Completa ${event.missions.length} misiones para desbloquear la recompensa exclusiva del evento.</small>
+                <p style="color:rgba(255,215,106,0.9);">${countdownText}</p>
+                <small>Completa ${event.missions.length} misiones y desbloquea la recompensa exclusiva del evento.</small>
             </div>
             <div style="display:flex; gap:10px; align-items:stretch; height:100%;">
                 ${rewardsColsHTML}
@@ -3093,15 +3125,17 @@ function renderSeasonEventsSectionHTML(season) {
     const endedHTML = pastSeasonEvents.map(event => {
         const state = readEventState(event.id);
         const rewardsColsHTML = _buildEventRewardPreviewCols(event);
+        const endedCopy = state.claimed
+            ? { title: '✅ EVENTO COMPLETADO', sub: `¡Lo lograste! Reclamaste tu recompensa en ${event.name}.` }
+            : { title: '💀 EVENTO EXPIRADO', sub: `El tiempo se acabó. La recompensa de ${event.name} quedó bloqueada.` };
         return `
         <div class="season-event-card season-event-card--ended">
             <div class="season-event-card-copy">
-                <strong>EVENTO FINALIZADO</strong>
-                <p>${event.name}</p>
-                <p>Terminó el ${formatSeasonEventDate(event.expiresAt)}</p>
-                <small>${state.claimed ? 'Reclamaste la recompensa a tiempo.' : 'La recompensa quedó bloqueada.'}</small>
+                <strong>${endedCopy.title}</strong>
+                <p>${endedCopy.sub}</p>
+                <small style="color:rgba(255,255,255,0.35);">Terminó el ${formatSeasonEventDate(event.expiresAt)}</small>
             </div>
-            <div style="display:flex; gap:10px; align-items:stretch; height:100%; opacity:${state.claimed ? '1' : '0.45'};">
+            <div style="display:flex; gap:10px; align-items:stretch; height:100%; opacity:${state.claimed ? '1' : '0.35'}; filter:${state.claimed ? 'none' : 'grayscale(0.6)'};">
                 ${rewardsColsHTML}
             </div>
         </div>`;
@@ -3273,6 +3307,12 @@ function renderSeasonEventSectionHTML() {
         : '';
 
     if (now < startsAt) {
+        const daysUntil = Math.ceil((startsAt - now) / (1000 * 60 * 60 * 24));
+        const countdownText = daysUntil <= 1
+            ? `¡Comienza mañana — prepárate!`
+            : daysUntil <= 3
+                ? `🔥 ¡Llega en ${daysUntil} días! Calienta motores`
+                : `⚡ Comienza el ${formatSeasonEventDate(config.startsAt)} — ¡no te lo pierdas!`;
         return `
         <div class="section-header">
             <span class="num">03</span><span class="line"></span>
@@ -3281,15 +3321,20 @@ function renderSeasonEventSectionHTML() {
         </div>
         <div class="season-event-card season-event-card--upcoming">
             <div class="season-event-card-copy">
-                <strong>PRÓXIMO EVENTO</strong>
-                <p>Comienza el ${formatSeasonEventDate(config.startsAt)}</p>
-                <small>Completa 6 misiones para desbloquear el banner exclusivo del evento.</small>
+                <strong>⏰ PRÓXIMO EVENTO</strong>
+                <p>${config.name || 'Evento de temporada'}</p>
+                <p style="color:rgba(255,215,106,0.9);">${countdownText}</p>
+                <small>Completa las misiones y desbloquea la recompensa exclusiva del evento.</small>
             </div>
             ${bannerPreview}
         </div>`;
     }
 
     if (now > expiresAt) {
+        const claimed = state.claimed || (newSystemEvent ? readEventState(newSystemEvent.id).claimed : false);
+        const endedCopy = claimed
+            ? { title: '✅ EVENTO COMPLETADO', sub: '¡Lo lograste! Reclamaste tu recompensa a tiempo.' }
+            : { title: '💀 EVENTO EXPIRADO', sub: 'El tiempo se acabó. La recompensa quedó bloqueada.' };
         return `
         <div class="section-header">
             <span class="num">03</span><span class="line"></span>
@@ -3298,9 +3343,9 @@ function renderSeasonEventSectionHTML() {
         </div>
         <div class="season-event-card season-event-card--ended">
             <div class="season-event-card-copy">
-                <strong>EVENTO FINALIZADO</strong>
-                <p>El evento terminó el ${formatSeasonEventDate(config.expiresAt)}.</p>
-                <small>${state.claimed ? 'Reclamaste la recompensa a tiempo.' : 'El banner queda bloqueado hasta el próximo evento.'}</small>
+                <strong>${endedCopy.title}</strong>
+                <p>${endedCopy.sub}</p>
+                <small style="color:rgba(255,255,255,0.35);">Terminó el ${formatSeasonEventDate(config.expiresAt)}</small>
             </div>
             ${bannerPreview}
         </div>`;
@@ -3332,7 +3377,7 @@ function renderSeasonEventSectionHTML() {
                 <div class="season-event-hero-info">
                     <p class="season-event-hero-title">${banner?.name || 'Recompensa de temporada'}</p>
                     <p class="season-event-hero-sub">Completa las misiones de temporada y desbloquea la recompensa exclusiva del evento.</p>
-                    <div class="season-event-timer-chip${countdown.urgent ? ' is-urgent' : ''}"><b>${countdown.value}</b><span>${countdown.unit} restantes</span></div>
+                    <div class="season-event-timer-chip${countdown.urgent ? ' is-urgent' : ''}"><b>${countdown.value}</b><span>${countdown.unit} restantes</span>${countdown.label ? `<span class="season-event-timer-label">${countdown.label}</span>` : ''}</div>
                     <div class="season-event-gauge-label"><span>Progreso de misiones</span><b>${completion.done}/${completion.total}</b></div>
                     <div class="season-event-gauge">${gaugeHtml}</div>
                     <div class="season-event-hero-actions">

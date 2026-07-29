@@ -29,7 +29,7 @@ const GEM_EVENTS = [
         seasonId: 'leyendas',
         name: 'Campeones de Leyendas',
         description: 'Completa las misiones de temporada y desbloquea la recompensa exclusiva del evento.',
-        startsAt: '2026-08-10',
+        startsAt: '2026-07-28',
         expiresAt: '2026-08-25',
         missions: [
             {
@@ -77,7 +77,7 @@ const GEM_EVENTS = [
         ],
         rewards: [
             { type: 'banner', id: 'banner_leyendas_campeones' },
-            { type: 'frame',  id: 'Frame_Leyendas_Campeones' }
+            { type: 'frame', id: 'Frame_Leyendas_Campeones' }
         ]
     }
 
@@ -105,7 +105,7 @@ window.GEM_EVENTS = GEM_EVENTS;
  */
 function getActiveEvents(now = new Date()) {
     return GEM_EVENTS.filter(ev => {
-        const startsAt  = new Date(`${ev.startsAt}T00:00:00`);
+        const startsAt = new Date(`${ev.startsAt}T00:00:00`);
         const expiresAt = new Date(`${ev.expiresAt}T23:59:59`);
         return now >= startsAt && now <= expiresAt;
     });
