@@ -1881,6 +1881,7 @@ window.showGameOverWithRevive = function () {
     setTimeout(() => flash.remove(), 300);
 
     // ── XP por supervivencia (solo en modo survival, si no se revivió) ──
+    const _comboBeforeGameOver = window.sessionMaxCombo || 0;
     try {
         const levelConfig = window.getCurrentLevelConfig ? window.getCurrentLevelConfig() : {};
         if (levelConfig.isSurvival && !window.reviveCount) {
@@ -1892,6 +1893,7 @@ window.showGameOverWithRevive = function () {
         console.warn('[GameOver] Error XP survival:', e);
     }
     // ── FIN XP ──────────────────────────────────────────────────────────
+    window.trackMissionBestValue?.('max_combo', _comboBeforeGameOver);
 
     // Contador de muertes por nivel (para la pantalla de selección de nivel)
     try {
@@ -1914,6 +1916,7 @@ window.showGameOverWithRevive = function () {
     window.updateWinStreak?.(false);
     window.recordPlayDate?.();
     window.trackMissionProgress?.('games_played', 1);
+    window.trackMissionProgress?.('playtime_seconds', Math.floor(window.gameTimer || 0));
 
     const go = document.getElementById('gameOver');
     const goTexts = window.GEM_CONFIG?.textos?.gameOver;
@@ -2088,6 +2091,7 @@ function winGame() {
         }
 
         // Resetear combo de sesión para la próxima partida
+        window.trackMissionBestValue?.('max_combo', window.sessionMaxCombo || 0);
         window.sessionMaxCombo = 0;
     } catch (e) {
         console.warn('[winGame] Error calculando XP:', e);
@@ -2117,6 +2121,7 @@ function winGame() {
 
     window.trackMissionProgress?.('game_win', 1);
     window.trackMissionProgress?.('games_played', 1);
+    window.trackMissionProgress?.('playtime_seconds', Math.floor(window.gameTimer || 0));
 
     let wins = parseInt(localStorage.getItem('gamesWon') || '0');
     wins++;

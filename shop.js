@@ -3714,6 +3714,7 @@ function renderSkinCard(s, equipped) {
 }
 
 function equipSkin(id) {
+    window.trackMissionUniqueValue?.('skin_equip_distinct', id);
     localStorage.setItem('equippedSkin', id);
     updateEquippedSkinPreview();
     renderSkinsPage(document.getElementById('shopContent'));
@@ -9727,6 +9728,58 @@ function trackSeasonEventProgress(metric, amount = 1) {
     saveSeasonEventState(state);
 }
 
+// Modo MEJOR VALOR: guarda el máximo histórico para la métrica dada.
+// Nunca baja aunque lleguen valores menores después.
+function trackSeasonEventBestValue(metric, value) {
+    if (!window.isSeasonEventActive?.()) return;
+    const config = window.SEASON_EVENT_CONFIG;
+    if (!config) return;
+    const mission = config.missions.find(m => m.metric === metric);
+    if (!mission) return;
+
+    const state = readSeasonEventState();
+    if (state.eventId !== config.id) {
+        state.eventId = config.id;
+        state.progress = {};
+        state.claimed = false;
+    }
+    const current = parseFloat(state.progress[metric]) || 0;
+    if (value > current) {
+        state.progress[metric] = Math.min(mission.goal, value);
+        saveSeasonEventState(state);
+    }
+}
+window.trackSeasonEventBestValue = trackSeasonEventBestValue;
+
+// Modo VALORES ÚNICOS: cuenta cuántos valores distintos se han visto.
+// La lista se guarda en state.uniqueSets[metric]; state.progress[metric]
+// refleja el conteo como número para que getSeasonEventMissionProgress
+// lo lea igual que cualquier otra misión.
+function trackSeasonEventUniqueValue(metric, value) {
+    if (!window.isSeasonEventActive?.()) return;
+    const config = window.SEASON_EVENT_CONFIG;
+    if (!config) return;
+    const mission = config.missions.find(m => m.metric === metric);
+    if (!mission) return;
+
+    const state = readSeasonEventState();
+    if (state.eventId !== config.id) {
+        state.eventId = config.id;
+        state.progress = {};
+        state.uniqueSets = {};
+        state.claimed = false;
+    }
+    if (!state.uniqueSets) state.uniqueSets = {};
+    if (!state.uniqueSets[metric]) state.uniqueSets[metric] = [];
+
+    if (!state.uniqueSets[metric].includes(value)) {
+        state.uniqueSets[metric].push(value);
+        state.progress[metric] = Math.min(mission.goal, state.uniqueSets[metric].length);
+        saveSeasonEventState(state);
+    }
+}
+window.trackSeasonEventUniqueValue = trackSeasonEventUniqueValue;
+
 function getSeasonEventCompletion() {
     const config = window.SEASON_EVENT_CONFIG;
     if (!config) return { done: 0, total: 0, allComplete: false };
@@ -9828,6 +9881,27 @@ function trackMissionProgress(metric, amount = 1) {
     state.progress[metric] = Math.max(0, (parseFloat(state.progress[metric]) || 0) + amount);
     saveMissionState(state);
 }
+
+// Modo MEJOR VALOR: guarda el máximo histórico para la métrica dada en
+// shopMissionsState_v1. Delega también al evento de temporada.
+function trackMissionBestValue(metric, value) {
+    window.trackSeasonEventBestValue?.(metric, value);
+    const state = readMissionState();
+    const current = parseFloat(state.progress[metric]) || 0;
+    if (value > current) {
+        state.progress[metric] = value;
+        saveMissionState(state);
+    }
+}
+window.trackMissionBestValue = trackMissionBestValue;
+
+// Modo VALORES ÚNICOS: pasador hacia el evento de temporada.
+// No modifica shopMissionsState_v1 porque no hay misiones diarias de
+// este tipo todavía — el conteo real vive en seasonEventState_v1.
+function trackMissionUniqueValue(metric, value) {
+    window.trackSeasonEventUniqueValue?.(metric, value);
+}
+window.trackMissionUniqueValue = trackMissionUniqueValue;
 
 function trackMissionDistance(px = 0) {
     if (!px || px < 0.2) return;
