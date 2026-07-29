@@ -4471,6 +4471,7 @@ function openChestReward(chest) {
 
 function showChestResult(chest) {
     const { coins, gems, drop, caronteKey } = openChestReward(chest);
+    window.trackMissionProgress?.('chest_open', 1);
     const rewardView = getChestRewardView(drop, coins, gems);
     const currencyHTML = renderCurrencyRewardPiles({ coins, gems });
     window.playSfx?.('reward');
@@ -7364,6 +7365,7 @@ function openInventoryChestAmount(id, amount) {
         summary.drops[result.drop] = (summary.drops[result.drop] || 0) + 1;
         if (result.caronteKey) summary.caronteKeys++;
     }
+    window.trackMissionProgress?.('chest_open', total);
     window.playSfx?.('reward');
     showInventorySection('cofres');
     const caronteKeyHTML = summary.caronteKeys > 0

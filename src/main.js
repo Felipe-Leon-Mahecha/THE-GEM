@@ -620,6 +620,9 @@ window.hitFlash = 0;
 
 window.worldRotation = 0
 window.worldChangeTimer = 180;
+// Checkpoint para detectar vueltas completas al circuito (circuit_lap).
+// null = aún no inicializado. Vive solo en memoria, no se persiste.
+let lastLapCheckRotation = null;
 
 // =====================================================
 // GAME
@@ -710,6 +713,21 @@ function update() {
     }
     window.worldRotationSpeed += (window.targetWorldSpeed - window.worldRotationSpeed) * 0.02;
     window.worldRotation += window.worldRotationSpeed;
+
+    // --- MISSION HOOK: circuit_lap ---
+    if (lastLapCheckRotation === null) {
+        // Primera ejecución: fija el punto de partida sin contar nada retroactivo.
+        lastLapCheckRotation = window.worldRotation;
+    } else {
+        const delta = Math.abs(window.worldRotation - lastLapCheckRotation);
+        const lapsCompleted = Math.floor(delta / (Math.PI * 2));
+        if (lapsCompleted > 0) {
+            window.trackMissionProgress?.('circuit_lap', lapsCompleted);
+            const direction = Math.sign(window.worldRotation - lastLapCheckRotation) || 1;
+            lastLapCheckRotation += lapsCompleted * (Math.PI * 2) * direction;
+        }
+    }
+    // --- FIN circuit_lap ---
 
     // PLAYER MOVEMENT
     let moveDir = 1;
@@ -1895,6 +1913,7 @@ window.showGameOverWithRevive = function () {
     window.playSfx?.('gameOver', 0.9);
     window.updateWinStreak?.(false);
     window.recordPlayDate?.();
+    window.trackMissionProgress?.('games_played', 1);
 
     const go = document.getElementById('gameOver');
     const goTexts = window.GEM_CONFIG?.textos?.gameOver;
@@ -2097,6 +2116,7 @@ function winGame() {
     }
 
     window.trackMissionProgress?.('game_win', 1);
+    window.trackMissionProgress?.('games_played', 1);
 
     let wins = parseInt(localStorage.getItem('gamesWon') || '0');
     wins++;

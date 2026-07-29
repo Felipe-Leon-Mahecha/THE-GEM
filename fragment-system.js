@@ -32,12 +32,12 @@ const FRAGMENT_CONFIG = {
 let fragmentSystem = {
     // Colección de fragmentos del jugador
     collection: {},
-    
+
     // Inicializar sistema
     init() {
         // RESET DE PRUEBA DESACTIVADO - Tu progreso ahora es permanente
         // this.resetAllForTesting();
-        
+
         this.loadCollection();
         this.syncWithGlobalInventory();
     },
@@ -60,7 +60,7 @@ let fragmentSystem = {
         console.log("Reiniciando todo para pruebas...");
         this.collection = {};
         this.saveCollection();
-        
+
         Object.keys(localStorage).forEach(key => {
             if (key.startsWith('skin_') && key !== 'skin_cyan') localStorage.removeItem(key);
             if (key.startsWith('emote_')) localStorage.removeItem(key);
@@ -74,7 +74,7 @@ let fragmentSystem = {
         this.collection = {};
         this.saveCollection();
     },
-    
+
     // Cargar colección desde localStorage
     loadCollection() {
         try {
@@ -89,71 +89,71 @@ let fragmentSystem = {
             this.collection = {};
         }
     },
-    
+
     // Guardar colección en localStorage
     saveCollection() {
         localStorage.setItem(FRAGMENT_STORAGE_KEY, JSON.stringify(this.collection));
     },
-    
+
     // Añadir un fragmento a un item
     addFragment(itemId, fragmentIndex) {
         if (!this.collection[itemId]) {
             this.collection[itemId] = { fragments: [], unlocked: false };
         }
-        
+
         const item = this.collection[itemId];
-        
+
         // Evitar duplicados
         if (item.fragments.includes(fragmentIndex)) {
             return { success: false, message: 'Ya tienes este fragmento' };
         }
-        
+
         item.fragments.push(fragmentIndex);
-        
+
         // Verificar desbloqueo completo
         if (item.fragments.length >= 4) {
             item.unlocked = true;
-            
+
             // Marcar como poseído inmediatamente
             const info = this.getItemInfo(itemId);
             if (info) {
                 const storageKey = info.type === 'skin' ? `skin_${itemId}` : `emote_${itemId}`;
                 localStorage.setItem(storageKey, 'true');
             }
-            
+
             this.saveCollection();
             // Notificar a la tienda que actualice su vista si está abierta
             if (window.SKINS_DATA) window.SKINS_DATA = window.getAllShopSkins?.() || window.SKINS_DATA;
-            
+
             return { success: true, unlocked: true, itemId };
         }
-        
+
         this.saveCollection();
         return { success: true, unlocked: false, fragmentIndex, totalFragments: item.fragments.length };
     },
-    
+
     // Verificar si un item está desbloqueado
     isItemUnlocked(itemId) {
         return this.collection[itemId]?.unlocked || false;
     },
-    
+
     // Obtener información de un item
     getItemInfo(itemId) {
         const allItems = [...FRAGMENT_CONFIG.skins, ...FRAGMENT_CONFIG.emotes];
         return allItems.find(item => item.id === itemId);
     },
-    
+
     // Obtener todos los items disponibles
     getAllItems() {
         return [...FRAGMENT_CONFIG.skins, ...FRAGMENT_CONFIG.emotes];
     },
-    
+
     // Obtener progreso de fragmentos de un item (0-4)
     getFragmentProgress(itemId) {
         const item = this.collection[itemId];
         return item ? item.fragments.length : 0;
     },
-    
+
     // Obtener array de 4 posiciones indicando qué fragmentos tiene (true/false)
     getFragmentArray(itemId) {
         const item = this.collection[itemId];
@@ -171,7 +171,7 @@ let fragmentSystem = {
 function showFragmentNotification(itemId, fragmentIndex, totalFragments) {
     const itemInfo = fragmentSystem.getItemInfo(itemId);
     if (!itemInfo) return;
-    
+
     const notification = document.createElement('div');
     notification.style.cssText = `
         position: fixed; top: 20px; right: 20px; z-index: 40000;
@@ -180,7 +180,7 @@ function showFragmentNotification(itemId, fragmentIndex, totalFragments) {
         display: flex; align-items: center; gap: 16px; transform: translateX(400px);
         transition: transform 0.3s, opacity 0.3s; opacity: 0; box-shadow: 0 0 40px #FFD70066;
     `;
-    
+
     notification.innerHTML = `
         <div style="font-size: 36px; filter: drop-shadow(0 0 12px #FFD70099);">🧩</div>
         <div style="display: flex; flex-direction: column; gap: 4px;">
@@ -189,7 +189,7 @@ function showFragmentNotification(itemId, fragmentIndex, totalFragments) {
             <span style="color: rgba(255,255,255,0.6); font-family: monospace; font-size: 11px;">Progreso: ${totalFragments}/4</span>
         </div>
     `;
-    
+
     document.body.appendChild(notification);
     setTimeout(() => { notification.style.transform = 'translateX(0)'; notification.style.opacity = '1'; }, 100);
     window.playSfx?.('reward', 0.7);
@@ -202,7 +202,7 @@ function showFragmentNotification(itemId, fragmentIndex, totalFragments) {
 function showItemUnlockedNotification(itemId) {
     const itemInfo = fragmentSystem.getItemInfo(itemId);
     if (!itemInfo) return;
-    
+
     const notification = document.createElement('div');
     notification.style.cssText = `
         position: fixed; top: 20px; right: 20px; z-index: 40000;
@@ -212,8 +212,8 @@ function showItemUnlockedNotification(itemId) {
         transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.3s;
         opacity: 0; box-shadow: 0 0 50px rgba(255, 215, 0, 0.3); min-width: 300px;
     `;
-    
-    const imageHtml = itemInfo.image ? 
+
+    const imageHtml = itemInfo.image ?
         `<div style="width: 60px; height: 60px; background: rgba(255,215,0,0.1); border: 1px solid #FFD70044; border-radius: 12px; display: grid; place-items: center; overflow: hidden;">
             <img src="${itemInfo.image}" style="width: 80%; height: 80%; object-fit: contain;">
         </div>` : `<div style="font-size: 40px;">🎉</div>`;
@@ -226,7 +226,7 @@ function showItemUnlockedNotification(itemId) {
             <span style="color: rgba(255,255,255,0.6); font-family: monospace; font-size: 11px;">Ya disponible en tu inventario</span>
         </div>
     `;
-    
+
     document.body.appendChild(notification);
     setTimeout(() => { notification.style.transform = 'translateX(0)'; notification.style.opacity = '1'; }, 100);
     window.playSfx?.('reward', 0.9);
@@ -239,16 +239,17 @@ function showItemUnlockedNotification(itemId) {
 function grantRandomFragment() {
     const availableItems = fragmentSystem.getAllItems().filter(item => !fragmentSystem.isItemUnlocked(item.id));
     if (availableItems.length === 0) return { success: false, message: 'Ya tienes todos los fragmentos' };
-    
+
     const randomItem = availableItems[Math.floor(Math.random() * availableItems.length)];
     const fragmentArray = fragmentSystem.getFragmentArray(randomItem.id);
     const availableIndices = fragmentArray.map((has, i) => has ? -1 : i).filter(i => i >= 0);
     const realRandomIdx = availableIndices[Math.floor(Math.random() * availableIndices.length)];
-    
+
     const result = fragmentSystem.addFragment(randomItem.id, realRandomIdx);
     if (result.success) {
         if (result.unlocked) showItemUnlockedNotification(randomItem.id);
         else showFragmentNotification(randomItem.id, realRandomIdx, result.totalFragments);
+        window.trackMissionProgress?.('skin_fragment_collect', 1);
     }
     return result;
 }
@@ -258,6 +259,7 @@ function grantSpecificFragment(itemId, index) {
     if (result.success) {
         if (result.unlocked) showItemUnlockedNotification(itemId);
         else showFragmentNotification(itemId, index, result.totalFragments);
+        window.trackMissionProgress?.('skin_fragment_collect', 1);
     }
     return result;
 }
@@ -267,14 +269,14 @@ function renderFragmentProgressBar(itemId) {
     const progress = fragmentSystem.getFragmentProgress(itemId);
     const fragmentArray = fragmentSystem.getFragmentArray(itemId);
     const isUnlocked = fragmentSystem.isItemUnlocked(itemId);
-    
+
     if (isUnlocked) {
         return `<div style="width:100%; height:26px; background:rgba(0,255,231,0.1); border:1px solid rgba(0,255,231,0.3); border-radius:8px; display:flex; align-items:center; justify-content:center; gap:3px; padding:3px;">
             ${fragmentArray.map(() => `<div style="flex:1; height:100%; background:#00ffe7; border-radius:4px;"></div>`).join('')}
             <span style="color:#00ffe7; font-family:Geom; font-size:11px; font-weight:bold; margin-left:4px;">✓</span>
         </div>`;
     }
-    
+
     return `<div style="width:100%; height:26px; background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.1); border-radius:8px; display:flex; align-items:center; justify-content:center; gap:3px; padding:3px; position:relative;">
         ${fragmentArray.map(has => `<div style="flex:1; height:100%; background:${has ? 'linear-gradient(to bottom, #FFD700, #b8860b)' : 'rgba(255,255,255,0.05)'}; border-radius:4px;"></div>`).join('')}
         <div style="position:absolute; width:100%; height:100%; display:flex; align-items:center; justify-content:center; pointer-events:none;">

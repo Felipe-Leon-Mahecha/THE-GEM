@@ -600,6 +600,7 @@ function activateDashPowerupSlot(slotIndex, powerup, state) {
     runPowerupEffect(slot.id, level, 0, slotIndex);
     window.playSfx?.('powerUp', 0.75);
     window.trackMissionProgress?.('powerup_use', 1);
+    window.trackMissionProgress?.('dash_use', 1);
     return true;
 }
 
