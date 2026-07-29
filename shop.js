@@ -2733,7 +2733,11 @@ function getSeasonEventMissionProgress(mission) {
     if (mission.metric === 'rubypass_premium_level_check') {
         return Math.min(mission.goal, getCurrentRubyPassPremiumLevel());
     }
-    const state = readSeasonEventState();
+    const config = window.SEASON_EVENT_CONFIG;
+    // Si este evento existe en el nuevo sistema, leer desde gemEventsState_v1
+    const state = (config && (window.GEM_EVENTS || []).some(e => e.id === config.id))
+        ? readEventState(config.id)
+        : readSeasonEventState();
     return Math.min(mission.goal, parseFloat(state.progress?.[mission.metric]) || 0);
 }
 
@@ -2752,15 +2756,18 @@ function getSeasonEventRewardTypeLabel(config) {
 // Mientras falte más de 24hrs se muestra en días (como antes). Cuando
 // entra en las últimas 24hrs, cambia a horas para transmitir urgencia
 // (igual que hace el Ruby Pass con getRubyPassSeasonCountdown).
-function getSeasonEventCountdown() {
-    const config = window.SEASON_EVENT_CONFIG;
-    if (!config) return { value: 0, unit: 'días' };
+// Acepta un objeto evento del nuevo sistema (con .expiresAt) como
+// parámetro opcional; si no se pasa, cae al SEASON_EVENT_CONFIG legacy.
+function getSeasonEventCountdown(event = null) {
+    const expiresAtStr = event?.expiresAt ?? window.SEASON_EVENT_CONFIG?.expiresAt;
+    if (!expiresAtStr) return { value: 0, unit: 'días', urgent: false };
     const now = new Date();
-    const expiresAt = new Date(`${config.expiresAt}T23:59:59`);
+    const expiresAt = new Date(`${expiresAtStr}T23:59:59`);
     const diffMs = Math.max(0, expiresAt - now);
     const totalHours = diffMs / (1000 * 60 * 60);
 
-    if (totalHours < 24) {
+    // Urgent: últimas 24 horas O exactamente 1 día restante
+    if (totalHours <= 24) {
         return { value: Math.max(1, Math.ceil(totalHours)), unit: totalHours <= 1 ? 'hora' : 'horas', urgent: true };
     }
     return { value: Math.ceil(totalHours / 24), unit: 'días', urgent: false };
@@ -3249,6 +3256,12 @@ window.openEventsHistoryModal = openEventsHistoryModal;
 function renderSeasonEventSectionHTML() {
     // @legacy — mantiene el evento único de SEASON_EVENT_CONFIG activo.
     // Para nuevos eventos usar renderSeasonEventsSectionHTML(season).
+    const config = window.SEASON_EVENT_CONFIG;
+    if (!config) return '';
+
+    // Para el estado activo, redirigir al nuevo sistema si el evento existe en GEM_EVENTS,
+    // así el checklist y el reclamo usan gemEventsState_v1 en vez del storage viejo.
+    const newSystemEvent = (window.GEM_EVENTS || []).find(e => e.id === config.id);
 
     const now = new Date();
     const startsAt = new Date(`${config.startsAt}T00:00:00`);
@@ -3323,8 +3336,8 @@ function renderSeasonEventSectionHTML() {
                     <div class="season-event-gauge-label"><span>Progreso de misiones</span><b>${completion.done}/${completion.total}</b></div>
                     <div class="season-event-gauge">${gaugeHtml}</div>
                     <div class="season-event-hero-actions">
-                        <button class="season-event-btn" onclick="openSeasonEventModal()" type="button">Ver checklist</button>
-                        ${completion.allComplete && !state.claimed ? `<button class="season-event-btn is-claim" onclick="handleClaimSeasonEventReward()" type="button">Reclamar recompensa</button>` : ''}
+                        <button class="season-event-btn" onclick="${newSystemEvent ? `openEventModal('${newSystemEvent.id}')` : 'openSeasonEventModal()'}" type="button">Ver checklist</button>
+                        ${completion.allComplete && !state.claimed ? `<button class="season-event-btn is-claim" onclick="${newSystemEvent ? `handleClaimEventReward('${newSystemEvent.id}')` : 'handleClaimSeasonEventReward()'}" type="button">Reclamar recompensa</button>` : ''}
                         ${state.claimed ? `<span class="season-event-card-claimed">Recompensa reclamada</span>` : ''}
                     </div>
                 </div>
@@ -10232,7 +10245,10 @@ window.trackEventUniqueValue = trackEventUniqueValue;
 function getSeasonEventCompletion() {
     const config = window.SEASON_EVENT_CONFIG;
     if (!config) return { done: 0, total: 0, allComplete: false };
-    const state = readSeasonEventState();
+    // Si este evento existe en el nuevo sistema, leer desde gemEventsState_v1
+    const state = (window.GEM_EVENTS || []).some(e => e.id === config.id)
+        ? readEventState(config.id)
+        : readSeasonEventState();
     let done = 0;
     config.missions.forEach(m => {
         const current = m.metric === 'rubypass_level_check'
@@ -10442,7 +10458,12 @@ function getMissionReadyCount() {
         return progress >= mission.goal && state.claimed[mission.id] !== true;
     }).length;
     const streakReady = MISSION_STREAK_REWARDS.filter(reward => streak.count >= reward.day && streak.claimed[reward.day] !== true).length;
-    return missionReady + streakReady;
+    // Eventos activos con todas las misiones completas y sin reclamar
+    const eventsReady = (window.getActiveEvents?.() || []).filter(ev => {
+        const { allComplete } = getEventCompletion(ev.id);
+        return allComplete && !readEventState(ev.id).claimed;
+    }).length;
+    return missionReady + streakReady + eventsReady;
 }
 
 function updateMissionBadge() {
