@@ -11502,7 +11502,65 @@ async function scheduleSeasonNotifications() {
 
 window.scheduleSeasonNotifications = scheduleSeasonNotifications;
 
-// ── Llamada al startup (solo en app nativa) ──────────────────────────────
+// =====================================================
+// PARTE A — Respaldo navegador (SOLO para pruebas en desktop)
+// Usa la Web Notification API estándar. Nunca corre en la app nativa.
+// Programa un setTimeout real hasta la fecha, así que solo es útil
+// para temporadas que empiezan HOY o MAÑANA (pestaña debe quedar abierta).
+// =====================================================
+
+async function scheduleSeasonNotificationsBrowserFallback() {
+    if (window._isCapacitor) return; // solo para navegador
+
+    if (!('Notification' in window)) {
+        console.warn('[SeasonNotifs-Browser] Este navegador no soporta la API Notification.');
+        return;
+    }
+
+    const permission = await Notification.requestPermission();
+    if (permission !== 'granted') {
+        console.warn('[SeasonNotifs-Browser] Permiso de notificaciones denegado.');
+        return;
+    }
+
+    const seasons = Object.values(window.GEM_SEASONS || {});
+    const now = new Date();
+    let scheduled = 0;
+
+    seasons.forEach(season => {
+        if (!season.startsAt || !season.displayName) return;
+
+        const startsAt = new Date(`${season.startsAt}T09:00:00`);
+        const dayBefore = new Date(startsAt);
+        dayBefore.setDate(dayBefore.getDate() - 1);
+
+        if (dayBefore > now) {
+            const msUntil = dayBefore - now;
+            setTimeout(() => {
+                new Notification('THE GEM', { body: `¡Mañana comienza ${season.displayName}!` });
+            }, msUntil);
+            scheduled++;
+        }
+
+        if (startsAt > now) {
+            const msUntil = startsAt - now;
+            setTimeout(() => {
+                new Notification('THE GEM', { body: `¡${season.displayName} ya está aquí!` });
+            }, msUntil);
+            scheduled++;
+        }
+    });
+
+    if (scheduled > 0) {
+        console.info(`[SeasonNotifs-Browser] ${scheduled} notificación(es) programada(s) vía setTimeout.`);
+    } else {
+        console.info('[SeasonNotifs-Browser] Sin temporadas futuras para notificar.');
+    }
+}
+
+window.scheduleSeasonNotificationsBrowserFallback = scheduleSeasonNotificationsBrowserFallback;
+
+// ── Llamada al startup ───────────────────────────────────────────────────
 if (window._isCapacitor) {
     // Esperar a que el DOM y GEM_SEASONS estén listos.
     // seasons.config.js se carga antes que shop.js, así que window.GEM_SEASONS
@@ -11512,4 +11570,55 @@ if (window._isCapacitor) {
             console.warn('[SeasonNotifs] Error en startup:', e)
         );
     }, 1500);
+} else {
+    scheduleSeasonNotificationsBrowserFallback();
 }
+
+// =====================================================
+// PARTE B — Función de prueba manual (dispara en 10 segundos)
+// Funciona en AMBOS contextos: app nativa y navegador de escritorio.
+// Uso: abrir consola (F12) y ejecutar testSeasonNotification()
+// =====================================================
+
+window.testSeasonNotification = async function () {
+    const testDate = new Date(Date.now() + 10000); // 10 segundos desde ahora
+
+    if (window._isCapacitor) {
+        const { LocalNotifications } = window.Capacitor.Plugins;
+        if (!LocalNotifications) {
+            console.warn('[testSeasonNotification] @capacitor/local-notifications no disponible.');
+            return;
+        }
+        const permission = await LocalNotifications.requestPermissions();
+        if (permission.display !== 'granted') {
+            console.warn('[testSeasonNotification] Permiso de notificaciones denegado.');
+            return;
+        }
+        await LocalNotifications.schedule({
+            notifications: [{
+                id: 9998,
+                title: 'THE GEM (PRUEBA)',
+                body: 'Esta es una notificación de prueba — si la ves, el sistema funciona.',
+                schedule: { at: testDate },
+                smallIcon: 'ic_stat_gem_notification'
+            }]
+        });
+        console.log('[testSeasonNotification] Notificación nativa programada para dentro de 10s.');
+    } else {
+        if (!('Notification' in window)) {
+            console.warn('[testSeasonNotification] Este navegador no soporta notificaciones.');
+            return;
+        }
+        const permission = await Notification.requestPermission();
+        if (permission !== 'granted') {
+            console.warn('[testSeasonNotification] Permiso de notificaciones denegado.');
+            return;
+        }
+        setTimeout(() => {
+            new Notification('THE GEM (PRUEBA)', {
+                body: 'Esta es una notificación de prueba — si la ves, el sistema funciona.'
+            });
+        }, 10000);
+        console.log('[testSeasonNotification] Notificación de navegador programada para dentro de 10s.');
+    }
+};
