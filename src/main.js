@@ -2122,6 +2122,10 @@ function winGame() {
     window.trackMissionProgress?.('game_win', 1);
     window.trackMissionProgress?.('games_played', 1);
     window.trackMissionProgress?.('playtime_seconds', Math.floor(window.gameTimer || 0));
+    if ((window.reviveCount || 0) === 0) {
+        window.trackMissionProgress?.('perfect_win', 1);
+    }
+    window.trackMissionUniqueValue?.('level_win_id', String(window.level));
 
     let wins = parseInt(localStorage.getItem('gamesWon') || '0');
     wins++;

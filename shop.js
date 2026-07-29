@@ -2721,9 +2721,17 @@ function getCurrentRubyPassFreeLevel() {
     return getRubyPassState().freeLevel;
 }
 
+function getCurrentRubyPassPremiumLevel() {
+    return getRubyPassState().premiumLevel;
+}
+window.getCurrentRubyPassPremiumLevel = getCurrentRubyPassPremiumLevel;
+
 function getSeasonEventMissionProgress(mission) {
     if (mission.metric === 'rubypass_level_check') {
         return Math.min(mission.goal, getCurrentRubyPassFreeLevel());
+    }
+    if (mission.metric === 'rubypass_premium_level_check') {
+        return Math.min(mission.goal, getCurrentRubyPassPremiumLevel());
     }
     const state = readSeasonEventState();
     return Math.min(mission.goal, parseFloat(state.progress?.[mission.metric]) || 0);
@@ -4671,6 +4679,8 @@ function spendCurrency(amount, currency) {
         window.playerData.caronteKeys = parseInt(localStorage.getItem(key) || '0');
     }
     window.trackMissionProgress?.('shop_purchase', 1);
+    if (currency === 'coins') window.trackMissionProgress?.('coins_spent', amount);
+    else if (currency === 'gems') window.trackMissionProgress?.('gems_spent', amount);
     refreshShopBalances();
 }
 
@@ -9788,7 +9798,9 @@ function getSeasonEventCompletion() {
     config.missions.forEach(m => {
         const current = m.metric === 'rubypass_level_check'
             ? getCurrentRubyPassFreeLevel()
-            : (parseFloat(state.progress?.[m.metric]) || 0);
+            : m.metric === 'rubypass_premium_level_check'
+                ? getCurrentRubyPassPremiumLevel()
+                : (parseFloat(state.progress?.[m.metric]) || 0);
         if (current >= m.goal) done++;
     });
     return { done, total: config.missions.length, allComplete: done === config.missions.length };
