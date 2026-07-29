@@ -2803,8 +2803,19 @@ function renderSeasonEventMissionIcon(mission) {
     }
 }
 
-function renderSeasonEventMissionRow(mission) {
-    const progress = getSeasonEventMissionProgress(mission);
+function renderSeasonEventMissionRow(mission, eventId = null) {
+    // Si se pasa eventId, lee el progreso del nuevo storage multi-evento.
+    // Sin eventId mantiene el comportamiento legacy (getSeasonEventMissionProgress).
+    let progress;
+    if (eventId) {
+        const state = readEventState(eventId);
+        progress =
+            mission.metric === 'rubypass_level_check' ? getCurrentRubyPassFreeLevel() :
+                mission.metric === 'rubypass_premium_level_check' ? getCurrentRubyPassPremiumLevel() :
+                    (parseFloat(state.progress?.[mission.metric]) || 0);
+    } else {
+        progress = getSeasonEventMissionProgress(mission);
+    }
     const complete = progress >= mission.goal;
     const pct = Math.max(0, Math.min(100, (progress / mission.goal) * 100));
     const segmentCount = 5;
@@ -2921,9 +2932,323 @@ function handleClaimSeasonEventReward() {
     if (content) renderShopSeasonsPage(content);
 }
 
+// ── Nueva UI multi-evento ─────────────────────────────────────────
+
+/**
+ * Construye las columnas de preview de recompensas para las cards
+ * upcoming/ended. Cada columna tiene la imagen clickeable (abre panel
+ * grande) y el label del tipo debajo.
+ * @param {object} event
+ * @returns {string} HTML
+ */
+function _buildEventRewardPreviewCols(event) {
+    return event.rewards.map(reward => {
+        let imgUrl = '';
+        let label = reward.type.toUpperCase();
+        if (reward.type === 'banner') {
+            const b = BANNERS_DATA.find(b => b.id === reward.id) || findCosmeticById(reward.id, 'banner');
+            imgUrl = b?.cover || '';
+        } else if (reward.type === 'frame') {
+            const f = findCosmeticById(reward.id, 'frame');
+            imgUrl = f?.imagen || '';
+        }
+        if (!imgUrl) return '';
+        const safeName = (event.name || '').replace(/'/g, "\\'");
+        return `
+        <div style="display:flex; flex-direction:column; align-items:center; gap:6px; flex:1; min-width:0; cursor:pointer;"
+             onclick="openEventRewardPreview('${imgUrl}', '${label}', '${safeName}')">
+            <div class="season-event-card-banner"
+                 style="background-image:url('${imgUrl}'); width:100%; flex:1; border-radius:8px;
+                        border:1px solid rgba(255,255,255,0.15); transition:border-color 0.2s;"
+                 onmouseenter="this.style.borderColor='rgba(255,215,106,0.5)'"
+                 onmouseleave="this.style.borderColor='rgba(255,255,255,0.15)'"></div>
+            <span style="font-family:monospace; font-size:8px; letter-spacing:2px; color:rgba(255,255,255,0.4);">${label}</span>
+        </div>`;
+    }).filter(Boolean).join('');
+}
+
+/**
+ * Abre un panel (lightbox) grande con la imagen de la recompensa.
+ * @param {string} imgUrl
+ * @param {string} label  — "BANNER" / "MARCO" / etc.
+ * @param {string} eventName
+ */
+function openEventRewardPreview(imgUrl, label, eventName) {
+    const existing = document.querySelector('.event-reward-preview-overlay');
+    if (existing) existing.remove();
+
+    const overlay = document.createElement('div');
+    overlay.className = 'season-banners-modal-overlay event-reward-preview-overlay';
+    overlay.innerHTML = `
+        <div class="season-banners-modal" style="max-width:420px; background:rgba(12,10,20,0.97);">
+            <div class="season-banners-modal-header">
+                <span>${label} — ${eventName}</span>
+                <button type="button" onclick="this.closest('.event-reward-preview-overlay').remove()">✕</button>
+            </div>
+            <div style="padding:20px; display:flex; flex-direction:column; align-items:center; gap:14px;">
+                <div style="width:100%; min-height:200px; border-radius:10px;
+                            background-image:url('${imgUrl}');
+                            background-size:contain; background-repeat:no-repeat;
+                            background-position:center;
+                            border:1px solid rgba(255,215,106,0.25);"></div>
+                <span style="font-family:monospace; font-size:9px; letter-spacing:3px;
+                             color:rgba(255,255,255,0.35);">RECOMPENSA DEL EVENTO</span>
+            </div>
+        </div>
+    `;
+    overlay.addEventListener('click', e => { if (e.target === overlay) overlay.remove(); });
+    document.body.appendChild(overlay);
+}
+window.openEventRewardPreview = openEventRewardPreview;
+
+/**
+ * Renderiza la sección "03 EVENTO DE TEMPORADA" soportando múltiples
+ * eventos activos y próximos. Reutiliza el mismo diseño visual hazard-stripe
+ * que renderSeasonEventSectionHTML pero parametrizado por evento.
+ * @param {object} season — objeto season activo
+ * @returns {string} HTML
+ */
+function renderSeasonEventsSectionHTML(season) {
+    const activeEvents = (window.getActiveEvents?.() || []).filter(ev => ev.seasonId === season.id);
+    const upcomingEvents = (window.getUpcomingEvents?.() || []).filter(ev => ev.seasonId === season.id);
+
+    if (activeEvents.length === 0 && upcomingEvents.length === 0) return '';
+
+    const header = `
+        <div class="section-header">
+            <span class="num">03</span><span class="line"></span>
+            <span class="txt">EVENTO DE TEMPORADA</span>
+            <span class="fade"></span>
+            <button class="season-event-history-btn" onclick="openEventsHistoryModal('${season.id}')" type="button" style="margin-left:auto; font-size:9px; letter-spacing:2px; color:rgba(255,255,255,0.4); background:none; border:none; cursor:pointer; font-family:monospace; padding:0 4px;">VER HISTORIAL</button>
+        </div>`;
+
+    const activeHTML = activeEvents.map(event => {
+        const completion = getEventCompletion(event.id);
+        const state = readEventState(event.id);
+        const countdown = getSeasonEventCountdown(event);
+
+        // Primera recompensa tipo banner para preview visual
+        const bannerReward = event.rewards.find(r => r.type === 'banner');
+        const banner = bannerReward ? (BANNERS_DATA.find(b => b.id === bannerReward.id) || findCosmeticById(bannerReward.id, 'banner')) : null;
+        const rarityColor = BANNER_RARITY_COLORS[banner?.rarity] || '#ffd76a';
+
+        // Etiqueta de tipos de recompensa
+        const rewardLabels = [...new Set(event.rewards.map(r => r.type.toUpperCase()))].join(' + ');
+
+        const gaugeHtml = Array.from({ length: completion.total }, (_, i) =>
+            `<i class="${i < completion.done ? 'on' : ''}"></i>`
+        ).join('');
+
+        return `
+        <div class="season-event-hero" style="--rarity-color:${rarityColor};">
+            <div class="season-event-hazard"><span>EVENTO ${rewardLabels}</span></div>
+            <div class="season-event-hero-body">
+                <div class="season-event-pedestal">
+                    <div class="season-event-pedestal-ring"></div>
+                    <div class="season-event-pedestal-ring2"></div>
+                    ${banner?.cover ? `<div class="season-event-pedestal-art" style="background-image:url('${banner.cover}');"></div>` : ''}
+                    ${banner?.rarity ? `<span class="season-event-pedestal-tag">${banner.rarity}</span>` : ''}
+                </div>
+                <div class="season-event-hero-info">
+                    <p class="season-event-hero-title">${event.name}</p>
+                    <p class="season-event-hero-sub">${event.description}</p>
+                    <div class="season-event-timer-chip${countdown.urgent ? ' is-urgent' : ''}"><b>${countdown.value}</b><span>${countdown.unit} restantes</span></div>
+                    <div class="season-event-gauge-label"><span>Progreso de misiones</span><b>${completion.done}/${completion.total}</b></div>
+                    <div class="season-event-gauge">${gaugeHtml}</div>
+                    <div class="season-event-hero-actions">
+                        <button class="season-event-btn" onclick="openEventModal('${event.id}')" type="button">Ver checklist</button>
+                        ${completion.allComplete && !state.claimed ? `<button class="season-event-btn is-claim" onclick="handleClaimEventReward('${event.id}')" type="button">Reclamar recompensa</button>` : ''}
+                        ${state.claimed ? `<span class="season-event-card-claimed">Recompensa reclamada</span>` : ''}
+                    </div>
+                </div>
+            </div>
+        </div>`;
+    }).join('');
+
+    const upcomingHTML = upcomingEvents.map(event => {
+        const rewardsColsHTML = _buildEventRewardPreviewCols(event);
+        return `
+        <div class="season-event-card season-event-card--upcoming">
+            <div class="season-event-card-copy">
+                <strong>PRÓXIMO EVENTO</strong>
+                <p>${event.name}</p>
+                <p>Comienza el ${formatSeasonEventDate(event.startsAt)}</p>
+                <small>Completa ${event.missions.length} misiones para desbloquear la recompensa exclusiva del evento.</small>
+            </div>
+            <div style="display:flex; gap:10px; align-items:stretch; height:100%;">
+                ${rewardsColsHTML}
+            </div>
+        </div>`;
+    }).join('');
+
+    const now = new Date();
+    const pastSeasonEvents = (window.getPastEvents?.() || []).filter(ev => ev.seasonId === season.id);
+    const endedHTML = pastSeasonEvents.map(event => {
+        const state = readEventState(event.id);
+        const rewardsColsHTML = _buildEventRewardPreviewCols(event);
+        return `
+        <div class="season-event-card season-event-card--ended">
+            <div class="season-event-card-copy">
+                <strong>EVENTO FINALIZADO</strong>
+                <p>${event.name}</p>
+                <p>Terminó el ${formatSeasonEventDate(event.expiresAt)}</p>
+                <small>${state.claimed ? 'Reclamaste la recompensa a tiempo.' : 'La recompensa quedó bloqueada.'}</small>
+            </div>
+            <div style="display:flex; gap:10px; align-items:stretch; height:100%; opacity:${state.claimed ? '1' : '0.45'};">
+                ${rewardsColsHTML}
+            </div>
+        </div>`;
+    }).join('');
+
+    return header + activeHTML + upcomingHTML + endedHTML;
+}
+window.renderSeasonEventsSectionHTML = renderSeasonEventsSectionHTML;
+
+/**
+ * Abre el modal de checklist para un evento específico por id.
+ * Reemplaza openSeasonEventModal() para el nuevo sistema multi-evento.
+ * @param {string} eventId
+ */
+function openEventModal(eventId) {
+    const event = (window.GEM_EVENTS || []).find(e => e.id === eventId);
+    if (!event) return;
+
+    const existing = document.querySelector('.season-event-modal-overlay');
+    if (existing) existing.remove();
+
+    const completion = getEventCompletion(eventId);
+    const state = readEventState(eventId);
+
+    // Primera recompensa banner para el showcase
+    const bannerReward = event.rewards.find(r => r.type === 'banner');
+    const frameReward = event.rewards.find(r => r.type === 'frame');
+    const banner = bannerReward ? (BANNERS_DATA.find(b => b.id === bannerReward.id) || findCosmeticById(bannerReward.id, 'banner')) : null;
+    const frame = frameReward ? findCosmeticById(frameReward.id, 'frame') : null;
+    const rarityColor = BANNER_RARITY_COLORS[banner?.rarity] || '#ffd76a';
+
+    const rewardColsHTML = event.rewards.map(reward => {
+        let previewHTML = `<span class="season-event-showcase-placeholder">Vista previa</span>`;
+        let label = reward.type.toUpperCase();
+        let name = reward.id;
+        let rarity = '';
+        if (reward.type === 'banner' && banner) {
+            previewHTML = banner.cover ? `<div class="season-event-showcase-art" style="background-image:url('${banner.cover}');"></div>` : previewHTML;
+            label = 'BANNER'; name = banner.name || name; rarity = banner.rarity || '';
+        } else if (reward.type === 'frame' && frame) {
+            previewHTML = frame.imagen ? `<div class="season-event-showcase-art" style="background-image:url('${frame.imagen}');"></div>` : previewHTML;
+            label = 'MARCO'; name = frame.name || name; rarity = frame.rarity || '';
+        }
+        return `
+        <div class="season-event-showcase-reward-col">
+            <div class="season-event-showcase-frame">${previewHTML}</div>
+            <span class="season-event-showcase-reward-label">${label}</span>
+            <p class="season-event-showcase-name">${name}</p>
+            ${rarity ? `<span class="season-event-showcase-rarity">${rarity}</span>` : ''}
+        </div>`;
+    }).join('');
+
+    const overlay = document.createElement('div');
+    overlay.className = 'season-banners-modal-overlay season-event-modal-overlay';
+    overlay.innerHTML = `
+        <div class="season-banners-modal season-event-modal">
+            <div class="season-banners-modal-header">
+                <span>CHECKLIST — ${event.name.toUpperCase()}</span>
+                <button type="button" onclick="this.closest('.season-event-modal-overlay').remove()">✕</button>
+            </div>
+            <div class="season-event-modal-body">
+                <div class="season-event-showcase" style="--rarity-color:${rarityColor};">
+                    <div class="season-event-showcase-rewards-row">${rewardColsHTML}</div>
+                    <p class="season-event-showcase-count">${completion.done}/${completion.total} misiones completadas</p>
+                </div>
+                <div class="season-event-mission-list">
+                    ${event.missions.map(m => renderSeasonEventMissionRow(m, eventId)).join('')}
+                </div>
+                ${completion.allComplete && !state.claimed ? `
+                    <button class="season-event-claim-btn" onclick="handleClaimEventReward('${eventId}')" type="button">RECLAMAR RECOMPENSA</button>
+                ` : ''}
+                ${state.claimed ? `<p class="season-event-claimed-msg">Recompensa reclamada</p>` : ''}
+            </div>
+        </div>
+    `;
+    overlay.addEventListener('click', e => { if (e.target === overlay) overlay.remove(); });
+    document.body.appendChild(overlay);
+}
+window.openEventModal = openEventModal;
+
+/**
+ * Claim handler para el nuevo sistema — llama claimEventReward y refresca.
+ * @param {string} eventId
+ */
+function handleClaimEventReward(eventId) {
+    if (!claimEventReward(eventId)) return;
+    window.playSfx?.('reward', 0.85);
+    document.querySelector('.season-event-modal-overlay')?.remove();
+    const content = document.getElementById('shopContent');
+    if (content) renderShopSeasonsPage(content);
+}
+window.handleClaimEventReward = handleClaimEventReward;
+
+/**
+ * Modal de historial de eventos pasados filtrado por temporada.
+ * Muestra nombre, fechas y si el jugador reclamó la recompensa.
+ * @param {string} seasonId
+ */
+function openEventsHistoryModal(seasonId) {
+    const past = (window.getPastEvents?.() || []).filter(ev => ev.seasonId === seasonId);
+
+    const existing = document.querySelector('.season-event-history-overlay');
+    if (existing) existing.remove();
+
+    const rowsHTML = past.length === 0
+        ? `<p style="color:rgba(255,255,255,0.4); font-family:monospace; font-size:11px; text-align:center; padding:24px 0;">No hay eventos anteriores en esta temporada.</p>`
+        : past.map(event => {
+            const state = readEventState(event.id);
+            const claimed = state.claimed === true;
+            const { done, total } = getEventCompletion(event.id);
+            const rewardLabels = [...new Set(event.rewards.map(r => r.type.toUpperCase()))].join(', ');
+            return `
+            <div style="display:flex; align-items:center; gap:12px; padding:12px 0; border-bottom:1px solid rgba(255,255,255,0.07);">
+                <div style="flex:1; min-width:0;">
+                    <p style="margin:0; font-family:monospace; font-size:12px; color:#fff; letter-spacing:1px;">${event.name}</p>
+                    <p style="margin:4px 0 0; font-family:monospace; font-size:10px; color:rgba(255,255,255,0.4);">
+                        ${formatSeasonEventDate(event.startsAt)} — ${formatSeasonEventDate(event.expiresAt)}
+                    </p>
+                    <p style="margin:3px 0 0; font-family:monospace; font-size:10px; color:rgba(255,255,255,0.35);">
+                        Recompensa: ${rewardLabels} · Progreso: ${done}/${total} misiones
+                    </p>
+                </div>
+                <span style="font-family:monospace; font-size:10px; letter-spacing:2px; padding:4px 10px; border-radius:20px;
+                    background:${claimed ? 'rgba(0,255,180,0.12)' : 'rgba(255,255,255,0.05)'};
+                    color:${claimed ? '#00ffb4' : 'rgba(255,255,255,0.3)'};
+                    border:1px solid ${claimed ? 'rgba(0,255,180,0.3)' : 'rgba(255,255,255,0.08)'};">
+                    ${claimed ? '✓ RECLAMADO' : 'NO RECLAMADO'}
+                </span>
+            </div>`;
+        }).join('');
+
+    const overlay = document.createElement('div');
+    overlay.className = 'season-banners-modal-overlay season-event-history-overlay';
+    overlay.innerHTML = `
+        <div class="season-banners-modal" style="max-width:480px;">
+            <div class="season-banners-modal-header">
+                <span>HISTORIAL DE EVENTOS</span>
+                <button type="button" onclick="this.closest('.season-event-history-overlay').remove()">✕</button>
+            </div>
+            <div style="padding:16px 20px 20px; max-height:60vh; overflow-y:auto;">
+                ${rowsHTML}
+            </div>
+        </div>
+    `;
+    overlay.addEventListener('click', e => { if (e.target === overlay) overlay.remove(); });
+    document.body.appendChild(overlay);
+}
+window.openEventsHistoryModal = openEventsHistoryModal;
+
+// ── Fin nueva UI multi-evento ─────────────────────────────────────
+
 function renderSeasonEventSectionHTML() {
-    const config = window.SEASON_EVENT_CONFIG;
-    if (!config) return '';
+    // @legacy — mantiene el evento único de SEASON_EVENT_CONFIG activo.
+    // Para nuevos eventos usar renderSeasonEventsSectionHTML(season).
 
     const now = new Date();
     const startsAt = new Date(`${config.startsAt}T00:00:00`);
@@ -3437,7 +3762,7 @@ function renderShopSeasonsPage(container) {
             ${showcaseHTML}
         </div>
 
-        ${renderSeasonEventSectionHTML()}
+        ${renderSeasonEventsSectionHTML(season)}
         ${renderSeasonStreakSectionHTML(season)}
     `;
 }
@@ -9694,6 +10019,62 @@ function claimDailyGift(day) {
 const MISSIONS_STORAGE_KEY = 'shopMissionsState_v1';
 const MISSION_STREAK_STORAGE_KEY = 'shopMissionStreak_v1';
 const SEASON_EVENT_STORAGE_KEY = 'seasonEventState_v1';
+
+// ── Nuevo storage genérico multi-evento ───────────────────────────
+// Estructura: { [eventId]: { progress: {}, uniqueSets: {}, claimed: false } }
+const GEM_EVENTS_STORAGE_KEY = 'gemEventsState_v1';
+
+function readAllEventsState() {
+    try {
+        const raw = localStorage.getItem(GEM_EVENTS_STORAGE_KEY);
+        return raw ? JSON.parse(raw) : {};
+    } catch {
+        return {};
+    }
+}
+
+function saveAllEventsState(allState) {
+    localStorage.setItem(GEM_EVENTS_STORAGE_KEY, JSON.stringify(allState));
+}
+
+function readEventState(eventId) {
+    const all = readAllEventsState();
+    return all[eventId] || { progress: {}, uniqueSets: {}, claimed: false };
+}
+
+function saveEventState(eventId, state) {
+    const all = readAllEventsState();
+    all[eventId] = state;
+    saveAllEventsState(all);
+}
+// ── Fin storage multi-evento ──────────────────────────────────────
+
+// ── Migración única del progreso legacy (seasonEventState_v1) ─────
+// Idempotente: si ya migró (flag en localStorage), no hace nada.
+// La clave vieja NO se borra — queda como respaldo para revertir.
+function migrateLegacyEventState() {
+    const MIGRATION_FLAG = 'gemEventsMigrated_v1';
+    if (localStorage.getItem(MIGRATION_FLAG)) return;
+    try {
+        const legacyRaw = localStorage.getItem('seasonEventState_v1');
+        if (legacyRaw) {
+            const legacy = JSON.parse(legacyRaw);
+            if (legacy && legacy.eventId) {
+                saveEventState(legacy.eventId, {
+                    progress: legacy.progress || {},
+                    uniqueSets: legacy.uniqueSets || {},
+                    claimed: !!legacy.claimed
+                });
+            }
+        }
+    } catch (e) {
+        console.warn('[migrateLegacyEventState] Error migrando progreso de evento:', e);
+    }
+    localStorage.setItem(MIGRATION_FLAG, 'true');
+}
+migrateLegacyEventState();
+// ── Fin migración ─────────────────────────────────────────────────
+
 const DAILY_MISSIONS = [
     { id: 'distance', title: 'Recorre distancia', text: 'Avanza 1800 metros en partidas.', metric: 'distance', goal: 1800, reward: { coins: 90, gems: 1 } },
     { id: 'shop_purchase', title: 'Compra algo', text: 'Haz 1 compra en la tienda.', metric: 'shop_purchase', goal: 1, reward: { coins: 60, gems: 1 } },
@@ -9721,6 +10102,9 @@ function saveSeasonEventState(state) {
     localStorage.setItem(SEASON_EVENT_STORAGE_KEY, JSON.stringify(state));
 }
 
+// @deprecated — Ya no se llama activamente. Reemplazada por trackEventProgress()
+// que itera todos los eventos activos via GEM_EVENTS. Se conserva por si hay que
+// revertir. Seguro eliminar una vez confirmado el nuevo sistema en producción.
 function trackSeasonEventProgress(metric, amount = 1) {
     if (!window.isSeasonEventActive?.()) return;
     const config = window.SEASON_EVENT_CONFIG;
@@ -9739,7 +10123,7 @@ function trackSeasonEventProgress(metric, amount = 1) {
 }
 
 // Modo MEJOR VALOR: guarda el máximo histórico para la métrica dada.
-// Nunca baja aunque lleguen valores menores después.
+// @deprecated — Reemplazada por trackEventBestValue(). Se conserva como respaldo.
 function trackSeasonEventBestValue(metric, value) {
     if (!window.isSeasonEventActive?.()) return;
     const config = window.SEASON_EVENT_CONFIG;
@@ -9765,6 +10149,7 @@ window.trackSeasonEventBestValue = trackSeasonEventBestValue;
 // La lista se guarda en state.uniqueSets[metric]; state.progress[metric]
 // refleja el conteo como número para que getSeasonEventMissionProgress
 // lo lea igual que cualquier otra misión.
+// @deprecated — Reemplazada por trackEventUniqueValue(). Se conserva como respaldo.
 function trackSeasonEventUniqueValue(metric, value) {
     if (!window.isSeasonEventActive?.()) return;
     const config = window.SEASON_EVENT_CONFIG;
@@ -9789,6 +10174,60 @@ function trackSeasonEventUniqueValue(metric, value) {
     }
 }
 window.trackSeasonEventUniqueValue = trackSeasonEventUniqueValue;
+
+// ── Tracking multi-evento (itera todos los eventos activos) ───────
+
+// Modo SUMA: acumula amount en cada evento activo que tenga esta métrica.
+function trackEventProgress(metric, amount = 1) {
+    const activeEvents = window.getActiveEvents?.() || [];
+    activeEvents.forEach(event => {
+        const mission = event.missions.find(m => m.metric === metric);
+        if (!mission) return;
+        const state = readEventState(event.id);
+        state.progress[metric] = Math.min(
+            mission.goal,
+            (parseFloat(state.progress[metric]) || 0) + amount
+        );
+        saveEventState(event.id, state);
+    });
+}
+window.trackEventProgress = trackEventProgress;
+
+// Modo MEJOR VALOR: guarda el máximo histórico en cada evento activo.
+function trackEventBestValue(metric, value) {
+    const activeEvents = window.getActiveEvents?.() || [];
+    activeEvents.forEach(event => {
+        const mission = event.missions.find(m => m.metric === metric);
+        if (!mission) return;
+        const state = readEventState(event.id);
+        const current = parseFloat(state.progress[metric]) || 0;
+        if (value > current) {
+            state.progress[metric] = Math.min(mission.goal, value);
+            saveEventState(event.id, state);
+        }
+    });
+}
+window.trackEventBestValue = trackEventBestValue;
+
+// Modo VALORES ÚNICOS: registra valores distintos en cada evento activo.
+function trackEventUniqueValue(metric, value) {
+    const activeEvents = window.getActiveEvents?.() || [];
+    activeEvents.forEach(event => {
+        const mission = event.missions.find(m => m.metric === metric);
+        if (!mission) return;
+        const state = readEventState(event.id);
+        if (!state.uniqueSets) state.uniqueSets = {};
+        if (!state.uniqueSets[metric]) state.uniqueSets[metric] = [];
+        if (!state.uniqueSets[metric].includes(value)) {
+            state.uniqueSets[metric].push(value);
+            state.progress[metric] = Math.min(mission.goal, state.uniqueSets[metric].length);
+            saveEventState(event.id, state);
+        }
+    });
+}
+window.trackEventUniqueValue = trackEventUniqueValue;
+
+// ── Fin tracking multi-evento ─────────────────────────────────────
 
 function getSeasonEventCompletion() {
     const config = window.SEASON_EVENT_CONFIG;
@@ -9826,6 +10265,81 @@ function claimSeasonEventReward() {
     saveSeasonEventState(state);
     return true;
 }
+
+// ── Sistema genérico multi-evento ────────────────────────────────
+
+/**
+ * Calcula el progreso de completitud de un evento específico.
+ * Lee state.progress directamente — compatible con los 3 modos de tracking.
+ * @param {string} eventId
+ * @returns {{ done: number, total: number, allComplete: boolean }}
+ */
+function getEventCompletion(eventId) {
+    const event = (window.GEM_EVENTS || []).find(e => e.id === eventId);
+    if (!event) return { done: 0, total: 0, allComplete: false };
+    const state = readEventState(eventId);
+    let done = 0;
+    event.missions.forEach(m => {
+        const current =
+            m.metric === 'rubypass_level_check' ? getCurrentRubyPassFreeLevel() :
+                m.metric === 'rubypass_premium_level_check' ? getCurrentRubyPassPremiumLevel() :
+                    (parseFloat(state.progress?.[m.metric]) || 0);
+        if (current >= m.goal) done++;
+    });
+    return { done, total: event.missions.length, allComplete: done === event.missions.length };
+}
+window.getEventCompletion = getEventCompletion;
+
+// Trails que usan sufijo '_png' en vez de '_cyan' (misma lista que selectTrailEffectNew).
+const SPECIFIC_TRAIL_IDS = [
+    'none', 'spark', 'ghost', 'fractura', 'hielo', 'toxico',
+    'trail_vampiro', 'trail_zombie', 'trail_fire', 'trail_water',
+    'trail_wind', 'trail_ice', 'trail_lava', 'trail_nature',
+    'trail_custom_text'
+];
+
+/**
+ * Otorga todas las recompensas de un evento y marca como reclamado.
+ * @param {string} eventId
+ * @returns {boolean}
+ */
+function claimEventReward(eventId) {
+    const state = readEventState(eventId);
+    if (state.claimed) return false;
+    const { allComplete } = getEventCompletion(eventId);
+    if (!allComplete) return false;
+
+    const event = (window.GEM_EVENTS || []).find(e => e.id === eventId);
+    if (!event) return false;
+
+    event.rewards.forEach(reward => {
+        if (!reward?.type || !reward?.id) return;
+        if (reward.type === 'banner') {
+            const banner = BANNERS_DATA.find(b => b.id === reward.id)
+                || findCosmeticById(reward.id, 'banner');
+            if (banner) setBannerOwned(banner);
+        } else if (reward.type === 'frame') {
+            const frame = findCosmeticById(reward.id, 'frame');
+            if (frame) setFrameOwned(frame);
+        } else if (reward.type === 'skin') {
+            // Persistencia real via getSkinStorageKey (no .owned en memoria)
+            localStorage.setItem(getSkinStorageKey(reward.id), 'true');
+        } else if (reward.type === 'trail') {
+            // Trails con variante PNG usan sufijo '_png'; el resto usa '_cyan'
+            const suffix = SPECIFIC_TRAIL_IDS.includes(reward.id) ? '_png' : '_cyan';
+            localStorage.setItem(`trail_${reward.id}${suffix}`, 'true');
+        } else if (reward.type === 'emote') {
+            localStorage.setItem('emote_' + reward.id, 'true');
+        }
+    });
+
+    state.claimed = true;
+    saveEventState(eventId, state);
+    return true;
+}
+window.claimEventReward = claimEventReward;
+
+// ── Fin sistema genérico multi-evento ────────────────────────────
 
 function getMissionDateKey(date = new Date()) {
     return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
@@ -9888,16 +10402,16 @@ function touchMissionSessionStreak() {
 }
 
 function trackMissionProgress(metric, amount = 1) {
-    window.trackSeasonEventProgress?.(metric, amount);
+    window.trackEventProgress?.(metric, amount);  // nuevo: itera todos los eventos activos
     const state = readMissionState();
     state.progress[metric] = Math.max(0, (parseFloat(state.progress[metric]) || 0) + amount);
     saveMissionState(state);
 }
 
 // Modo MEJOR VALOR: guarda el máximo histórico para la métrica dada en
-// shopMissionsState_v1. Delega también al evento de temporada.
+// shopMissionsState_v1. Delega también a todos los eventos activos.
 function trackMissionBestValue(metric, value) {
-    window.trackSeasonEventBestValue?.(metric, value);
+    window.trackEventBestValue?.(metric, value);  // nuevo: itera todos los eventos activos
     const state = readMissionState();
     const current = parseFloat(state.progress[metric]) || 0;
     if (value > current) {
@@ -9907,11 +10421,11 @@ function trackMissionBestValue(metric, value) {
 }
 window.trackMissionBestValue = trackMissionBestValue;
 
-// Modo VALORES ÚNICOS: pasador hacia el evento de temporada.
+// Modo VALORES ÚNICOS: delega a todos los eventos activos.
 // No modifica shopMissionsState_v1 porque no hay misiones diarias de
-// este tipo todavía — el conteo real vive en seasonEventState_v1.
+// este tipo todavía — el conteo real vive en gemEventsState_v1.
 function trackMissionUniqueValue(metric, value) {
-    window.trackSeasonEventUniqueValue?.(metric, value);
+    window.trackEventUniqueValue?.(metric, value);  // nuevo: itera todos los eventos activos
 }
 window.trackMissionUniqueValue = trackMissionUniqueValue;
 
