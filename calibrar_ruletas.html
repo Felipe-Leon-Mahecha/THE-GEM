@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Calibración de Offset — Ruletas THE GEM</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: #0d0d14;
+    color: #e8dfc8;
+    font-family: 'Segoe UI', sans-serif;
+    padding: 24px;
+    min-height: 100vh;
+  }
+  h1 { font-size: 18px; letter-spacing: 2px; color: #e0b563; margin-bottom: 6px; }
+  p.subtitle { font-size: 12px; color: rgba(255,255,255,.45); margin-bottom: 28px; }
+
+  .wheels-row {
+    display: flex;
+    gap: 48px;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    justify-content: center;
+  }
+
+  .wheel-panel {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 14px;
+    width: 340px;
+  }
+  .wheel-panel h2 {
+    font-size: 13px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+  }
+  .wheel-panel h2.vip  { color: #e0b563; }
+  .wheel-panel h2.free { color: #ff4d6d; }
+
+  /* ── La rueda ── */
+  .wheel-wrap {
+    position: relative;
+    width: 300px;
+    height: 300px;
+  }
+  /* Puntero fijo arriba — igual que en el juego real */
+  .wheel-pointer {
+    position: absolute;
+    top: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 0; height: 0;
+    border-left: 10px solid transparent;
+    border-right: 10px solid transparent;
+    border-top: 17px solid #fff;
+    filter: drop-shadow(0 2px 5px rgba(0,0,0,.7));
+    z-index: 10;
+  }
+  .wheel-img {
+    position: absolute;
+    inset: 0;
+    width: 100%; height: 100%;
+    border-radius: 50%;
+    background-size: cover;
+    background-position: center;
+    /* Línea de referencia horizontal — ayuda a ver si el puntero
+       está apuntando a la línea divisoria del PNG */
+    box-shadow: 0 0 0 3px rgba(255,255,255,.08);
+  }
+  .icons-wrap {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+  }
+  /* Cruz de referencia para ver el eje 0° visualmente */
+  .crosshair {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 5;
+  }
+  .crosshair::before, .crosshair::after {
+    content: '';
+    position: absolute;
+    background: rgba(255,255,80,.35);
+  }
+  .crosshair::before { /* horizontal */ top: 50%; left: 0; right: 0; height: 1px; }
+  .crosshair::after  { /* vertical   */ left: 50%; top: 0; bottom: 0; width: 1px; }
+
+  .seg-icon {
+    position: absolute;
+    width: 44px; height: 44px;
+    transform: translate(-50%, -50%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0,0,0,.55);
+    border-radius: 50%;
+    border: 1.5px solid rgba(255,255,255,.25);
+    box-shadow: 0 2px 8px rgba(0,0,0,.7), 0 0 0 1px rgba(255,255,255,.08);
+  }
+  .seg-icon img {
+    width: 28px; height: 28px;
+    object-fit: contain;
+    filter: drop-shadow(0 1px 3px rgba(0,0,0,.8));
+  }
+  /* Número de índice encima del ícono */
+  .seg-icon .idx-badge {
+    position: absolute;
+    top: -8px; right: -8px;
+    background: #e0b563;
+    color: #1a0800;
+    font-size: 9px;
+    font-weight: 700;
+    border-radius: 50%;
+    width: 16px; height: 16px;
+    display: flex; align-items: center; justify-content: center;
+    line-height: 1;
+  }
+  .seg-icon.free-badge .idx-badge { background: #ff4d6d; color: #fff; }
+
+  /* Líneas radiales de los gajos calculadas (trazo fino para ver si
+     coinciden con las líneas pintadas del PNG) */
+  .seg-lines-canvas {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 2;
+    border-radius: 50%;
+    overflow: hidden;
+  }
+
+  /* ── Controles ── */
+  .controls {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .ctrl-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 12px;
+  }
+  .ctrl-row label { width: 100px; color: rgba(255,255,255,.6); }
+  .ctrl-row input[type=range] {
+    flex: 1;
+    accent-color: #e0b563;
+    cursor: pointer;
+  }
+  .ctrl-row span.val {
+    width: 52px;
+    text-align: right;
+    font-weight: 700;
+    font-size: 13px;
+    color: #e0b563;
+    font-variant-numeric: tabular-nums;
+  }
+  .free-accent input[type=range] { accent-color: #ff4d6d; }
+  .free-accent span.val { color: #ff4d6d; }
+
+  .btn-copy {
+    display: block;
+    width: 100%;
+    padding: 9px 0;
+    border: 1px solid rgba(255,255,255,.2);
+    border-radius: 8px;
+    background: rgba(255,255,255,.04);
+    color: #e8dfc8;
+    font-size: 12px;
+    letter-spacing: 1px;
+    cursor: pointer;
+    transition: background .15s;
+  }
+  .btn-copy:hover { background: rgba(255,255,255,.1); }
+  .btn-copy.vip-btn { border-color: rgba(224,181,99,.4); color: #e0b563; }
+  .btn-copy.free-btn { border-color: rgba(255,77,109,.4); color: #ff4d6d; }
+
+  /* ── Panel de resultado final ── */
+  #result-panel {
+    margin-top: 32px;
+    background: rgba(255,255,255,.04);
+    border: 1px solid rgba(255,255,255,.1);
+    border-radius: 12px;
+    padding: 18px 22px;
+    max-width: 720px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  #result-panel h3 { font-size: 13px; letter-spacing: 1px; color: #e0b563; margin-bottom: 10px; }
+  #result-panel pre {
+    font-size: 12px;
+    color: #9cf5b8;
+    white-space: pre-wrap;
+    line-height: 1.7;
+  }
+
+  /* ── Info pill ── */
+  .info-pill {
+    background: rgba(255,255,255,.06);
+    border-radius: 20px;
+    padding: 4px 12px;
+    font-size: 11px;
+    color: rgba(255,255,255,.45);
+    text-align: center;
+    line-height: 1.6;
+    max-width: 300px;
+  }
+</style>
+</head>
+<body>
+
+<h1>CALIBRACIÓN DE WHEEL_OFFSET_DEG</h1>
+<p class="subtitle">
+  Arrastrá los sliders hasta que los íconos queden CENTRADOS dentro de cada gajo pintado en el PNG.<br>
+  El puntero blanco ▼ arriba representa donde el motor espera que esté el segmento ganador.<br>
+  Las líneas finas amarillas muestran los límites de cada gajo calculados por el código.
+</p>
+
+<div class="wheels-row">
+
+  <!-- ── VIP ── -->
+  <div class="wheel-panel" id="panel-vip">
+    <h2 class="vip">La Llave de Caronte — VIP</h2>
+    <div class="wheel-wrap" id="wrap-vip">
+      <div class="wheel-pointer"></div>
+      <canvas class="seg-lines-canvas" id="lines-vip" width="300" height="300"></canvas>
+      <div class="wheel-img" id="img-vip"
+           style="background-image:url('assets/Imagenes/Ruletas/Ruleta_VIP.png');"></div>
+      <div class="icons-wrap" id="icons-vip"></div>
+      <div class="crosshair"></div>
+    </div>
+    <div class="info-pill">8 segmentos · 45° cada uno</div>
+    <div class="controls">
+      <div class="ctrl-row">
+        <label>Offset (°)</label>
+        <input type="range" id="offset-vip" min="-45" max="45" step="0.5" value="0">
+        <span class="val" id="val-vip">0.0°</span>
+      </div>
+      <div class="ctrl-row">
+        <label>Radio (%)</label>
+        <input type="range" id="radius-vip" min="25" max="48" step="1" value="37">
+        <span class="val" id="valr-vip" style="color:rgba(255,255,255,.5)">37%</span>
+      </div>
+    </div>
+    <button class="btn-copy vip-btn" onclick="copyVIP()">Copiar constantes VIP</button>
+  </div>
+
+  <!-- ── Diaria ── -->
+  <div class="wheel-panel" id="panel-free">
+    <h2 class="free">Ruleta Diaria — Normal</h2>
+    <div class="wheel-wrap" id="wrap-free">
+      <div class="wheel-pointer"></div>
+      <canvas class="seg-lines-canvas" id="lines-free" width="300" height="300"></canvas>
+      <div class="wheel-img" id="img-free"
+           style="background-image:url('assets/Imagenes/Ruletas/Ruleta_Free.png');"></div>
+      <div class="icons-wrap" id="icons-free"></div>
+      <div class="crosshair"></div>
+    </div>
+    <div class="info-pill">8 segmentos · 45° cada uno</div>
+    <div class="controls">
+      <div class="ctrl-row free-accent">
+        <label>Offset (°)</label>
+        <input type="range" id="offset-free" min="-45" max="45" step="0.5" value="0">
+        <span class="val" id="val-free">0.0°</span>
+      </div>
+      <div class="ctrl-row free-accent">
+        <label>Radio (%)</label>
+        <input type="range" id="radius-free" min="25" max="48" step="1" value="37">
+        <span class="val" id="valr-free" style="color:rgba(255,255,255,.5)">37%</span>
+      </div>
+    </div>
+    <button class="btn-copy free-btn" onclick="copyFree()">Copiar constantes Diaria</button>
+  </div>
+
+</div>
+
+<!-- ── Panel de resultado ── -->
+<div id="result-panel">
+  <h3>CONSTANTES LISTAS PARA COPIAR AL CÓDIGO</h3>
+  <pre id="result-code">// Mové los sliders y las constantes aparecen acá automáticamente.</pre>
+</div>
+
+<script>
+// ─── Íconos de cada rueda (mismos que en el juego real) ───────────────────
+const SEGMENTS_VIP = [
+  { img: 'assets/UI/Common/Currency/Rubies.png',               label: 'Rubíes' },
+  { img: 'assets/Imagenes/Cofres Imagenes/Cofre ESPECIAL.png', label: 'Cofre Especial' },
+  { img: 'assets/Imagenes/Cofres Imagenes/Cofre EPICO.png',    label: 'Cofre Épico' },
+  { img: 'assets/Imagenes/Cofres Imagenes/Cofre DEMON.png',    label: 'Cofre Demon' },
+  { img: 'assets/Imagenes/Cofres Imagenes/Cofre VIP.png',      label: 'Cofre VIP' },
+  { img: 'assets/Imagenes/Cofres Imagenes/Cofre LUCK.png',     label: 'Cofre de la Suerte' },
+  { img: 'assets/UI/Common/Currency/Rubies.png',               label: 'Rubíes ×2' },
+  { img: 'assets/UI/Store/placeholder.png',                    label: 'Fragmento' },
+];
+
+const SEGMENTS_FREE = [
+  { img: 'assets/UI/Common/Currency/DEAD_COIN.png',            label: 'Monedas' },
+  { img: 'assets/UI/Common/Currency/DEAD_COIN.png',            label: 'Monedas extra' },
+  { img: 'assets/Imagenes/Cofres Imagenes/Cofre BASICO.png',   label: 'Cofre Básico' },
+  { img: 'assets/Imagenes/Cofres Imagenes/Cofre ESPECIAL.png', label: 'Cofre Especial' },
+  { img: 'assets/Imagenes/Cofres Imagenes/Cofre EPICO.png',    label: 'Cofre Épico' },
+  { img: 'assets/Imagenes/Cofres Imagenes/Cofre DEMON.png',    label: 'Cofre Demon' },
+  { img: 'assets/Imagenes/Cofres Imagenes/Cofre LUCK.png',     label: 'Cofre de la Suerte' },
+  { img: 'assets/UI/Store/placeholder.png',                    label: 'Skin temporada' },
+];
+
+// ─── Render de íconos ────────────────────────────────────────────────────
+function renderIcons(wrapperId, segments, offsetDeg, radiusPct, isVip) {
+  const wrap = document.getElementById(wrapperId);
+  if (!wrap) return;
+  const n = segments.length;
+  const segDeg = 360 / n;
+  const half = segDeg / 2; // bisector del gajo i=0 está a half desde el inicio del gajo
+
+  wrap.innerHTML = segments.map((seg, i) => {
+    // El bisector del gajo i, con el offset aplicado.
+    // El puntero está en -90° (arriba), así que restamos 90 para que el
+    // segmento 0 arranque apuntando hacia arriba.
+    const angleDeg = segDeg * i - 90 + half + offsetDeg;
+    const x = 50 + radiusPct * Math.cos(angleDeg * Math.PI / 180);
+    const y = 50 + radiusPct * Math.sin(angleDeg * Math.PI / 180);
+    const badgeClass = isVip ? '' : ' free-badge';
+    return `<div class="seg-icon${badgeClass}" style="left:${x}%;top:${y}%;" title="${seg.label}">
+      <img src="${seg.img}" alt="${seg.label}">
+      <span class="idx-badge">${i}</span>
+    </div>`;
+  }).join('');
+}
+
+// ─── Líneas radiales de los gajos en canvas ──────────────────────────────
+function drawLines(canvasId, n, offsetDeg) {
+  const canvas = document.getElementById(canvasId);
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const W = canvas.width, H = canvas.height;
+  const cx = W / 2, cy = H / 2;
+  const r = W / 2 - 2;
+  ctx.clearRect(0, 0, W, H);
+
+  ctx.strokeStyle = 'rgba(255, 255, 80, 0.55)';
+  ctx.lineWidth = 1;
+
+  for (let i = 0; i < n; i++) {
+    // Las líneas van en los BORDES de los gajos (no en los bisectores)
+    const segDeg = 360 / n;
+    // Borde del gajo i: i * segDeg - 90 + offsetDeg
+    // (el -90 pone el primer borde en "arriba", que es donde está el puntero)
+    const angleDeg = segDeg * i - 90 + offsetDeg;
+    const rad = angleDeg * Math.PI / 180;
+    ctx.beginPath();
+    ctx.moveTo(cx, cy);
+    ctx.lineTo(cx + r * Math.cos(rad), cy + r * Math.sin(rad));
+    ctx.stroke();
+  }
+
+  // Círculo central (hub)
+  ctx.strokeStyle = 'rgba(255,255,80,.3)';
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  ctx.arc(cx, cy, r * 0.12, 0, Math.PI * 2);
+  ctx.stroke();
+
+  // Círculo externo del radio de íconos (para ver si los íconos quedan
+  // bien centrados en el anillo)
+  ctx.setLineDash([3, 5]);
+  ctx.strokeStyle = 'rgba(255,255,80,.18)';
+  ctx.lineWidth = 1;
+  // el radio se re-dibuja cuando cambie el slider — se lee del valor actual
+  const rPct = parseInt(document.getElementById(canvasId === 'lines-vip' ? 'radius-vip' : 'radius-free').value);
+  const rPx = (rPct / 100) * (W / 2) * 2; // diámetro real, mitad = radio en px
+  ctx.beginPath();
+  ctx.arc(cx, cy, rPx / 2, 0, Math.PI * 2);
+  ctx.stroke();
+  ctx.setLineDash([]);
+}
+
+// ─── Actualizar panel de resultado ───────────────────────────────────────
+function updateResult() {
+  const ov = parseFloat(document.getElementById('offset-vip').value).toFixed(1);
+  const of = parseFloat(document.getElementById('offset-free').value).toFixed(1);
+  const rv = parseInt(document.getElementById('radius-vip').value);
+  const rf = parseInt(document.getElementById('radius-free').value);
+
+  document.getElementById('result-code').textContent =
+`// ─── Pegar estas constantes en shop.js, justo antes de getNormalWheelSegments ───
+
+// Offset de calibración: compensa la diferencia entre donde el PNG de Isabel
+// dibuja la primera línea divisoria y donde el motor calcula el inicio del
+// segmento 0. Medido con calibrar_ruletas.html.
+const WHEEL_OFFSET_DEG = {
+    vip:    ${ov},   // Ruleta VIP  "La Llave de Caronte"
+    normal: ${of},   // Ruleta Diaria
+};
+
+// Radio de los íconos dentro de la rueda (% del radio total del contenedor).
+// Más alto = más cerca del borde; más bajo = más cerca del centro.
+const WHEEL_ICON_RADIUS = {
+    vip:    ${rv},   // %
+    normal: ${rf},   // %
+};`;
+}
+
+// ─── Setup de un panel ───────────────────────────────────────────────────
+function setup(suffix, segments, isVip) {
+  const sliderOffset = document.getElementById('offset-' + suffix);
+  const sliderRadius = document.getElementById('radius-' + suffix);
+  const valOffset   = document.getElementById('val-' + suffix);
+  const valRadius   = document.getElementById('valr-' + suffix);
+
+  function refresh() {
+    const offset = parseFloat(sliderOffset.value);
+    const radius = parseInt(sliderRadius.value);
+    valOffset.textContent = offset.toFixed(1) + '°';
+    valRadius.textContent = radius + '%';
+    renderIcons('icons-' + suffix, segments, offset, radius, isVip);
+    drawLines('lines-' + suffix, segments.length, offset);
+    updateResult();
+  }
+
+  sliderOffset.addEventListener('input', refresh);
+  sliderRadius.addEventListener('input', refresh);
+
+  // Render inicial
+  refresh();
+}
+
+// ─── Copiar al portapapeles ───────────────────────────────────────────────
+function copyVIP() {
+  const ov = parseFloat(document.getElementById('offset-vip').value).toFixed(1);
+  const rv = parseInt(document.getElementById('radius-vip').value);
+  navigator.clipboard.writeText(`vip offset: ${ov}°  radius: ${rv}%`).then(() => alert('Copiado: VIP offset=' + ov + '° radius=' + rv + '%'));
+}
+function copyFree() {
+  const of = parseFloat(document.getElementById('offset-free').value).toFixed(1);
+  const rf = parseInt(document.getElementById('radius-free').value);
+  navigator.clipboard.writeText(`normal offset: ${of}°  radius: ${rf}%`).then(() => alert('Copiado: Diaria offset=' + of + '° radius=' + rf + '%'));
+}
+
+// ─── Init ────────────────────────────────────────────────────────────────
+setup('vip',  SEGMENTS_VIP,  true);
+setup('free', SEGMENTS_FREE, false);
+</script>
+</body>
+</html>

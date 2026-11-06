@@ -3394,192 +3394,304 @@ section+.vip-section-title {
     background-position: center;
 }
 
-/* rueda grande dentro del modal (Fase 2.5) — mismo PNG real, más grande,
-   con los 8 íconos de premio superpuestos alrededor (ver
-   renderWheelSegmentIcons() en shop.js). No gira sincronizada con el
-   premio real; es la "vidriera" de lo que se puede ganar, el premio
-   real lo decide rollWeightedTable() aparte. */
-.roulette-wheel-big-wrap {
+/* =====================================================================
+   MÁQUINA GARRA — CSS v1
+   Corresponde a renderClawMachine y performClawSpin en shop.js.
+   ===================================================================== */
+
+/* ── Contenedor general de la máquina ───────────────────────────────── */
+.claw-machine-wrap {
     position: relative;
     width: 300px;
-    height: 300px;
-    margin: 6px auto 0;
+    margin: 0 auto 10px;
+    user-select: none;
 }
 
-.roulette-wheel-big-wrap::before {
-    content: "";
-    position: absolute;
-    inset: -16px;
-    border-radius: 50%;
-    background: conic-gradient(from 0deg, transparent, color-mix(in srgb, var(--cfg-hud-accent) 40%, transparent) 25%, transparent 55%);
-    filter: blur(7px);
-    opacity: .55;
-    z-index: 0;
-    animation: roulette-halo-spin 6s linear infinite;
-}
-
-@keyframes roulette-halo-spin {
-    to {
-        transform: rotate(360deg);
-    }
-}
-
-body.reduced-motion .roulette-wheel-big-wrap::before,
-body.performance-mode .roulette-wheel-big-wrap::before {
-    animation: none;
-}
-
-.roulette-wheel-big {
+.claw-machine-body {
+    position: relative;
     width: 100%;
-    height: 100%;
-    border-radius: 50%;
-    background-size: cover;
-    background-position: center;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, .55), 0 0 0 6px rgba(0, 0, 0, .25);
 }
 
-.roulette-icons-wrap {
-    position: absolute;
-    inset: 0;
+.claw-machine-png {
+    display: block;
     width: 100%;
-    height: 100%;
     pointer-events: none;
-}
-
-.roulette-wheel-pointer {
-    position: absolute;
-    top: -11px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 0;
-    height: 0;
-    border-left: 10px solid transparent;
-    border-right: 10px solid transparent;
-    border-top: 17px solid var(--cfg-hud-accent);
-    filter: drop-shadow(0 2px 5px rgba(0, 0, 0, .55));
-    z-index: 3;
-}
-
-.roulette-segment-icon {
-    position: absolute;
-    width: 54px;
-    height: 54px;
-    transform: translate(-50%, -50%);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    pointer-events: none;
-}
-
-.roulette-segment-icon img {
-    width: 100%;
-    height: 100%;
-    object-fit: contain;
-    filter: drop-shadow(0 2px 5px rgba(0, 0, 0, .75)) drop-shadow(0 0 3px rgba(0, 0, 0, .6));
-}
-
-.roulette-segment-icon.is-skin img {
-    filter: drop-shadow(0 0 10px color-mix(in srgb, var(--cfg-hud-accent) 85%, transparent)) drop-shadow(0 2px 5px rgba(0, 0, 0, .75));
-}
-
-/* ── chispas al aterrizar (spawnRouletteSparks) ── */
-.roulette-spark {
-    position: absolute;
-    left: 50%;
-    top: 50%;
-    width: 6px;
-    height: 6px;
-    border-radius: 50%;
-    background: var(--cfg-hud-accent);
-    box-shadow: 0 0 7px 2px color-mix(in srgb, var(--cfg-hud-accent) 85%, white 15%);
-    pointer-events: none;
-    z-index: 4;
-    animation: roulette-spark-burst .7s ease-out forwards;
-}
-
-@keyframes roulette-spark-burst {
-    0% {
-        transform: translate(-50%, -50%) translate(0, 0) scale(1);
-        opacity: 1;
-    }
-
-    100% {
-        transform: translate(-50%, -50%) translate(var(--sx), var(--sy)) scale(.2);
-        opacity: 0;
-    }
-}
-
-/* ── flash de luz al aterrizar (glow de la rueda + del wrap) ── */
-.roulette-wheel-big-wrap.roulette-landed-glow::after {
-    content: "";
-    position: absolute;
-    inset: -24px;
-    border-radius: 50%;
-    background: radial-gradient(circle, color-mix(in srgb, var(--cfg-hud-accent) 55%, transparent) 0%, transparent 70%);
-    animation: roulette-landed-flash .75s ease-out;
-    pointer-events: none;
+    position: relative;
     z-index: 1;
 }
 
-@keyframes roulette-landed-flash {
-    0% {
-        opacity: 0;
-        transform: scale(.7);
+.claw-machine-fallback {
+    width: 100%;
+    height: 260px;
+    background: linear-gradient(180deg, rgba(20, 22, 35, .9), rgba(10, 10, 18, .95));
+    border: 2px solid rgba(255, 255, 255, .12);
+    border-radius: 18px;
+}
+
+/* ── Zona de cristal — vitrina ──────────────────────────────────────── */
+.claw-glass {
+    position: absolute;
+    top: 12%;
+    left: 10%;
+    width: 80%;
+    height: 62%;
+    z-index: 2;
+    overflow: hidden;
+    border-radius: 8px;
+}
+
+/* ── Riel de la garra ───────────────────────────────────────────────── */
+.claw-rail {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    z-index: 5;
+}
+
+.claw-cable {
+    width: 2px;
+    height: 10px;
+    background: rgba(255, 255, 255, .5);
+    transition: height 0.4s ease-in-out;
+}
+
+.claw-cable.claw-cable-extend {
+    height: 60px;
+}
+
+.claw-cable.claw-cable-retract {
+    height: 10px;
+}
+
+.claw-png {
+    width: 36px;
+    pointer-events: none;
+    filter: drop-shadow(0 2px 6px rgba(0, 0, 0, .6));
+}
+
+.claw-png-hidden {
+    visibility: hidden;
+}
+
+.claw-rail.claw-descending {
+    animation: claw-drop 0.45s ease-in forwards;
+}
+
+.claw-rail.claw-ascending {
+    animation: claw-rise 0.45s ease-out forwards;
+}
+
+@keyframes claw-drop {
+    from {
+        transform: translateY(0);
     }
 
-    30% {
+    to {
+        transform: translateY(55px);
+    }
+}
+
+@keyframes claw-rise {
+    from {
+        transform: translateY(55px);
+    }
+
+    to {
+        transform: translateY(0);
+    }
+}
+
+/* ── Grid de ítems dentro del cristal ──────────────────────────────── */
+.claw-items-grid {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 8px;
+}
+
+.claw-item {
+    width: 44px;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 10px;
+    background: rgba(255, 255, 255, .06);
+    border: 1px solid rgba(255, 255, 255, .1);
+    flex-shrink: 0;
+    animation: claw-item-float 3s ease-in-out infinite alternate;
+    transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.claw-item img {
+    width: 70%;
+    height: 70%;
+    object-fit: contain;
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, .7));
+}
+
+.claw-item.is-skin {
+    border-color: color-mix(in srgb, var(--cfg-hud-accent) 55%, transparent);
+    background: color-mix(in srgb, var(--cfg-hud-accent) 10%, transparent);
+}
+
+.claw-item.is-skin img {
+    filter: drop-shadow(0 0 6px color-mix(in srgb, var(--cfg-hud-accent) 70%, transparent));
+}
+
+.claw-item.claw-item-grabbed {
+    opacity: 0;
+    transform: scale(0.5);
+}
+
+@keyframes claw-item-float {
+    from {
+        transform: translateY(0);
+    }
+
+    to {
+        transform: translateY(-5px);
+    }
+}
+
+body.reduced-motion .claw-item,
+body.performance-mode .claw-item {
+    animation: none;
+}
+
+/* ── Bandeja de salida ──────────────────────────────────────────────── */
+.claw-tray {
+    position: absolute;
+    bottom: 4%;
+    left: 20%;
+    width: 60%;
+    height: 12%;
+    z-index: 3;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 6px;
+    background: rgba(0, 0, 0, .25);
+    border: 1px solid rgba(255, 255, 255, .08);
+    overflow: hidden;
+}
+
+.claw-tray.claw-tray-active {
+    background: color-mix(in srgb, var(--cfg-hud-accent) 12%, rgba(0, 0, 0, .25));
+    border-color: color-mix(in srgb, var(--cfg-hud-accent) 40%, transparent);
+}
+
+.claw-tray-prize {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+}
+
+.claw-prize-img {
+    width: 40px;
+    height: 40px;
+    object-fit: contain;
+    filter: drop-shadow(0 2px 6px rgba(0, 0, 0, .6));
+}
+
+.claw-prize-img.is-legendary {
+    filter: drop-shadow(0 0 10px color-mix(in srgb, var(--cfg-hud-accent) 80%, transparent));
+}
+
+.claw-prize-drop {
+    animation: claw-prize-fall 0.5s cubic-bezier(.2, .8, .3, 1);
+}
+
+@keyframes claw-prize-fall {
+    from {
+        transform: translateY(-30px) scale(0.6);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateY(0) scale(1);
         opacity: 1;
-        transform: scale(1.05);
-    }
-
-    100% {
-        opacity: 0;
-        transform: scale(1.35);
     }
 }
 
-.roulette-wheel-big.roulette-glowing {
-    animation: vip-roulette-wheel-glow .75s ease-in-out;
+@media (max-width: 480px) {
+    .claw-machine-wrap {
+        width: 260px;
+    }
+
+    .claw-item {
+        width: 36px;
+        height: 36px;
+    }
+
+    .claw-prize-img {
+        width: 32px;
+        height: 32px;
+    }
 }
 
-/* ── mensaje "GIRANDO…" mientras corre la rueda ── */
+/* ── Mensaje "AGARRANDO…" ──────────────────────────────────────────── */
+.claw-spinning-msg {
+    text-align: center;
+    color: rgba(255, 255, 255, .4);
+    font-size: 11px;
+    letter-spacing: 3.5px;
+    text-transform: uppercase;
+    padding: 14px 0 6px;
+    animation: roulette-spinning-pulse 1s ease-in-out infinite;
+}
+
+/* ── "GIRANDO…" — reutilizado también por .claw-spinning-msg ────────── */
 .roulette-spinning-msg {
     text-align: center;
-    color: rgba(255, 255, 255, .45);
-    font-size: 12px;
-    letter-spacing: 3px;
-    padding: 18px 0 6px;
-    animation: roulette-spinning-pulse 1.1s ease-in-out infinite;
+    color: rgba(255, 255, 255, .4);
+    font-size: 11px;
+    letter-spacing: 3.5px;
+    text-transform: uppercase;
+    padding: 20px 0 8px;
+    animation: roulette-spinning-pulse 1s ease-in-out infinite;
 }
 
 @keyframes roulette-spinning-pulse {
 
     0%,
     100% {
-        opacity: .35;
+        opacity: .3;
     }
 
     50% {
-        opacity: .85;
+        opacity: .9;
     }
 }
 
 body.reduced-motion .roulette-spinning-msg,
 body.performance-mode .roulette-spinning-msg {
     animation: none;
-    opacity: .6;
+    opacity: .55;
 }
 
-/* ── texto de ayuda + botón de girar ── */
+/* ── Footer del modal (zona de controles + resultado) ───────────────── */
 .roulette-footer {
     width: 100%;
+    position: relative;
+    /* necesario para que .caronte-info-panel se posicione dentro */
 }
 
 .roulette-hint-text {
-    color: rgba(255, 255, 255, .6);
+    color: rgba(255, 255, 255, .58);
     font-size: 12px;
-    line-height: 1.6;
-    margin: 16px 0 18px;
+    line-height: 1.65;
+    margin: 14px 0 16px;
     text-align: center;
 }
 
@@ -3587,17 +3699,20 @@ body.performance-mode .roulette-spinning-msg {
     text-align: center;
     color: #ff9ab0;
     font-size: 11px;
-    margin-top: 14px;
+    margin-top: 12px;
 }
 
+/* ── Botón de girar ─────────────────────────────────────────────────── */
 .roulette-spin-btn {
     position: relative;
     display: block;
     margin: 0 auto;
-    padding: 15px 34px;
+    padding: 14px 32px;
     border-radius: 10px;
     border: 1px solid var(--cfg-hud-accent);
-    background: linear-gradient(180deg, color-mix(in srgb, var(--cfg-hud-accent) 88%, white 12%), var(--cfg-hud-accent));
+    background: linear-gradient(180deg,
+            color-mix(in srgb, var(--cfg-hud-accent) 88%, white 12%),
+            var(--cfg-hud-accent));
     color: #1c0d05;
     font-family: 'Cinzel', serif;
     font-weight: 700;
@@ -3605,37 +3720,40 @@ body.performance-mode .roulette-spinning-msg {
     letter-spacing: 1.5px;
     cursor: pointer;
     overflow: hidden;
-    box-shadow: 0 4px 14px rgba(0, 0, 0, .5), 0 0 18px color-mix(in srgb, var(--cfg-hud-accent) 45%, transparent);
+    box-shadow:
+        0 4px 14px rgba(0, 0, 0, .5),
+        0 0 18px color-mix(in srgb, var(--cfg-hud-accent) 40%, transparent);
     transition: transform .15s ease, box-shadow .15s ease, filter .15s ease;
 }
 
-/* la Diaria usa la fuente de marca del juego (Geom), la VIP se queda con
-   el look elegante (Cinzel) — mismo patrón que ya usa el título del modal */
+/* Diaria: fuente principal del juego; VIP: Cinzel (elegante) */
 .shop-roulette-overlay .roulette-spin-btn {
     font-family: var(--font-principal);
 }
 
+/* Brillo de barrido al hover */
 .roulette-spin-btn::before {
     content: "";
     position: absolute;
     top: 0;
-    left: -60%;
-    width: 40%;
+    left: -65%;
+    width: 38%;
     height: 100%;
-    background: linear-gradient(120deg, transparent, rgba(255, 255, 255, .4), transparent);
+    background: linear-gradient(120deg, transparent, rgba(255, 255, 255, .38), transparent);
     transform: skewX(-20deg);
-    transition: left .5s ease;
+    transition: left .48s ease;
 }
 
 .roulette-spin-btn:hover:not(:disabled)::before {
-    left: 120%;
+    left: 125%;
 }
 
 .roulette-spin-btn:hover:not(:disabled) {
     transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(0, 0, 0, .55), 0 0 26px color-mix(in srgb, var(--cfg-hud-accent) 65%, transparent);
+    box-shadow:
+        0 6px 20px rgba(0, 0, 0, .55),
+        0 0 26px color-mix(in srgb, var(--cfg-hud-accent) 60%, transparent);
     filter: brightness(1.08);
-
 }
 
 .roulette-spin-btn:active:not(:disabled) {
@@ -3644,28 +3762,28 @@ body.performance-mode .roulette-spinning-msg {
 
 .roulette-spin-btn:disabled {
     cursor: not-allowed;
-    opacity: .45;
-    filter: grayscale(.3);
+    opacity: .4;
+    filter: grayscale(.35);
 }
 
 .roulette-spin-again-btn {
-    margin-top: 4px;
+    margin-top: 6px;
 }
 
-/* ── tarjeta de resultado ── */
+/* ── Tarjeta de resultado ───────────────────────────────────────────── */
 .roulette-result-card {
     display: flex;
     flex-direction: column;
     align-items: center;
     gap: 10px;
     padding: 14px 0 4px;
-    animation: roulette-result-in .4s ease;
+    animation: roulette-result-in .38s cubic-bezier(.2, .8, .3, 1);
 }
 
 @keyframes roulette-result-in {
     from {
         opacity: 0;
-        transform: translateY(10px) scale(.96);
+        transform: translateY(12px) scale(.94);
     }
 
     to {
@@ -3690,13 +3808,15 @@ body.performance-mode .roulette-spinning-msg {
 
 .roulette-result-flavor {
     font-size: 12.5px;
-    color: rgba(255, 255, 255, .55);
+    color: rgba(255, 255, 255, .52);
     text-align: center;
     letter-spacing: .3px;
 }
 
+/* Variante legendaria: imagen con glow de acento, sabor en color acento */
 .roulette-result-card.is-legendary .roulette-result-img {
-    filter: drop-shadow(0 0 16px color-mix(in srgb, var(--cfg-hud-accent) 85%, transparent)) drop-shadow(0 4px 10px rgba(0, 0, 0, .5));
+    filter:
+        drop-shadow(0 0 14px color-mix(in srgb, var(--cfg-hud-accent) 80%, transparent)) drop-shadow(0 4px 10px rgba(0, 0, 0, .5));
 }
 
 .roulette-result-card.is-legendary .roulette-result-flavor {
@@ -3714,6 +3834,146 @@ body.performance-mode .roulette-spinning-msg {
     letter-spacing: 1px;
     color: rgba(255, 255, 255, .55);
     white-space: nowrap;
+}
+
+/* =====================================================================
+   BOTÓN ÓBOLO DE INFORMACIÓN — "La Llave de Caronte" (VIP)
+   Bug fix: las clases caronte-info-* no estaban definidas, causando
+   que el botón "i" apareciera fuera del modal sin posicionamiento.
+   Solución: el botón es absolute dentro de .roulette-footer (que ya
+   tiene position: relative). El panel se despliega hacia arriba para
+   no quedar tapado por los botones de abajo.
+   ===================================================================== */
+
+/* ── Botón óbolo ── */
+.caronte-info-btn {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    border: 1px solid color-mix(in srgb, var(--cfg-hud-accent) 55%, transparent);
+    background: rgba(255, 255, 255, .05);
+    color: color-mix(in srgb, var(--cfg-hud-accent) 80%, white 20%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 10;
+    transition: background .15s ease, border-color .15s ease, color .15s ease;
+    flex-shrink: 0;
+}
+
+.caronte-info-btn:hover {
+    background: color-mix(in srgb, var(--cfg-hud-accent) 18%, transparent);
+    border-color: var(--cfg-hud-accent);
+    color: var(--cfg-hud-accent);
+}
+
+/* ── Panel de información (oculto por defecto, se abre con .open) ── */
+/* Aparece sobre el contenido del footer, posicionado arriba del botón,
+   con z-index suficiente para no quedar bajo la rueda. */
+.caronte-info-panel {
+    display: none;
+    position: absolute;
+    bottom: calc(100% + 8px);
+    /* justo encima del footer */
+    right: 0;
+    width: 220px;
+    background: color-mix(in srgb, #0a0c14 92%, var(--cfg-hud-accent) 8%);
+    border: 1px solid color-mix(in srgb, var(--cfg-hud-accent) 40%, transparent);
+    border-radius: 10px;
+    padding: 12px 14px;
+    box-shadow:
+        0 8px 24px rgba(0, 0, 0, .6),
+        0 0 0 1px rgba(255, 255, 255, .04) inset;
+    z-index: 20;
+    animation: caronte-panel-in .2s ease;
+}
+
+.caronte-info-panel.open {
+    display: block;
+}
+
+@keyframes caronte-panel-in {
+    from {
+        opacity: 0;
+        transform: translateY(6px) scale(.97);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+.caronte-info-panel p {
+    font-size: 11.5px;
+    color: rgba(255, 255, 255, .7);
+    line-height: 1.55;
+    margin: 0;
+}
+
+/* ── Separador dentro del panel ── */
+.caronte-info-divider {
+    height: 1px;
+    background: color-mix(in srgb, var(--cfg-hud-accent) 30%, transparent);
+    margin: 8px 0;
+}
+
+/* ── Subtítulo "Probabilidades por giro" ── */
+.caronte-info-subtitle {
+    font-size: 10px !important;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: color-mix(in srgb, var(--cfg-hud-accent) 85%, white 15%) !important;
+    margin-bottom: 6px !important;
+}
+
+/* ── Lista de probabilidades ── */
+.caronte-info-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.caronte-info-list li {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    font-size: 11px;
+    color: rgba(255, 255, 255, .65);
+    gap: 8px;
+}
+
+.caronte-info-list li span:last-child {
+    font-weight: 700;
+    color: color-mix(in srgb, var(--cfg-hud-accent) 90%, white 10%);
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+/* ── Responsive: rueda más chica en pantallas angostas ── */
+@media (max-width: 480px) {
+    .roulette-wheel-big-wrap {
+        width: 240px;
+        height: 240px;
+    }
+
+    .roulette-segment-icon {
+        width: 38px;
+        height: 38px;
+    }
+
+    .caronte-info-panel {
+        width: 190px;
+        right: -10px;
+    }
 }
 
 /* ábreme: snake hacia los lados + brillo del botón y de la rueda */
@@ -6303,6 +6563,195 @@ body.is-touch-device .ruby-shop-label-ruby {
     animation: none !important;
     text-shadow: none !important;
 }
+
+/* ── Convertidor Tienda Ruby — rediseño visual (prefijo rcv- para no
+   chocar con nada existente). Usa grid a todo el ancho en vez del viejo
+   max-width:480px centrado que dejaba mucho espacio vacío a los lados.
+   No fuerza ninguna altura (nada de 100vh) porque vive DENTRO de
+   .shop-content-scroll, que ya tiene su propio scroll vertical — y
+   .rcv-rate-row usa flex-wrap para que nunca se desborde horizontalmente
+   sin importar el ancho de pantalla. ── */
+.rcv-wrap {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: hidden;
+}
+
+.rcv-rate {
+    position: relative;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 16px;
+    padding: 20px 24px;
+    margin-bottom: 16px;
+    overflow: hidden;
+}
+
+.rcv-strip {
+    height: 4px;
+    margin: -20px -24px 16px;
+    background: repeating-linear-gradient(135deg, #ffee00 0 10px, transparent 10px 20px);
+    opacity: 0.55;
+}
+
+.rcv-rate-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    flex-wrap: wrap;
+    row-gap: 10px;
+}
+
+.rcv-corners::before,
+.rcv-corners::after,
+.rcv-corners .rcv-c2::before,
+.rcv-corners .rcv-c2::after {
+    content: '';
+    position: absolute;
+    width: 14px;
+    height: 14px;
+    pointer-events: none;
+}
+.rcv-corners::before { top: -1px; left: -1px; border-top: 2px solid #ffee00; border-left: 2px solid #ffee00; border-radius: 8px 0 0 0; }
+.rcv-corners::after { top: -1px; right: -1px; border-top: 2px solid #ffee00; border-right: 2px solid #ffee00; border-radius: 0 8px 0 0; }
+.rcv-corners .rcv-c2::before { bottom: -1px; left: -1px; border-bottom: 2px solid #ffee00; border-left: 2px solid #ffee00; border-radius: 0 0 0 8px; }
+.rcv-corners .rcv-c2::after { bottom: -1px; right: -1px; border-bottom: 2px solid #ffee00; border-right: 2px solid #ffee00; border-radius: 0 0 8px 0; }
+
+.rcv-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 260px) minmax(0, 1fr);
+    gap: 16px;
+    align-items: stretch;
+}
+@media (max-width: 760px) {
+    .rcv-grid { grid-template-columns: minmax(0, 1fr); }
+}
+
+.rcv-bal-col {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    min-width: 0;
+}
+.rcv-bal-card {
+    flex: 1;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 14px;
+    padding: 18px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-width: 0;
+}
+.rcv-bal-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex: none;
+}
+.rcv-bal-icon img { width: 22px; height: 22px; object-fit: contain; }
+.rcv-bal-icon.coins { background: radial-gradient(circle at 35% 30%, rgba(255,238,0,0.35), rgba(255,238,0,0.08)); box-shadow: 0 0 16px -4px rgba(255,238,0,0.35); }
+.rcv-bal-icon.gems { background: radial-gradient(circle at 35% 30%, rgba(255,77,109,0.35), rgba(255,77,109,0.08)); box-shadow: 0 0 16px -4px rgba(255,77,109,0.35); }
+.rcv-bal-card small { display: block; font-family: monospace; font-size: 10px; letter-spacing: 1.5px; color: rgba(255,255,255,0.4); margin-bottom: 4px; }
+.rcv-bal-card b { font-family: monospace; font-size: 20px; }
+.rcv-bal-card.coins b { color: #ffee00; }
+.rcv-bal-card.gems b { color: #ff4d6d; }
+
+.rcv-conv-col {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    min-width: 0;
+}
+.rcv-panel {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 16px;
+    padding: 20px 22px;
+    min-width: 0;
+}
+.rcv-panel-head {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 14px;
+    font-family: monospace;
+    font-size: 13px;
+    letter-spacing: 1px;
+    color: white;
+    flex-wrap: wrap;
+    row-gap: 6px;
+}
+.rcv-panel-head img { width: 18px; height: 18px; object-fit: contain; }
+.rcv-panel-head .rcv-arrow { color: rgba(255,255,255,0.35); }
+.rcv-tag {
+    margin-left: auto;
+    font-family: monospace;
+    font-size: 10px;
+    color: rgba(255,255,255,0.4);
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.08);
+    padding: 3px 10px;
+    border-radius: 20px;
+}
+
+.rcv-body { display: flex; gap: 10px; flex-wrap: wrap; }
+.rcv-input {
+    flex: 1;
+    min-width: 120px;
+    padding: 12px 14px;
+    background: rgba(0,0,0,0.28);
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 10px;
+    color: white;
+    font-family: monospace;
+    font-size: 14px;
+    outline: none;
+    transition: 0.2s;
+}
+.rcv-panel.gold .rcv-input:focus { border-color: #ffee00; box-shadow: 0 0 0 3px rgba(255,238,0,0.12); }
+.rcv-panel.red .rcv-input:focus { border-color: #ff4d6d; box-shadow: 0 0 0 3px rgba(255,77,109,0.12); }
+
+.rcv-btn {
+    flex: none;
+    border-radius: 10px;
+    padding: 0 22px;
+    font-family: monospace;
+    font-size: 12px;
+    letter-spacing: 1.5px;
+    font-weight: bold;
+    cursor: pointer;
+}
+.rcv-panel.gold .rcv-btn { background: rgba(255,238,0,0.12); border: 1px solid #ffee00; color: #ffee00; }
+.rcv-panel.red .rcv-btn { background: rgba(255,77,109,0.12); border: 1px solid #ff4d6d; color: #ff4d6d; }
+.rcv-btn:active { transform: scale(0.96); }
+
+.rcv-preview { font-family: monospace; font-size: 11px; color: rgba(255,255,255,0.35); margin-top: 8px; }
+.rcv-preview b { font-weight: bold; }
+.rcv-panel.gold .rcv-preview b { color: #ff4d6d; }
+.rcv-panel.red .rcv-preview b { color: #ffee00; }
+
+.rcv-quick { display: flex; gap: 6px; margin-top: 10px; flex-wrap: wrap; }
+.rcv-chip {
+    font-family: monospace;
+    font-size: 10px;
+    color: rgba(255,255,255,0.5);
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.1);
+    padding: 5px 10px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: 0.15s;
+}
+.rcv-panel.gold .rcv-chip:hover { border-color: #ffee00; color: #ffee00; }
+.rcv-panel.red .rcv-chip:hover { border-color: #ff4d6d; color: #ff4d6d; }
+
+.rcv-result { font-family: monospace; font-size: 11px; margin-top: 10px; }
 
 /* Retícula de la tienda — reorganizada en 3 grupos con aire real entre
    ellos (pedido de Felipe: "no quiero que se vea todo pegado como
@@ -14311,19 +14760,28 @@ body.performance-mode .hud-notify-dot {
 
 .season-emotes-of-day-col {
     flex: 1 1 50%;
-    display: flex;
-    flex-direction: column;
-    gap: 14px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
     min-width: 0;
 }
 
 .season-emote-of-day-card {
-    flex: 1;
     position: relative;
     overflow: hidden;
-    border-radius: 8px;
+    border-radius: 10px;
     border: 1px solid rgba(255, 215, 106, .25);
-    background: #0e0d16;
+    background: radial-gradient(circle at 50% 35%, rgba(255, 215, 106, .08), transparent 70%), #0e0d16;
+    aspect-ratio: 1 / 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform .18s ease, border-color .18s ease;
+}
+
+.season-emote-of-day-card:hover {
+    transform: translateY(-2px);
+    border-color: rgba(255, 215, 106, .55);
 }
 
 .season-emote-of-day-card.is-empty {
@@ -14334,42 +14792,13 @@ body.performance-mode .hud-notify-dot {
     font-family: 'Chakra Petch', sans-serif;
     font-size: 10px;
     letter-spacing: 1px;
-}
-
-.season-emote-of-day-hazard {
-    height: 20px;
-    background: repeating-linear-gradient(135deg, #e0b563 0 8px, #0e0d16 8px 16px);
-    clip-path: polygon(0 0, 100% 0, calc(100% - 14px) 100%, 0 100%);
-    display: flex;
-    align-items: center;
-    padding-left: 12px;
-}
-
-.season-emote-of-day-hazard span {
-    background: #0e0d16;
-    color: #e0b563;
-    font-family: 'Chakra Petch', sans-serif;
-    font-size: 9px;
-    letter-spacing: 1.5px;
-    font-weight: 600;
-    padding: 2px 8px;
-    text-transform: uppercase;
-}
-
-.season-emote-of-day-body {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 10px 14px;
+    text-align: center;
+    padding: 8px;
 }
 
 .season-emote-of-day-thumb {
-    width: 48px;
-    height: 48px;
-    flex-shrink: 0;
-    border-radius: 50%;
-    background: rgba(255, 255, 255, .04);
-    border: 1px solid rgba(255, 255, 255, .1);
+    width: 72%;
+    height: 72%;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -14379,14 +14808,7 @@ body.performance-mode .hud-notify-dot {
 .season-emote-of-day-thumb img {
     width: 100%;
     height: 100%;
-    object-fit: cover;
-}
-
-.season-emote-of-day-name {
-    font-family: 'Chakra Petch', sans-serif;
-    font-size: 12px;
-    color: #fff;
-    letter-spacing: .5px;
+    object-fit: contain;
 }
 
 .season-packs-card {
@@ -14394,11 +14816,13 @@ body.performance-mode .hud-notify-dot {
     position: relative;
     overflow: hidden;
     cursor: pointer;
-    border-radius: 8px;
+    border-radius: 10px;
     border: 1px solid rgba(162, 89, 255, .3);
     background: radial-gradient(circle at 80% 10%, rgba(162, 89, 255, .16), transparent 55%), #0e0d16;
     display: flex;
     flex-direction: column;
+    justify-content: center;
+    padding: 18px 20px;
     transition: transform .18s ease, border-color .18s ease;
 }
 
@@ -14407,29 +14831,39 @@ body.performance-mode .hud-notify-dot {
     border-color: rgba(162, 89, 255, .6);
 }
 
-.season-packs-hazard {
-    height: 20px;
-    background: repeating-linear-gradient(135deg, #a259ff 0 8px, #0e0d16 8px 16px);
-    clip-path: polygon(0 0, 100% 0, calc(100% - 14px) 100%, 0 100%);
-    display: flex;
-    align-items: center;
-    padding-left: 12px;
+.season-packs-art {
+    position: absolute;
+    inset: 0;
+    background-size: cover;
+    background-position: center 30%;
+    background-repeat: no-repeat;
+    z-index: 0;
 }
 
-.season-packs-hazard span {
-    background: #0e0d16;
-    color: #a259ff;
+.season-packs-art::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, rgba(14, 13, 22, .15) 0%, rgba(14, 13, 22, .55) 55%, rgba(14, 13, 22, .92) 100%);
+}
+
+.season-packs-eyebrow {
+    position: relative;
+    z-index: 1;
     font-family: 'Chakra Petch', sans-serif;
-    font-size: 9px;
-    letter-spacing: 1.5px;
+    font-size: 10px;
+    letter-spacing: 2px;
     font-weight: 600;
-    padding: 2px 8px;
+    color: #a259ff;
     text-transform: uppercase;
+    margin-bottom: 8px;
+    text-shadow: 0 1px 4px rgba(0, 0, 0, .8);
 }
 
 .season-packs-body {
+    position: relative;
+    z-index: 1;
     flex: 1;
-    padding: 14px;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -14438,31 +14872,10 @@ body.performance-mode .hud-notify-dot {
 .season-packs-title {
     font-family: 'Rajdhani', sans-serif;
     font-weight: 700;
-    font-size: 22px;
+    font-size: 26px;
     letter-spacing: 2px;
     color: #fff;
-    text-shadow: 0 0 18px rgba(162, 89, 255, .5);
-    margin-bottom: 6px;
-}
-
-.season-packs-sub {
-    font-size: 11px;
-    color: rgba(255, 255, 255, .55);
-    line-height: 1.5;
-    margin: 0 0 12px;
-}
-
-.season-packs-swatches {
-    display: flex;
-    gap: 8px;
-}
-
-.season-packs-swatch {
-    width: 20px;
-    height: 20px;
-    border-radius: 50%;
-    background: var(--c);
-    box-shadow: 0 0 12px var(--c);
+    text-shadow: 0 0 18px rgba(162, 89, 255, .5), 0 2px 6px rgba(0, 0, 0, .8);
 }
 
 /* ===== Modal de Packs: overview con 2 paneles ===== */

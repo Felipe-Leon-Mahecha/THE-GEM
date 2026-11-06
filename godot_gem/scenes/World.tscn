@@ -1,0 +1,41 @@
+[gd_scene load_steps=3 format=3 uid="uid://world_gem"]
+
+[ext_resource type="Script" path="res://scripts/circular_world.gd" id="1_world"]
+[ext_resource type="PackedScene" path="res://scenes/Player.tscn" id="2_player"]
+
+; ════════════════════════════════════════════════════════════════════════════
+; Árbol de nodos:
+;
+;   World  (Node2D)             ← raíz de la escena principal
+;   ├── Camera2D                ← cámara que sigue al jugador
+;   ├── CircularWorld (Node2D)  ← genera las dos superficies circulares
+;   └── Player                  ← instancia de Player.tscn
+;
+; El origen (0,0) es el CENTRO del domo. Ambos círculos están centrados aquí.
+; ════════════════════════════════════════════════════════════════════════════
+
+[node name="World" type="Node2D"]
+
+; ── Cámara ──────────────────────────────────────────────────────────────────
+; position_smoothing_enabled hace que la cámara siga al jugador suavemente.
+; Zoom 0.85 para ver bien ambos círculos en pantalla (ajusta a tu resolución).
+[node name="Camera2D" type="Camera2D" parent="."]
+zoom = Vector2(0.85, 0.85)
+position_smoothing_enabled = true
+position_smoothing_speed = 6.0
+
+; ── Mundo circular (genera colisiones + visuals en _ready) ──────────────────
+[node name="CircularWorld" type="Node2D" parent="."]
+script = ExtResource("1_world")
+outer_radius = 340.0
+inner_radius = 160.0
+segments = 128
+line_width = 3.0
+outer_color = Color(0.2, 0.6, 1.0, 1.0)
+inner_color = Color(1.0, 0.4, 0.1, 1.0)
+
+; ── Jugador ──────────────────────────────────────────────────────────────────
+; Posición inicial: en la superficie exterior, directamente "arriba" del centro.
+; player.gd la sobreescribe en _ready() de todas formas.
+[node name="Player" parent="." instance=ExtResource("2_player")]
+position = Vector2(0.0, -320.0)

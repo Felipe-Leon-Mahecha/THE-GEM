@@ -1951,6 +1951,12 @@ const SEASON_PACKS_LEYENDAS = [
 ];
 window.SEASON_PACKS_LEYENDAS = SEASON_PACKS_LEYENDAS;
 
+// Arte de fondo (Solmerion vs Zherath) para la card grande "PACKS" en la
+// vitrina de Destacados. Si el archivo no existe todavía, la card cae
+// de vuelta al degradado morado liso definido en CSS.
+const SEASON_PACKS_SHOWCASE_ART = 'assets/Imagenes/Temporadas/Temp_Leyendas/Packs/pack_showcase_vs.png';
+window.SEASON_PACKS_SHOWCASE_ART = SEASON_PACKS_SHOWCASE_ART;
+
 // Hash simple y determinístico (mismo día → mismo resultado, sin dependencias externas)
 function seasonSimpleHash(str) {
     let hash = 0;
@@ -3472,12 +3478,8 @@ function renderSeasonEmoteOfDayCard(index, emotePool) {
     }
     return `
         <div class="season-emote-of-day-card">
-            <div class="season-emote-of-day-hazard"><span>EMOTES DEL DÍA</span></div>
-            <div class="season-emote-of-day-body">
-                <div class="season-emote-of-day-thumb">
-                    <img src="${emote.image}" alt="${emote.name}" onerror="this.style.display='none';">
-                </div>
-                <div class="season-emote-of-day-name">${emote.name}</div>
+            <div class="season-emote-of-day-thumb">
+                <img src="${emote.image}" alt="${emote.name}" onerror="this.style.display='none';">
             </div>
         </div>
     `;
@@ -3486,13 +3488,10 @@ function renderSeasonEmoteOfDayCard(index, emotePool) {
 function renderSeasonPacksCard() {
     return `
         <div class="season-packs-card" onclick="openSeasonPacksModal()">
-            <div class="season-packs-hazard"><span>Colecciones</span></div>
+            <div class="season-packs-art" style="background-image:url('${SEASON_PACKS_SHOWCASE_ART}')"></div>
+            <div class="season-packs-eyebrow">COLECCIÓN DE TEMPORADA</div>
             <div class="season-packs-body">
                 <div class="season-packs-title">PACKS</div>
-                <p class="season-packs-sub">Descubre las colecciones completas de cada personaje de la temporada.</p>
-                <div class="season-packs-swatches">
-                    ${SEASON_PACKS_LEYENDAS.map(p => `<span class="season-packs-swatch" style="--c:${p.color};"></span>`).join('')}
-                </div>
             </div>
         </div>
     `;
@@ -5561,27 +5560,37 @@ function getTodayKey() {
    de lo que se puede llegar a ganar.
    ===================================================== */
 
-// Shuffle determinístico: mismo array de entrada + misma semilla = mismo
-// resultado siempre (así el orden no cambia entre giros del mismo día).
-function seededShuffle(array, seedStr) {
-    let seed = 0;
-    for (let i = 0; i < seedStr.length; i++) seed = (seed * 31 + seedStr.charCodeAt(i)) >>> 0;
-    const rand = () => { seed = (seed * 1103515245 + 12345) >>> 0; return seed / 4294967296; };
-    const result = [...array];
-    for (let i = result.length - 1; i > 0; i--) {
-        const j = Math.floor(rand() * (i + 1));
-        [result[i], result[j]] = [result[j], result[i]];
-    }
-    return result;
-}
+/* =====================================================
+   MOTOR VISUAL DE RUEDA v3 — canvas puro.
+   Los gajos se dibujan con <canvas> 2D en JS, sin depender
+   de ningún PNG para la alineación. El PNG de Isabel queda
+   como overlay decorativo del aro (no rota, solo decora).
+   Esto garantiza que el ícono ganador SIEMPRE quede bajo
+   el puntero: el segmento i empieza en startAngle(i) que
+   el mismo código usa para calcular el aterrizaje.
+   ===================================================== */
 
-function getRouletteSkinIcon(skinId) {
-    const skin = FRAGMENT_SKINS_LIST.find(s => s.id === skinId);
-    return skin ? { image: skin.imageRight, label: skin.name, isSeasonSkin: true } : null;
-}
+/* =====================================================
+   MÁQUINA GARRA — motor visual v1
+   Reemplaza el sistema de ruleta giratoria.
+   La lógica de premios (rollWeightedTable, applyRouletteReward,
+   NORMAL/VIP_ROULETTE_TABLE, getRouletteRewardTier) NO SE TOCA.
 
-function getNormalWheelSegments() {
-    const pool = [
+   Mecánica:
+     1. El jugador ve una vitrina con todos los premios posibles
+        flotando dentro de la máquina.
+     2. Al presionar JUGAR, rollWeightedTable elige el premio.
+     3. La garra baja, agarra el premio ganado, sube y lo suelta
+        en la bandeja de salida.
+     4. No hay ángulos, no hay rotación — el premio mostrado
+        siempre coincide 100% con el premio otorgado.
+   ===================================================== */
+
+// ── Pool de ítems de vitrina ──────────────────────────────────────────────
+// Solo visual: qué íconos se muestran dentro del cristal.
+// NO afecta las probabilidades — eso lo decide rollWeightedTable.
+function getNormalClawItems() {
+    return [
         { image: 'assets/UI/Common/Currency/DEAD_COIN.png', label: 'Monedas' },
         { image: 'assets/UI/Common/Currency/DEAD_COIN.png', label: 'Monedas extra' },
         { image: 'assets/Imagenes/Cofres Imagenes/Cofre BASICO.png', label: 'Cofre Básico' },
@@ -5589,14 +5598,12 @@ function getNormalWheelSegments() {
         { image: 'assets/Imagenes/Cofres Imagenes/Cofre EPICO.png', label: 'Cofre Épico' },
         { image: 'assets/Imagenes/Cofres Imagenes/Cofre DEMON.png', label: 'Cofre Demon' },
         { image: 'assets/Imagenes/Cofres Imagenes/Cofre LUCK.png', label: 'Cofre de la Suerte' },
-    ];
-    const skinIcon = getRouletteSkinIcon(NORMAL_ROULETTE_SEASON_SKIN);
-    if (skinIcon) pool.push(skinIcon);
-    return seededShuffle(pool, 'normal_' + getTodayKey());
+        { image: getClawSkinImage(NORMAL_ROULETTE_SEASON_SKIN), label: 'Skin temporada', isSkin: true },
+    ].filter(item => item.image);
 }
 
-function getVIPWheelSegments() {
-    const pool = [
+function getVIPClawItems() {
+    return [
         { image: 'assets/UI/Common/Currency/Rubies.png', label: 'Rubíes' },
         { image: SHOP_PLACEHOLDER_IMAGE, label: 'Fragmento' },
         { image: 'assets/Imagenes/Cofres Imagenes/Cofre ESPECIAL.png', label: 'Cofre Especial' },
@@ -5604,29 +5611,181 @@ function getVIPWheelSegments() {
         { image: 'assets/Imagenes/Cofres Imagenes/Cofre DEMON.png', label: 'Cofre Demon' },
         { image: 'assets/Imagenes/Cofres Imagenes/Cofre VIP.png', label: 'Cofre VIP' },
         { image: 'assets/Imagenes/Cofres Imagenes/Cofre LUCK.png', label: 'Cofre de la Suerte' },
-    ];
-    const skinIcon = getRouletteSkinIcon(VIP_ROULETTE_SEASON_SKIN);
-    if (skinIcon) pool.push(skinIcon);
-    return seededShuffle(pool, 'vip_' + getTodayKey());
+        { image: getClawSkinImage(VIP_ROULETTE_SEASON_SKIN), label: 'Skin temporada', isSkin: true },
+    ].filter(item => item.image);
 }
 
-// Distribuye los 8 íconos en círculo alrededor del centro (posiciones en %,
-// para ubicarlos con left/top sobre el contenedor cuadrado de la rueda).
-function renderWheelSegmentIcons(segments, wrapId) {
-    const R = 37; // radio en % — qué tan cerca del borde quedan los íconos
-    const half = 360 / segments.length / 2; // offset para caer en el CENTRO del gajo, no en el vértice
-    const icons = segments.map((seg, i) => {
-        const angle = (360 / segments.length) * i - 90 + half;
-        const x = 50 + R * Math.cos(angle * Math.PI / 180);
-        const y = 50 + R * Math.sin(angle * Math.PI / 180);
-        return `<div class="roulette-segment-icon${seg.isSeasonSkin ? ' is-skin' : ''}" style="left:${x}%; top:${y}%;" title="${seg.label}">
-            <img src="${seg.image}" alt="${seg.label}">
+function getClawSkinImage(skinId) {
+    const skin = FRAGMENT_SKINS_LIST?.find(s => s.id === skinId);
+    return skin ? skin.imageRight : null;
+}
+
+// ── renderClawMachine ─────────────────────────────────────────────────────
+// Genera el HTML completo de la vitrina de la máquina garra.
+// items = getNormalClawItems() o getVIPClawItems()
+// machineId = 'normal' | 'vip'  (para IDs únicos)
+// pngMachine = URL del PNG de la máquina (cuerpo)
+// pngClaw    = URL del PNG de la garra
+function renderClawMachine(items, machineId, pngMachine, pngClaw) {
+    const itemsHtml = items.map((item, i) =>
+        `<div class="claw-item${item.isSkin ? ' is-skin' : ''}" data-index="${i}" style="animation-delay:${(i * 0.18).toFixed(2)}s">
+            <img src="${item.image}" alt="${item.label}" title="${item.label}">
+        </div>`
+    ).join('');
+
+    return `
+        <div class="claw-machine-wrap" id="${machineId}ClawWrap">
+            <div class="claw-machine-body">
+                ${pngMachine
+            ? `<img src="${pngMachine}" class="claw-machine-png" alt="Máquina garra" draggable="false">`
+            : `<div class="claw-machine-fallback"></div>`
+        }
+                <div class="claw-glass">
+                    <div class="claw-rail" id="${machineId}ClawRail">
+                        <img src="${pngClaw || ''}" class="claw-png${pngClaw ? '' : ' claw-png-hidden'}" id="${machineId}ClawImg" alt="Garra" draggable="false">
+                        <div class="claw-cable" id="${machineId}ClawCable"></div>
+                    </div>
+                    <div class="claw-items-grid" id="${machineId}ClawGrid">
+                        ${itemsHtml}
+                    </div>
+                </div>
+                <div class="claw-tray" id="${machineId}ClawTray">
+                    <div class="claw-tray-prize" id="${machineId}ClawPrize"></div>
+                </div>
+            </div>
         </div>`;
-    }).join('');
-    // van adentro de un wrapper con su propio id: performRouletteSpin le
-    // aplica el MISMO transform que a la rueda, para que los íconos giren
-    // pegados a sus gajos en vez de quedarse quietos mientras gira el fondo.
-    return `<div class="roulette-icons-wrap" id="${wrapId}">${icons}</div>`;
+}
+
+// ── performClawSpin ───────────────────────────────────────────────────────
+// Motor de la máquina garra. Sin ángulos, sin rotación.
+// El premio real (entry) se obtiene de rollWeightedTable ANTES de animar.
+// La animación solo muestra ese premio — es imposible que diverjan.
+//
+// Secuencia de animación:
+//   1. Garra se mueve horizontalmente sobre el ítem ganador (0.5s)
+//   2. Garra baja (0.4s)
+//   3. Garra sube con el ítem (0.4s)
+//   4. Garra se mueve al centro / bandeja (0.4s)
+//   5. Premio cae en la bandeja + tarjeta de resultado (0.5s)
+function performClawSpin(opts) {
+    const { machineId, footerId, table, resultTextColor, spinAgainFn } = opts;
+
+    const footer = document.getElementById(footerId);
+    const rail = document.getElementById(machineId + 'ClawRail');
+    const cable = document.getElementById(machineId + 'ClawCable');
+    const grid = document.getElementById(machineId + 'ClawGrid');
+    const tray = document.getElementById(machineId + 'ClawTray');
+    const prize = document.getElementById(machineId + 'ClawPrize');
+    if (!footer || !rail) return;
+
+    // PASO 1 — elegir el premio (lógica, NO TOCAR)
+    const entry = rollWeightedTable(table);
+    const reduced = isShopPerformanceMode();
+
+    // PASO 2 — encontrar el ítem visual que corresponde al premio
+    // (misma lógica que antes, pero ahora sin riesgo de desfase angular)
+    const items = grid ? Array.from(grid.querySelectorAll('.claw-item')) : [];
+    let targetItem = null;
+    if (entry.type === 'skin') {
+        targetItem = items.find(el => el.classList.contains('is-skin'));
+    } else if (entry.type === 'chest') {
+        const byLabel = { basic: 'Cofre Básico', special: 'Cofre Especial', epic: 'Cofre Épico', demon: 'Cofre Demon', vip: 'Cofre VIP' };
+        const lbl = byLabel[entry.chestId];
+        targetItem = items.find(el => el.querySelector('img')?.alt === lbl);
+    } else if (entry.type === 'coins') {
+        const lbl = entry.amount >= 100 ? 'Monedas extra' : 'Monedas';
+        targetItem = items.find(el => el.querySelector('img')?.alt === lbl);
+    } else if (entry.type === 'gems') {
+        targetItem = items.find(el => el.querySelector('img')?.alt === 'Rubíes');
+    } else if (entry.type === 'fragment') {
+        targetItem = items.find(el => el.querySelector('img')?.alt === 'Fragmento');
+    } else if (entry.type === 'luckChest') {
+        targetItem = items.find(el => el.querySelector('img')?.alt === 'Cofre de la Suerte');
+    }
+    if (!targetItem) targetItem = items[Math.floor(Math.random() * items.length)];
+
+    // Deshabilitar el footer mientras anima
+    footer.innerHTML = `<div class="claw-spinning-msg">AGARRANDO…</div>`;
+
+    if (reduced) {
+        // Modo reducido: sin animación, resultado inmediato
+        _clawShowResult(entry, footer, prize, tray, resultTextColor, spinAgainFn);
+        return;
+    }
+
+    // PASO 3 — animación en 5 fases con CSS classes
+    const wrap = document.getElementById(machineId + 'ClawWrap');
+
+    // Fase 1: mover garra horizontalmente sobre el target
+    const gridRect = grid?.getBoundingClientRect();
+    const itemRect = targetItem?.getBoundingClientRect();
+    const railRect = rail?.getBoundingClientRect();
+    let offsetX = 0;
+    if (gridRect && itemRect && railRect) {
+        const itemCx = itemRect.left + itemRect.width / 2;
+        const railCx = railRect.left + railRect.width / 2;
+        offsetX = itemCx - railCx;
+        // Clamp para no salirse de la vitrina
+        const maxX = gridRect.width / 2 - 20;
+        offsetX = Math.max(-maxX, Math.min(maxX, offsetX));
+    }
+
+    rail.style.transition = 'transform 0.5s ease-in-out';
+    rail.style.transform = `translateX(${offsetX.toFixed(1)}px)`;
+
+    setTimeout(() => {
+        // Fase 2: bajar la garra
+        rail.classList.add('claw-descending');
+        if (cable) cable.classList.add('claw-cable-extend');
+
+        setTimeout(() => {
+            // Fase 3: subir la garra — el ítem "desaparece" de la vitrina
+            rail.classList.remove('claw-descending');
+            rail.classList.add('claw-ascending');
+            if (cable) { cable.classList.remove('claw-cable-extend'); cable.classList.add('claw-cable-retract'); }
+            targetItem?.classList.add('claw-item-grabbed');
+            window.playSfx?.('powerUp');
+
+            setTimeout(() => {
+                // Fase 4: mover garra al centro (bandeja)
+                rail.style.transition = 'transform 0.4s ease-in-out';
+                rail.style.transform = 'translateX(0)';
+                rail.classList.remove('claw-ascending');
+
+                setTimeout(() => {
+                    // Fase 5: soltar el premio en la bandeja
+                    rail.classList.remove('claw-ascending');
+                    if (cable) { cable.classList.remove('claw-cable-retract'); }
+                    tray?.classList.add('claw-tray-active');
+                    _clawShowResult(entry, footer, prize, tray, resultTextColor, spinAgainFn);
+                    rail.style.transition = '';
+                    rail.style.transform = '';
+                }, 450);
+            }, 450);
+        }, 450);
+    }, 550);
+}
+
+// Muestra la tarjeta de resultado y aplica el premio real.
+function _clawShowResult(entry, footer, prize, tray, resultTextColor, spinAgainFn) {
+    // LÓGICA DE PREMIO — NO TOCAR
+    const result = applyRouletteReward(entry);
+    window.playSfx?.('reward');
+    const tier = getRouletteRewardTier(entry);
+    const flavor = pickRouletteFlavor(tier === 'mid' ? 'good' : tier);
+
+    if (prize && result.image) {
+        prize.innerHTML = `<img src="${result.image}" alt="${result.label}" class="claw-prize-img${tier === 'legendary' ? ' is-legendary' : ''}">`;
+        prize.classList.add('claw-prize-drop');
+    }
+
+    footer.innerHTML = `
+        <div class="roulette-result-card${tier === 'legendary' ? ' is-legendary' : ''}">
+            ${result.image ? `<img src="${result.image}" class="roulette-result-img" alt="">` : ''}
+            <div class="roulette-result-label" style="color:${resultTextColor};">${result.label}</div>
+            <div class="roulette-result-flavor">${flavor}</div>
+            <button class="roulette-spin-btn roulette-spin-again-btn" onclick="${spinAgainFn}()">JUGAR DE NUEVO</button>
+        </div>`;
 }
 
 // Encuentra en `segments` (los 8 gajos visuales) cuál le corresponde
@@ -5721,109 +5880,6 @@ function pickRouletteFlavor(tier) {
     return pool[Math.floor(Math.random() * pool.length)];
 }
 
-// Chispas que salen disparadas del centro de la rueda al aterrizar.
-// La cantidad escala con el tier del premio real.
-function spawnRouletteSparks(wheelWrap, tier) {
-    if (!wheelWrap) return;
-    const n = ROULETTE_SPARK_COUNTS[tier] || ROULETTE_SPARK_COUNTS.mid;
-    for (let i = 0; i < n; i++) {
-        const spark = document.createElement('div');
-        spark.className = 'roulette-spark';
-        const angle = Math.random() * 360;
-        const dist = 55 + Math.random() * 95;
-        spark.style.setProperty('--sx', `${Math.cos(angle * Math.PI / 180) * dist}px`);
-        spark.style.setProperty('--sy', `${Math.sin(angle * Math.PI / 180) * dist}px`);
-        spark.style.animationDelay = `${Math.random() * 0.12}s`;
-        wheelWrap.appendChild(spark);
-        spark.addEventListener('animationend', () => spark.remove());
-    }
-}
-
-// Motor de giro compartido. `table` ya decide el premio real
-// (rollWeightedTable) — el giro visual de la rueda es puro
-// suspenso, no tiene que "aterrizar" en el ícono correcto (la
-// rueda es la vidriera, ver comentario en getNormalWheelSegments).
-function performRouletteSpin(opts) {
-    const { wheelWrapId, bigWheelId, iconsWrapId, smallWheelSelector, footerId, table, segments, resultTextColor, spinAgainFn } = opts;
-
-    const wheelWrap = document.getElementById(wheelWrapId);
-    const bigWheel = document.getElementById(bigWheelId);
-    const iconsWrap = iconsWrapId ? document.getElementById(iconsWrapId) : null;
-    const smallWheel = document.querySelector(smallWheelSelector);
-    const footer = document.getElementById(footerId);
-    if (!bigWheel || !footer) return;
-
-    const entry = rollWeightedTable(table);
-    const reduced = isShopPerformanceMode();
-
-    // Ángulo del gajo que REALMENTE ganó (misma fórmula que usa
-    // renderWheelSegmentIcons para ubicar los íconos), para que la
-    // rueda aterrice ahí y no en cualquier lado al azar.
-    const n = segments.length;
-    const half = 360 / n / 2;
-    const targetIndex = matchRouletteSegmentIndex(segments, entry);
-    const segAngle = (360 / n) * targetIndex + half;
-
-    // El puntero está fijo arriba (ángulo -90). Un poco de jitter dentro
-    // del propio gajo para que no caiga siempre justo en el centro.
-    const jitter = (Math.random() - 0.5) * (half * 0.7);
-    const desiredMod = (((-90 - segAngle + jitter) % 360) + 360) % 360;
-
-    // 6 a 8 vueltas completas, acumuladas sobre la rotación previa (para
-    // que nunca "salte" hacia atrás visualmente), ajustadas para terminar
-    // exactamente en el gajo ganador.
-    const prevRotation = parseFloat(bigWheel.dataset.rotation || '0');
-    const currentMod = ((prevRotation % 360) + 360) % 360;
-    const diff = (desiredMod - currentMod + 360) % 360;
-    const nextRotation = prevRotation + (6 + Math.random() * 2) * 360 + diff;
-    bigWheel.dataset.rotation = nextRotation;
-
-    const duration = reduced ? 0.9 : 4.6;
-    footer.innerHTML = `<div class="roulette-spinning-msg">GIRANDO…</div>`;
-
-    // Curva monótona (frena parejo, sin "rebotes" a mitad de camino) en vez
-    // de la anterior que arrancaba con un salto casi instantáneo al 82% del
-    // giro y después se arrastraba — eso era el efecto "rueda chueca".
-    const easing = 'cubic-bezier(0.16, 1, 0.3, 1)';
-    bigWheel.style.transition = `transform ${duration}s ${easing}`;
-    bigWheel.style.transform = `rotate(${nextRotation}deg)`;
-    if (iconsWrap) {
-        iconsWrap.style.transition = `transform ${duration}s ${easing}`;
-        iconsWrap.style.transform = `rotate(${nextRotation}deg)`;
-    }
-    if (smallWheel) {
-        smallWheel.style.transition = `transform ${duration}s ${easing}`;
-        smallWheel.style.transform = `rotate(${nextRotation}deg)`;
-    }
-    window.playSfx?.('powerUp');
-
-    setTimeout(() => {
-        const result = applyRouletteReward(entry);
-        window.playSfx?.('reward');
-
-        const tier = getRouletteRewardTier(entry);
-
-        wheelWrap?.classList.add('roulette-landed-glow');
-        bigWheel.classList.add('roulette-glowing');
-        setTimeout(() => {
-            wheelWrap?.classList.remove('roulette-landed-glow');
-            bigWheel.classList.remove('roulette-glowing');
-        }, 750);
-
-        if (!reduced) spawnRouletteSparks(wheelWrap, tier);
-
-        const flavor = pickRouletteFlavor(tier === 'mid' ? 'good' : tier);
-
-        footer.innerHTML = `
-            <div class="roulette-result-card${tier === 'legendary' ? ' is-legendary' : ''}">
-                ${result.image ? `<img src="${result.image}" class="roulette-result-img" alt="">` : ''}
-                <div class="roulette-result-label" style="color:${resultTextColor};">${result.label}</div>
-                <div class="roulette-result-flavor">${flavor}</div>
-                <button class="roulette-spin-btn roulette-spin-again-btn" onclick="${spinAgainFn}()">GIRAR DE NUEVO</button>
-            </div>
-        `;
-    }, duration * 1000);
-}
 
 // Costo del próximo giro en la Ruleta Diaria: gratis 1 vez por día
 // (mismo patrón de reinicio por día calendario que el Regalo Diario),
@@ -5886,14 +5942,13 @@ function renderVIPRouletteModalBody() {
     const canPaySingle = window.infiniteCoinsMode || keys >= VIP_ROULETTE_KEY_COST_SINGLE;
     const canPayBulk = window.infiniteCoinsMode || keys >= VIP_ROULETTE_KEY_COST_BULK;
     const keysDisplay = window.infiniteCoinsMode ? '∞' : keys;
-    const segments = getVIPWheelSegments();
     const probGroups = getVIPRouletteProbabilityGroups();
+    const items = getVIPClawItems();
+
     body.innerHTML = `
-        <div class="roulette-wheel-big-wrap" id="vipRouletteWheelWrap">
-            <div class="roulette-wheel-pointer"></div>
-            <div class="vip-roulette-wheel roulette-wheel-big" id="vipRouletteBigWheel" style="background-image:url('${ROULETTE_WHEEL_IMAGES.vip}');"></div>
-            ${renderWheelSegmentIcons(segments, 'vipRouletteIconsWrap')}
-        </div>
+        ${renderClawMachine(items, 'vip',
+        'assets/Imagenes/Maquina_Garra/maquina_vip.png',
+        'assets/Imagenes/Maquina_Garra/garra.png')}
         <div class="roulette-footer" id="vipRouletteFooter">
             <button type="button" class="caronte-info-btn" id="vipRouletteInfoBtn" aria-label="Información de La Llave de Caronte">
                 ${CARONTE_OBOLO_SVG}
@@ -5912,10 +5967,10 @@ function renderVIPRouletteModalBody() {
             </div>
             <div class="vip-roulette-spin-options">
                 <button id="vipRouletteSpinBtn" class="roulette-spin-btn" onclick="spinVIPRoulette()" ${canPaySingle ? '' : 'disabled'}>
-                    GIRAR x1 · ${renderCaronteKeyIcon('sm')} 1
+                    JUGAR x1 · ${renderCaronteKeyIcon('sm')} 1
                 </button>
                 <button id="vipRouletteSpinBulkBtn" class="roulette-spin-btn roulette-spin-bulk-btn" onclick="spinVIPRouletteBulk()" ${canPayBulk ? '' : 'disabled'}>
-                    GIRAR x12 · ${renderCaronteKeyIcon('sm')} 10
+                    JUGAR x12 · ${renderCaronteKeyIcon('sm')} 10
                 </button>
             </div>
         </div>
@@ -5929,15 +5984,11 @@ function spinVIPRoulette() {
     if (!window.infiniteCoinsMode && getCaronteKeys() < VIP_ROULETTE_KEY_COST_SINGLE) return;
     if (!window.infiniteCoinsMode) spendCurrency(VIP_ROULETTE_KEY_COST_SINGLE, 'caronteKeys');
 
-    performRouletteSpin({
-        wheelWrapId: 'vipRouletteWheelWrap',
-        bigWheelId: 'vipRouletteBigWheel',
-        iconsWrapId: 'vipRouletteIconsWrap',
-        smallWheelSelector: '#vipRouletteBtn .vip-roulette-wheel',
+    performClawSpin({
+        machineId: 'vip',
         footerId: 'vipRouletteFooter',
         table: VIP_ROULETTE_TABLE,
-        segments: getVIPWheelSegments(),
-        resultTextColor: '#5a1220',
+        resultTextColor: '#e0b563',
         spinAgainFn: 'renderVIPRouletteModalBody',
     });
 }
@@ -6062,19 +6113,18 @@ function renderShopRouletteModalBody() {
     const cost = getNormalRouletteSpinCost();
     const coins = parseInt(localStorage.getItem('deadCoins') || '0');
     const canPay = cost === 0 || window.infiniteCoinsMode || coins >= cost;
-    const segments = getNormalWheelSegments();
+    const items = getNormalClawItems();
+
     body.innerHTML = `
-        <div class="roulette-wheel-big-wrap" id="shopRouletteWheelWrap">
-            <div class="roulette-wheel-pointer"></div>
-            <div class="vip-roulette-wheel roulette-wheel-big" id="shopRouletteBigWheel" style="background-image:url('${ROULETTE_WHEEL_IMAGES.normal}');"></div>
-            ${renderWheelSegmentIcons(segments, 'shopRouletteIconsWrap')}
-        </div>
+        ${renderClawMachine(items, 'normal',
+        'assets/Imagenes/Maquina_Garra/maquina_normal.png',
+        'assets/Imagenes/Maquina_Garra/garra.png')}
         <div class="roulette-footer" id="shopRouletteFooter">
             <p class="roulette-hint-text">
                 ${cost === 0 ? 'Tenés tu giro gratis de hoy esperando.' : `Ya usaste el giro gratis de hoy. Girar de nuevo cuesta ${cost} monedas.`}
             </p>
             <button id="shopRouletteSpinBtn" class="roulette-spin-btn" onclick="spinShopRoulette()" ${canPay ? '' : 'disabled'}>
-                ${cost === 0 ? 'GIRAR GRATIS' : `GIRAR · ${cost} monedas`}
+                ${cost === 0 ? 'JUGAR GRATIS' : `JUGAR · ${cost} monedas`}
             </button>
             ${canPay ? '' : '<p class="roulette-cant-pay">No te alcanzan las monedas.</p>'}
         </div>
@@ -6095,14 +6145,10 @@ function spinShopRoulette() {
         localStorage.setItem('roulettePaidSpins_' + todayKey, String(paidCount + 1));
     }
 
-    performRouletteSpin({
-        wheelWrapId: 'shopRouletteWheelWrap',
-        bigWheelId: 'shopRouletteBigWheel',
-        iconsWrapId: 'shopRouletteIconsWrap',
-        smallWheelSelector: '#shopRouletteBtn .vip-roulette-wheel',
+    performClawSpin({
+        machineId: 'normal',
         footerId: 'shopRouletteFooter',
         table: NORMAL_ROULETTE_TABLE,
-        segments: getNormalWheelSegments(),
         resultTextColor: '#ffffff',
         spinAgainFn: 'renderShopRouletteModalBody',
     });
@@ -9934,55 +9980,114 @@ function renderConversionTabHtml() {
     const ct = shopTextos('conversion');
 
     return `
-        <div style="max-width:480px; margin:0 auto; display:flex; flex-direction:column; gap:20px;">
+        <div class="rcv-wrap">
 
-            <div style="background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.08); border-radius:14px; padding:20px; text-align:center;">
-                <div style="color:rgba(255,255,255,0.4); font-family:monospace; font-size:11px; letter-spacing:3px; margin-bottom:12px;">${ct.labelTasaCambio ?? 'TASA DE CAMBIO'}</div>
-                <div style="display:flex; align-items:center; justify-content:center; gap:8px;">
+            <div class="rcv-rate rcv-corners">
+                <span class="rcv-c2"></span>
+                <div class="rcv-strip"></div>
+                <div style="text-align:center; color:rgba(255,255,255,0.4); font-family:monospace; font-size:11px; letter-spacing:3px; margin-bottom:12px;">${ct.labelTasaCambio ?? 'TASA DE CAMBIO'}</div>
+                <div class="rcv-rate-row">
                     <img src="assets/UI/Common/Currency/DEAD_COIN.png" style="width:20px;height:20px;object-fit:contain;">
                     <span style="color:white; font-family:monospace; font-size:18px; letter-spacing:2px;">${ct.textoTasa ?? '100 = 1 / 1 = 30'}</span>
                     <img src="assets/UI/Common/Currency/Rubies.png" style="width:20px;height:20px;object-fit:contain;">
                 </div>
             </div>
 
-            <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
-                <div style="background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.08); border-radius:12px; padding:16px; text-align:center;">
-                    <div style="display:flex; align-items:center; justify-content:center; gap:6px; margin-bottom:8px;">
-                        <img src="assets/UI/Common/Currency/DEAD_COIN.png" style="width:16px;height:16px;object-fit:contain;">
-                        <span style="color:rgba(255,255,255,0.4); font-family:monospace; font-size:10px; letter-spacing:2px;">${ct.labelDeadCoins ?? 'DEAD COINS'}</span>
+            <div class="rcv-grid">
+                <div class="rcv-bal-col">
+                    <div class="rcv-bal-card coins">
+                        <div class="rcv-bal-icon coins"><img src="assets/UI/Common/Currency/DEAD_COIN.png"></div>
+                        <div><small>${ct.labelDeadCoins ?? 'DEAD COINS'}</small><b id="conv-coins">${coins}</b></div>
                     </div>
-                    <div id="conv-coins" style="color:white; font-family:monospace; font-size:22px; font-weight:bold;">${coins}</div>
-                </div>
-                <div style="background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.08); border-radius:12px; padding:16px; text-align:center;">
-                    <div style="display:flex; align-items:center; justify-content:center; gap:6px; margin-bottom:8px;">
-                        <img src="assets/UI/Common/Currency/Rubies.png" style="width:16px;height:16px;object-fit:contain;">
-                        <span style="color:rgba(255,255,255,0.4); font-family:monospace; font-size:10px; letter-spacing:2px;">${ct.labelGemas ?? 'GEMAS'}</span>
+                    <div class="rcv-bal-card gems">
+                        <div class="rcv-bal-icon gems"><img src="assets/UI/Common/Currency/Rubies.png"></div>
+                        <div><small>${ct.labelGemas ?? 'GEMAS'}</small><b id="conv-gems">${gems}</b></div>
                     </div>
-                    <div id="conv-gems" style="color:#ffee00; font-family:monospace; font-size:22px; font-weight:bold;">${gems}</div>
                 </div>
-            </div>
 
-            <div style="background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.08); border-radius:14px; padding:20px;">
-                <div style="color:rgba(255,255,255,0.4); font-family:monospace; font-size:11px; letter-spacing:3px; margin-bottom:14px;">${ct.tituloConvertirCoins ?? 'CONVERTIR COINS → GEMAS'}</div>
-                <div style="display:flex; gap:10px; align-items:center;">
-                    <input id="conv-input" type="number" min="100" step="100" placeholder="${ct.placeholderCoins ?? 'ej: 100'}"
-                        style="flex:1; padding:10px 14px; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.15); border-radius:8px; color:white; font-family:monospace; font-size:14px; outline:none;">
-                    <button onclick="convertCoins()" style="padding:10px 20px; border:1px solid #ffee00; background:rgba(255,238,0,0.1); color:#ffee00; font-family:monospace; font-size:12px; border-radius:8px; cursor:pointer; letter-spacing:2px;">${ct.botonConvertir ?? 'CONVERTIR'}</button>
-                </div>
-                <div id="conv-result" style="color:rgba(255,255,255,0.3); font-family:monospace; font-size:11px; margin-top:10px;"></div>
-            </div>
+                <div class="rcv-conv-col">
+                    <div class="rcv-panel gold">
+                        <div class="rcv-panel-head">
+                            <img src="assets/UI/Common/Currency/DEAD_COIN.png"> Coins <span class="rcv-arrow">→</span>
+                            <img src="assets/UI/Common/Currency/Rubies.png"> Gemas
+                            <span class="rcv-tag">100 : 1</span>
+                        </div>
+                        <div class="rcv-body">
+                            <input id="conv-input" type="number" min="100" step="100" placeholder="${ct.placeholderCoins ?? 'ej: 100'}" class="rcv-input" oninput="rcvPreviewCoins()">
+                            <button onclick="convertCoins()" class="rcv-btn">${ct.botonConvertir ?? 'CONVERTIR'}</button>
+                        </div>
+                        <div class="rcv-preview" id="conv-preview-coins">Ingresa una cantidad</div>
+                        <div class="rcv-quick">
+                            <div class="rcv-chip" onclick="rcvSetVal('conv-input',500)">500</div>
+                            <div class="rcv-chip" onclick="rcvSetVal('conv-input',1000)">1.000</div>
+                            <div class="rcv-chip" onclick="rcvSetVal('conv-input',5000)">5.000</div>
+                            <div class="rcv-chip" onclick="rcvSetMax('conv-input','deadCoins')">MÁXIMO</div>
+                        </div>
+                        <div id="conv-result" class="rcv-result"></div>
+                    </div>
 
-            <div style="background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.08); border-radius:14px; padding:20px;">
-                <div style="color:rgba(255,255,255,0.4); font-family:monospace; font-size:11px; letter-spacing:3px; margin-bottom:14px;">${ct.tituloConvertirGemas ?? 'CONVERTIR RUBIES A MONEDAS'}</div>
-                <div style="display:flex; gap:10px; align-items:center;">
-                    <input id="conv-gem-input" type="number" min="1" step="1" placeholder="${ct.placeholderGemas ?? 'ej: 3'}"
-                        style="flex:1; padding:10px 14px; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.15); border-radius:8px; color:white; font-family:monospace; font-size:14px; outline:none;">
-                    <button onclick="convertGems()" style="padding:10px 20px; border:1px solid #ff4d6d; background:rgba(255,77,109,0.1); color:#ff4d6d; font-family:monospace; font-size:12px; border-radius:8px; cursor:pointer; letter-spacing:2px;">${ct.botonConvertir ?? 'CONVERTIR'}</button>
+                    <div class="rcv-panel red">
+                        <div class="rcv-panel-head">
+                            <img src="assets/UI/Common/Currency/Rubies.png"> Rubíes <span class="rcv-arrow">→</span>
+                            <img src="assets/UI/Common/Currency/DEAD_COIN.png"> Monedas
+                            <span class="rcv-tag">1 : 30</span>
+                        </div>
+                        <div class="rcv-body">
+                            <input id="conv-gem-input" type="number" min="1" step="1" placeholder="${ct.placeholderGemas ?? 'ej: 3'}" class="rcv-input" oninput="rcvPreviewGems()">
+                            <button onclick="convertGems()" class="rcv-btn">${ct.botonConvertir ?? 'CONVERTIR'}</button>
+                        </div>
+                        <div class="rcv-preview" id="conv-preview-gems">Ingresa una cantidad</div>
+                        <div class="rcv-quick">
+                            <div class="rcv-chip" onclick="rcvSetVal('conv-gem-input',10)">10</div>
+                            <div class="rcv-chip" onclick="rcvSetVal('conv-gem-input',50)">50</div>
+                            <div class="rcv-chip" onclick="rcvSetVal('conv-gem-input',100)">100</div>
+                            <div class="rcv-chip" onclick="rcvSetMax('conv-gem-input','gems')">MÁXIMO</div>
+                        </div>
+                        <div id="conv-gem-result" class="rcv-result"></div>
+                    </div>
                 </div>
-                <div id="conv-gem-result" style="color:rgba(255,255,255,0.3); font-family:monospace; font-size:11px; margin-top:10px;"></div>
             </div>
         </div>
     `;
+}
+
+// ── Preview en vivo + chips de cantidad rápida del convertidor ──────────
+// (no tocan convertCoins/convertGems, solo muestran cuánto vas a recibir
+// antes de tocar "Convertir")
+function rcvPreviewCoins() {
+    const el = document.getElementById('conv-input');
+    const out = document.getElementById('conv-preview-coins');
+    if (!el || !out) return;
+    const v = parseInt(el.value || '0');
+    if (!v || v <= 0) { out.textContent = 'Ingresa una cantidad'; return; }
+    const gemsGanadas = Math.floor(v / 100);
+    out.innerHTML = 'Recibirás <b>' + gemsGanadas.toLocaleString() + ' gemas</b>';
+}
+
+function rcvPreviewGems() {
+    const el = document.getElementById('conv-gem-input');
+    const out = document.getElementById('conv-preview-gems');
+    if (!el || !out) return;
+    const v = parseInt(el.value || '0');
+    if (!v || v <= 0) { out.textContent = 'Ingresa una cantidad'; return; }
+    const coinsGanadas = Math.floor(v * 30);
+    out.innerHTML = 'Recibirás <b>' + coinsGanadas.toLocaleString() + ' coins</b>';
+}
+
+function rcvSetVal(id, val) {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.value = val;
+    id === 'conv-input' ? rcvPreviewCoins() : rcvPreviewGems();
+}
+
+function rcvSetMax(id, storageKey) {
+    const el = document.getElementById(id);
+    if (!el) return;
+    let max = parseInt(localStorage.getItem(storageKey) || '0');
+    if (id === 'conv-input') max = Math.floor(max / 100) * 100;
+    el.value = max;
+    id === 'conv-input' ? rcvPreviewCoins() : rcvPreviewGems();
 }
 
 // Mantenido por compatibilidad si algo externo aún llama a renderConversionPage
@@ -10911,6 +11016,9 @@ function convertCoins() {
     result.textContent = (ct.exitoCoinsAGemas ?? '✔ Convertiste {input} coins en {ganado} gemas')
         .replace('{input}', input).replace('{ganado}', gemsGained);
     result.style.color = '#00ff88';
+
+    document.getElementById('conv-input').value = '';
+    document.getElementById('conv-preview-coins').textContent = 'Ingresa una cantidad';
 }
 
 function convertGems() {
@@ -10948,6 +11056,9 @@ function convertGems() {
     result.textContent = (ct.exitoGemasACoins ?? 'Convertiste {input} rubies en {ganado} monedas')
         .replace('{input}', input).replace('{ganado}', coinsGained);
     result.style.color = '#00ff88';
+
+    document.getElementById('conv-gem-input').value = '';
+    document.getElementById('conv-preview-gems').textContent = 'Ingresa una cantidad';
 }
 
 function equipTrailFromInventory(effectId, colorId) {
